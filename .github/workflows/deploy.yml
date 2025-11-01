@@ -1,0 +1,47 @@
+name: deploy-vue-to-ferozo
+on:
+  push:
+    branches: [ main ]
+concurrency:
+  group: deploy-vue
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+      - run: npm run build
+
+      # Ensure dist/assets exists (even if empty)
+      - name: Ensure dist/assets folder exists
+        run: mkdir -p dist/assets
+
+      # (Opcional) generar .htaccess dentro de dist si no lo versionás
+      - name: Ensure .htaccess for SPA (sin forzar HTTPS)
+        run: |
+          DIST="dist"
+          mkdir -p "$DIST"
+          cat > "$DIST/.htaccess" <<'EOF'
+          # SPA fallback (history mode)
+          RewriteEngine On
+          RewriteRule ^index\.html$ - [L]
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteRule . /index.html [L]
+          EOF
+
+      - name: Deploy dist via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: dist/
+          server-dir: ${{ secrets.FTP_DIR }}/
