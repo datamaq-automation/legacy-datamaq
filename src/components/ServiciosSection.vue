@@ -24,7 +24,7 @@ Path: src/components/ServiciosSection.vue
               <img
                 src="@/assets/powermeter.png"
                 alt="Equipos powermeter industriales"
-                class="img-fluid rounded shadow mt-3"
+                class="img-fluid rounded shadow mt-3 mx-auto d-block"
                 style="max-height: 120px; object-fit: contain;"
               />
               <p class="text-white-50 mt-2 mb-0" style="font-size: 0.95em;">
