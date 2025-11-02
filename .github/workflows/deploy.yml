@@ -34,6 +34,10 @@ jobs:
       - name: Ensure dist/assets folder exists
         run: mkdir -p dist/assets
 
+      # Copiar config.json a dist/
+      - name: Copy config.json to dist
+        run: cp config.json dist/config.json
+
       # (Opcional) generar .htaccess dentro de dist si no lo versionás
       - name: Ensure .htaccess for SPA (sin forzar HTTPS)
         run: |
