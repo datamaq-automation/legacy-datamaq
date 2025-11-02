@@ -42,13 +42,13 @@ function openWhatsApp(): void {
     .then((response) => {
       return response.json().then((data) => {
         if (response.ok && data.success) {
-        conversionMsg.value = "¡Conversión registrada correctamente!";
-      } else if (response.status === 429) {
-        conversionMsg.value = "Conversión duplicada detectada. Espera unos segundos antes de volver a intentar.";
-      } else if (response.status === 400) {
-        conversionMsg.value = "Datos incompletos o formato inválido.";
-      } else if (response.status === 500) {
-        conversionMsg.value = "Ocurrió un error técnico. Intenta nuevamente más tarde.";
+          console.log("¡Conversión registrada correctamente!");
+        } else if (response.status === 429) {
+          conversionMsg.value = "Conversión duplicada detectada. Espera unos segundos antes de volver a intentar.";
+        } else if (response.status === 400) {
+          conversionMsg.value = "Datos incompletos o formato inválido.";
+        } else if (response.status === 500) {
+          conversionMsg.value = "Ocurrió un error técnico. Intenta nuevamente más tarde.";
         } else {
           conversionMsg.value = "No se pudo registrar la conversión. Intenta nuevamente.";
         }
@@ -73,8 +73,4 @@ function openWhatsApp(): void {
   <WhatsappFab @whatsapp="openWhatsApp" />
   <LegalSection />
   <Footer />
-  <!-- Mensaje de conversión -->
-  <div v-if="conversionMsg" class="alert alert-info" style="position:fixed;bottom:80px;right:20px;z-index:999;">
-    {{ conversionMsg }}
-  </div>
 </template>
