@@ -1,29 +1,61 @@
 <script setup lang="ts">
+import config from '../config.json'
+
+import { ref } from 'vue'
 import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
 import ServiciosSection from './components/ServiciosSection.vue'
-import Sobreprofebustos from './components/SobreProfeBustos.vue' // <-- nuevo import
+import Sobreprofebustos from './components/SobreProfeBustos.vue'
 import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
 import LegalSection from './components/LegalSection.vue'
-// === Configuración mínima (reemplazá el número por el tuyo en formato internacional, sin + ni espacios) ===
-// Ejemplo AR (CABA): 54911XXXXXXXX — Ver: https://wa.me/<numero>
-const WHATSAPP_NUMBER = "54911XXXXXXXX"; // TODO: reemplazar por tu número
-const PRESET_MSG = "Vengo de la página web, quiero más información."; // debe coincidir con el SRS
 
-// Habilitá esto cuando esté operativo tu subdominio del bot
-const CHAT_ENABLED = false; // TODO: poner true cuando chat.profebustos.com.ar esté listo
-const CHAT_URL = "https://chat.profebustos.com.ar";
+// Configuración desde config.json
+const WHATSAPP_NUMBER = config.WHATSAPP_NUMBER
+const PRESET_MSG = config.PRESET_MSG
+const CHAT_ENABLED = config.CHAT_ENABLED
+const CHAT_URL = config.CHAT_URL
+
+// Estado para mensajes al usuario
+const conversionMsg = ref<string | null>(null);
 
 function openWhatsApp(): void {
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PRESET_MSG)}`;
   window.open(url, "_blank", "noopener");
-  // Señalización de conversión (si usás GTM/dataLayer u otro)
-  // @see FR-006 — Medición de conversiones
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).dataLayer?.push({ event: "conversion_whatsapp_click" });
-  // Fallback: CustomEvent para listeners propios
   window.dispatchEvent(new CustomEvent("conversion:whatsapp_click"));
+
+  fetch('https://unhued-tashia-beforehand.ngrok-free.app/api/registrar_conversion.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tipo: 'whatsapp',
+      timestamp: new Date().toISOString(),
+      seccion: 'fab'
+    })
+  })
+    .then(async (response) => {
+      const data = await response.json();
+      if (response.ok && data.success) {
+        conversionMsg.value = "¡Conversión registrada correctamente!";
+      } else if (response.status === 429) {
+        conversionMsg.value = "Conversión duplicada detectada. Espera unos segundos antes de volver a intentar.";
+      } else if (response.status === 400) {
+        conversionMsg.value = "Datos incompletos o formato inválido.";
+      } else if (response.status === 500) {
+        conversionMsg.value = "Ocurrió un error técnico. Intenta nuevamente más tarde.";
+      } else {
+        conversionMsg.value = "No se pudo registrar la conversión. Intenta nuevamente.";
+      }
+      // Opcional: loguear el error para análisis
+      if (data.error) {
+        console.error("Error conversión:", data.error);
+      }
+    })
+    .catch((err) => {
+      conversionMsg.value = "Error de red al registrar conversión.";
+      console.error("Error de red conversión:", err);
+    });
 }
 </script>
 
@@ -35,4 +67,8 @@ function openWhatsApp(): void {
   <WhatsappFab @whatsapp="openWhatsApp" />
   <LegalSection />
   <Footer />
+  <!-- Mensaje de conversión -->
+  <div v-if="conversionMsg" class="alert alert-info" style="position:fixed;bottom:80px;right:20px;z-index:999;">
+    {{ conversionMsg }}
+  </div>
 </template>
