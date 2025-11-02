@@ -2,6 +2,7 @@
 import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
 import ServiciosSection from './components/ServiciosSection.vue'
+import SobreDataMaq from './components/SobreDataMaq.vue' // <-- nuevo import
 import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
 import LegalSection from './components/LegalSection.vue'
@@ -30,6 +31,7 @@ function openWhatsApp(): void {
   <Navbar :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
   <HeroSection :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
   <ServiciosSection />
+  <SobreDataMaq />
   <WhatsappFab @whatsapp="openWhatsApp" />
   <LegalSection />
   <Footer />

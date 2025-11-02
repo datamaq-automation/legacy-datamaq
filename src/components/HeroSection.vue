@@ -5,8 +5,16 @@ path: src/components/HeroSection.vue
 <template>
   <section class="bg-primary bg-gradient py-5 text-white" aria-labelledby="hero-title">
     <div class="container py-4">
-      <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-8 text-center">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-md-4 mb-4 mb-md-0 text-center">
+          <img
+            src="@/assets/foto-tablero.png"
+            alt="Foto profesional trabajando en tablero eléctrico"
+            class="img-fluid rounded shadow"
+            style="max-height: 260px;"
+          />
+        </div>
+        <div class="col-lg-8 col-xl-8 text-center">
           <h1 id="hero-title" class="display-5 fw-bold mb-3">
             Eficiencia energética y OEE para industrias del GBA Norte
           </h1>
