@@ -34,9 +34,9 @@ function openWhatsApp(): void {
       seccion: 'fab'
     })
   })
-    .then(async (response) => {
-      const data = await response.json();
-      if (response.ok && data.success) {
+    .then((response) => {
+      return response.json().then((data) => {
+        if (response.ok && data.success) {
         conversionMsg.value = "¡Conversión registrada correctamente!";
       } else if (response.status === 429) {
         conversionMsg.value = "Conversión duplicada detectada. Espera unos segundos antes de volver a intentar.";
@@ -44,13 +44,14 @@ function openWhatsApp(): void {
         conversionMsg.value = "Datos incompletos o formato inválido.";
       } else if (response.status === 500) {
         conversionMsg.value = "Ocurrió un error técnico. Intenta nuevamente más tarde.";
-      } else {
-        conversionMsg.value = "No se pudo registrar la conversión. Intenta nuevamente.";
-      }
-      // Opcional: loguear el error para análisis
-      if (data.error) {
-        console.error("Error conversión:", data.error);
-      }
+        } else {
+          conversionMsg.value = "No se pudo registrar la conversión. Intenta nuevamente.";
+        }
+        // Opcional: loguear el error para análisis
+        if (data.error) {
+          console.error("Error conversión:", data.error);
+        }
+      });
     })
     .catch((err) => {
       conversionMsg.value = "Error de red al registrar conversión.";
