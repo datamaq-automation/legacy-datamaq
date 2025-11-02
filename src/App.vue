@@ -30,7 +30,7 @@ function openWhatsApp(): void {
   (window as any).dataLayer?.push({ event: "conversion_whatsapp_click" });
   window.dispatchEvent(new CustomEvent("conversion:whatsapp_click"));
 
-  fetch(`${API_BASE_URL}/api/registrar_conversion.php`, {
+  fetch(`${API_BASE_URL}/registrar_conversion.php`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
