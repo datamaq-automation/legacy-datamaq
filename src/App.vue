@@ -66,11 +66,13 @@ function openWhatsApp(): void {
 </script>
 
 <template>
-  <Navbar :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
-  <HeroSection :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
-  <ServiciosSection />
-  <Sobreprofebustos />
-  <WhatsappFab @whatsapp="openWhatsApp" />
-  <LegalSection />
-  <Footer />
+  <div class="bg-dark text-white min-vh-100">
+    <Navbar :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
+    <HeroSection :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
+    <ServiciosSection />
+    <Sobreprofebustos />
+    <WhatsappFab @whatsapp="openWhatsApp" />
+    <LegalSection />
+    <Footer />
+  </div>
 </template>
