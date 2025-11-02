@@ -7,7 +7,7 @@ Registra una conversión cuando el usuario hace clic en el botón de WhatsApp.
 ### URL
 
 ```
-POST https://unhued-tashia-beforehand.ngrok-free.app/api/registrar_conversion.php
+POST https://<subdominio>.ngrok-free.app/api/registrar_conversion.php
 ```
 
 ### Headers
@@ -81,7 +81,7 @@ POST https://unhued-tashia-beforehand.ngrok-free.app/api/registrar_conversion.ph
 ### Ejemplo de uso en frontend
 
 ```typescript
-fetch('https://unhued-tashia-beforehand.ngrok-free.app/api/registrar_conversion.php', {
+fetch('https://<subdominio>.ngrok-free.app/api/registrar_conversion.php', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({

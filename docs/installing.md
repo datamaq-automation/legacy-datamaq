@@ -19,17 +19,32 @@ Este documento explica cómo instalar y ejecutar el frontend (Vue + Vite) y el b
    cd profebustos-www
    ```
 
-2. Instala las dependencias:
+2. Copia el archivo de configuración de ejemplo y personalízalo:
+   ```sh
+   cp config.example.json config.json
+   ```
+   Edita `config.json` con tus datos privados:
+   ```json
+   {
+     "WHATSAPP_NUMBER": "54911XYYYZZZZ",
+     "CHAT_URL": "https://chat.tu-dominio.com.ar",
+     "API_BASE_URL": "https://<subdominio>.ngrok-free.app"
+   }
+   ```
+
+   > **Importante:** No subas `config.json` al repositorio. Este archivo está en `.gitignore` para proteger tus datos privados.
+
+3. Instala las dependencias:
    ```sh
    npm install
    ```
 
-3. Ejecuta el servidor de desarrollo:
+4. Ejecuta el servidor de desarrollo:
    ```sh
    npm run dev
    ```
 
-4. Compila para producción:
+5. Compila para producción:
    ```sh
    npm run build
    ```
@@ -107,6 +122,47 @@ Este documento explica cómo instalar y ejecutar el frontend (Vue + Vite) y el b
 
 - Para producción, sirve el frontend compilado desde un servidor web (Apache, Nginx, etc.).
 - Ejecuta el backend Flask con un servidor WSGI (por ejemplo, Gunicorn).
+- **Configuración remota:** En el flujo de despliegue (GitHub Actions), el archivo `config.json` se genera automáticamente usando los secrets configurados en el repositorio. No necesitas subir tus credenciales al código fuente.
+
+  Ejemplo de paso en `.github/workflows/deploy.yml`:
+  ```yaml
+  - name: Generate config.json from secrets
+    run: |
+      cat > config.json <<EOF
+      {
+        "WHATSAPP_NUMBER": "${{ secrets.WHATSAPP_NUMBER }}",
+        "CHAT_URL": "${{ secrets.CHAT_URL }}",
+        "API_BASE_URL": "${{ secrets.API_BASE_URL }}"
+      }
+      EOF
+  ```
+
+---
+
+## 6. Despliegue Automático con GitHub Actions
+
+El despliegue a producción se realiza automáticamente mediante GitHub Actions usando el archivo `.github/workflows/deploy.yml`.  
+En este flujo:
+
+- El archivo `config.json` se genera automáticamente con los valores privados almacenados como secrets en el repositorio de GitHub.
+- El build y el deploy se ejecutan en el entorno remoto, sin exponer credenciales en el código fuente.
+
+**No es necesario copiar ni editar manualmente `config.json` para producción.**
+
+Ejemplo del paso relevante en `deploy.yml`:
+```yaml
+- name: Generate config.json from secrets
+  run: |
+    cat > config.json <<EOF
+    {
+      "WHATSAPP_NUMBER": "${{ secrets.WHATSAPP_NUMBER }}",
+      "CHAT_URL": "${{ secrets.CHAT_URL }}",
+      "API_BASE_URL": "${{ secrets.API_BASE_URL }}"
+    }
+    EOF
+```
+
+Para más detalles, revisa el archivo `.github/workflows/deploy.yml` en el repositorio.
 
 ---
 

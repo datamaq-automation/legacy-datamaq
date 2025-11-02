@@ -16,6 +16,17 @@ jobs:
         with:
           node-version: '20'
 
+      # Crear config.json con secrets antes del build
+      - name: Generate config.json from secrets
+        run: |
+          cat > config.json <<EOF
+          {
+            "WHATSAPP_NUMBER": "${{ secrets.WHATSAPP_NUMBER }}",
+            "CHAT_URL": "${{ secrets.CHAT_URL }}",
+            "API_BASE_URL": "${{ secrets.API_BASE_URL }}"
+          }
+          EOF
+
       - run: npm ci
       - run: npm run build
 

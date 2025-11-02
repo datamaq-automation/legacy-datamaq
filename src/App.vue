@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/*
+Path: src/App.vue
+*/
+
 import config from '../config.json'
 
 import { ref } from 'vue'
@@ -10,11 +14,12 @@ import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
 import LegalSection from './components/LegalSection.vue'
 
-// Configuración desde config.json
 const WHATSAPP_NUMBER = config.WHATSAPP_NUMBER
-const PRESET_MSG = config.PRESET_MSG
-const CHAT_ENABLED = config.CHAT_ENABLED
 const CHAT_URL = config.CHAT_URL
+const API_BASE_URL = config.API_BASE_URL
+
+const PRESET_MSG = "Vengo de la página web, quiero más información."
+const CHAT_ENABLED = false
 
 // Estado para mensajes al usuario
 const conversionMsg = ref<string | null>(null);
@@ -25,7 +30,7 @@ function openWhatsApp(): void {
   (window as any).dataLayer?.push({ event: "conversion_whatsapp_click" });
   window.dispatchEvent(new CustomEvent("conversion:whatsapp_click"));
 
-  fetch('https://unhued-tashia-beforehand.ngrok-free.app/api/registrar_conversion.php', {
+  fetch(`${API_BASE_URL}/api/registrar_conversion.php`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

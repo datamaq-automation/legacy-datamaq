@@ -1,6 +1,5 @@
 {
-  "WHATSAPP_NUMBER": "5491135162685",
-  "PRESET_MSG": "Vengo de la página web, quiero más información.",
-  "CHAT_ENABLED": false,
-  "CHAT_URL": "https://chat.profebustos.com.ar"
+  "WHATSAPP_NUMBER": "54911XYYYZZZZ",
+  "CHAT_URL": "https://chat.tu-dominio.com.ar",
+  "API_BASE_URL": "https://<subdominio>.ngrok-free.app"
 }
