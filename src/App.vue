@@ -2,7 +2,7 @@
 import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
 import ServiciosSection from './components/ServiciosSection.vue'
-import SobreDataMaq from './components/SobreDataMaq.vue' // <-- nuevo import
+import Sobreprofebustos from './components/SobreProfeBustos.vue' // <-- nuevo import
 import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
 import LegalSection from './components/LegalSection.vue'
@@ -12,8 +12,8 @@ const WHATSAPP_NUMBER = "54911XXXXXXXX"; // TODO: reemplazar por tu número
 const PRESET_MSG = "Vengo de la página web, quiero más información."; // debe coincidir con el SRS
 
 // Habilitá esto cuando esté operativo tu subdominio del bot
-const CHAT_ENABLED = false; // TODO: poner true cuando chat.datamaq.com.ar esté listo
-const CHAT_URL = "https://chat.datamaq.com.ar";
+const CHAT_ENABLED = false; // TODO: poner true cuando chat.profebustos.com.ar esté listo
+const CHAT_URL = "https://chat.profebustos.com.ar";
 
 function openWhatsApp(): void {
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PRESET_MSG)}`;
@@ -31,7 +31,7 @@ function openWhatsApp(): void {
   <Navbar :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
   <HeroSection :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
   <ServiciosSection />
-  <SobreDataMaq />
+  <Sobreprofebustos />
   <WhatsappFab @whatsapp="openWhatsApp" />
   <LegalSection />
   <Footer />

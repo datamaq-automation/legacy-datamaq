@@ -1,5 +1,5 @@
 <!--
-Path: src/components/SobreDataMaq.vue
+Path: src/components/Sobreprofebustos.vue
 -->
 
 <template>
@@ -15,9 +15,9 @@ Path: src/components/SobreDataMaq.vue
           />
         </div>
         <div class="col-md-8">
-          <h2 id="sobre-title" class="mb-3">Sobre DataMaq</h2>
+          <h2 id="sobre-title" class="mb-3">Sobre profebustos</h2>
           <p>
-            DataMaq es liderado por profesionales con experiencia en la industria y la educación técnica. 
+            profebustos es liderado por profesionales con experiencia en la industria y la educación técnica. 
             Nuestra misión es ayudar a las empresas del GBA Norte a mejorar su eficiencia energética y operativa, 
             combinando tecnología de medición y formación especializada.
           </p>

@@ -1,4 +1,4 @@
-# Software Requirements Specification — [www.datamaq.com.ar](http://www.datamaq.com.ar) — Sitio Web de Servicios Industriales (IoT + Consultoría)
+# Software Requirements Specification — [www.profebustos.com.ar](http://www.profebustos.com.ar) — Sitio Web de Servicios Industriales (IoT + Consultoría)
 
 ## 0. Control de cambios
 
@@ -12,7 +12,7 @@
 
 ### 1.1 Propósito
 
-Este SRS define los requisitos de **[www.datamaq.com.ar](http://www.datamaq.com.ar)**, un sitio web orientado a promocionar y captar demanda para servicios de **instalación de dispositivos de toma de datos (IoT)** y **consultoría en interpretación de datos** eléctricos y de producción. **Audiencia**: responsables de mantenimiento, jefes de planta y direcciones técnicas de **industrias del GBA Norte** (preferentemente del sector gráfico), sin exclusión de otras industrias.
+Este SRS define los requisitos de **[www.profebustos.com.ar](http://www.profebustos.com.ar)**, un sitio web orientado a promocionar y captar demanda para servicios de **instalación de dispositivos de toma de datos (IoT)** y **consultoría en interpretación de datos** eléctricos y de producción. **Audiencia**: responsables de mantenimiento, jefes de planta y direcciones técnicas de **industrias del GBA Norte** (preferentemente del sector gráfico), sin exclusión de otras industrias.
 
 ### 1.2 Alcance del producto
 
@@ -20,7 +20,7 @@ El sitio debe:
 
 * **Comunicar con claridad el portafolio de servicios**: instalación de analizadores de redes eléctricas y medición de producción; consultoría para establecer **línea base** y proponer **mejoras** en **eficiencia energética por unidad** y en **OEE (disponibilidad y rendimiento)**.
 * **Facilitar la conversión** mediante un **botón fijo de WhatsApp** con mensaje prellenado (ver FR-001).
-* **Opcionalmente derivar** a un chat en **chat.datamaq.com.ar** cuando esté disponible (ver FR-005).
+* **Opcionalmente derivar** a un chat en **chat.profebustos.com.ar** cuando esté disponible (ver FR-005).
 
 **Métrica clave**: **clics en WhatsApp** y **clics en el enlace al chat** contabilizados como **conversiones** (ver FR-006).
 
@@ -44,7 +44,7 @@ El sitio debe:
 * **WCAG 2.1 (W3C)** — Pautas de accesibilidad para contenido web, nivel **AA**.
 * **OWASP ASVS v4.x** — Estándar de verificación de seguridad de aplicaciones *(aplica en Fase 2 si se agregan formularios/login)*.
 * **Ley 25.326 (AR) – Protección de Datos Personales** y guías de la **AAIP** *(marco general; en Fase 1 no se recolecta PII)*.
-* **Política de Privacidad de datamaq** *(TBD)* y **Términos y Condiciones** *(TBD).*
+* **Política de Privacidad de profebustos** *(TBD)* y **Términos y Condiciones** *(TBD).*
 
 ### 1.5 Visión general del documento
 
@@ -62,7 +62,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 
 ### 2.1 Perspectiva del producto
 
-**Fase 1**: sitio **público** de una sola página orientado a **comunicar servicios** y **capturar conversiones por clic** en WhatsApp (y, opcionalmente, chat externo). **Sin backend propio** ni formularios/PII. Dependencias **externas**: `wa.me` (WhatsApp) y `chat.datamaq.com.ar` (cuando esté operativo). Evolución a **multipágina** condicionada por **BR-002**.
+**Fase 1**: sitio **público** de una sola página orientado a **comunicar servicios** y **capturar conversiones por clic** en WhatsApp (y, opcionalmente, chat externo). **Sin backend propio** ni formularios/PII. Dependencias **externas**: `wa.me` (WhatsApp) y `chat.profebustos.com.ar` (cuando esté operativo). Evolución a **multipágina** condicionada por **BR-002**.
 
 ### 2.2 Clases y características de usuarios
 
@@ -75,7 +75,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 * Se cuenta con **PowerMeter** como proveedor de hardware IoT (analizador de redes eléctricas y controlador/Automate).
 * Las empresas objetivo disponen de **conectividad básica** y personal capaz de interactuar por WhatsApp/Chat.
 * En esta fase **no se recolectan datos personales** mediante formularios; el contacto se canaliza por **WhatsApp** o **chat externo**.
-* Dependencia futura: **habilitación de** `chat.datamaq.com.ar`.
+* Dependencia futura: **habilitación de** `chat.profebustos.com.ar`.
 
 ### 2.4 Restricciones
 
@@ -104,7 +104,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 
 * **Texto introductorio** sobre el enfoque geográfico (GBA Norte) y sectorial (gráfico/cooperativas), sin exclusiones (FR-004).
 
-* **Enlace opcional** “Conversar con el bot” que deriva a `chat.datamaq.com.ar` cuando esté operativo (FR-005).
+* **Enlace opcional** “Conversar con el bot” que deriva a `chat.profebustos.com.ar` cuando esté operativo (FR-005).
 
 * Cumplimiento de **accesibilidad** y **responsividad** según NFR-030.
 
@@ -117,13 +117,13 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 ### 3.3 Interfaces de software (APIs/SDKs)
 
 * **INT-MET-001 — Medición de conversiones**: el sistema debe permitir etiquetar y contar clics en CTA de WhatsApp y enlace al chat como **conversiones** agregadas, sin PII.
-* **INT-CHAT-001 — Derivación a chat**: enlace HTTP(S) hacia `chat.datamaq.com.ar` (cuando esté operativo).
+* **INT-CHAT-001 — Derivación a chat**: enlace HTTP(S) hacia `chat.profebustos.com.ar` (cuando esté operativo).
 * **INT-WA-001 — CTA WhatsApp**: deep-link con mensaje prellenado: *"Vengo de la página web, quiero más información."*
 
 ### 3.4 Interfaces de comunicación
 
 * **Protocolo**: **HTTPS only** (TLS 1.2+).
-* **Salidas**: enlaces salientes a `wa.me/...` (WhatsApp) y a `chat.datamaq.com.ar`.
+* **Salidas**: enlaces salientes a `wa.me/...` (WhatsApp) y a `chat.profebustos.com.ar`.
 
 ## 4. Requisitos funcionales
 
@@ -190,7 +190,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 
 * **GIVEN** un visitante ve el enlace/CTA "Conversar con el bot"
   **WHEN** hace clic
-  **THEN** es redirigido a `chat.datamaq.com.ar` (si está operativo) y se registra conversión **Chat Click**.
+  **THEN** es redirigido a `chat.profebustos.com.ar` (si está operativo) y se registra conversión **Chat Click**.
 * **GIVEN** el chat **no** está disponible
   **WHEN** el visitante hace clic
   **THEN** se presenta un **mensaje informativo** y/o se **omite** el enlace hasta su habilitación, sin errores de navegación.
@@ -231,7 +231,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 * **FR-002 — Sección de Servicios**: Se incluye una sección con dos sub-secciones (Instalación de dispositivos de toma de datos eléctricos/producción; Consultoría para interpretación y mejoras) con descripciones claras de alcance y beneficios.
 * **FR-003 — Escalabilidad de contenidos**: Al superar un umbral de contenido (p. ej., >2 servicios activos o >800 palabras por servicio), el sitio podrá evolucionar a **páginas/secciones dedicadas** (pestañas/landing por servicio) manteniendo navegación clara.
 * **FR-004 — Enfoque geográfico/sectorial**: Se muestra un texto introductorio que explicita la preferencia por **industrias del GBA Norte** y **sector gráfico/cooperativas**, sin carácter excluyente.
-* **FR-005 — Derivación a chat externo (opcional)**: Se ofrece un enlace/CTA a `chat.datamaq.com.ar` (cuando esté disponible) y se contabilizan sus clics como conversión.
+* **FR-005 — Derivación a chat externo (opcional)**: Se ofrece un enlace/CTA a `chat.profebustos.com.ar` (cuando esté disponible) y se contabilizan sus clics como conversión.
 * **FR-006 — Medición de conversiones**: El sistema registra la cantidad de clics en el botón de WhatsApp y en el enlace al chat como **conversiones** para análisis posterior.
 * **FR-007 — Casos de éxito (opcional)**: Si existen **autorizaciones válidas**, el sitio muestra una sección con 1–3 casos con **métricas antes/después**. Si no, se muestra un **Caso anónimo** o se omite la sección (ver BR-003..BR-006).
 
@@ -310,7 +310,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 
 **UC-01 — Iniciar contacto por WhatsApp**
 **Actores:** Visitante (Primario); Sitio Web (Secundario); Plataforma WhatsApp (Sistema externo).
-**Objetivo:** Contactar a datamaq por WhatsApp desde el CTA.
+**Objetivo:** Contactar a profebustos por WhatsApp desde el CTA.
 **Precondiciones:** Landing cargada; CTA visible; conectividad disponible.
 **Escenario principal:** 1) Visitante ve CTA; 2) Hace clic; 3) Se abre WhatsApp/App o Web con mensaje prellenado; 4) Se registra conversión **WhatsApp Click**.
 **Extensiones/Excepciones:**
@@ -322,10 +322,10 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
   **Requisitos enlazados:** FR-001, FR-006, INT-WA-001.
 
 **UC-02 — Derivación a chat**
-**Actores:** Visitante (Primario); Sitio Web (Secundario); Chat `chat.datamaq.com.ar` (Sistema externo).
-**Objetivo:** Iniciar conversación con bot en `chat.datamaq.com.ar`.
+**Actores:** Visitante (Primario); Sitio Web (Secundario); Chat `chat.profebustos.com.ar` (Sistema externo).
+**Objetivo:** Iniciar conversación con bot en `chat.profebustos.com.ar`.
 **Precondiciones:** Enlace al chat visible; chat operativo (cuando aplique).
-**Escenario principal:** 1) Visitante hace clic en “Conversar con el bot”; 2) Redirección a `chat.datamaq.com.ar`; 3) Se registra conversión **Chat Click**.
+**Escenario principal:** 1) Visitante hace clic en “Conversar con el bot”; 2) Redirección a `chat.profebustos.com.ar`; 3) Se registra conversión **Chat Click**.
 **Extensiones/Excepciones:**
 
 * **E1 (Chat no disponible):** informar y ofrecer CTA WhatsApp; no presentar errores 404/5xx.
@@ -345,13 +345,13 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 ### 10.1 Integración (alto nivel, agnóstico de tecnología)
 
 * **I-001 — Medición de conversiones:** Debe existir un mecanismo para etiquetar y contar clics en CTA WhatsApp y enlace al chat como **conversiones agregadas** (sin PII). Debe poder segmentarse por página/sección y rango temporal.
-* **I-002 — Enlaces externos confiables:** Los deep-links a `wa.me/...` y `chat.datamaq.com.ar` deben validarse periódicamente (salud de destino, códigos 2xx/3xx).
+* **I-002 — Enlaces externos confiables:** Los deep-links a `wa.me/...` y `chat.profebustos.com.ar` deben validarse periódicamente (salud de destino, códigos 2xx/3xx).
 * **I-003 — Aviso legal y cookies (si aplica):** Si se incorpora rastreo adicional en futuras fases, se deberá mostrar aviso/captura de consentimiento acorde a norma vigente.
 
 ### 10.2 Despliegue (alineado a NFR y reglas)
 
 * **D-001 — HTTPS only:** Certificado SSL/TLS **válido** y renovado automáticamente; redirección **301** de HTTP→HTTPS.
-* **D-002 — DNS y dominios:** Registros A/AAAA y CAA correctos para `datamaq.com.ar` y `www.datamaq.com.ar`; reserva del subdominio `chat.datamaq.com.ar`.
+* **D-002 — DNS y dominios:** Registros A/AAAA y CAA correctos para `profebustos.com.ar` y `www.profebustos.com.ar`; reserva del subdominio `chat.profebustos.com.ar`.
 * **D-003 — Rendimiento inicial:** Tiempo de carga **≤ 3 s p95** (ver NFR-031) bajo conexión móvil típica (≥4G); tamaño total de recursos inicial **objetivo ≤ 1.0 MB** (orientativo, no vinculante).
 * **D-004 — Observabilidad mínima:** Logs de acceso/errores de servidor y tableros de **conversión** (WhatsApp Click / Chat Click) por día/semana/mes.
 * **D-005 — Contenido y cambios:** Flujo de publicación con revisión (4 ojos). Al publicar nuevos **servicios** o **piezas educativas**, evaluar **BR-002** para escalar a multipágina.
@@ -474,7 +474,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 **TC-002 — Chat Click (FR-005)**
 
 * **Precondiciones:** Enlace al chat visible (chat operativo).
-* **Pasos:** 1) Clic en “Conversar con el bot”; 2) Verificar redirección a `chat.datamaq.com.ar`; 3) Verificar registro de conversión.
+* **Pasos:** 1) Clic en “Conversar con el bot”; 2) Verificar redirección a `chat.profebustos.com.ar`; 3) Verificar registro de conversión.
 * **Resultado esperado:** Redirección correcta y 1 conversión **Chat Click**.
 
 **TC-003 — Conteo de conversiones (FR-006)**
@@ -551,7 +551,7 @@ Este SRS está organizado así: (1) **Introducción** y glosario; (2) **Descripc
 
 **CTA primario:** **Escribime por WhatsApp**
 Texto del mensaje prellenado: *"Vengo de la página web, quiero más información."*
-**CTA secundario (opcional):** **Conversar con el bot** (redirige a `chat.datamaq.com.ar` cuando esté disponible).
+**CTA secundario (opcional):** **Conversar con el bot** (redirige a `chat.profebustos.com.ar` cuando esté disponible).
 
 **Sección Servicios (microcopys):**
 
@@ -604,9 +604,9 @@ C+. Enfocados en industrias del GBA Norte y cooperativas. Contacto inmediato por
 
 **Sugerencias de paths**
 
-* `datamaq.com.ar/industria`
-* `datamaq.com.ar/eficiencia`
-* `datamaq.com.ar/oee`
+* `profebustos.com.ar/industria`
+* `profebustos.com.ar/eficiencia`
+* `profebustos.com.ar/oee`
 
 **UTM (opcional para trazado)**
 
