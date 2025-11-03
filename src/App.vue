@@ -36,7 +36,8 @@ function openWhatsApp(): void {
     body: JSON.stringify({
       tipo: 'whatsapp',
       timestamp: new Date().toISOString(),
-      seccion: 'fab'
+      seccion: 'fab',
+      web: window.location.href
     })
   })
     .then((response) => {
