@@ -2,10 +2,14 @@
 Path: src/appLogic.ts
 */
 
-import { WHATSAPP_NUMBER, PRESET_MSG } from './infrastructure/config'
+
+
+import { WHATSAPP_NUMBER, PRESET_MSG, CHAT_URL } from './infrastructure/config'
 import { registrarConversion } from './interface_adapters/gateways/conversionGateway'
 import { ref } from 'vue'
-import { CHAT_URL } from './infrastructure/config'
+
+// Timestamp de entrada a la página
+const pageEntryTimestamp = Date.now()
 
 export { CHAT_URL }
 
@@ -18,12 +22,16 @@ export async function openWhatsApp(): Promise<void> {
   ;(window as any).dataLayer?.push({ event: "conversion_whatsapp_click" })
   window.dispatchEvent(new CustomEvent("conversion:whatsapp_click"))
 
+  // Calcular tiempo de navegación en milisegundos
+  const tiempoNavegacion = Date.now() - pageEntryTimestamp
+
   try {
     const response = await registrarConversion({
       tipo: 'whatsapp',
       timestamp: new Date().toISOString(),
       seccion: 'fab',
-      web: window.location.href
+      web: window.location.href,
+      tiempo_navegacion: tiempoNavegacion
     })
     const data = await response.json()
     if (response.ok && data.success) {
