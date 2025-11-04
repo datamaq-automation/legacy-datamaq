@@ -16,13 +16,20 @@ export { CHAT_URL }
 export const conversionMsg = ref<string | null>(null)
 export const CHAT_ENABLED = !!WHATSAPP_NUMBER
 
+function getTrafficSource(): string {
+  // Prioriza UTM, luego referer
+  const urlParams = new URLSearchParams(window.location.search)
+  const utmSource = urlParams.get('utm_source')
+  if (utmSource) return utmSource
+  return document.referrer || 'direct'
+}
+
 export async function openWhatsApp(): Promise<void> {
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PRESET_MSG)}`
   window.open(url, "_blank", "noopener")
   ;(window as any).dataLayer?.push({ event: "conversion_whatsapp_click" })
   window.dispatchEvent(new CustomEvent("conversion:whatsapp_click"))
 
-  // Calcular tiempo de navegación en milisegundos
   const tiempoNavegacion = Date.now() - pageEntryTimestamp
 
   try {
@@ -31,7 +38,8 @@ export async function openWhatsApp(): Promise<void> {
       timestamp: new Date().toISOString(),
       seccion: 'fab',
       web: window.location.href,
-      tiempo_navegacion: tiempoNavegacion
+      tiempo_navegacion: tiempoNavegacion,
+      fuente_trafico: getTrafficSource() // Nuevo campo
     })
     const data = await response.json()
     if (response.ok && data.success) {

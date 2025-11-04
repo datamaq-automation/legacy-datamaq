@@ -7,4 +7,5 @@ export interface Conversion {
   timestamp: string
   seccion: string
   web: string
+  fuente_trafico?: string
 }

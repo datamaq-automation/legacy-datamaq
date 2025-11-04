@@ -10,6 +10,7 @@ export async function registrarConversion(payload: {
   seccion: string
   web: string
   tiempo_navegacion: number
+  fuente_trafico?: string
 }) {
   const response = await fetch(`${API_BASE_URL}/registrar_conversion.php`, {
     method: 'POST',
