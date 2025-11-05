@@ -9,4 +9,3 @@ export const config = {
   PRESET_MSG:      "Vengo de la página web, quiero más información."
 } as const;
 
-console.log("Config:", config);

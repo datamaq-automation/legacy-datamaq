@@ -60,8 +60,8 @@ export async function openWhatsApp(): Promise<void> {
     conversionMsg.value = "Error de red al registrar conversión."
     // Muestra la URL y el error en consola
     console.error(
-      `Error de red conversión. Endpoint: ${config.API_BASE_URL}/registrar_conversion.php`,
-      err
+      `Error de red conversión. Endpoint: ${config.API_BASE_URL}/registrar_conversion.php`
     )
+    console.error("Error de red conversión:", err)
   }
 }
