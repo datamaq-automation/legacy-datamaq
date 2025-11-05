@@ -2,8 +2,9 @@
 Path: src/infrastructure/config.ts
 */
 
-import config from '../../config.json'
-export const WHATSAPP_NUMBER = config.WHATSAPP_NUMBER
-export const CHAT_URL = config.CHAT_URL
-export const API_BASE_URL = config.API_BASE_URL
-export const PRESET_MSG = "Vengo de la página web, quiero más información."
+export const config = {
+  WHATSAPP_NUMBER: import.meta.env.VITE_WHATSAPP_NUMBER ?? "",
+  CHAT_URL:        import.meta.env.VITE_CHAT_URL ?? "",
+  API_BASE_URL:    import.meta.env.VITE_API_BASE_URL ?? "",
+  PRESET_MSG:      "Vengo de la página web, quiero más información."
+} as const;

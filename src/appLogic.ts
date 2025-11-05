@@ -4,17 +4,17 @@ Path: src/appLogic.ts
 
 
 
-import { WHATSAPP_NUMBER, PRESET_MSG, CHAT_URL } from './infrastructure/config'
+import { config } from './infrastructure/config'
 import { registrarConversion } from './interface_adapters/gateways/conversionGateway'
 import { ref } from 'vue'
 
 // Timestamp de entrada a la página
 const pageEntryTimestamp = Date.now()
 
-export { CHAT_URL }
+export const CHAT_URL = config.CHAT_URL
 
 export const conversionMsg = ref<string | null>(null)
-export const CHAT_ENABLED = !!WHATSAPP_NUMBER
+export const CHAT_ENABLED = !!config.WHATSAPP_NUMBER
 
 function getTrafficSource(): string {
   // Prioriza UTM, luego referer
@@ -25,7 +25,7 @@ function getTrafficSource(): string {
 }
 
 export async function openWhatsApp(): Promise<void> {
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PRESET_MSG)}`
+  const url = `https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodeURIComponent(config.PRESET_MSG)}`
   window.open(url, "_blank", "noopener")
   ;(window as any).dataLayer?.push({ event: "conversion_whatsapp_click" })
   window.dispatchEvent(new CustomEvent("conversion:whatsapp_click"))

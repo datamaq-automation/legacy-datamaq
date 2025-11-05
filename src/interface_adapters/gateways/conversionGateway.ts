@@ -2,7 +2,7 @@
 Path: src/interface_adapters/gateways/conversionGateway.ts
 */
 
-import { API_BASE_URL } from '../../infrastructure/config'
+import { config } from '../../infrastructure/config'
 
 export async function registrarConversion(payload: {
   tipo: string
@@ -12,7 +12,7 @@ export async function registrarConversion(payload: {
   tiempo_navegacion: number
   fuente_trafico?: string
 }) {
-  const response = await fetch(`${API_BASE_URL}/registrar_conversion.php`, {
+  const response = await fetch(`${config.API_BASE_URL}/registrar_conversion.php`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
