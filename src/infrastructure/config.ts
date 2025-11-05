@@ -9,3 +9,6 @@ export const config = {
   PRESET_MSG:      "Vengo de la página web, quiero más información."
 } as const;
 
+// Agrega console.info para mostrar el valor de API_BASE_URL al cargar la config
+console.info(`API_BASE_URL cargado desde entorno: ${config.API_BASE_URL}`)
+

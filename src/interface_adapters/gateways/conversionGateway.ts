@@ -12,6 +12,8 @@ export async function registrarConversion(payload: {
   tiempo_navegacion: number
   fuente_trafico?: string
 }) {
+  // Agrega console.info antes de llamar a la API
+  console.info(`Usando API_BASE_URL en registrarConversion: ${config.API_BASE_URL}/registrar_conversion.php`)
   const response = await fetch(`${config.API_BASE_URL}/registrar_conversion.php`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

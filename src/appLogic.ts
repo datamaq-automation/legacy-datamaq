@@ -32,6 +32,9 @@ export async function openWhatsApp(): Promise<void> {
 
   const tiempoNavegacion = Date.now() - pageEntryTimestamp
 
+  // Agrega console.info antes de llamar a la API
+  console.info(`Llamando a API_BASE_URL: ${config.API_BASE_URL}/registrar_conversion.php`)
+
   try {
     const response = await registrarConversion({
       tipo: 'whatsapp',
@@ -39,7 +42,7 @@ export async function openWhatsApp(): Promise<void> {
       seccion: 'fab',
       web: window.location.href,
       tiempo_navegacion: tiempoNavegacion,
-      fuente_trafico: getTrafficSource() // Nuevo campo
+      fuente_trafico: getTrafficSource()
     })
     const data = await response.json()
     if (response.ok && data.success) {
@@ -59,6 +62,7 @@ export async function openWhatsApp(): Promise<void> {
   } catch (err) {
     conversionMsg.value = "Error de red al registrar conversión."
     // Muestra la URL y el error en consola
+    console.info(`API_BASE_URL usado en error: ${config.API_BASE_URL}/registrar_conversion.php`)
     console.error(
       `Error de red conversión. Endpoint: ${config.API_BASE_URL}/registrar_conversion.php`
     )
