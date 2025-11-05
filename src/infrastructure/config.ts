@@ -8,3 +8,5 @@ export const config = {
   API_BASE_URL:    import.meta.env.VITE_API_BASE_URL ?? "",
   PRESET_MSG:      "Vengo de la página web, quiero más información."
 } as const;
+
+console.log("Config:", config);
