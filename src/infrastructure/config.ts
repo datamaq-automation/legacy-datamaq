@@ -11,4 +11,7 @@ export const config = {
 
 // Agrega console.info para mostrar el valor de API_BASE_URL al cargar la config
 console.info(`API_BASE_URL cargado desde entorno: ${config.API_BASE_URL}`)
+console.info(`WHATSAPP_NUMBER cargado desde entorno: ${config.WHATSAPP_NUMBER}`)
+console.info(`CHAT_URL cargado desde entorno: ${config.CHAT_URL}`)
+
 
