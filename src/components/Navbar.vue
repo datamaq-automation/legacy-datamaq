@@ -36,7 +36,9 @@ Path: src/components/Navbar.vue
               <a class="nav-link" href="#servicios">Servicios</a>
             </li>
             <li class="nav-item" v-if="chatEnabled">
-              <a class="nav-link" :href="chatUrl" target="_blank" rel="noopener">Conversar con el bot</a>
+              <a class="nav-link" :href="chatUrl" target="_blank" rel="noopener">
+                Conversá con nuestro bot especializado para sacarte todas tus dudas
+              </a>
             </li>
           </ul>
         </nav>

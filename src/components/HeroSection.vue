@@ -28,7 +28,7 @@ path: src/components/HeroSection.vue
           <div class="d-flex gap-3 flex-wrap justify-content-center mb-4">
             <a v-if="chatEnabled" class="btn btn-outline-light btn-lg px-4" :href="chatUrl" target="_blank" rel="noopener"
                @click="$emit('chat_click')">
-              Conversar con el bot
+              Conversá con nuestro bot especializado para sacarte todas tus dudas
             </a>
           </div>
           <ul class="list-unstyled text-start text-md-center" aria-label="Beneficios">
