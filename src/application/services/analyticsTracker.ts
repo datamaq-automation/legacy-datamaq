@@ -7,6 +7,7 @@ export interface ContactEngagementContext {
 
 const WHATSAPP_EVENT_NAME = 'whatsapp_click'
 const EMAIL_EVENT_NAME = 'email_contact_submit'
+const isDev = import.meta.env.DEV
 
 export function recordWhatsappEngagement(
   context: ContactEngagementContext
@@ -44,9 +45,11 @@ function sendGaEvent(
   context: ContactEngagementContext
 ): void {
   if (typeof window.gtag !== 'function') {
-    console.warn(
-      `[GA4] gtag no se encuentra disponible. Evento "${eventName}" no enviado.`
-    )
+    if (isDev) {
+      console.warn(
+        `[GA4] gtag no se encuentra disponible. Evento "${eventName}" no enviado.`
+      )
+    }
     return
   }
 
@@ -64,9 +67,11 @@ function sendClarityEvent(
   context: ContactEngagementContext
 ): void {
   if (typeof window.clarity !== 'function') {
-    console.warn(
-      `[Clarity] clarity no se encuentra disponible. Evento "${eventName}" no enviado.`
-    )
+    if (isDev) {
+      console.warn(
+        `[Clarity] clarity no se encuentra disponible. Evento "${eventName}" no enviado.`
+      )
+    }
     return
   }
 

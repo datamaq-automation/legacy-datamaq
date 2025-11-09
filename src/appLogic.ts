@@ -23,6 +23,7 @@ import {
 export const CHAT_URL = getChatUrl()
 export const CHAT_ENABLED = isChatEnabled()
 export const CONTACT_EMAIL = getContactEmail()
+const isDev = import.meta.env.DEV
 const pageEntryTimestamp = Date.now()
 
 function getTrafficSource(): string {
@@ -45,7 +46,9 @@ function buildEngagementContext(section: string): ContactEngagementContext {
 
 export function openWhatsApp(seccion: string = 'fab'): void {
   if (!CHAT_ENABLED) {
-    console.warn('Intento de abrir WhatsApp cuando el canal está deshabilitado')
+    if (isDev) {
+      console.warn('Intento de abrir WhatsApp cuando el canal está deshabilitado')
+    }
     return
   }
 
@@ -54,7 +57,9 @@ export function openWhatsApp(seccion: string = 'fab'): void {
   try {
     url = buildWhatsappUrl()
   } catch (error) {
-    console.error('Error al construir la URL de WhatsApp:', error)
+    if (isDev) {
+      console.error('Error al construir la URL de WhatsApp:', error)
+    }
     return
   }
 
@@ -73,7 +78,9 @@ export function submitEmailContact(
   try {
     mailtoHref = buildMailtoHref(payload)
   } catch (error) {
-    console.error('Error al construir el correo de contacto:', error)
+    if (isDev) {
+      console.error('Error al construir el correo de contacto:', error)
+    }
     return
   }
 
