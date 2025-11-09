@@ -10,7 +10,7 @@ path: src/components/HeroSection.vue
           <div
             class="d-inline-flex align-items-center gap-2 rounded-pill px-3 py-1 bg-success-subtle text-success-emphasis fw-semibold text-uppercase small"
           >
-            Diagnóstico inicial sin costo
+            Consulta Virtual sin cargo
           </div>
           <h1 id="hero-title" class="display-5 fw-bold text-body-emphasis mt-3 mb-3">
             Energía y producción alineadas a tus objetivos de planta
@@ -30,17 +30,6 @@ path: src/components/HeroSection.vue
               Agendar diagnóstico
             </button>
             <a
-              v-if="chatEnabled"
-              class="btn btn-outline-primary btn-lg px-4"
-              :href="chatUrl"
-              target="_blank"
-              rel="noopener"
-              @click="emit('chat_click')"
-            >
-              Hablar ahora con el bot 24/7
-            </a>
-            <a
-              v-else
               class="btn btn-outline-secondary btn-lg px-4"
               href="#servicios"
             >
@@ -100,13 +89,7 @@ path: src/components/HeroSection.vue
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  chatEnabled: boolean
-  chatUrl: string
-}>()
-
 const emit = defineEmits<{
   (e: 'primary-cta'): void
-  (e: 'chat_click'): void
 }>()
 </script>
