@@ -1,17 +1,17 @@
 # Instalación del Proyecto
 
-Este documento explica cómo instalar y ejecutar el frontend (Vue + Vite) y el backend (API REST en Python con Flask).
+Este documento describe cómo preparar, ejecutar y desplegar el frontend desarrollado con Vue + Vite.
 
 ---
 
-## 1. Instalación del Frontend
-
-### Requisitos
+## 1. Requisitos
 
 - Node.js >= 16
 - npm >= 8
 
-### Pasos
+---
+
+## 2. Configuración inicial
 
 1. Clona el repositorio:
    ```sh
@@ -19,152 +19,59 @@ Este documento explica cómo instalar y ejecutar el frontend (Vue + Vite) y el b
    cd profebustos-www
    ```
 
-2. Copia el archivo de configuración de ejemplo y personalízalo:
+2. Crea tu archivo de variables de entorno a partir del ejemplo provisto:
    ```sh
-   cp config.example.json config.json
-   ```
-   Edita `config.json` con tus datos privados:
-   ```json
-   {
-     "WHATSAPP_NUMBER": "54911XYYYZZZZ",
-     "CHAT_URL": "https://chat.tu-dominio.com.ar",
-     "API_BASE_URL": "https://<subdominio>.ngrok-free.app"
-   }
+   cp example.env .env
    ```
 
-   > **Importante:** No subas `config.json` al repositorio. Este archivo está en `.gitignore` para proteger tus datos privados.
+3. Edita `.env` con los valores reales:
+   - `VITE_WHATSAPP_NUMBER`: número de WhatsApp completo (sin signos ni espacios) utilizado por el botón de contacto.
+   - `VITE_CHAT_URL`: URL del chat externo si está disponible (puede quedar vacío).
+   - `VITE_CLARITY_PROJECT_ID`: identificador del proyecto en Microsoft Clarity para el tracking de sesiones.
+   - `VITE_GA4_ID`: identificador de la propiedad de Google Analytics 4.
 
-3. Instala las dependencias:
+---
+
+## 3. Ejecución local
+
+1. Instala las dependencias:
    ```sh
    npm install
    ```
 
-4. Ejecuta el servidor de desarrollo:
+2. Levanta el servidor de desarrollo:
    ```sh
    npm run dev
    ```
 
-5. Compila para producción:
+3. Genera el build de producción:
    ```sh
    npm run build
    ```
 
 ---
 
-## 2. Instalación del Backend (Flask)
+## 4. Analítica y trazabilidad
 
-### Requisitos
+El sitio no depende de un backend propio para registrar conversiones. Los clics al canal de WhatsApp se registran mediante:
 
-- Python >= 3.8
-- pip
+- **Google Analytics 4**: se emite el evento `whatsapp_click` con información sobre la sección de origen, la fuente de tráfico, la URL visitada y el tiempo de navegación previo al clic.
+- **Microsoft Clarity**: se envía el mismo evento `whatsapp_click` para facilitar la segmentación de sesiones y la reproducción de interacciones clave.
 
-### Pasos
-
-1. Ve al directorio del backend (por ejemplo, `backend/`):
-   ```sh
-   cd backend
-   ```
-
-2. Crea un entorno virtual (opcional pero recomendado):
-   ```sh
-   python -m venv venv
-   source venv/bin/activate   # En Linux/macOS
-   venv\Scripts\activate      # En Windows
-   ```
-
-3. Instala Flask y dependencias:
-   ```sh
-   pip install flask flask-cors mysql-connector-python
-   ```
-
-4. Crea el archivo principal, por ejemplo `app.py`:
-
-   ```python
-   from flask import Flask, request, jsonify
-   from flask_cors import CORS
-
-   app = Flask(__name__)
-   CORS(app)
-
-   @app.route('/api/registrar_conversion.php', methods=['POST'])
-   def registrar_conversion():
-       data = request.get_json()
-       # TODO: Validar y guardar conversión en la base de datos
-       return jsonify(success=True)
-
-   if __name__ == '__main__':
-       app.run(debug=True)
-   ```
-
-5. Ejecuta el backend:
-   ```sh
-   python app.py
-   ```
-
----
-
-## 3. Configuración de la Base de Datos
-
-- Crea una base de datos en MySQL/MariaDB.
-- Crea la tabla `conversiones` según la documentación de la API.
-- Configura la conexión en el backend Flask.
-
----
-
-## 4. Conexión Frontend ↔ Backend
-
-- Asegúrate de que el endpoint en `src/App.vue` apunte a la URL correcta de tu backend Flask.
-- Habilita CORS en Flask para permitir peticiones desde el frontend.
+Para garantizar la captura de datos, verifica que los IDs de GA4 y Clarity estén correctamente configurados en `.env` antes de construir o desplegar el sitio.
 
 ---
 
 ## 5. Despliegue
 
-- Para producción, sirve el frontend compilado desde un servidor web (Apache, Nginx, etc.).
-- Ejecuta el backend Flask con un servidor WSGI (por ejemplo, Gunicorn).
-- **Configuración remota:** En el flujo de despliegue (GitHub Actions), el archivo `config.json` se genera automáticamente usando los secrets configurados en el repositorio. No necesitas subir tus credenciales al código fuente.
+El build generado en `dist/` puede servirse desde cualquier hosting de archivos estáticos (Netlify, Vercel, Cloudflare Pages, etc.). Asegúrate de:
 
-  Ejemplo de paso en `.github/workflows/deploy.yml`:
-  ```yaml
-  - name: Generate config.json from secrets
-    run: |
-      cat > config.json <<EOF
-      {
-        "WHATSAPP_NUMBER": "${{ secrets.WHATSAPP_NUMBER }}",
-        "CHAT_URL": "${{ secrets.CHAT_URL }}",
-        "API_BASE_URL": "${{ secrets.API_BASE_URL }}"
-      }
-      EOF
-  ```
+- Proveer las mismas variables de entorno (`VITE_*`) en el entorno de construcción remoto.
+- Incluir los scripts externos de Clarity y GA4 provistos automáticamente por las dependencias al montar la aplicación.
+
+Con esto, el sitio quedará listo para producción sin dependencias adicionales.
 
 ---
 
-## 6. Despliegue Automático con GitHub Actions
+¿Dudas o problemas? Contacta a [Profebustos](mailto:contacto@profebustos.com.ar).
 
-El despliegue a producción se realiza automáticamente mediante GitHub Actions usando el archivo `.github/workflows/deploy.yml`.  
-En este flujo:
-
-- El archivo `config.json` se genera automáticamente con los valores privados almacenados como secrets en el repositorio de GitHub.
-- El build y el deploy se ejecutan en el entorno remoto, sin exponer credenciales en el código fuente.
-
-**No es necesario copiar ni editar manualmente `config.json` para producción.**
-
-Ejemplo del paso relevante en `deploy.yml`:
-```yaml
-- name: Generate config.json from secrets
-  run: |
-    cat > config.json <<EOF
-    {
-      "WHATSAPP_NUMBER": "${{ secrets.WHATSAPP_NUMBER }}",
-      "CHAT_URL": "${{ secrets.CHAT_URL }}",
-      "API_BASE_URL": "${{ secrets.API_BASE_URL }}"
-    }
-    EOF
-```
-
-Para más detalles, revisa el archivo `.github/workflows/deploy.yml` en el repositorio.
-
----
-
-¿Dudas o problemas?  
-Contacta a [Profebustos](mailto:contacto@profebustos.com.ar)

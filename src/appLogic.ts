@@ -4,64 +4,67 @@ Path: src/appLogic.ts
 
 
 
-import { config } from './infrastructure/config'
-import { registrarConversion } from './interface_adapters/gateways/conversionGateway'
-import { ref } from 'vue'
+import {
+  buildWhatsappUrl,
+  getChatUrl,
+  isChatEnabled
+} from './application/services/chatChannelService'
+import {
+  recordWhatsappEngagement,
+  type WhatsappEngagementContext
+} from './application/services/analyticsTracker'
 
-// Timestamp de entrada a la página
+export const CHAT_URL = getChatUrl()
+export const CHAT_ENABLED = isChatEnabled()
 const pageEntryTimestamp = Date.now()
 
-export const CHAT_URL = config.CHAT_URL
-
-export const conversionMsg = ref<string | null>(null)
-export const CHAT_ENABLED = !!config.WHATSAPP_NUMBER
-
 function getTrafficSource(): string {
-  // Prioriza UTM, luego referer
   const urlParams = new URLSearchParams(window.location.search)
   const utmSource = urlParams.get('utm_source')
   if (utmSource) return utmSource
   return document.referrer || 'direct'
 }
 
-export async function openWhatsApp(): Promise<void> {
-  const url = `https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodeURIComponent(config.PRESET_MSG)}`
-  window.open(url, "_blank", "noopener")
-  ;(window as any).dataLayer?.push({ event: "conversion_whatsapp_click" })
-  window.dispatchEvent(new CustomEvent("conversion:whatsapp_click"))
+function buildEngagementContext(section: string): WhatsappEngagementContext {
+  const now = Date.now()
 
-  const tiempoNavegacion = Date.now() - pageEntryTimestamp
+  return {
+    section,
+    pageUrl: window.location.href,
+    trafficSource: getTrafficSource(),
+    navigationTimeMs: Math.max(now - pageEntryTimestamp, 0)
+  }
+}
+
+export function openWhatsApp(seccion: string = 'fab'): void {
+  if (!CHAT_ENABLED) {
+    console.warn('Intento de abrir WhatsApp cuando el canal está deshabilitado')
+    return
+  }
+
+  let url: string
 
   try {
-    const response = await registrarConversion({
-      tipo: 'whatsapp',
-      timestamp: new Date().toISOString(),
-      seccion: 'fab',
-      web: window.location.href,
-      tiempo_navegacion: tiempoNavegacion,
-      fuente_trafico: getTrafficSource()
-    })
-    const data = await response.json()
-    if (response.ok && data.success) {
-      console.log("¡Conversión registrada correctamente!")
-    } else if (response.status === 429) {
-      conversionMsg.value = "Conversión duplicada detectada. Espera unos segundos antes de volver a intentar."
-    } else if (response.status === 400) {
-      conversionMsg.value = "Datos incompletos o formato inválido."
-    } else if (response.status === 500) {
-      conversionMsg.value = "Ocurrió un error técnico. Intenta nuevamente más tarde."
-    } else {
-      conversionMsg.value = "No se pudo registrar la conversión. Intenta nuevamente."
-    }
-    if (data.error) {
-      console.error("Error conversión:", data.error)
-    }
-  } catch (err) {
-    conversionMsg.value = "Error de red al registrar conversión."
-    // Muestra la URL y el error en consola
-    console.error(
-      `Error de red conversión. Endpoint: ${config.API_BASE_URL}/registrar_conversion.php`
-    )
-    console.error("Error de red conversión:", err)
+    url = buildWhatsappUrl()
+  } catch (error) {
+    console.error('Error al construir la URL de WhatsApp:', error)
+    return
   }
+
+  window.open(url, '_blank', 'noopener')
+  const context = buildEngagementContext(seccion)
+
+  window.dataLayer?.push({
+    event: 'conversion_whatsapp_click',
+    section: context.section,
+    traffic_source: context.trafficSource,
+    navigation_time_ms: context.navigationTimeMs,
+    page_location: context.pageUrl
+  })
+
+  window.dispatchEvent(
+    new CustomEvent('conversion:whatsapp_click', { detail: context })
+  )
+
+  recordWhatsappEngagement(context)
 }
