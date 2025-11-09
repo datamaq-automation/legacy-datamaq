@@ -1,7 +1,7 @@
-import { config } from '../../infrastructure/config'
+import { config, isWhatsappConfigured } from '../../infrastructure/config'
 
 export function isChatEnabled(): boolean {
-  return Boolean(config.WHATSAPP_NUMBER)
+  return isWhatsappConfigured()
 }
 
 export function getChatUrl(): string {
@@ -13,6 +13,6 @@ export function buildWhatsappUrl(): string {
     throw new Error('WhatsApp number is not configured')
   }
 
-  const presetMessage = config.PRESET_MSG ?? ''
+  const presetMessage = config.WHATSAPP_PRESET_MESSAGE ?? ''
   return `https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodeURIComponent(presetMessage)}`
 }

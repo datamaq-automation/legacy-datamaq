@@ -16,6 +16,8 @@ Path: src/components/ServiciosSection.vue
                   alt="Herramientas eléctricas y de medición industrial"
                   class="rounded-3 shadow-sm align-self-start"
                   style="max-width: 140px; object-fit: contain;"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <h3 class="h4 fw-semibold text-body-emphasis mb-2">Instalación de medidores</h3>
@@ -40,17 +42,34 @@ Path: src/components/ServiciosSection.vue
                   <span class="text-body-secondary">Configuración inicial validada con lecturas de referencia.</span>
                 </li>
               </ul>
-              <figure class="text-center mb-0">
+              <figure class="text-center mb-4">
                 <img
                   src="@/assets/powermeter.png"
                   alt="Equipos powermeter industriales"
                   class="img-fluid rounded-3 shadow-sm mx-auto"
                   style="max-height: 120px; object-fit: contain;"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <figcaption class="small text-secondary mt-2">
                   Equipos powermeter industriales para lecturas confiables desde el primer día.
                 </figcaption>
               </figure>
+              <button
+                type="button"
+                class="btn btn-primary w-100"
+                :disabled="!chatEnabled"
+                :aria-disabled="!chatEnabled"
+                @click="emit('contact', 'servicios-instalacion')"
+              >
+                {{ chatEnabled ? 'Hablar por WhatsApp' : 'WhatsApp no disponible' }}
+              </button>
+              <p
+                v-if="!chatEnabled"
+                class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small mt-3"
+              >
+                El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.
+              </p>
             </div>
           </div>
         </div>
@@ -64,6 +83,8 @@ Path: src/components/ServiciosSection.vue
                   alt="Infografía de indicadores energéticos y período de repago"
                   class="rounded-3 shadow-sm align-self-start"
                   style="max-width: 160px; object-fit: contain;"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <h3 class="h4 fw-semibold text-body-emphasis mb-2">Consultoría en datos y mejora</h3>
@@ -88,9 +109,23 @@ Path: src/components/ServiciosSection.vue
                   <span class="text-body-secondary">Informe ejecutivo con próximos pasos y período de repago estimado.</span>
                 </li>
               </ul>
-              <p class="small text-secondary mb-0">
-                Visualizamos indicadores como IDEn, OEE y payback para alinear a equipos técnicos y gerencia en las
-                mismas prioridades.
+              <p class="small text-secondary mb-4">
+                Visualizamos indicadores como IDEn, OEE y payback para alinear a equipos técnicos y gerencia en las mismas prioridades.
+              </p>
+              <button
+                type="button"
+                class="btn btn-primary w-100"
+                :disabled="!chatEnabled"
+                :aria-disabled="!chatEnabled"
+                @click="emit('contact', 'servicios-consultoria')"
+              >
+                {{ chatEnabled ? 'Quiero una consulta por WhatsApp' : 'WhatsApp no disponible' }}
+              </button>
+              <p
+                v-if="!chatEnabled"
+                class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small mt-3"
+              >
+                El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.
               </p>
             </div>
           </div>
@@ -99,3 +134,17 @@ Path: src/components/ServiciosSection.vue
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+const props = defineProps<{
+  chatEnabled: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'contact', section: string): void
+}>()
+
+const chatEnabled = computed(() => props.chatEnabled)
+</script>
