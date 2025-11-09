@@ -4,6 +4,7 @@ interface ImportMetaEnv {
   readonly VITE_WHATSAPP_PRESET_MESSAGE?: string
   readonly VITE_CLARITY_PROJECT_ID?: string
   readonly VITE_GA4_ID?: string
+  readonly VITE_CONTACT_EMAIL?: string
 }
 
 interface ImportMeta {

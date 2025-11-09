@@ -3,10 +3,11 @@
 Path: src/App.vue
 */
 
-import { CHAT_ENABLED, openWhatsApp } from './appLogic'
+import { CHAT_ENABLED, CONTACT_EMAIL, openWhatsApp, submitEmailContact } from './appLogic'
 import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
 import ServiciosSection from './components/ServiciosSection.vue'
+import ContactFormSection from './components/ContactFormSection.vue'
 import Sobreprofebustos from './components/SobreProfeBustos.vue'
 import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
@@ -14,6 +15,10 @@ import LegalSection from './components/LegalSection.vue'
 
 function handleWhatsapp(section: string) {
   openWhatsApp(section)
+}
+
+function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
+  submitEmailContact('contacto-formulario', payload)
 }
 </script>
 
@@ -26,6 +31,10 @@ function handleWhatsapp(section: string) {
       <ServiciosSection
         :chatEnabled="CHAT_ENABLED"
         @contact="handleWhatsapp($event)"
+      />
+      <ContactFormSection
+        :contact-email="CONTACT_EMAIL"
+        @submit="handleEmailSubmit"
       />
       <Sobreprofebustos />
       <LegalSection />

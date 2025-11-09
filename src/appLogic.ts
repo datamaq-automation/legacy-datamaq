@@ -10,12 +10,20 @@ import {
   isChatEnabled
 } from './application/services/chatChannelService'
 import {
+  buildMailtoHref,
+  getContactEmail,
+  type EmailContactPayload
+} from './application/services/emailChannelService'
+import {
+  recordEmailEngagement,
   recordWhatsappEngagement,
-  type WhatsappEngagementContext
+  type ContactEngagementContext
 } from './application/services/analyticsTracker'
 
 export const CHAT_URL = getChatUrl()
 export const CHAT_ENABLED = isChatEnabled()
+export const CONTACT_EMAIL = getContactEmail()
+const isDev = import.meta.env.DEV
 const pageEntryTimestamp = Date.now()
 
 function getTrafficSource(): string {
@@ -25,7 +33,7 @@ function getTrafficSource(): string {
   return document.referrer || 'direct'
 }
 
-function buildEngagementContext(section: string): WhatsappEngagementContext {
+function buildEngagementContext(section: string): ContactEngagementContext {
   const now = Date.now()
 
   return {
@@ -38,7 +46,9 @@ function buildEngagementContext(section: string): WhatsappEngagementContext {
 
 export function openWhatsApp(seccion: string = 'fab'): void {
   if (!CHAT_ENABLED) {
-    console.warn('Intento de abrir WhatsApp cuando el canal está deshabilitado')
+    if (isDev) {
+      console.warn('Intento de abrir WhatsApp cuando el canal está deshabilitado')
+    }
     return
   }
 
@@ -47,7 +57,9 @@ export function openWhatsApp(seccion: string = 'fab'): void {
   try {
     url = buildWhatsappUrl()
   } catch (error) {
-    console.error('Error al construir la URL de WhatsApp:', error)
+    if (isDev) {
+      console.error('Error al construir la URL de WhatsApp:', error)
+    }
     return
   }
 
@@ -55,4 +67,25 @@ export function openWhatsApp(seccion: string = 'fab'): void {
   const context = buildEngagementContext(seccion)
 
   recordWhatsappEngagement(context)
+}
+
+export function submitEmailContact(
+  section: string,
+  payload: EmailContactPayload
+): void {
+  let mailtoHref: string
+
+  try {
+    mailtoHref = buildMailtoHref(payload)
+  } catch (error) {
+    if (isDev) {
+      console.error('Error al construir el correo de contacto:', error)
+    }
+    return
+  }
+
+  window.location.href = mailtoHref
+  const context = buildEngagementContext(section)
+
+  recordEmailEngagement(context)
 }

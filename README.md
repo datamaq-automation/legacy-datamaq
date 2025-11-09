@@ -7,11 +7,12 @@ Proyecto web basado en **Vue 3** y **Vite** para el sitio de Profebustos.
 - SPA con Vue 3 + Vite
 - Componentes reutilizables (Navbar, Hero, Servicios, WhatsApp, Footer, etc.)
 - Registro de conversiones vía API (WhatsApp click)
+- Formulario de contacto por correo con fallback `mailto:`
 - Fácil configuración y despliegue
 
 ## Requisitos
 
-- Node.js >= 16
+- Node.js >= 20.19.0
 - npm >= 8
 - Servidor PHP para el backend de la API
 - MySQL/MariaDB para persistencia de conversiones
@@ -49,13 +50,14 @@ Proyecto web basado en **Vue 3** y **Vite** para el sitio de Profebustos.
 
 ## API de conversión
 
-El frontend registra conversiones (clic en WhatsApp) mediante una API REST en PHP.  
+El frontend registra conversiones (clic en WhatsApp) mediante una API REST en PHP.
 Consulta la [documentación de la API](./docs/API_documentation.md) para detalles de uso y respuesta.
+
+Para el nuevo canal de correo electrónico se espera un backend dedicado; el contrato sugerido está en [docs/API-document.md](./docs/API-document.md).
 
 ## Personalización
 
-- Edita el número de WhatsApp en `src/App.vue` (`WHATSAPP_NUMBER`)
-- Configura el subdominio del chat en `CHAT_URL` y `CHAT_ENABLED`
+- Configurá las variables en `.env` (`VITE_WHATSAPP_NUMBER`, `VITE_CHAT_URL`, `VITE_CONTACT_EMAIL`, etc.).
 - Personaliza los componentes en `src/components/`
 
 ## Referencias
