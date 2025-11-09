@@ -24,7 +24,7 @@ function getTrafficSource(): string {
   return document.referrer || 'direct'
 }
 
-export async function openWhatsApp(): Promise<void> {
+export async function openWhatsApp(seccion: string = 'fab'): Promise<void> {
   const url = `https://wa.me/${config.WHATSAPP_NUMBER}?text=${encodeURIComponent(config.PRESET_MSG)}`
   window.open(url, "_blank", "noopener")
   ;(window as any).dataLayer?.push({ event: "conversion_whatsapp_click" })
@@ -36,7 +36,7 @@ export async function openWhatsApp(): Promise<void> {
     const response = await registrarConversion({
       tipo: 'whatsapp',
       timestamp: new Date().toISOString(),
-      seccion: 'fab',
+      seccion,
       web: window.location.href,
       tiempo_navegacion: tiempoNavegacion,
       fuente_trafico: getTrafficSource()

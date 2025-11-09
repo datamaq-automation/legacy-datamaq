@@ -26,8 +26,21 @@ path: src/components/HeroSection.vue
             <strong>línea base</strong> y priorizar mejoras con retorno.
           </p>
           <div class="d-flex gap-3 flex-wrap justify-content-center mb-4">
-            <a v-if="chatEnabled" class="btn btn-outline-light btn-lg px-4" :href="chatUrl" target="_blank" rel="noopener"
-               @click="$emit('chat_click')">
+            <button
+              type="button"
+              class="btn btn-light btn-lg px-4 fw-semibold text-dark"
+              @click="emit('primary-cta')"
+            >
+              Agendar diagnóstico
+            </button>
+            <a
+              v-if="chatEnabled"
+              class="btn btn-outline-light btn-lg px-4"
+              :href="chatUrl"
+              target="_blank"
+              rel="noopener"
+              @click="emit('chat_click')"
+            >
               Conversá con nuestro bot especializado para sacarte todas tus dudas
             </a>
           </div>
@@ -46,5 +59,10 @@ path: src/components/HeroSection.vue
 defineProps<{
   chatEnabled: boolean
   chatUrl: string
+}>()
+
+const emit = defineEmits<{
+  (e: 'primary-cta'): void
+  (e: 'chat_click'): void
 }>()
 </script>
