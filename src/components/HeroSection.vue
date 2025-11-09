@@ -25,9 +25,12 @@ path: src/components/HeroSection.vue
             <button
               type="button"
               class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm"
+              :disabled="!chatEnabled"
+              :aria-disabled="!chatEnabled"
+              :aria-describedby="!chatEnabled ? 'hero-chat-disabled' : undefined"
               @click="emit('primary-cta')"
             >
-              Agendar diagnóstico
+              {{ chatEnabled ? 'Agendar diagnóstico' : 'Canal de WhatsApp no disponible' }}
             </button>
             <a
               class="btn btn-outline-secondary btn-lg px-4"
@@ -36,8 +39,15 @@ path: src/components/HeroSection.vue
               Ver servicios
             </a>
           </div>
-          <p class="text-secondary small mb-4">
+          <p class="text-secondary small mb-2">
             Respuesta en menos de 24 horas con agenda de instalación y análisis de datos.
+          </p>
+          <p
+            v-if="!chatEnabled"
+            id="hero-chat-disabled"
+            class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small"
+          >
+            El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.
           </p>
           <ul class="row list-unstyled gy-3 text-start" aria-label="Beneficios">
             <li class="col-12 col-sm-6">
@@ -80,6 +90,8 @@ path: src/components/HeroSection.vue
               alt="Profesional instalando sensores en tablero industrial"
               class="img-fluid rounded-4 shadow-lg position-relative"
               style="max-height: 320px; object-fit: cover;"
+              fetchpriority="high"
+              decoding="async"
             />
           </div>
         </div>
@@ -89,7 +101,15 @@ path: src/components/HeroSection.vue
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
+const props = defineProps<{
+  chatEnabled: boolean
+}>()
+
 const emit = defineEmits<{
   (e: 'primary-cta'): void
 }>()
+
+const chatEnabled = computed(() => props.chatEnabled)
 </script>

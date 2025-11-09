@@ -12,6 +12,8 @@ Path: src/components/Sobreprofebustos.vue
             alt="Docente enseñando en aula"
             class="img-fluid rounded shadow"
             style="max-height: 220px;"
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div class="col-md-8">

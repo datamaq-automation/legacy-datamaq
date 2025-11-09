@@ -54,17 +54,5 @@ export function openWhatsApp(seccion: string = 'fab'): void {
   window.open(url, '_blank', 'noopener')
   const context = buildEngagementContext(seccion)
 
-  window.dataLayer?.push({
-    event: 'conversion_whatsapp_click',
-    section: context.section,
-    traffic_source: context.trafficSource,
-    navigation_time_ms: context.navigationTimeMs,
-    page_location: context.pageUrl
-  })
-
-  window.dispatchEvent(
-    new CustomEvent('conversion:whatsapp_click', { detail: context })
-  )
-
   recordWhatsappEngagement(context)
 }
