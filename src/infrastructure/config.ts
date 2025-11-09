@@ -49,6 +49,7 @@ function ensureHttpsUrl(value: NullableString, envKey: string): NullableString {
 const WHATSAPP_PRESET_FALLBACK = 'Vengo de la página web, quiero más información.'
 const CONTACT_EMAIL_FALLBACK = 'contacto@profebustos.com.ar'
 
+
 const whatsappNumber = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
 const chatUrl = ensureHttpsUrl(normalize(import.meta.env.VITE_CHAT_URL), 'VITE_CHAT_URL')
 const whatsappPresetMessage =
@@ -58,6 +59,7 @@ const ga4Id = normalize(import.meta.env.VITE_GA4_ID)
 const contactEmail =
   ensureEmail(normalize(import.meta.env.VITE_CONTACT_EMAIL), 'VITE_CONTACT_EMAIL') ??
   CONTACT_EMAIL_FALLBACK
+const contactApiUrl = normalize(import.meta.env.VITE_CONTACT_API_URL)
 
 export const config = {
   WHATSAPP_NUMBER: whatsappNumber,
@@ -65,7 +67,8 @@ export const config = {
   WHATSAPP_PRESET_MESSAGE: whatsappPresetMessage,
   CLARITY_PROJECT_ID: clarityProjectId,
   GA4_ID: ga4Id,
-  CONTACT_EMAIL: contactEmail
+  CONTACT_EMAIL: contactEmail,
+  CONTACT_API_URL: contactApiUrl
 } as const
 
 export function isWhatsappConfigured(): boolean {

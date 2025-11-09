@@ -10,10 +10,10 @@ import {
   isChatEnabled
 } from './application/services/chatChannelService'
 import {
-  buildMailtoHref,
   getContactEmail,
   type EmailContactPayload
 } from './application/services/emailChannelService'
+import { config } from './infrastructure/config'
 import {
   recordEmailEngagement,
   recordWhatsappEngagement,
@@ -72,20 +72,36 @@ export function openWhatsApp(seccion: string = 'fab'): void {
 export function submitEmailContact(
   section: string,
   payload: EmailContactPayload
-): void {
-  let mailtoHref: string
-
-  try {
-    mailtoHref = buildMailtoHref(payload)
-  } catch (error) {
+): Promise<{ ok: boolean; error?: string }> {
+  const apiUrl = config.CONTACT_API_URL
+  if (!apiUrl) {
     if (isDev) {
-      console.error('Error al construir el correo de contacto:', error)
+      console.error('CONTACT_API_URL no está configurada')
     }
-    return
+    return Promise.resolve({ ok: false, error: 'No se encuentra configurado el backend de contacto.' })
   }
 
-  window.location.href = mailtoHref
   const context = buildEngagementContext(section)
 
-  recordEmailEngagement(context)
+  return fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const errorText = await res.text().catch(() => 'Error desconocido')
+        return { ok: false, error: errorText }
+      }
+      recordEmailEngagement(context)
+      return { ok: true }
+    })
+    .catch((err) => {
+      if (isDev) {
+        console.error('Error al enviar la consulta de contacto:', err)
+      }
+      return { ok: false, error: 'No se pudo enviar la consulta. Intente más tarde.' }
+    })
 }

@@ -4,11 +4,13 @@ Este documento describe el contrato esperado del backend que procesará las cons
 
 ## Resumen del flujo
 
+
 1. El frontend muestra un formulario con los campos `name`, `email`, `company` (opcional) y `message`.
-2. Al enviarse, el frontend construye un `mailto:` de respaldo y envía en paralelo una solicitud HTTP al backend para que registre la consulta.
+2. Al enviarse, el frontend realiza una solicitud HTTP POST al backend para registrar la consulta. El flujo mailto ya no se utiliza como respaldo.
 3. El backend debe validar los datos, persistirlos y despachar un correo transaccional a `VITE_CONTACT_EMAIL` o a la casilla que el equipo determine.
 
-> **Nota:** Mantener el envío de `mailto:` garantiza compatibilidad aun si el backend está inoperativo. El endpoint HTTP permite trazabilidad y automatización.
+
+> **Nota:** El flujo mailto ha sido eliminado. El frontend depende exclusivamente del endpoint HTTP para el registro y notificación de la consulta.
 
 ## Endpoint
 
@@ -18,12 +20,13 @@ POST https://api.profebustos.com.ar/v1/contact/email
 
 ### Headers
 
+
 | Clave         | Valor             |
 |---------------|-------------------|
 | Content-Type  | application/json  |
-| X-Api-Key     | <token secreto>   |
 
-- `X-Api-Key` debe configurarse como variable de entorno en Cloudflare Pages (`CONTACT_API_KEY`) y verificarse en el backend.
+
+> **Nota:** Actualmente no se requiere autenticación por API Key desde el frontend.
 
 ### Request Body
 
@@ -90,8 +93,7 @@ El frontend puede invocar el endpoint después de construir el `mailto:`:
 fetch(import.meta.env.VITE_CONTACT_API_URL, {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json',
-    'X-Api-Key': import.meta.env.VITE_CONTACT_API_KEY
+    'Content-Type': 'application/json'
   },
   body: JSON.stringify({
     name,
@@ -102,18 +104,19 @@ fetch(import.meta.env.VITE_CONTACT_API_URL, {
     traffic_source: new URLSearchParams(window.location.search).get('utm_source') ?? 'direct'
   })
 }).catch(() => {
-  // El `mailto:` funciona como fallback, no mostrar error crítico al usuario.
+  // Se recomienda mostrar un mensaje de error accesible al usuario.
 });
 ```
+
 
 Registrar los estados (éxito/error) con `recordEmailEngagement` para completar la trazabilidad en GA4 y Clarity.
 
 ## Checklist para despliegue en Cloudflare
 
 1. Definir variables de entorno:
-   - `VITE_CONTACT_EMAIL` (frontend)
-   - `VITE_CONTACT_API_URL` y `VITE_CONTACT_API_KEY` (frontend si se expone la llamada HTTP)
-   - `CONTACT_API_KEY`, credenciales SMTP o secretos equivalentes en el backend.
+  - `VITE_CONTACT_EMAIL` (frontend)
+  - `VITE_CONTACT_API_URL` (frontend)
+  - `CONTACT_API_KEY`, credenciales SMTP o secretos equivalentes en el backend.
 2. Configurar reglas de Firewall para limitar el acceso al endpoint solo desde las IPs de Cloudflare.
 3. Habilitar HTTPS forzado y TLS 1.3.
 4. Añadir monitores (Health Checks) para el endpoint y alertar cuando devuelva `5xx` repetidos.

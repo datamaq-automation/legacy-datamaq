@@ -18,7 +18,8 @@ function handleWhatsapp(section: string) {
 }
 
 function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
-  submitEmailContact('contacto-formulario', payload)
+  // El componente espera una promesa para feedback, así que retornamos la llamada
+  return submitEmailContact('contacto-formulario', payload)
 }
 </script>
 

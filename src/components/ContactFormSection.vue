@@ -9,12 +9,8 @@
                 Preferís coordinar por correo electrónico
               </h2>
               <p class="text-secondary mb-4">
-                Completá el formulario y se abrirá tu cliente de correo predeterminado para enviar la consulta a
-                <a
-                  v-if="contactEmail"
-                  class="link-secondary fw-semibold"
-                  :href="`mailto:${contactEmail}`"
-                >{{ contactEmail }}</a>.
+                Completá el formulario y recibirás una respuesta a tu correo electrónico
+                <span v-if="contactEmail" class="fw-semibold">{{ contactEmail }}</span>.
               </p>
               <form
                 ref="formRef"
@@ -65,14 +61,13 @@
                   />
                 </div>
                 <div class="col-12">
-                  <label class="form-label" for="contacto-mensaje">Mensaje</label>
+                  <label class="form-label" for="contacto-mensaje">Mensaje (opcional)</label>
                   <textarea
                     id="contacto-mensaje"
                     v-model="form.message"
                     class="form-control"
                     name="message"
                     rows="4"
-                    required
                     maxlength="1200"
                     :disabled="!isChannelEnabled"
                   ></textarea>
@@ -81,10 +76,16 @@
                   <button
                     type="submit"
                     class="btn btn-primary w-100"
-                    :disabled="!isChannelEnabled"
-                    :aria-disabled="!isChannelEnabled"
+                    :disabled="!isChannelEnabled || isSubmitting"
+                    :aria-disabled="!isChannelEnabled || isSubmitting"
                   >
-                    Enviar consulta por correo
+                    <span v-if="isSubmitting">
+                      Enviando...
+                      <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
+                    </span>
+                    <span v-else>
+                      Enviar consulta por correo
+                    </span>
                   </button>
                 </div>
                 <p
@@ -93,6 +94,13 @@
                 >
                   El canal de correo electrónico no se encuentra disponible en este momento. Por favor, intentá nuevamente más
                   tarde.
+                </p>
+                <p
+                  v-if="feedback.message"
+                  :class="['mt-2', 'alert', feedback.success ? 'alert-success' : 'alert-danger']"
+                  role="alert"
+                >
+                  {{ feedback.message }}
                 </p>
               </form>
             </div>
@@ -108,21 +116,20 @@ import { computed, reactive, ref } from 'vue'
 import type { EmailContactPayload } from '@/application/services/emailChannelService'
 
 const props = defineProps<{ contactEmail?: string }>()
-
 const emit = defineEmits<{
-  (e: 'submit', payload: EmailContactPayload): void
+  (e: 'submit', payload: EmailContactPayload): Promise<{ ok: boolean; error?: string }>
 }>()
 
 const formRef = ref<HTMLFormElement | null>(null)
-
 const form = reactive({
   name: '',
   email: '',
   company: '',
   message: ''
 })
-
 const isChannelEnabled = computed(() => Boolean(props.contactEmail))
+const isSubmitting = ref(false)
+const feedback = reactive<{ message: string; success: boolean }>({ message: '', success: false })
 
 function resetForm(): void {
   form.name = ''
@@ -131,29 +138,40 @@ function resetForm(): void {
   form.message = ''
 }
 
-function handleSubmit(): void {
+async function handleSubmit(): Promise<void> {
   const formElement = formRef.value
+  feedback.message = ''
+  feedback.success = false
 
   if (!isChannelEnabled.value) {
     return
   }
-
   if (formElement && !formElement.reportValidity()) {
     return
   }
-
-  emit('submit', {
-    name: form.name,
-    email: form.email,
-    company: form.company,
-    message: form.message
-  })
-
-  if (formElement) {
-    formElement.reset()
+  isSubmitting.value = true
+  try {
+    const result = await emit('submit', {
+      name: form.name,
+      email: form.email,
+      company: form.company,
+      message: form.message
+    })
+    if (result && result.ok) {
+      feedback.message = '¡Consulta enviada correctamente! Te responderemos a la brevedad.'
+      feedback.success = true
+      if (formElement) formElement.reset()
+      resetForm()
+    } else {
+      feedback.message = result?.error || 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
+      feedback.success = false
+    }
+  } catch (e) {
+    feedback.message = 'Ocurrió un error inesperado. Intenta nuevamente más tarde.'
+    feedback.success = false
+  } finally {
+    isSubmitting.value = false
   }
-
-  resetForm()
 }
 
 const contactEmail = computed(() => props.contactEmail)

@@ -4,7 +4,12 @@
     "esModuleInterop": true,
     "lib": ["ES2015", "dom"],
     "module": "esnext",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@": ["."]
+    }
   },
   "include": ["src"]
 }

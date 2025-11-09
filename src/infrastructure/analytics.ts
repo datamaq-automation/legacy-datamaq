@@ -19,9 +19,7 @@ export function installAnalytics(app: App): void {
 
   if (ga4Id) {
     app.use(VueGtag, {
-      config: {
-        id: ga4Id
-      }
+      property: { id: ga4Id }
     })
     if (isDev) {
       console.info(`[GA4] Inicializado con ID: ${ga4Id}`)
