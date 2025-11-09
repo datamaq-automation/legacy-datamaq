@@ -10,12 +10,19 @@ import {
   isChatEnabled
 } from './application/services/chatChannelService'
 import {
+  buildMailtoHref,
+  getContactEmail,
+  type EmailContactPayload
+} from './application/services/emailChannelService'
+import {
+  recordEmailEngagement,
   recordWhatsappEngagement,
-  type WhatsappEngagementContext
+  type ContactEngagementContext
 } from './application/services/analyticsTracker'
 
 export const CHAT_URL = getChatUrl()
 export const CHAT_ENABLED = isChatEnabled()
+export const CONTACT_EMAIL = getContactEmail()
 const pageEntryTimestamp = Date.now()
 
 function getTrafficSource(): string {
@@ -25,7 +32,7 @@ function getTrafficSource(): string {
   return document.referrer || 'direct'
 }
 
-function buildEngagementContext(section: string): WhatsappEngagementContext {
+function buildEngagementContext(section: string): ContactEngagementContext {
   const now = Date.now()
 
   return {
@@ -54,17 +61,24 @@ export function openWhatsApp(seccion: string = 'fab'): void {
   window.open(url, '_blank', 'noopener')
   const context = buildEngagementContext(seccion)
 
-  window.dataLayer?.push({
-    event: 'conversion_whatsapp_click',
-    section: context.section,
-    traffic_source: context.trafficSource,
-    navigation_time_ms: context.navigationTimeMs,
-    page_location: context.pageUrl
-  })
-
-  window.dispatchEvent(
-    new CustomEvent('conversion:whatsapp_click', { detail: context })
-  )
-
   recordWhatsappEngagement(context)
+}
+
+export function submitEmailContact(
+  section: string,
+  payload: EmailContactPayload
+): void {
+  let mailtoHref: string
+
+  try {
+    mailtoHref = buildMailtoHref(payload)
+  } catch (error) {
+    console.error('Error al construir el correo de contacto:', error)
+    return
+  }
+
+  window.location.href = mailtoHref
+  const context = buildEngagementContext(section)
+
+  recordEmailEngagement(context)
 }

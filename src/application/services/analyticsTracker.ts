@@ -1,4 +1,4 @@
-export interface WhatsappEngagementContext {
+export interface ContactEngagementContext {
   section: string
   pageUrl: string
   trafficSource: string
@@ -6,22 +6,32 @@ export interface WhatsappEngagementContext {
 }
 
 const WHATSAPP_EVENT_NAME = 'whatsapp_click'
+const EMAIL_EVENT_NAME = 'email_contact_submit'
 
 export function recordWhatsappEngagement(
-  context: WhatsappEngagementContext
+  context: ContactEngagementContext
 ): void {
-  pushToDataLayer(context)
-  sendGaEvent(context)
-  sendClarityEvent(context)
+  pushToDataLayer(WHATSAPP_EVENT_NAME, context)
+  sendGaEvent(WHATSAPP_EVENT_NAME, context)
+  sendClarityEvent(WHATSAPP_EVENT_NAME, context)
 }
 
-function pushToDataLayer(context: WhatsappEngagementContext): void {
+export function recordEmailEngagement(context: ContactEngagementContext): void {
+  pushToDataLayer(EMAIL_EVENT_NAME, context)
+  sendGaEvent(EMAIL_EVENT_NAME, context)
+  sendClarityEvent(EMAIL_EVENT_NAME, context)
+}
+
+function pushToDataLayer(
+  eventName: string,
+  context: ContactEngagementContext
+): void {
   if (!window.dataLayer) {
     return
   }
 
   window.dataLayer.push({
-    event: WHATSAPP_EVENT_NAME,
+    event: eventName,
     section: context.section,
     traffic_source: context.trafficSource,
     navigation_time_ms: context.navigationTimeMs,
@@ -29,15 +39,18 @@ function pushToDataLayer(context: WhatsappEngagementContext): void {
   })
 }
 
-function sendGaEvent(context: WhatsappEngagementContext): void {
+function sendGaEvent(
+  eventName: string,
+  context: ContactEngagementContext
+): void {
   if (typeof window.gtag !== 'function') {
     console.warn(
-      '[GA4] gtag no se encuentra disponible. Evento de WhatsApp no enviado.'
+      `[GA4] gtag no se encuentra disponible. Evento "${eventName}" no enviado.`
     )
     return
   }
 
-  window.gtag('event', WHATSAPP_EVENT_NAME, {
+  window.gtag('event', eventName, {
     event_category: 'engagement',
     event_label: context.section,
     traffic_source: context.trafficSource,
@@ -46,15 +59,18 @@ function sendGaEvent(context: WhatsappEngagementContext): void {
   })
 }
 
-function sendClarityEvent(context: WhatsappEngagementContext): void {
+function sendClarityEvent(
+  eventName: string,
+  context: ContactEngagementContext
+): void {
   if (typeof window.clarity !== 'function') {
     console.warn(
-      '[Clarity] clarity no se encuentra disponible. Evento de WhatsApp no enviado.'
+      `[Clarity] clarity no se encuentra disponible. Evento "${eventName}" no enviado.`
     )
     return
   }
 
-  window.clarity('event', WHATSAPP_EVENT_NAME, {
+  window.clarity('event', eventName, {
     section: context.section,
     traffic_source: context.trafficSource,
     navigation_time_ms: context.navigationTimeMs,

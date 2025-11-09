@@ -7,6 +7,7 @@ Path: src/components/Navbar.vue
     <div class="container-fluid px-3">
       <!-- Botón hamburguesa a la izquierda, visible solo en mobile -->
       <button
+        ref="toggleButtonRef"
         class="navbar-toggler me-2"
         type="button"
         aria-label="Abrir menú"
@@ -31,9 +32,18 @@ Path: src/components/Navbar.vue
           }"
           ref="navRef"
         >
-          <ul class="navbar-nav ms-lg-auto">
+          <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-2">
             <li class="nav-item">
-              <a class="nav-link" href="#servicios">Servicios</a>
+              <a class="nav-link" href="#servicios" @click="handleNavLinkClick">Servicios</a>
+            </li>
+            <li v-if="chatEnabled" class="nav-item ms-lg-3">
+              <button
+                type="button"
+                class="btn btn-success"
+                @click="handleContactClick"
+              >
+                Contactar ahora
+              </button>
             </li>
           </ul>
         </nav>
@@ -43,25 +53,39 @@ Path: src/components/Navbar.vue
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 const props = defineProps<{
   chatEnabled: boolean
-  chatUrl: string
+}>()
+
+const emit = defineEmits<{
+  (e: 'contact'): void
 }>()
 
 const menuOpen = ref(false)
-const isDesktop = ref(window.innerWidth >= 992)
+const isDesktop = ref(typeof window !== 'undefined' ? window.innerWidth >= 992 : false)
 const navRef = ref<HTMLElement | null>(null)
+const toggleButtonRef = ref<HTMLButtonElement | null>(null)
+const chatEnabled = computed(() => props.chatEnabled)
 
 function toggleMenu() {
   menuOpen.value = !menuOpen.value
 }
 
+function closeMenu(returnFocus = false) {
+  menuOpen.value = false
+  if (returnFocus) {
+    toggleButtonRef.value?.focus()
+  }
+}
+
 // Actualiza isDesktop al cambiar el tamaño de ventana
 function handleResize() {
   isDesktop.value = window.innerWidth >= 992
-  if (isDesktop.value) menuOpen.value = false
+  if (isDesktop.value) {
+    closeMenu()
+  }
 }
 
 // Cierra el menú si se hace click fuera del nav (solo mobile)
@@ -71,17 +95,39 @@ function handleClickOutside(event: MouseEvent) {
     navRef.value &&
     !navRef.value.contains(event.target as Node)
   ) {
-    menuOpen.value = false
+    closeMenu()
+  }
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && menuOpen.value) {
+    event.preventDefault()
+    closeMenu(true)
+  }
+}
+
+function handleNavLinkClick() {
+  if (!isDesktop.value) {
+    closeMenu()
+  }
+}
+
+function handleContactClick() {
+  emit('contact')
+  if (!isDesktop.value) {
+    closeMenu(true)
   }
 }
 
 onMounted(() => {
   window.addEventListener('resize', handleResize)
   document.addEventListener('mousedown', handleClickOutside)
+  document.addEventListener('keydown', handleKeydown)
 })
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   document.removeEventListener('mousedown', handleClickOutside)
+  document.removeEventListener('keydown', handleKeydown)
 })
 </script>
 

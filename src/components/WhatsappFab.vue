@@ -7,6 +7,7 @@ Path: src/components/WhatsappFab.vue
     <button
       class="btn btn-success rounded-circle shadow-lg whatsapp-track d-flex align-items-center justify-content-center"
       style="width:60px;height:60px;"
+      type="button"
       @click="$emit('whatsapp')"
       aria-label="Abrir WhatsApp"
     >

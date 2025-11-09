@@ -3,44 +3,66 @@
 Path: src/App.vue
 */
 
-import {
-  CHAT_URL,
-  CHAT_ENABLED,
-  openWhatsApp
-} from './appLogic'
+import { CHAT_ENABLED, CONTACT_EMAIL, openWhatsApp, submitEmailContact } from './appLogic'
 import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
 import ServiciosSection from './components/ServiciosSection.vue'
+import ContactFormSection from './components/ContactFormSection.vue'
 import Sobreprofebustos from './components/SobreProfeBustos.vue'
 import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
 import LegalSection from './components/LegalSection.vue'
 
-function handleHeroPrimaryCta() {
-  if (CHAT_ENABLED) {
-    openWhatsApp('hero')
-  } else {
-    window.location.href = 'mailto:contacto@profebustos.com.ar?subject=Diagn%C3%B3stico%20energ%C3%A9tico'
-  }
+function handleWhatsapp(section: string) {
+  openWhatsApp(section)
 }
 
-function handleWhatsappFab() {
-  openWhatsApp('fab')
+function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
+  submitEmailContact('contacto-formulario', payload)
 }
 </script>
 
 <template>
-  <div class="bg-dark text-white min-vh-100">
-    <Navbar :chatEnabled="CHAT_ENABLED" :chatUrl="CHAT_URL" />
-    <HeroSection
-      :chatEnabled="CHAT_ENABLED"
-      :chatUrl="CHAT_URL"
-      @primary-cta="handleHeroPrimaryCta"
-    />
-    <ServiciosSection />
-    <Sobreprofebustos />
-    <WhatsappFab @whatsapp="handleWhatsappFab" />
-    <LegalSection />
+  <div class="app-shell bg-dark text-white min-vh-100">
+    <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+    <Navbar :chatEnabled="CHAT_ENABLED" @contact="handleWhatsapp('navbar')" />
+    <main id="contenido-principal" class="flex-grow-1">
+      <HeroSection :chatEnabled="CHAT_ENABLED" @primary-cta="handleWhatsapp('hero')" />
+      <ServiciosSection
+        :chatEnabled="CHAT_ENABLED"
+        @contact="handleWhatsapp($event)"
+      />
+      <ContactFormSection
+        :contact-email="CONTACT_EMAIL"
+        @submit="handleEmailSubmit"
+      />
+      <Sobreprofebustos />
+      <LegalSection />
+    </main>
     <Footer />
+    <WhatsappFab v-if="CHAT_ENABLED" @whatsapp="handleWhatsapp('fab')" />
   </div>
 </template>
+
+<style>
+.app-shell {
+  display: flex;
+  flex-direction: column;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 1rem;
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+  background-color: #0d6efd;
+  color: #fff;
+  border-radius: 0.5rem;
+  transition: left 0.2s ease-in-out;
+}
+
+.skip-link:focus {
+  left: 1rem;
+}
+</style>
