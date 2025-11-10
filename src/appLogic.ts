@@ -62,7 +62,10 @@ function sendWhatsappContactEvent(section: string): void {
 
   const payload = {
     ticket_id: generateUUID(),
-    message: 'boton_whatsapp',
+    name: 'from_whatsapp',
+    email: 'whatsapp@profebustos.com.ar',
+    company: 'from_whatsapp',
+    message: 'from_whatsapp',
     page_location: window.location.href,
     traffic_source: getTrafficSource(),
     user_agent: navigator.userAgent,
