@@ -42,15 +42,6 @@ function buildEngagementContext(section: string): ContactEngagementContext {
   }
 }
 
-function generateUUID(): string {
-  // Simple UUID v4 generator
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
-}
-
 function sendWhatsappContactEvent(section: string): void {
   const apiUrl = config.CONTACT_API_URL
   if (!apiUrl) {
@@ -61,7 +52,6 @@ function sendWhatsappContactEvent(section: string): void {
   }
 
   const payload = {
-    ticket_id: generateUUID(),
     name: 'from_whatsapp',
     email: 'whatsapp@profebustos.com.ar',
     company: 'from_whatsapp',
