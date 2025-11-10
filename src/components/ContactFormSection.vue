@@ -1,3 +1,6 @@
+<!--
+Path: src/components/ContactFormSection.vue
+-->
 <template>
   <section id="contacto" class="py-5 bg-dark text-white" aria-labelledby="contacto-title">
     <div class="container">
@@ -115,9 +118,9 @@
 import { computed, reactive, ref } from 'vue'
 import type { EmailContactPayload } from '@/application/services/emailChannelService'
 
-const props = defineProps<{ contactEmail?: string }>()
-const emit = defineEmits<{
-  (e: 'submit', payload: EmailContactPayload): Promise<{ ok: boolean; error?: string }>
+const props = defineProps<{
+  contactEmail?: string,
+  onSubmit: (payload: EmailContactPayload) => Promise<{ ok: boolean; error?: string }>
 }>()
 
 const formRef = ref<HTMLFormElement | null>(null)
@@ -151,12 +154,15 @@ async function handleSubmit(): Promise<void> {
   }
   isSubmitting.value = true
   try {
-    const result = await emit('submit', {
+    const result = await props.onSubmit({
       name: form.name,
       email: form.email,
       company: form.company,
       message: form.message
     })
+    if (import.meta.env.DEV) {
+      console.debug('[ContactFormSection] Resultado de onSubmit:', result)
+    }
     if (result && result.ok) {
       feedback.message = '¡Consulta enviada correctamente! Te responderemos a la brevedad.'
       feedback.success = true
@@ -167,6 +173,9 @@ async function handleSubmit(): Promise<void> {
       feedback.success = false
     }
   } catch (e) {
+    if (import.meta.env.DEV) {
+      console.error('[ContactFormSection] Error inesperado en handleSubmit:', e)
+    }
     feedback.message = 'Ocurrió un error inesperado. Intenta nuevamente más tarde.'
     feedback.success = false
   } finally {

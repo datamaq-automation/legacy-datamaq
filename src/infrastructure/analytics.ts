@@ -11,10 +11,10 @@ export function installAnalytics(app: App): void {
   if (clarityProjectId) {
     clarity.init(clarityProjectId)
     if (isDev) {
-      console.info(`[Clarity] Inicializado con ID: ${clarityProjectId}`)
+      console.log(`[Clarity] Inicializado con ID: ${clarityProjectId}`)
     }
   } else if (isDev) {
-    console.info('[Clarity] ID no configurado, Clarity no se inicializa.')
+    console.log('[Clarity] ID no configurado, Clarity no se inicializa.')
   }
 
   if (ga4Id) {
@@ -22,9 +22,9 @@ export function installAnalytics(app: App): void {
       property: { id: ga4Id }
     })
     if (isDev) {
-      console.info(`[GA4] Inicializado con ID: ${ga4Id}`)
+      console.log(`[GA4] Inicializado con ID: ${ga4Id}`)
     }
   } else if (isDev) {
-    console.info('[GA4] ID no configurado, GA4 no se inicializa.')
+    console.log('[GA4] ID no configurado, GA4 no se inicializa.')
   }
 }

@@ -83,6 +83,11 @@ export function submitEmailContact(
 
   const context = buildEngagementContext(section)
 
+  if (isDev) {
+    console.debug('[submitEmailContact] Enviando payload:', payload)
+    console.debug('[submitEmailContact] URL:', apiUrl)
+  }
+
   return fetch(apiUrl, {
     method: 'POST',
     headers: {
@@ -91,8 +96,20 @@ export function submitEmailContact(
     body: JSON.stringify(payload)
   })
     .then(async (res) => {
+      if (isDev) {
+        console.debug('[submitEmailContact] Respuesta HTTP:', res.status, res.statusText)
+      }
+      let errorText = ''
       if (!res.ok) {
-        const errorText = await res.text().catch(() => 'Error desconocido')
+        try {
+          const errorJson = await res.json()
+          errorText = errorJson?.error || JSON.stringify(errorJson)
+        } catch {
+          errorText = await res.text().catch(() => 'Error desconocido')
+        }
+        if (isDev) {
+          console.warn('[submitEmailContact] Error de backend:', errorText)
+        }
         return { ok: false, error: errorText }
       }
       recordEmailEngagement(context)

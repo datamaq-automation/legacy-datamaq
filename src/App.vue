@@ -35,7 +35,7 @@ function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
       />
       <ContactFormSection
         :contact-email="CONTACT_EMAIL"
-        @submit="handleEmailSubmit"
+        :on-submit="handleEmailSubmit"
       />
       <Sobreprofebustos />
       <LegalSection />
