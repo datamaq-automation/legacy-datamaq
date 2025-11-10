@@ -42,6 +42,52 @@ function buildEngagementContext(section: string): ContactEngagementContext {
   }
 }
 
+function generateUUID(): string {
+  // Simple UUID v4 generator
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+function sendWhatsappContactEvent(section: string): void {
+  const apiUrl = config.CONTACT_API_URL
+  if (!apiUrl) {
+    if (isDev) {
+      console.error('CONTACT_API_URL no está configurada')
+    }
+    return
+  }
+
+  const payload = {
+    ticket_id: generateUUID(),
+    message: 'boton_whatsapp',
+    page_location: window.location.href,
+    traffic_source: getTrafficSource(),
+    user_agent: navigator.userAgent,
+    created_at: new Date().toISOString()
+    // IP la debe agregar el backend
+  }
+
+  if (isDev) {
+    console.debug('[sendWhatsappContactEvent] Payload:', payload)
+  }
+
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).catch((err) => {
+    if (isDev) {
+      console.error('Error al enviar evento de WhatsApp:', err)
+    }
+    // Silencioso, no feedback al usuario
+  })
+}
+
 export function openWhatsApp(seccion: string = 'fab'): void {
   if (!CHAT_ENABLED) {
     if (isDev) {
@@ -49,6 +95,9 @@ export function openWhatsApp(seccion: string = 'fab'): void {
     }
     return
   }
+
+  // Enviar evento silencioso al backend
+  sendWhatsappContactEvent(seccion)
 
   let url: string
 
