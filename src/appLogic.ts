@@ -2,8 +2,6 @@
 Path: src/appLogic.ts
 */
 
-
-
 import {
   buildWhatsappUrl,
   getChatUrl,
@@ -88,12 +86,20 @@ export function submitEmailContact(
     console.debug('[submitEmailContact] URL:', apiUrl)
   }
 
+  // Si message está vacío, poner "Null"
+  const extendedPayload = {
+    ...payload,
+    message: !payload.message ? 'Null' : payload.message,
+    page_location: window.location.href,
+    traffic_source: getTrafficSource()
+  }
+
   return fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(extendedPayload)
   })
     .then(async (res) => {
       if (isDev) {
