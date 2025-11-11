@@ -1,6 +1,6 @@
 # Seguimiento de tareas — profebustos-www
 
-_Última actualización: 11 feb 2025_
+_Última actualización: 19 feb 2025_
 
 ## Tareas completadas
 - [x] Documentación de auditoría técnica y alternativas priorizadas (`docs/audit-2025-02-17.md`, `docs/improvement-options-2025-02-18.md`).
@@ -13,6 +13,7 @@ _Última actualización: 11 feb 2025_
 - [x] Sustitución de assets pesados por ilustraciones SVG optimizadas (`src/assets/*.svg`).
 - [x] Tema de alto contraste y tokens de color consistentes (`src/assets/theme.css`).
 - [x] Plan de escalamiento a multipágina y guía de arquitectura (`docs/multipage-architecture-plan.md`).
+- [x] Mejora de UX mobile: CTA único en hero, ritmos de secciones, servicios y contacto con espaciado y contrastes consistentes.
 
 ## Tareas pendientes o bloqueadas
 - [x] **Confirmar disponibilidad de backend de contacto en entornos de prueba.**

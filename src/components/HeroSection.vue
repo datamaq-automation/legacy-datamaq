@@ -20,24 +20,28 @@ path: src/components/HeroSection.vue
             operativa.
           </p>
           <div
-            class="d-flex flex-column flex-sm-row gap-3 align-items-stretch align-items-sm-center align-items-lg-start mb-4 hero-primary-actions"
+            class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 hero-primary-actions cta-stack"
           >
-            <button
-              type="button"
-              class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm primary-whatsapp-cta"
-              :disabled="!chatEnabled"
-              :aria-disabled="!chatEnabled"
-              :aria-describedby="!chatEnabled ? 'hero-chat-disabled' : undefined"
-              @click="emit('primary-cta')"
-            >
-              {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
-            </button>
-            <a
-              class="btn btn-outline-secondary btn-lg px-4 hero-secondary-cta"
-              href="#servicios"
-            >
-              {{ CTA_COPY.SECONDARY_SERVICES }}
-            </a>
+            <div class="cta-stack__item">
+              <button
+                type="button"
+                class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm primary-whatsapp-cta w-100"
+                :disabled="!chatEnabled"
+                :aria-disabled="!chatEnabled"
+                :aria-describedby="!chatEnabled ? 'hero-chat-disabled' : undefined"
+                @click="emit('primary-cta')"
+              >
+                {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
+              </button>
+            </div>
+            <div class="cta-stack__item">
+              <a
+                class="btn btn-outline-secondary btn-lg px-4 hero-secondary-cta w-100"
+                href="#servicios"
+              >
+                {{ CTA_COPY.SECONDARY_SERVICES }}
+              </a>
+            </div>
           </div>
           <p class="text-secondary small mb-2">
             Respuesta en menos de 24 horas con agenda de instalación y análisis de datos.

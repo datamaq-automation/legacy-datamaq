@@ -13,11 +13,25 @@
   --bs-secondary-color: rgba(248, 249, 250, 0.75);
   --bs-border-radius-lg: 1rem;
   --bs-border-radius: 0.75rem;
+
+  /* Mobile rhythm tokens */
+  --section-mobile-padding: 3.25rem;
+  --section-mobile-gap: 1.75rem;
+  --mobile-card-surface: rgba(6, 12, 20, 0.92);
+  --mobile-card-border: rgba(248, 249, 250, 0.18);
+  --mobile-card-text: rgba(248, 249, 250, 0.82);
+  --floating-safe-area: 0;
+  --cookie-banner-height: 0;
+  --cookie-banner-visible-height: 5rem;
 }
 
 body {
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
+}
+
+body.has-consent-banner {
+  --cookie-banner-height: var(--cookie-banner-visible-height);
 }
 
 section[aria-labelledby],
@@ -32,15 +46,41 @@ img {
 }
 
 .section-mobile {
-  padding-block: clamp(3rem, calc(4vw + 2rem), 5rem);
+  padding-block: clamp(var(--section-mobile-padding), calc(3vw + 2.25rem), 5rem);
 }
 
 .with-floating-cta {
-  padding-bottom: 0;
+  padding-bottom: var(--floating-safe-area);
 }
 
 .primary-whatsapp-cta {
   letter-spacing: 0.01em;
+}
+
+.secondary-whatsapp-cta {
+  letter-spacing: 0.01em;
+  border-width: 2px;
+  --bs-btn-color: #f8f9fa;
+  --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.6);
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: rgba(var(--bs-primary-rgb), 0.2);
+  --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.85);
+  --bs-btn-disabled-opacity: 0.55;
+}
+
+.secondary-whatsapp-cta:disabled,
+.secondary-whatsapp-cta[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.cta-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cta-stack .cta-stack__item {
+  width: 100%;
 }
 
 .benefit-card {
@@ -49,8 +89,8 @@ img {
   gap: 1rem;
   padding: 1.35rem 1.5rem;
   border-radius: 1rem;
-  background: rgba(6, 12, 20, 0.9);
-  border: 1px solid rgba(248, 249, 250, 0.14);
+  background: var(--mobile-card-surface);
+  border: 1px solid var(--mobile-card-border);
   color: var(--bs-body-color);
   box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
 }
@@ -76,7 +116,7 @@ img {
 
 .benefit-card__text {
   margin: 0;
-  color: rgba(248, 249, 250, 0.78);
+  color: var(--mobile-card-text);
   font-size: 0.95rem;
   line-height: 1.55;
 }
@@ -152,16 +192,20 @@ img {
 }
 
 @media (max-width: 767.98px) {
+  body {
+    --floating-safe-area: 6.5rem;
+  }
+
   .section-mobile {
-    padding-block: 3rem !important;
+    padding-block: var(--section-mobile-padding) !important;
   }
 
   .section-mobile + .section-mobile {
-    margin-top: 1.5rem;
+    margin-top: var(--section-mobile-gap);
   }
 
   .with-floating-cta {
-    padding-bottom: 6.5rem;
+    padding-bottom: calc(var(--floating-safe-area) + var(--cookie-banner-height));
   }
 
   .primary-whatsapp-cta {
@@ -170,8 +214,13 @@ img {
     padding-block: 0.9rem;
   }
 
+  .cta-stack {
+    gap: 1.25rem;
+  }
+
   .benefit-card {
     padding: 1.5rem;
+    backdrop-filter: blur(10px);
   }
 
   .benefit-card__title {
@@ -187,5 +236,16 @@ img {
   .whatsapp-fab {
     padding-bottom: max(env(safe-area-inset-bottom, 0px) + 1.25rem, 2.5rem) !important;
     right: clamp(1rem, 4vw, 1.75rem);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .cta-stack .cta-stack__item {
+    display: block;
+  }
+
+  .cta-stack .cta-stack__item .btn,
+  .cta-stack .cta-stack__item .btn:focus {
+    width: 100%;
   }
 }

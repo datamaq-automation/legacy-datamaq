@@ -75,10 +75,11 @@ Path: src/components/ContactFormSection.vue
                     :disabled="!isChannelEnabled"
                   ></textarea>
                 </div>
-                <div class="col-12">
+                <div class="col-12 mt-2">
                   <button
                     type="submit"
-                    class="btn btn-primary w-100"
+                    class="btn w-100 email-submit-cta"
+                    :class="isChannelEnabled ? 'btn-primary' : 'btn-outline-secondary disabled-channel'"
                     :disabled="!isChannelEnabled || isSubmitting"
                     :aria-disabled="!isChannelEnabled || isSubmitting"
                   >
@@ -100,10 +101,10 @@ Path: src/components/ContactFormSection.vue
                   </p>
                   <p
                     v-else-if="!isBackendAvailable"
-                    class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small"
+                    class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small contact-alert"
                   >
-                    El canal de correo electrónico no se encuentra disponible en este momento. Por favor, intentá nuevamente
-                    más tarde.
+                    El canal de correo electrónico está en mantenimiento. Nuestro canal principal es WhatsApp: agendá tu
+                    diagnóstico allí y retomá este formulario más tarde si necesitás documentación.
                   </p>
                   <p
                     v-if="feedback.message"
@@ -225,3 +226,31 @@ onBeforeUnmount(() => {
   unsubscribeFromStatus?.()
 })
 </script>
+
+<style scoped>
+.email-submit-cta {
+  min-height: 3.25rem;
+  letter-spacing: 0.01em;
+}
+
+.disabled-channel {
+  color: rgba(248, 249, 250, 0.7);
+  border-color: rgba(248, 249, 250, 0.35);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.contact-alert {
+  line-height: 1.6;
+}
+
+@media (max-width: 767.98px) {
+  .email-submit-cta {
+    padding-block: 0.85rem;
+    font-size: 1.02rem;
+  }
+
+  .contact-alert {
+    margin-top: 0.5rem;
+  }
+}
+</style>

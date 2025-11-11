@@ -18,11 +18,21 @@ Path: src/components/ConsentBanner.vue
             sitio.
           </p>
         </div>
-        <div class="col-12 col-lg-auto d-flex gap-2 justify-content-lg-end">
-          <button type="button" class="btn btn-outline-secondary btn-sm" @click="reject" data-testid="consent-reject">
+        <div class="col-12 col-lg-auto d-flex gap-2 justify-content-lg-end consent-banner__actions">
+          <button
+            type="button"
+            class="btn btn-outline-secondary consent-banner__button"
+            @click="reject"
+            data-testid="consent-reject"
+          >
             Rechazar
           </button>
-          <button type="button" class="btn btn-primary btn-sm" @click="accept" data-testid="consent-accept">
+          <button
+            type="button"
+            class="btn btn-primary consent-banner__button"
+            @click="accept"
+            data-testid="consent-accept"
+          >
             Aceptar
           </button>
         </div>
@@ -32,7 +42,7 @@ Path: src/components/ConsentBanner.vue
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { consentManagerKey, type ConsentStatus } from '@/application/services/consentManager'
 
 const manager = inject(consentManagerKey)
@@ -60,7 +70,16 @@ onMounted(() => {
   })
 })
 
+watch(
+  visible,
+  (isVisible) => {
+    document.body.classList.toggle('has-consent-banner', isVisible)
+  },
+  { immediate: true }
+)
+
 onBeforeUnmount(() => {
+  document.body.classList.remove('has-consent-banner')
   unsubscribe?.()
 })
 </script>
@@ -72,11 +91,31 @@ onBeforeUnmount(() => {
   z-index: 1080;
 }
 
+.consent-banner__actions {
+  flex-wrap: wrap;
+}
+
+.consent-banner__button {
+  min-height: 2.75rem;
+  padding-inline: 1.5rem;
+  flex: 1 1 45%;
+}
+
 @media (min-width: 992px) {
   .consent-banner {
     width: auto;
     min-width: 60rem;
     border-radius: 0.75rem 0.75rem 0 0;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .consent-banner {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0);
+  }
+
+  .consent-banner__button {
+    flex: 1 1 100%;
   }
 }
 </style>

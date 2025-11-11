@@ -9,8 +9,8 @@ Path: src/components/ServiciosSection.vue
       <div class="row g-4">
         <div class="col-12 col-lg-6">
           <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
+            <div class="card-body p-4 d-flex flex-column gap-4">
+              <div class="d-flex flex-column flex-sm-row gap-3">
                 <img
                   :src="installTools"
                   alt="Ilustración de herramientas y plano técnico"
@@ -28,8 +28,8 @@ Path: src/components/ServiciosSection.vue
                   </p>
                 </div>
               </div>
-              <h4 class="h6 text-uppercase text-secondary fw-semibold mb-3">Entregables</h4>
-              <ul class="list-unstyled mb-4">
+              <h4 class="h6 text-uppercase text-secondary fw-semibold mb-1">Entregables</h4>
+              <ul class="list-unstyled mb-0">
                 <li class="d-flex gap-2 mb-2">
                   <span class="text-success fw-bold">•</span>
                   <span class="text-body-secondary">Mapa priorizado de puntos eléctricos y de proceso.</span>
@@ -57,15 +57,19 @@ Path: src/components/ServiciosSection.vue
                   Equipos powermeter industriales para lecturas confiables desde el primer día.
                 </figcaption>
               </figure>
-              <button
-                type="button"
-                class="btn btn-primary w-100 primary-whatsapp-cta"
-                :disabled="!chatEnabled"
-                :aria-disabled="!chatEnabled"
-                @click="emit('contact', 'servicios-instalacion')"
-              >
-                {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
-              </button>
+              <div class="cta-stack">
+                <div class="cta-stack__item">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary w-100 secondary-whatsapp-cta"
+                    :disabled="!chatEnabled"
+                    :aria-disabled="!chatEnabled"
+                    @click="emit('contact', 'servicios-instalacion')"
+                  >
+                    {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
+                  </button>
+                </div>
+              </div>
               <p
                 v-if="!chatEnabled"
                 class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small mt-3"
@@ -78,8 +82,8 @@ Path: src/components/ServiciosSection.vue
 
         <div class="col-12 col-lg-6">
           <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
+            <div class="card-body p-4 d-flex flex-column gap-4">
+              <div class="d-flex flex-column flex-sm-row gap-3">
                 <img
                   :src="analytics"
                   alt="Ilustración de dashboard con indicadores energéticos"
@@ -97,8 +101,8 @@ Path: src/components/ServiciosSection.vue
                   </p>
                 </div>
               </div>
-              <h4 class="h6 text-uppercase text-secondary fw-semibold mb-3">Resultados clave</h4>
-              <ul class="list-unstyled mb-4">
+              <h4 class="h6 text-uppercase text-secondary fw-semibold mb-1">Resultados clave</h4>
+              <ul class="list-unstyled mb-0">
                 <li class="d-flex gap-2 mb-2">
                   <span class="text-success fw-bold">•</span>
                   <span class="text-body-secondary">Dashboard base con kWh/unidad, disponibilidad y rendimiento.</span>
@@ -112,18 +116,22 @@ Path: src/components/ServiciosSection.vue
                   <span class="text-body-secondary">Informe ejecutivo con próximos pasos y período de repago estimado.</span>
                 </li>
               </ul>
-              <p class="small text-secondary mb-4">
+              <p class="small text-secondary mb-0">
                 Visualizamos indicadores como IDEn, OEE y payback para alinear a equipos técnicos y gerencia en las mismas prioridades.
               </p>
-              <button
-                type="button"
-                class="btn btn-primary w-100 primary-whatsapp-cta"
-                :disabled="!chatEnabled"
-                :aria-disabled="!chatEnabled"
-                @click="emit('contact', 'servicios-consultoria')"
-              >
-                {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
-              </button>
+              <div class="cta-stack">
+                <div class="cta-stack__item">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary w-100 secondary-whatsapp-cta"
+                    :disabled="!chatEnabled"
+                    :aria-disabled="!chatEnabled"
+                    @click="emit('contact', 'servicios-consultoria')"
+                  >
+                    {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
+                  </button>
+                </div>
+              </div>
               <p
                 v-if="!chatEnabled"
                 class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small mt-3"
