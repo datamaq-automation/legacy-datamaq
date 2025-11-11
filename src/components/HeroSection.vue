@@ -3,7 +3,7 @@ path: src/components/HeroSection.vue
 -->
 
 <template>
-  <section class="py-5 bg-body-tertiary text-body" aria-labelledby="hero-title">
+  <section class="section-mobile py-5 bg-body-tertiary text-body" aria-labelledby="hero-title">
     <div class="container py-4">
       <div class="row align-items-center gy-5">
         <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start">
@@ -20,23 +20,23 @@ path: src/components/HeroSection.vue
             operativa.
           </p>
           <div
-            class="d-flex flex-column flex-sm-row gap-3 align-items-stretch align-items-sm-center align-items-lg-start mb-3"
+            class="d-flex flex-column flex-sm-row gap-3 align-items-stretch align-items-sm-center align-items-lg-start mb-4 hero-primary-actions"
           >
             <button
               type="button"
-              class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm"
+              class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm primary-whatsapp-cta"
               :disabled="!chatEnabled"
               :aria-disabled="!chatEnabled"
               :aria-describedby="!chatEnabled ? 'hero-chat-disabled' : undefined"
               @click="emit('primary-cta')"
             >
-              {{ chatEnabled ? 'Agendar diagnóstico' : 'Canal de WhatsApp no disponible' }}
+              {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
             </button>
             <a
-              class="btn btn-outline-secondary btn-lg px-4"
+              class="btn btn-outline-secondary btn-lg px-4 hero-secondary-cta"
               href="#servicios"
             >
-              Ver servicios
+              {{ CTA_COPY.SECONDARY_SERVICES }}
             </a>
           </div>
           <p class="text-secondary small mb-2">
@@ -49,31 +49,31 @@ path: src/components/HeroSection.vue
           >
             El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.
           </p>
-          <ul class="row list-unstyled gy-3 text-start" aria-label="Beneficios">
+          <ul class="row list-unstyled gy-3 text-start hero-benefits" aria-label="Beneficios">
             <li class="col-12 col-sm-6">
-              <div class="d-flex gap-3 align-items-start p-3 bg-white rounded-3 shadow-sm h-100">
-                <span class="badge bg-success-subtle text-success-emphasis rounded-pill mt-1">1</span>
+              <div class="benefit-card benefit-card--success h-100">
+                <span class="benefit-card__badge">1</span>
                 <div>
-                  <p class="fw-semibold text-body-emphasis mb-1">Línea base en semanas</p>
-                  <p class="text-secondary small mb-0">Lecturas continuas de energía y producción con checklist validado.</p>
+                  <p class="benefit-card__title">Línea base en semanas</p>
+                  <p class="benefit-card__text">Lecturas continuas de energía y producción con checklist validado.</p>
                 </div>
               </div>
             </li>
             <li class="col-12 col-sm-6">
-              <div class="d-flex gap-3 align-items-start p-3 bg-white rounded-3 shadow-sm h-100">
-                <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill mt-1">2</span>
+              <div class="benefit-card benefit-card--primary h-100">
+                <span class="benefit-card__badge">2</span>
                 <div>
-                  <p class="fw-semibold text-body-emphasis mb-1">Decisiones guiadas por OEE</p>
-                  <p class="text-secondary small mb-0">Disponibilidad, rendimiento y calidad listos para priorizar mejoras.</p>
+                  <p class="benefit-card__title">Decisiones guiadas por OEE</p>
+                  <p class="benefit-card__text">Disponibilidad, rendimiento y calidad listos para priorizar mejoras.</p>
                 </div>
               </div>
             </li>
             <li class="col-12">
-              <div class="d-flex gap-3 align-items-start p-3 bg-white rounded-3 shadow-sm h-100">
-                <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill mt-1">3</span>
+              <div class="benefit-card benefit-card--warning h-100">
+                <span class="benefit-card__badge">3</span>
                 <div>
-                  <p class="fw-semibold text-body-emphasis mb-1">Preferencia cooperativas y sector gráfico</p>
-                  <p class="text-secondary small mb-0">Planes ajustados a industrias del GBA Norte sin exclusiones.</p>
+                  <p class="benefit-card__title">Preferencia cooperativas y sector gráfico</p>
+                  <p class="benefit-card__text">Planes ajustados a industrias del GBA Norte sin exclusiones.</p>
                 </div>
               </div>
             </li>
@@ -105,6 +105,7 @@ path: src/components/HeroSection.vue
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { CTA_COPY } from '@/application/constants/ctaCopy'
 import heroIllustration from '@/assets/hero-energy.svg'
 
 const props = defineProps<{
@@ -125,5 +126,31 @@ defineOptions({
 <style scoped>
 .hero-illustration {
   max-width: 420px;
+}
+
+.hero-primary-actions :deep(.btn) {
+  min-height: 3.25rem;
+}
+
+@media (max-width: 575.98px) {
+  .hero-primary-actions {
+    align-items: stretch !important;
+  }
+
+  .hero-secondary-cta {
+    font-size: 1rem;
+    line-height: 1.5;
+    padding-block: 0.75rem;
+    border-width: 1px;
+  }
+
+  .primary-whatsapp-cta {
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .hero-benefits {
+    row-gap: 1.5rem !important;
+  }
 }
 </style>

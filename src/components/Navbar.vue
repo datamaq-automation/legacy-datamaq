@@ -42,7 +42,7 @@ Path: src/components/Navbar.vue
                 class="btn btn-success"
                 @click="handleContactClick"
               >
-                Contactar ahora
+                {{ CTA_COPY.NAV_CONTACT }}
               </button>
             </li>
           </ul>
@@ -54,6 +54,7 @@ Path: src/components/Navbar.vue
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { CTA_COPY } from '@/application/constants/ctaCopy'
 
 const props = defineProps<{
   chatEnabled: boolean

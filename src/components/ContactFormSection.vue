@@ -2,7 +2,7 @@
 Path: src/components/ContactFormSection.vue
 -->
 <template>
-  <section id="contacto" class="py-5 bg-dark text-white" aria-labelledby="contacto-title">
+  <section id="contacto" class="section-mobile py-5 bg-dark text-white" aria-labelledby="contacto-title">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -87,7 +87,7 @@ Path: src/components/ContactFormSection.vue
                       <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
                     </span>
                     <span v-else>
-                      Enviar consulta por correo
+                      {{ CTA_COPY.EMAIL_SUBMIT }}
                     </span>
                   </button>
                 </div>
@@ -126,6 +126,7 @@ Path: src/components/ContactFormSection.vue
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { CTA_COPY } from '@/application/constants/ctaCopy'
 import type { EmailContactPayload } from '@/application/services/emailChannelService'
 import {
   ensureContactBackendStatus,

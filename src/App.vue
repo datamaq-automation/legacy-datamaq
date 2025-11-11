@@ -28,7 +28,7 @@ function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
   <div class="app-shell bg-dark text-white min-vh-100">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
     <Navbar :chatEnabled="CHAT_ENABLED" @contact="handleWhatsapp('navbar')" />
-    <main id="contenido-principal" class="flex-grow-1">
+    <main id="contenido-principal" class="flex-grow-1 with-floating-cta">
       <HeroSection :chatEnabled="CHAT_ENABLED" @primary-cta="handleWhatsapp('hero')" />
       <ServiciosSection
         :chatEnabled="CHAT_ENABLED"

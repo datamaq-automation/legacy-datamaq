@@ -31,6 +31,72 @@ img {
   height: auto;
 }
 
+.section-mobile {
+  padding-block: clamp(3rem, calc(4vw + 2rem), 5rem);
+}
+
+.with-floating-cta {
+  padding-bottom: 0;
+}
+
+.primary-whatsapp-cta {
+  letter-spacing: 0.01em;
+}
+
+.benefit-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.35rem 1.5rem;
+  border-radius: 1rem;
+  background: rgba(6, 12, 20, 0.9);
+  border: 1px solid rgba(248, 249, 250, 0.14);
+  color: var(--bs-body-color);
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
+}
+
+.benefit-card__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #0b1626;
+}
+
+.benefit-card__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--bs-body-color);
+  margin-bottom: 0.35rem;
+}
+
+.benefit-card__text {
+  margin: 0;
+  color: rgba(248, 249, 250, 0.78);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.benefit-card--success .benefit-card__badge {
+  background: rgba(var(--bs-success-rgb), 0.85);
+}
+
+.benefit-card--primary .benefit-card__badge {
+  background: rgba(var(--bs-primary-rgb), 0.85);
+}
+
+.benefit-card--warning .benefit-card__badge {
+  background: rgba(var(--bs-warning-rgb), 0.85);
+}
+
+.whatsapp-fab {
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem) !important;
+}
+
 .btn-primary {
   --bs-btn-color: #ffffff;
   --bs-btn-bg: var(--bs-primary);
@@ -82,5 +148,44 @@ img {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .section-mobile {
+    padding-block: 3rem !important;
+  }
+
+  .section-mobile + .section-mobile {
+    margin-top: 1.5rem;
+  }
+
+  .with-floating-cta {
+    padding-bottom: 6.5rem;
+  }
+
+  .primary-whatsapp-cta {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    padding-block: 0.9rem;
+  }
+
+  .benefit-card {
+    padding: 1.5rem;
+  }
+
+  .benefit-card__title {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  .benefit-card__text {
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+
+  .whatsapp-fab {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px) + 1.25rem, 2.5rem) !important;
+    right: clamp(1rem, 4vw, 1.75rem);
   }
 }

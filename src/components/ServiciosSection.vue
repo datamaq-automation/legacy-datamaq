@@ -3,7 +3,7 @@ Path: src/components/ServiciosSection.vue
 -->
 
 <template>
-  <section id="servicios" class="py-5 bg-body-secondary text-body" aria-labelledby="servicios-title">
+  <section id="servicios" class="section-mobile py-5 bg-body-secondary text-body" aria-labelledby="servicios-title">
     <div class="container">
       <h2 id="servicios-title" class="mb-5 text-center text-body-emphasis">Servicios</h2>
       <div class="row g-4">
@@ -59,12 +59,12 @@ Path: src/components/ServiciosSection.vue
               </figure>
               <button
                 type="button"
-                class="btn btn-primary w-100"
+                class="btn btn-primary w-100 primary-whatsapp-cta"
                 :disabled="!chatEnabled"
                 :aria-disabled="!chatEnabled"
                 @click="emit('contact', 'servicios-instalacion')"
               >
-                {{ chatEnabled ? 'Hablar por WhatsApp' : 'WhatsApp no disponible' }}
+                {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
               </button>
               <p
                 v-if="!chatEnabled"
@@ -117,12 +117,12 @@ Path: src/components/ServiciosSection.vue
               </p>
               <button
                 type="button"
-                class="btn btn-primary w-100"
+                class="btn btn-primary w-100 primary-whatsapp-cta"
                 :disabled="!chatEnabled"
                 :aria-disabled="!chatEnabled"
                 @click="emit('contact', 'servicios-consultoria')"
               >
-                {{ chatEnabled ? 'Quiero una consulta por WhatsApp' : 'WhatsApp no disponible' }}
+                {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
               </button>
               <p
                 v-if="!chatEnabled"
@@ -140,6 +140,7 @@ Path: src/components/ServiciosSection.vue
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { CTA_COPY } from '@/application/constants/ctaCopy'
 import analytics from '@/assets/analytics-dashboard.svg'
 import installTools from '@/assets/install-tools.svg'
 import powermeter from '@/assets/powermeter.svg'
