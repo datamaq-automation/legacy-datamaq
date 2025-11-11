@@ -8,12 +8,11 @@ Path: src/components/ContactFormSection.vue
         <div class="col-lg-8">
           <div class="card border-0 shadow-lg bg-body text-body">
             <div class="card-body p-4 p-md-5">
-              <h2 id="contacto-title" class="h3 fw-bold text-body-emphasis mb-3">
+              <h2 id="contacto-title" class="h3 correo-title mb-3">
                 Preferís coordinar por correo electrónico
               </h2>
-              <p class="text-secondary mb-4">
+              <p class="text-body mb-4">
                 Completá el formulario y recibirás una respuesta a tu correo electrónico
-                <span v-if="contactEmail" class="fw-semibold">{{ contactEmail }}</span>.
               </p>
               <form
                 ref="formRef"

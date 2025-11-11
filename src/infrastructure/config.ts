@@ -28,22 +28,29 @@ function ensureEmail(value: NullableString, envKey: string): NullableString {
   return value
 }
 
-function ensureHttpsUrl(value: NullableString, envKey: string): NullableString {
+function ensureApiUrl(value: NullableString, envKey: string): NullableString {
   if (!value) {
     return undefined
   }
 
-  if (!value.startsWith('https://')) {
-    if (import.meta.env.DEV) {
+  // Permitir http en desarrollo, exigir https en producción
+  if (import.meta.env.DEV) {
+    if (!value.startsWith('http://') && !value.startsWith('https://')) {
       console.warn(
-        `[config] La variable ${envKey} debe comenzar con "https://". Valor recibido: ${value}`
+        `[config] La variable ${envKey} debe comenzar con "http://" o "https://" en desarrollo. Valor recibido: ${value}`
       )
+      return undefined
     }
-
-    return undefined
+    return value
+  } else {
+    if (!value.startsWith('https://')) {
+      console.warn(
+        `[config] La variable ${envKey} debe comenzar con "https://" en producción. Valor recibido: ${value}`
+      )
+      return undefined
+    }
+    return value
   }
-
-  return value
 }
 
 const WHATSAPP_PRESET_FALLBACK = 'Vengo de la página web, quiero más información.'
@@ -51,7 +58,7 @@ const CONTACT_EMAIL_FALLBACK = 'contacto@profebustos.com.ar'
 
 
 const whatsappNumber = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
-const chatUrl = ensureHttpsUrl(normalize(import.meta.env.VITE_CHAT_URL), 'VITE_CHAT_URL')
+const chatUrl = ensureApiUrl(normalize(import.meta.env.VITE_CHAT_URL), 'VITE_CHAT_URL')
 const whatsappPresetMessage =
   normalize(import.meta.env.VITE_WHATSAPP_PRESET_MESSAGE) ?? WHATSAPP_PRESET_FALLBACK
 const clarityProjectId = normalize(import.meta.env.VITE_CLARITY_PROJECT_ID)
@@ -59,7 +66,7 @@ const ga4Id = normalize(import.meta.env.VITE_GA4_ID)
 const contactEmail =
   ensureEmail(normalize(import.meta.env.VITE_CONTACT_EMAIL), 'VITE_CONTACT_EMAIL') ??
   CONTACT_EMAIL_FALLBACK
-const contactApiUrl = ensureHttpsUrl(
+const contactApiUrl = ensureApiUrl(
   normalize(import.meta.env.VITE_CONTACT_API_URL),
   'VITE_CONTACT_API_URL'
 )
