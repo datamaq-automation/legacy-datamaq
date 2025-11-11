@@ -8,16 +8,43 @@ export interface ContactEngagementContext {
 const WHATSAPP_EVENT_NAME = 'whatsapp_click'
 const EMAIL_EVENT_NAME = 'email_contact_submit'
 const isDev = import.meta.env.DEV
+const DEDUPE_WINDOW_MS = 2000
+
+const dispatchedEvents = new Map<string, number>()
+
+function shouldSkipEvent(eventName: string, context: ContactEngagementContext): boolean {
+  const now = Date.now()
+  const key = `${eventName}:${context.section}:${context.pageUrl}:${context.trafficSource}`
+  const lastDispatch = dispatchedEvents.get(key)
+
+  if (typeof lastDispatch === 'number' && now - lastDispatch < DEDUPE_WINDOW_MS) {
+    if (isDev) {
+      console.warn(
+        `[analytics] Evento "${eventName}" omitido para evitar duplicados (último envío hace ${now - lastDispatch} ms).`
+      )
+    }
+    return true
+  }
+
+  dispatchedEvents.set(key, now)
+  return false
+}
 
 export function recordWhatsappEngagement(
   context: ContactEngagementContext
 ): void {
+  if (shouldSkipEvent(WHATSAPP_EVENT_NAME, context)) {
+    return
+  }
   pushToDataLayer(WHATSAPP_EVENT_NAME, context)
   sendGaEvent(WHATSAPP_EVENT_NAME, context)
   sendClarityEvent(WHATSAPP_EVENT_NAME, context)
 }
 
 export function recordEmailEngagement(context: ContactEngagementContext): void {
+  if (shouldSkipEvent(EMAIL_EVENT_NAME, context)) {
+    return
+  }
   pushToDataLayer(EMAIL_EVENT_NAME, context)
   sendGaEvent(EMAIL_EVENT_NAME, context)
   sendClarityEvent(EMAIL_EVENT_NAME, context)

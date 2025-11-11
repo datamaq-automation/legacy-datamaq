@@ -4,8 +4,16 @@ import VueGtag from 'vue-gtag-next'
 import { getAnalyticsIds } from './config'
 
 const isDev = import.meta.env.DEV
+let analyticsInstalled = false
 
 export function installAnalytics(app: App): void {
+  if (analyticsInstalled) {
+    if (isDev) {
+      console.warn('[analytics] Se ignoró un intento duplicado de inicializar analíticas.')
+    }
+    return
+  }
+
   const { clarityProjectId, ga4Id } = getAnalyticsIds()
 
   if (clarityProjectId) {
@@ -27,4 +35,6 @@ export function installAnalytics(app: App): void {
   } else if (isDev) {
     console.log('[GA4] ID no configurado, GA4 no se inicializa.')
   }
+
+  analyticsInstalled = true
 }

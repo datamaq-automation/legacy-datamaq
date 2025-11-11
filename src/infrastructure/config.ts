@@ -59,7 +59,10 @@ const ga4Id = normalize(import.meta.env.VITE_GA4_ID)
 const contactEmail =
   ensureEmail(normalize(import.meta.env.VITE_CONTACT_EMAIL), 'VITE_CONTACT_EMAIL') ??
   CONTACT_EMAIL_FALLBACK
-const contactApiUrl = normalize(import.meta.env.VITE_CONTACT_API_URL)
+const contactApiUrl = ensureHttpsUrl(
+  normalize(import.meta.env.VITE_CONTACT_API_URL),
+  'VITE_CONTACT_API_URL'
+)
 
 export const config = {
   WHATSAPP_NUMBER: whatsappNumber,

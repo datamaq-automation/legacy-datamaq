@@ -34,5 +34,4 @@ coverage
 
 # Vitest
 __screenshots__/
-docs/todo.md
 .env.remote

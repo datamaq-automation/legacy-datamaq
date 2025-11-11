@@ -1,5 +1,5 @@
 <!--
-Path: src/components/Sobreprofebustos.vue
+Path: src/components/SobreProfeBustos.vue
 -->
 
 <template>
@@ -8,10 +8,11 @@ Path: src/components/Sobreprofebustos.vue
       <div class="row align-items-center">
         <div class="col-md-4 text-center mb-4 mb-md-0">
           <img
-            src="@/assets/foto-aula.png"
-            alt="Docente enseñando en aula"
+            :src="teamTraining"
+            alt="Ilustración de equipo técnico en sesión de formación"
             class="img-fluid rounded shadow"
-            style="max-height: 220px;"
+            width="240"
+            height="180"
             loading="lazy"
             decoding="async"
           />
@@ -32,3 +33,11 @@ Path: src/components/Sobreprofebustos.vue
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import teamTraining from '@/assets/team-training.svg'
+
+defineOptions({
+  name: 'SobreProfeBustos'
+})
+</script>

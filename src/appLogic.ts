@@ -17,12 +17,19 @@ import {
   recordWhatsappEngagement,
   type ContactEngagementContext
 } from './application/services/analyticsTracker'
+import {
+  ensureContactBackendStatus,
+  markContactBackendAvailable,
+  markContactBackendUnavailable
+} from './application/services/contactBackendStatus'
 
 export const CHAT_URL = getChatUrl()
 export const CHAT_ENABLED = isChatEnabled()
 export const CONTACT_EMAIL = getContactEmail()
 const isDev = import.meta.env.DEV
 const pageEntryTimestamp = Date.now()
+
+void ensureContactBackendStatus()
 
 function getTrafficSource(): string {
   const urlParams = new URLSearchParams(window.location.search)
@@ -42,11 +49,21 @@ function buildEngagementContext(section: string): ContactEngagementContext {
   }
 }
 
-function sendWhatsappContactEvent(section: string): void {
+async function sendWhatsappContactEvent(section: string): Promise<void> {
   const apiUrl = config.CONTACT_API_URL
   if (!apiUrl) {
     if (isDev) {
       console.error('CONTACT_API_URL no está configurada')
+    }
+    markContactBackendUnavailable()
+    return
+  }
+
+  const backendStatus = await ensureContactBackendStatus()
+
+  if (backendStatus !== 'available') {
+    if (isDev) {
+      console.warn('[sendWhatsappContactEvent] Backend de contacto no disponible, omitiendo envío.')
     }
     return
   }
@@ -67,18 +84,32 @@ function sendWhatsappContactEvent(section: string): void {
     console.debug('[sendWhatsappContactEvent] Payload:', payload)
   }
 
-  fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  }).catch((err) => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (!response.ok && response.status >= 500) {
+      markContactBackendUnavailable()
+      if (isDev) {
+        console.warn(
+          `[sendWhatsappContactEvent] Respuesta no exitosa del backend (${response.status}).`
+        )
+      }
+    } else {
+      markContactBackendAvailable()
+    }
+  } catch (err) {
+    markContactBackendUnavailable()
     if (isDev) {
       console.error('Error al enviar evento de WhatsApp:', err)
     }
     // Silencioso, no feedback al usuario
-  })
+  }
 }
 
 export function openWhatsApp(seccion: string = 'fab'): void {
@@ -90,7 +121,7 @@ export function openWhatsApp(seccion: string = 'fab'): void {
   }
 
   // Enviar evento silencioso al backend
-  sendWhatsappContactEvent(seccion)
+  void sendWhatsappContactEvent(seccion)
 
   let url: string
 
@@ -109,7 +140,7 @@ export function openWhatsApp(seccion: string = 'fab'): void {
   recordWhatsappEngagement(context)
 }
 
-export function submitEmailContact(
+export async function submitEmailContact(
   section: string,
   payload: EmailContactPayload
 ): Promise<{ ok: boolean; error?: string }> {
@@ -118,7 +149,16 @@ export function submitEmailContact(
     if (isDev) {
       console.error('CONTACT_API_URL no está configurada')
     }
-    return Promise.resolve({ ok: false, error: 'No se encuentra configurado el backend de contacto.' })
+    markContactBackendUnavailable()
+    return { ok: false, error: 'No se encuentra configurado el backend de contacto.' }
+  }
+
+  const backendStatus = await ensureContactBackendStatus()
+  if (backendStatus !== 'available') {
+    return {
+      ok: false,
+      error: 'El canal de correo electrónico no se encuentra disponible en este momento.'
+    }
   }
 
   const context = buildEngagementContext(section)
@@ -136,37 +176,49 @@ export function submitEmailContact(
     traffic_source: getTrafficSource()
   }
 
-  return fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(extendedPayload)
-  })
-    .then(async (res) => {
-      if (isDev) {
-        console.debug('[submitEmailContact] Respuesta HTTP:', res.status, res.statusText)
-      }
+  try {
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(extendedPayload)
+    })
+
+    if (isDev) {
+      console.debug('[submitEmailContact] Respuesta HTTP:', res.status, res.statusText)
+    }
+
+    if (!res.ok) {
       let errorText = ''
-      if (!res.ok) {
-        try {
-          const errorJson = await res.json()
-          errorText = errorJson?.error || JSON.stringify(errorJson)
-        } catch {
-          errorText = await res.text().catch(() => 'Error desconocido')
-        }
-        if (isDev) {
-          console.warn('[submitEmailContact] Error de backend:', errorText)
-        }
-        return { ok: false, error: errorText }
+      try {
+        const errorJson = await res.json()
+        errorText = errorJson?.error || JSON.stringify(errorJson)
+      } catch {
+        errorText = await res.text().catch(() => 'Error desconocido')
       }
-      recordEmailEngagement(context)
-      return { ok: true }
-    })
-    .catch((err) => {
+
       if (isDev) {
-        console.error('Error al enviar la consulta de contacto:', err)
+        console.warn('[submitEmailContact] Error de backend:', errorText)
       }
-      return { ok: false, error: 'No se pudo enviar la consulta. Intente más tarde.' }
-    })
+
+      if (res.status >= 500) {
+        markContactBackendUnavailable()
+      } else {
+        markContactBackendAvailable()
+      }
+
+      return { ok: false, error: errorText }
+    }
+
+    markContactBackendAvailable()
+    recordEmailEngagement(context)
+    return { ok: true }
+  } catch (err) {
+    markContactBackendUnavailable()
+    if (isDev) {
+      console.error('Error al enviar la consulta de contacto:', err)
+    }
+    return { ok: false, error: 'No se pudo enviar la consulta. Intente más tarde.' }
+  }
 }

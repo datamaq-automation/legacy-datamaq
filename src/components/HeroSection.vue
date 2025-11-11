@@ -80,19 +80,22 @@ path: src/components/HeroSection.vue
           </ul>
         </div>
         <div class="col-lg-6 order-1 order-lg-2 text-center">
-          <div class="position-relative mx-auto" style="max-width: 420px;">
+          <div class="position-relative mx-auto hero-illustration">
             <div
               class="bg-primary rounded-circle position-absolute top-50 start-50 translate-middle"
               style="width: 320px; height: 320px; opacity: 0.25;"
             ></div>
-            <img
-              src="@/assets/foto-tablero.png"
-              alt="Profesional instalando sensores en tablero industrial"
-              class="img-fluid rounded-4 shadow-lg position-relative"
-              style="max-height: 320px; object-fit: cover;"
-              fetchpriority="high"
-              decoding="async"
-            />
+            <picture class="d-inline-block position-relative">
+              <img
+                :src="heroIllustration"
+                alt="Ilustración de tablero digital con indicadores de energía"
+                class="img-fluid rounded-4 shadow-lg"
+                width="420"
+                height="320"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </picture>
           </div>
         </div>
       </div>
@@ -102,6 +105,7 @@ path: src/components/HeroSection.vue
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import heroIllustration from '@/assets/hero-energy.svg'
 
 const props = defineProps<{
   chatEnabled: boolean
@@ -112,4 +116,14 @@ const emit = defineEmits<{
 }>()
 
 const chatEnabled = computed(() => props.chatEnabled)
+
+defineOptions({
+  name: 'HeroSection'
+})
 </script>
+
+<style scoped>
+.hero-illustration {
+  max-width: 420px;
+}
+</style>

@@ -8,10 +8,11 @@ import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
 import ServiciosSection from './components/ServiciosSection.vue'
 import ContactFormSection from './components/ContactFormSection.vue'
-import Sobreprofebustos from './components/SobreProfeBustos.vue'
+import SobreProfeBustos from './components/SobreProfeBustos.vue'
 import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
 import LegalSection from './components/LegalSection.vue'
+import ConsentBanner from './components/ConsentBanner.vue'
 
 function handleWhatsapp(section: string) {
   openWhatsApp(section)
@@ -37,11 +38,12 @@ function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
         :contact-email="CONTACT_EMAIL"
         :on-submit="handleEmailSubmit"
       />
-      <Sobreprofebustos />
+      <SobreProfeBustos />
       <LegalSection />
     </main>
     <Footer />
     <WhatsappFab v-if="CHAT_ENABLED" @whatsapp="handleWhatsapp('fab')" />
+    <ConsentBanner />
   </div>
 </template>
 

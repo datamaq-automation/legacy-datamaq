@@ -3,19 +3,20 @@ Path: src/components/ServiciosSection.vue
 -->
 
 <template>
-  <section id="servicios" class="py-5 bg-body-secondary text-body">
+  <section id="servicios" class="py-5 bg-body-secondary text-body" aria-labelledby="servicios-title">
     <div class="container">
-      <h2 class="mb-5 text-center text-body-emphasis">Servicios</h2>
+      <h2 id="servicios-title" class="mb-5 text-center text-body-emphasis">Servicios</h2>
       <div class="row g-4">
         <div class="col-12 col-lg-6">
           <div class="card h-100 border-0 shadow-sm">
             <div class="card-body p-4">
               <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
                 <img
-                  src="@/assets/herramientas.png"
-                  alt="Herramientas eléctricas y de medición industrial"
+                  :src="installTools"
+                  alt="Ilustración de herramientas y plano técnico"
                   class="rounded-3 shadow-sm align-self-start"
-                  style="max-width: 140px; object-fit: contain;"
+                  width="140"
+                  height="120"
                   loading="lazy"
                   decoding="async"
                 />
@@ -44,10 +45,11 @@ Path: src/components/ServiciosSection.vue
               </ul>
               <figure class="text-center mb-4">
                 <img
-                  src="@/assets/powermeter.png"
-                  alt="Equipos powermeter industriales"
+                  :src="powermeter"
+                  alt="Ilustración de medidor de energía"
                   class="img-fluid rounded-3 shadow-sm mx-auto"
-                  style="max-height: 120px; object-fit: contain;"
+                  width="220"
+                  height="140"
                   loading="lazy"
                   decoding="async"
                 />
@@ -79,10 +81,11 @@ Path: src/components/ServiciosSection.vue
             <div class="card-body p-4">
               <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
                 <img
-                  src="@/assets/infografia-indicadores.png"
-                  alt="Infografía de indicadores energéticos y período de repago"
+                  :src="analytics"
+                  alt="Ilustración de dashboard con indicadores energéticos"
                   class="rounded-3 shadow-sm align-self-start"
-                  style="max-width: 160px; object-fit: contain;"
+                  width="160"
+                  height="140"
                   loading="lazy"
                   decoding="async"
                 />
@@ -137,6 +140,9 @@ Path: src/components/ServiciosSection.vue
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import analytics from '@/assets/analytics-dashboard.svg'
+import installTools from '@/assets/install-tools.svg'
+import powermeter from '@/assets/powermeter.svg'
 
 const props = defineProps<{
   chatEnabled: boolean
@@ -147,4 +153,8 @@ const emit = defineEmits<{
 }>()
 
 const chatEnabled = computed(() => props.chatEnabled)
+
+defineOptions({
+  name: 'ServiciosSection'
+})
 </script>

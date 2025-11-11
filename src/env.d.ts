@@ -14,8 +14,29 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
+type DataLayerEvent = {
+  event: string
+  section?: string
+  traffic_source?: string
+  navigation_time_ms?: number
+  page_location?: string
+  [key: string]: unknown
+}
+
+type GtagFunction = (
+  command: 'event',
+  eventName: string,
+  params?: Record<string, unknown>
+) => void
+
+type ClarityFunction = (
+  command: 'event',
+  eventName: string,
+  payload?: Record<string, unknown>
+) => void
+
 interface Window {
-  dataLayer?: Array<Record<string, unknown>>
-  gtag?: (...args: unknown[]) => void
-  clarity?: (...args: unknown[]) => void
+  dataLayer?: DataLayerEvent[]
+  gtag?: GtagFunction
+  clarity?: ClarityFunction
 }

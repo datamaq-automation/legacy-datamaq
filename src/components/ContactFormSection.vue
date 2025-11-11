@@ -91,20 +91,30 @@ Path: src/components/ContactFormSection.vue
                     </span>
                   </button>
                 </div>
-                <p
-                  v-if="!isChannelEnabled"
-                  class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small"
-                >
-                  El canal de correo electrónico no se encuentra disponible en este momento. Por favor, intentá nuevamente más
-                  tarde.
-                </p>
-                <p
-                  v-if="feedback.message"
-                  :class="['mt-2', 'alert', feedback.success ? 'alert-success' : 'alert-danger']"
-                  role="alert"
-                >
-                  {{ feedback.message }}
-                </p>
+                <div class="col-12" aria-live="polite" aria-atomic="true">
+                  <p
+                    v-if="isCheckingBackend"
+                    class="text-info-emphasis bg-info-subtle border border-info-subtle rounded-3 px-3 py-2 small"
+                  >
+                    Verificando la disponibilidad del servicio de correo electrónico…
+                  </p>
+                  <p
+                    v-else-if="!isBackendAvailable"
+                    class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small"
+                  >
+                    El canal de correo electrónico no se encuentra disponible en este momento. Por favor, intentá nuevamente
+                    más tarde.
+                  </p>
+                  <p
+                    v-if="feedback.message"
+                    ref="feedbackMessageRef"
+                    :class="['mt-2', 'alert', feedback.success ? 'alert-success' : 'alert-danger']"
+                    role="alert"
+                    tabindex="-1"
+                  >
+                    {{ feedback.message }}
+                  </p>
+                </div>
               </form>
             </div>
           </div>
@@ -115,8 +125,14 @@ Path: src/components/ContactFormSection.vue
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import type { EmailContactPayload } from '@/application/services/emailChannelService'
+import {
+  ensureContactBackendStatus,
+  getContactBackendStatus,
+  subscribeToContactBackendStatus,
+  type ContactBackendStatus
+} from '@/application/services/contactBackendStatus'
 
 const props = defineProps<{
   contactEmail?: string,
@@ -130,9 +146,14 @@ const form = reactive({
   company: '',
   message: ''
 })
-const isChannelEnabled = computed(() => Boolean(props.contactEmail))
+const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus())
+const isBackendAvailable = computed(() => backendStatus.value === 'available')
+const isCheckingBackend = computed(() => backendStatus.value === 'unknown')
+const isChannelEnabled = computed(() => Boolean(props.contactEmail) && isBackendAvailable.value)
 const isSubmitting = ref(false)
 const feedback = reactive<{ message: string; success: boolean }>({ message: '', success: false })
+const feedbackMessageRef = ref<HTMLParagraphElement | null>(null)
+let unsubscribeFromStatus: (() => void) | undefined
 
 function resetForm(): void {
   form.name = ''
@@ -164,24 +185,42 @@ async function handleSubmit(): Promise<void> {
       console.debug('[ContactFormSection] Resultado de onSubmit:', result)
     }
     if (result && result.ok) {
-      feedback.message = '¡Consulta enviada correctamente! Te responderemos a la brevedad.'
-      feedback.success = true
       if (formElement) formElement.reset()
       resetForm()
+      await announceFeedback('¡Consulta enviada correctamente! Te responderemos a la brevedad.', true)
     } else {
-      feedback.message = result?.error || 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
-      feedback.success = false
+      await announceFeedback(
+        result?.error || 'No se pudo enviar la consulta. Intenta nuevamente más tarde.',
+        false
+      )
     }
   } catch (e) {
     if (import.meta.env.DEV) {
       console.error('[ContactFormSection] Error inesperado en handleSubmit:', e)
     }
-    feedback.message = 'Ocurrió un error inesperado. Intenta nuevamente más tarde.'
-    feedback.success = false
+    await announceFeedback('Ocurrió un error inesperado. Intenta nuevamente más tarde.', false)
   } finally {
     isSubmitting.value = false
   }
 }
 
 const contactEmail = computed(() => props.contactEmail)
+
+async function announceFeedback(message: string, success: boolean): Promise<void> {
+  feedback.message = message
+  feedback.success = success
+  await nextTick()
+  feedbackMessageRef.value?.focus()
+}
+
+onMounted(() => {
+  unsubscribeFromStatus = subscribeToContactBackendStatus((status) => {
+    backendStatus.value = status
+  })
+  void ensureContactBackendStatus()
+})
+
+onBeforeUnmount(() => {
+  unsubscribeFromStatus?.()
+})
 </script>

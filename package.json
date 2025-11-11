@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:a11y": "node scripts/run-a11y.mjs"
   },
   "dependencies": {
     "@microsoft/clarity": "^1.0.0",
