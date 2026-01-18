@@ -6,10 +6,10 @@ import type {
 } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
-import type { ContactBackendMonitor } from '../services/contactBackendStatus'
-import type { EngagementTracker } from '../services/engagementTracker'
+import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
+import type { EngagementTracker } from '../analytics/engagementTracker'
 
-export class OpenWhatsapp {
+export class OpenWhatsappUseCase {
   constructor(
     private config: ConfigPort,
     private location: LocationProvider,

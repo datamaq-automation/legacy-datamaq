@@ -1,4 +1,4 @@
-<!--
+Ôªø<!--
 Path: src/ui/features/contact/ConsentBanner.vue
 -->
 <template>
@@ -42,13 +42,13 @@ Path: src/ui/features/contact/ConsentBanner.vue
 
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { consentManagerKey, type ConsentStatus } from '@/application/services/consentManager'
+import { consentManagerKey, type ConsentStatus } from '@/application/consent/consentManager'
 import { useContent } from '@/ui/composables/useContent'
 
 const manager = inject(consentManagerKey)
 
 if (!manager) {
-  throw new Error('ConsentManager no est· disponible en el ·rbol de la aplicaciÛn.')
+  throw new Error('ConsentManager no est√° disponible en el √°rbol de la aplicaci√≥n.')
 }
 
 const status = ref<ConsentStatus>(manager.getStatus())
@@ -120,3 +120,4 @@ onBeforeUnmount(() => {
   }
 }
 </style>
+

@@ -1,4 +1,4 @@
-import type { AnalyticsProvider } from '../ports/AnalyticsProvider'
+import type { AnalyticsProvider } from './ports/AnalyticsProvider'
 import type { LoggerPort } from '../ports/Logger'
 
 export class AnalyticsFacade {

@@ -1,6 +1,6 @@
 import { EmailContactSchema } from '@/application/validation/contactSchema'
 import type { EmailContactPayload } from '@/application/dto/contact'
-import type { Result } from '@/application/types/result'
+import type { Result } from '@/domain/shared/result'
 
 export function useContactValidation() {
   function validate(payload: EmailContactPayload): Result<EmailContactPayload, null> {

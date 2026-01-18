@@ -1,7 +1,7 @@
 import type { DomainEvent } from '@/application/ports/EventBus'
 import type { LoggerPort } from '@/application/ports/Logger'
-import type { AnalyticsFacade } from '../analyticsFacade'
-import type { NotificationFacade } from '../notificationFacade'
+import type { AnalyticsFacade } from '../../analytics/analyticsFacade'
+import type { NotificationFacade } from '../../notifications/notificationFacade'
 
 export class ContactSubmittedHandler {
   constructor(

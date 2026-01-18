@@ -1,5 +1,5 @@
 import { useContainer } from '@/di/container'
-import type { ContactBackendStatus } from '@/application/services/contactBackendStatus'
+import type { ContactBackendStatus } from '@/application/contact/contactBackendStatus'
 
 export type { ContactBackendStatus }
 

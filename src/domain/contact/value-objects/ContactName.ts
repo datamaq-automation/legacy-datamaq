@@ -1,4 +1,4 @@
-import type { Result } from '@/application/types/result'
+import type { Result } from '@/domain/shared/result'
 import type { ContactDomainError } from '../errors'
 
 export class ContactName {

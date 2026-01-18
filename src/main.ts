@@ -8,7 +8,7 @@ import './styles/layout.css'
 import './styles/components.css'
 import './assets/theme.css'
 import { installAnalytics } from './infrastructure/analytics'
-import { consentManagerKey } from './application/services/consentManager'
+import { consentManagerKey } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
 
 const app = createApp(App)

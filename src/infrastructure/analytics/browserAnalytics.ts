@@ -1,4 +1,4 @@
-import type { AnalyticsProvider } from '@/application/ports/AnalyticsProvider'
+import type { AnalyticsProvider } from '@/application/analytics/ports/AnalyticsProvider'
 import type { LoggerPort } from '@/application/ports/Logger'
 
 type DataLayer = Array<Record<string, unknown>>

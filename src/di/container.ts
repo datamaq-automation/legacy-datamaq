@@ -1,10 +1,10 @@
-import { createConsentManager } from '@/application/services/consentManager'
-import { AnalyticsFacade } from '@/application/services/analyticsFacade'
-import { ContactBackendMonitor } from '@/application/services/contactBackendStatus'
-import { EngagementTracker } from '@/application/services/engagementTracker'
-import { SubmitContactApplicationService } from '@/application/services/submitContactApplicationService'
-import { ContactSubmittedHandler } from '@/application/services/handlers/contactSubmittedHandler'
-import { OpenWhatsapp } from '@/application/use-cases/openWhatsapp'
+import { createConsentManager } from '@/application/consent/consentManager'
+import { AnalyticsFacade } from '@/application/analytics/analyticsFacade'
+import { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
+import { EngagementTracker } from '@/application/analytics/engagementTracker'
+import { SubmitContactApplicationService } from '@/application/contact/submitContactApplicationService'
+import { ContactSubmittedHandler } from '@/application/contact/handlers/contactSubmittedHandler'
+import { OpenWhatsappUseCase } from '@/application/use-cases/openWhatsapp'
 import { BrowserAnalytics } from '@/infrastructure/analytics/browserAnalytics'
 import { ViteConfig } from '@/infrastructure/config/viteConfig'
 import { BrowserEnvironment } from '@/infrastructure/environment/browserEnvironment'
@@ -14,7 +14,7 @@ import { ConsoleLogger } from '@/infrastructure/logging/consoleLogger'
 import { BrowserStorage } from '@/infrastructure/storage/browserStorage'
 import { ContactApiGateway } from '@/infrastructure/contact/contactApiGateway'
 import { ContactService } from '@/domain/contact/services/ContactService'
-import { NotificationFacade } from '@/application/services/notificationFacade'
+import { NotificationFacade } from '@/application/notifications/notificationFacade'
 import { NoopNotificationProvider } from '@/infrastructure/notifications/noopNotificationProvider'
 import type { App, InjectionKey } from 'vue'
 import { inject } from 'vue'
@@ -34,7 +34,7 @@ const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, logger)
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
 
-const openWhatsapp = new OpenWhatsapp(
+const openWhatsapp = new OpenWhatsappUseCase(
   config,
   environment,
   environment,

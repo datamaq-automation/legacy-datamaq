@@ -1,5 +1,5 @@
 import type { EmailContactPayload } from '@/application/dto/contact'
-import type { Result } from '@/application/types/result'
+import type { Result } from '@/domain/shared/result'
 import type { ContactError } from '@/application/types/errors'
 import { useContainer } from '@/di/container'
 

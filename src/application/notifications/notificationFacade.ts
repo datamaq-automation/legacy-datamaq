@@ -1,4 +1,4 @@
-import type { NotificationProvider } from '../ports/NotificationProvider'
+import type { NotificationProvider } from './ports/NotificationProvider'
 import type { LoggerPort } from '../ports/Logger'
 
 export class NotificationFacade {

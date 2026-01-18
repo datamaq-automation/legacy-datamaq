@@ -1,6 +1,6 @@
-import type { ContactGateway } from '@/application/ports/ContactGateway'
+import type { ContactGateway } from '@/application/contact/ports/ContactGateway'
 import type { ContactSubmitPayload } from '@/application/dto/contact'
-import type { Result } from '@/application/types/result'
+import type { Result } from '@/domain/shared/result'
 import type { ContactError } from '@/application/types/errors'
 import type { HttpClient } from '@/application/ports/HttpClient'
 import type { ConfigPort } from '@/application/ports/Config'
