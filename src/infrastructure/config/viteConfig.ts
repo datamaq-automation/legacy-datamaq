@@ -6,15 +6,13 @@ const WHATSAPP_PRESET_FALLBACK = 'Vengo de la pagina web, quiero mas informacion
 const CONTACT_EMAIL_FALLBACK = 'contacto@profebustos.com.ar'
 
 export class ViteConfig implements ConfigPort {
-  contactApiUrl?: string
-  contactEmail?: string
-  whatsappNumber?: string
-  whatsappPresetMessage?: string
-  chatUrl?: string
+  contactApiUrl: NullableString
+  contactEmail: NullableString
+  whatsappNumber: NullableString
+  whatsappPresetMessage: NullableString
 
   constructor() {
     this.whatsappNumber = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
-    this.chatUrl = ensureApiUrl(normalize(import.meta.env.VITE_CHAT_URL), 'VITE_CHAT_URL')
     this.whatsappPresetMessage =
       normalize(import.meta.env.VITE_WHATSAPP_PRESET_MESSAGE) ?? WHATSAPP_PRESET_FALLBACK
     this.contactEmail =

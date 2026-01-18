@@ -26,7 +26,6 @@ Este documento describe cómo preparar, ejecutar y desplegar el frontend desarro
 
 3. Edita `.env` con los valores reales:
    - `VITE_WHATSAPP_NUMBER`: número de WhatsApp completo (sin signos ni espacios) utilizado por el botón de contacto.
-   - `VITE_CHAT_URL`: URL del chat externo si está disponible (puede quedar vacío).
    - `VITE_CLARITY_PROJECT_ID`: identificador del proyecto en Microsoft Clarity para el tracking de sesiones.
    - `VITE_GA4_ID`: identificador de la propiedad de Google Analytics 4.
 
@@ -74,4 +73,3 @@ Con esto, el sitio quedará listo para producción sin dependencias adicionales.
 ---
 
 ¿Dudas o problemas? Contacta a [Profebustos](mailto:contacto@profebustos.com.ar).
-

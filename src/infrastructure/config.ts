@@ -58,7 +58,6 @@ const CONTACT_EMAIL_FALLBACK = 'contacto@profebustos.com.ar'
 
 
 const whatsappNumber = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
-const chatUrl = ensureApiUrl(normalize(import.meta.env.VITE_CHAT_URL), 'VITE_CHAT_URL')
 const whatsappPresetMessage =
   normalize(import.meta.env.VITE_WHATSAPP_PRESET_MESSAGE) ?? WHATSAPP_PRESET_FALLBACK
 const clarityProjectId = normalize(import.meta.env.VITE_CLARITY_PROJECT_ID)
@@ -73,7 +72,6 @@ const contactApiUrl = ensureApiUrl(
 
 export const config = {
   WHATSAPP_NUMBER: whatsappNumber,
-  CHAT_URL: chatUrl,
   WHATSAPP_PRESET_MESSAGE: whatsappPresetMessage,
   CLARITY_PROJECT_ID: clarityProjectId,
   GA4_ID: ga4Id,

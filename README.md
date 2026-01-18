@@ -17,7 +17,7 @@ Landing corporativa construida con **Vue 3** y **Vite** para promocionar los ser
 
 ## Configuración de entorno
 1. Copiá `.env.example` a `.env` y completá los valores reales para cada entorno (desarrollo, staging, producción).
-2. Verificá que `VITE_CONTACT_API_URL` y `VITE_CHAT_URL` apunten a endpoints **HTTPS** válidos.
+2. Verificá que `VITE_CONTACT_API_URL` apunte a un endpoint **HTTPS** válido.
 3. Ajustá los IDs de analítica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) según la propiedad correspondiente.
 
 ## Instalación y scripts

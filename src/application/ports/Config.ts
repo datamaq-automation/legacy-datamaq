@@ -1,7 +1,8 @@
+type NullableString = string | undefined
+
 export interface ConfigPort {
-  contactApiUrl?: string
-  contactEmail?: string
-  whatsappNumber?: string
-  whatsappPresetMessage?: string
-  chatUrl?: string
+  contactApiUrl: NullableString
+  contactEmail: NullableString
+  whatsappNumber: NullableString
+  whatsappPresetMessage: NullableString
 }
