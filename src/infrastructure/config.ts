@@ -84,12 +84,12 @@ export function isWhatsappConfigured(): boolean {
 }
 
 export function getAnalyticsIds(): {
-  clarityProjectId?: string
-  ga4Id?: string
+  clarityProjectId: NullableString
+  ga4Id: NullableString
 } {
   return {
-    clarityProjectId,
-    ga4Id
+    clarityProjectId: clarityProjectId ?? undefined,
+    ga4Id: ga4Id ?? undefined
   }
 }
 
