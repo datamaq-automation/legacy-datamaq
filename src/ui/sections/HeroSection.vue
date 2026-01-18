@@ -10,14 +10,13 @@ Path: src/ui/sections/HeroSection.vue
           <div
             class="d-inline-flex align-items-center gap-2 rounded-pill px-3 py-1 bg-success-subtle text-success-emphasis fw-semibold text-uppercase small"
           >
-            Consulta Virtual sin cargo
+            {{ hero.badge }}
           </div>
           <h1 id="hero-title" class="display-5 fw-bold text-body-emphasis mt-3 mb-3">
-            Energía y producción alineadas a tus objetivos de planta
+            {{ hero.title }}
           </h1>
           <p class="fs-5 text-secondary mb-4">
-            Instalamos los medidores críticos y te acompañamos para que el OEE y los kWh/unidad guíen cada decisión
-            operativa.
+            {{ hero.subtitle }}
           </p>
           <div
             class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 hero-primary-actions hero-cta-stack"
@@ -31,35 +30,35 @@ Path: src/ui/sections/HeroSection.vue
                 :aria-describedby="!chatEnabled ? 'hero-chat-disabled' : undefined"
                 @click="emit('primary-cta')"
               >
-                {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
+                {{ chatEnabled ? hero.primaryCta.label : hero.chatUnavailableMessage }}
               </button>
             </div>
             <div class="hero-cta-stack__item">
               <a
                 class="btn btn-outline-secondary btn-lg px-4 hero-secondary-cta w-100"
-                href="#servicios"
+                :href="hero.secondaryCta.href"
               >
-                {{ CTA_COPY.SECONDARY_SERVICES }}
+                {{ hero.secondaryCta.label }}
               </a>
             </div>
           </div>
           <p class="text-secondary small mb-2">
-            Respuesta en menos de 24 horas con agenda de instalación y análisis de datos.
+            {{ hero.responseNote }}
           </p>
           <p
             v-if="!chatEnabled"
             id="hero-chat-disabled"
             class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small"
           >
-            El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.
+            {{ hero.chatUnavailableMessage }}
           </p>
           <ul class="row list-unstyled gy-3 text-start hero-benefits" aria-label="Beneficios">
             <li class="col-12 col-sm-6">
               <div class="hero-benefit-card hero-benefit-card--success h-100">
                 <span class="hero-benefit-card__badge">1</span>
                 <div>
-                  <p class="hero-benefit-card__title">Línea base en semanas</p>
-                  <p class="hero-benefit-card__text">Lecturas continuas de energía y producción con checklist validado.</p>
+                  <p class="hero-benefit-card__title">{{ hero.benefits[0].title }}</p>
+                  <p class="hero-benefit-card__text">{{ hero.benefits[0].text }}</p>
                 </div>
               </div>
             </li>
@@ -67,8 +66,8 @@ Path: src/ui/sections/HeroSection.vue
               <div class="hero-benefit-card hero-benefit-card--primary h-100">
                 <span class="hero-benefit-card__badge">2</span>
                 <div>
-                  <p class="hero-benefit-card__title">Decisiones guiadas por OEE</p>
-                  <p class="hero-benefit-card__text">Disponibilidad, rendimiento y calidad listos para priorizar mejoras.</p>
+                  <p class="hero-benefit-card__title">{{ hero.benefits[1].title }}</p>
+                  <p class="hero-benefit-card__text">{{ hero.benefits[1].text }}</p>
                 </div>
               </div>
             </li>
@@ -76,8 +75,8 @@ Path: src/ui/sections/HeroSection.vue
               <div class="hero-benefit-card hero-benefit-card--warning h-100">
                 <span class="hero-benefit-card__badge">3</span>
                 <div>
-                  <p class="hero-benefit-card__title">Preferencia cooperativas y sector gráfico</p>
-                  <p class="hero-benefit-card__text">Planes ajustados a industrias del GBA Norte sin exclusiones.</p>
+                  <p class="hero-benefit-card__title">{{ hero.benefits[2].title }}</p>
+                  <p class="hero-benefit-card__text">{{ hero.benefits[2].text }}</p>
                 </div>
               </div>
             </li>
@@ -91,11 +90,11 @@ Path: src/ui/sections/HeroSection.vue
             ></div>
             <picture class="d-inline-block position-relative">
               <img
-                :src="heroIllustration"
-                alt="Ilustración de tablero digital con indicadores de energía"
+                :src="hero.image.src"
+                :alt="hero.image.alt"
                 class="img-fluid rounded-4 shadow-lg"
-                width="420"
-                height="320"
+                :width="hero.image.width"
+                :height="hero.image.height"
                 fetchpriority="high"
                 decoding="async"
               />
@@ -109,15 +108,15 @@ Path: src/ui/sections/HeroSection.vue
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CTA_COPY } from '@/application/constants/ctaCopy'
 import type { HeroSectionEmits, HeroSectionProps } from '@/ui/types/sections'
-import heroIllustration from '@/assets/hero-energy.svg'
+import { useContent } from '@/ui/composables/useContent'
 
 const props = defineProps<HeroSectionProps>()
 
 const emit = defineEmits<HeroSectionEmits>()
 
 const chatEnabled = computed(() => props.chatEnabled)
+const { hero } = useContent()
 
 defineOptions({
   name: 'HeroSection'
@@ -155,7 +154,3 @@ defineOptions({
   }
 }
 </style>
-
-
-
-

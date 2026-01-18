@@ -1,5 +1,5 @@
 <!--
-Path: src/components/WhatsappFab.vue
+Path: src/ui/features/contact/WhatsappFab.vue
 -->
 
 <template>
@@ -9,20 +9,20 @@ Path: src/components/WhatsappFab.vue
       style="width:60px;height:60px;"
       type="button"
       @click="emit('whatsapp')"
-      :aria-label="CTA_COPY.FAB_ARIA_LABEL"
+      :aria-label="whatsappFab.ariaLabel"
     >
       <i class="bi bi-whatsapp fs-2" aria-hidden="true"></i>
-      <span class="visually-hidden">{{ CTA_COPY.FAB_ARIA_LABEL }}</span>
+      <span class="visually-hidden">{{ whatsappFab.ariaLabel }}</span>
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { CTA_COPY } from '@/application/constants/ctaCopy'
-
 import type { WhatsappFabEmits } from '@/ui/types/sections'
+import { useContent } from '@/ui/composables/useContent'
 
 const emit = defineEmits<WhatsappFabEmits>()
+const { whatsappFab } = useContent()
 
 defineOptions({
   name: 'WhatsappFab'

@@ -1,5 +1,5 @@
 <!--
-Path: src/components/ConsentBanner.vue
+Path: src/ui/features/contact/ConsentBanner.vue
 -->
 <template>
   <div
@@ -12,10 +12,9 @@ Path: src/components/ConsentBanner.vue
     <div class="container py-3">
       <div class="row align-items-center g-3">
         <div class="col-12 col-lg">
-          <h2 id="consent-banner-title" class="h6 fw-semibold mb-1 text-body">Usamos cookies para analítica</h2>
+          <h2 id="consent-banner-title" class="h6 fw-semibold mb-1 text-body">{{ consent.title }}</h2>
           <p class="mb-0 small text-body-secondary">
-            Aceptá para habilitar Google Analytics 4 y Microsoft Clarity. Podés revisar los detalles en la sección legal del
-            sitio.
+            {{ consent.description }}
           </p>
         </div>
         <div class="col-12 col-lg-auto d-flex gap-2 justify-content-lg-end consent-banner__actions">
@@ -25,7 +24,7 @@ Path: src/components/ConsentBanner.vue
             @click="reject"
             data-testid="consent-reject"
           >
-            Rechazar
+            {{ consent.rejectLabel }}
           </button>
           <button
             type="button"
@@ -33,7 +32,7 @@ Path: src/components/ConsentBanner.vue
             @click="accept"
             data-testid="consent-accept"
           >
-            Aceptar
+            {{ consent.acceptLabel }}
           </button>
         </div>
       </div>
@@ -44,15 +43,17 @@ Path: src/components/ConsentBanner.vue
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { consentManagerKey, type ConsentStatus } from '@/application/services/consentManager'
+import { useContent } from '@/ui/composables/useContent'
 
 const manager = inject(consentManagerKey)
 
 if (!manager) {
-  throw new Error('ConsentManager no está disponible en el árbol de la aplicación.')
+  throw new Error('ConsentManager no est� disponible en el �rbol de la aplicaci�n.')
 }
 
 const status = ref<ConsentStatus>(manager.getStatus())
 let unsubscribe: (() => void) | undefined
+const { consent } = useContent()
 
 const visible = computed(() => status.value === 'unknown')
 

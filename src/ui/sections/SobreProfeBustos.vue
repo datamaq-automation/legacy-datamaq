@@ -1,5 +1,5 @@
 <!--
-Path: src/components/SobreProfeBustos.vue
+Path: src/ui/sections/SobreProfeBustos.vue
 -->
 
 <template>
@@ -8,25 +8,22 @@ Path: src/components/SobreProfeBustos.vue
       <div class="row align-items-center">
         <div class="col-md-4 text-center mb-4 mb-md-0">
           <img
-            :src="teamTraining"
-            alt="Ilustración de equipo técnico en sesión de formación"
+            :src="about.image.src"
+            :alt="about.image.alt"
             class="img-fluid rounded shadow"
-            width="240"
-            height="180"
+            :width="about.image.width"
+            :height="about.image.height"
             loading="lazy"
             decoding="async"
           />
         </div>
         <div class="col-md-8">
-          <h2 id="sobre-title" class="mb-3 accent-title">Sobre profebustos</h2>
+          <h2 id="sobre-title" class="mb-3 accent-title">{{ about.title }}</h2>
           <p class="sobre-text">
-            profebustos es liderado por profesionales con experiencia en la industria y la educación técnica.
-            Nuestra misión es ayudar a las empresas del GBA Norte a mejorar su eficiencia energética y operativa,
-            combinando tecnología de medición y formación especializada.
+            {{ about.paragraphs[0] }}
           </p>
           <p class="sobre-text">
-            El responsable principal cuenta con trayectoria en instalaciones industriales y docencia,
-            aportando una visión integral para interpretar datos y tomar decisiones informadas.
+            {{ about.paragraphs[1] }}
           </p>
         </div>
       </div>
@@ -35,7 +32,9 @@ Path: src/components/SobreProfeBustos.vue
 </template>
 
 <script setup lang="ts">
-import teamTraining from '@/assets/team-training.svg'
+import { useContent } from '@/ui/composables/useContent'
+
+const { about } = useContent()
 
 defineOptions({
   name: 'SobreProfeBustos'

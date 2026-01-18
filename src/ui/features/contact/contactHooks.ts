@@ -7,6 +7,7 @@ import {
 } from '@/interfaces/controllers/contactBackendController'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
+import { useContent } from '@/ui/composables/useContent'
 import { useContactValidation } from './useContactValidation'
 
 export function useContactForm(props: ContactFormProps) {
@@ -24,6 +25,7 @@ export function useContactForm(props: ContactFormProps) {
   const isSubmitting = ref(false)
   const feedback = reactive<{ message: string; success: boolean }>({ message: '', success: false })
   const feedbackMessageRef = ref<HTMLParagraphElement | null>(null)
+  const { contact } = useContent()
   let unsubscribeFromStatus: (() => void) | undefined
 
   function resetForm(): void {
@@ -62,7 +64,7 @@ export function useContactForm(props: ContactFormProps) {
         message: form.message
       })
       if (!parsed.ok) {
-        await announceFeedback('Revisá los datos ingresados e intenta nuevamente.', false)
+        await announceFeedback(contact.errorMessage, false)
         return
       }
       const result = await props.onSubmit(parsed.data)
@@ -72,15 +74,21 @@ export function useContactForm(props: ContactFormProps) {
       if (result && result.ok) {
         if (formElement) formElement.reset()
         resetForm()
-        await announceFeedback('¡Consulta enviada correctamente! Te responderemos a la brevedad.', true)
+        await announceFeedback(contact.successMessage, true)
       } else {
-        await announceFeedback(mapContactError(result?.error), false)
+        await announceFeedback(
+          mapContactError(result?.error, {
+            unavailable: contact.unavailableMessage,
+            error: contact.errorMessage
+          }),
+          false
+        )
       }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('[ContactFormSection] Error inesperado en handleSubmit:', error)
       }
-      await announceFeedback('Ocurrió un error inesperado. Intenta nuevamente más tarde.', false)
+      await announceFeedback(contact.unexpectedErrorMessage, false)
     } finally {
       isSubmitting.value = false
     }
@@ -110,23 +118,26 @@ export function useContactForm(props: ContactFormProps) {
   }
 }
 
-function mapContactError(error: ContactError | undefined): string {
+function mapContactError(
+  error: ContactError | undefined,
+  messages: { unavailable: string; error: string }
+): string {
   if (!error) {
-    return 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
+    return messages.error
   }
   switch (error.type) {
     case 'Unavailable':
-      return 'El canal de correo electrónico no se encuentra disponible en este momento.'
+      return messages.unavailable
     case 'NetworkError':
-      return 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
+      return messages.error
     case 'BackendError':
       if (error.status === 429) {
         return 'Demasiadas solicitudes. Intenta nuevamente en unos minutos.'
       }
       return 'No se pudo enviar la consulta. Verifica los datos e intenta nuevamente.'
     case 'ValidationError':
-      return 'Revisá los datos ingresados e intenta nuevamente.'
+      return messages.error
     default:
-      return 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
+      return messages.error
   }
 }

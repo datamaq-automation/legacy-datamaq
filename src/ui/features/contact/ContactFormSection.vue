@@ -1,5 +1,5 @@
 <!--
-Path: src/components/ContactFormSection.vue
+Path: src/ui/features/contact/ContactFormSection.vue
 -->
 <template>
   <section id="contacto" class="section-mobile py-5 bg-dark text-white" aria-labelledby="contacto-title">
@@ -9,10 +9,10 @@ Path: src/components/ContactFormSection.vue
           <div class="card border-0 shadow-lg bg-body text-body">
             <div class="card-body p-4 p-md-5">
               <h2 id="contacto-title" class="h3 contact-form__title mb-3">
-                Preferís coordinar por correo electrónico
+                {{ contact.title }}
               </h2>
               <p class="text-body mb-4">
-                Completá el formulario y recibirás una respuesta a tu correo electrónico
+                {{ contact.subtitle }}
               </p>
               <form
                 ref="formRef"
@@ -21,7 +21,7 @@ Path: src/components/ContactFormSection.vue
                 @submit.prevent="handleSubmit"
               >
                 <div class="col-12">
-                  <label class="form-label" for="contacto-nombre">Nombre y apellido</label>
+                  <label class="form-label" for="contacto-nombre">{{ contact.labels.name }}</label>
                   <input
                     id="contacto-nombre"
                     v-model="form.name"
@@ -35,7 +35,7 @@ Path: src/components/ContactFormSection.vue
                   />
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label" for="contacto-email">Correo electrónico</label>
+                  <label class="form-label" for="contacto-email">{{ contact.labels.email }}</label>
                   <input
                     id="contacto-email"
                     v-model="form.email"
@@ -50,7 +50,7 @@ Path: src/components/ContactFormSection.vue
                   />
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label" for="contacto-empresa">Empresa (opcional)</label>
+                  <label class="form-label" for="contacto-empresa">{{ contact.labels.company }}</label>
                   <input
                     id="contacto-empresa"
                     v-model="form.company"
@@ -63,7 +63,7 @@ Path: src/components/ContactFormSection.vue
                   />
                 </div>
                 <div class="col-12">
-                  <label class="form-label" for="contacto-mensaje">Mensaje (opcional)</label>
+                  <label class="form-label" for="contacto-mensaje">{{ contact.labels.message }}</label>
                   <textarea
                     id="contacto-mensaje"
                     v-model="form.message"
@@ -87,7 +87,7 @@ Path: src/components/ContactFormSection.vue
                       <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
                     </span>
                     <span v-else>
-                      {{ CTA_COPY.EMAIL_SUBMIT }}
+                      {{ contact.submitLabel }}
                     </span>
                   </button>
                 </div>
@@ -96,14 +96,13 @@ Path: src/components/ContactFormSection.vue
                     v-if="isCheckingBackend"
                     class="text-info-emphasis bg-info-subtle border border-info-subtle rounded-3 px-3 py-2 small"
                   >
-                    Verificando la disponibilidad del servicio de correo electrónico…
+                    {{ contact.checkingMessage }}
                   </p>
                   <p
                     v-else-if="!isBackendAvailable"
                     class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small contact-alert"
                   >
-                    El canal de correo electrónico está en mantenimiento. Nuestro canal principal es WhatsApp: agendá tu
-                    diagnóstico allí y retomá este formulario más tarde si necesitás documentación.
+                    {{ contact.unavailableMessage }}
                   </p>
                   <p
                     v-if="feedback.message"
@@ -125,11 +124,12 @@ Path: src/components/ContactFormSection.vue
 </template>
 
 <script setup lang="ts">
-import { CTA_COPY } from '@/application/constants/ctaCopy'
+import { useContent } from '@/ui/composables/useContent'
 import { useContactForm } from './contactHooks'
 import type { ContactFormProps } from './contactTypes'
 
 const props = defineProps<ContactFormProps>()
+const { contact } = useContent()
 
 const {
   formRef,
@@ -171,4 +171,3 @@ const {
   }
 }
 </style>
-

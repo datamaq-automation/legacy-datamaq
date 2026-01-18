@@ -5,20 +5,20 @@ Path: src/ui/layout/Navbar.vue
 <template>
   <header class="navbar navbar-dark bg-dark sticky-top border-bottom" role="banner">
     <div class="container-fluid px-3">
-      <!-- BotÃ³n hamburguesa a la izquierda, visible solo en mobile -->
+      <!-- Botón hamburguesa a la izquierda, visible solo en mobile -->
       <button
         ref="toggleButtonRef"
         class="navbar-toggler me-2"
         type="button"
-        aria-label="Abrir menÃº"
+        aria-label="Abrir menú"
         @click="toggleMenu"
         :aria-expanded="menuOpen"
         aria-controls="main-navbar"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand fw-bold" href="#" aria-label="profebustos, inicio">profebustos</a>
-      <!-- MenÃº colapsable -->
+      <a class="navbar-brand fw-bold" href="#" :aria-label="navbar.brandAriaLabel">{{ navbar.brand }}</a>
+      <!-- Menú colapsable -->
       <transition name="slide-fade">
         <nav
           v-if="menuOpen || isDesktop"
@@ -33,8 +33,8 @@ Path: src/ui/layout/Navbar.vue
           ref="navRef"
         >
           <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-2">
-            <li class="nav-item">
-              <a class="nav-link" href="#servicios" @click="handleNavLinkClick">Servicios</a>
+            <li v-for="link in navbar.links" :key="link.href" class="nav-item">
+              <a class="nav-link" :href="link.href" @click="handleNavLinkClick">{{ link.label }}</a>
             </li>
             <li v-if="chatEnabled" class="nav-item ms-lg-3">
               <button
@@ -42,7 +42,7 @@ Path: src/ui/layout/Navbar.vue
                 class="btn btn-success"
                 @click="handleContactClick"
               >
-                {{ CTA_COPY.NAV_CONTACT }}
+                {{ navbar.contactLabel }}
               </button>
             </li>
           </ul>
@@ -56,7 +56,7 @@ Path: src/ui/layout/Navbar.vue
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useBreakpoint } from '@/ui/composables/useBreakpoint'
 import { useClickOutside } from '@/ui/composables/useClickOutside'
-import { CTA_COPY } from '@/application/constants/ctaCopy'
+import { useContent } from '@/ui/composables/useContent'
 import type { NavbarEmits, NavbarProps } from '@/ui/types/layout'
 
 const props = defineProps<NavbarProps>()
@@ -68,6 +68,7 @@ const { matches: isDesktop } = useBreakpoint(992)
 const navRef = ref<HTMLElement | null>(null)
 const toggleButtonRef = ref<HTMLButtonElement | null>(null)
 const chatEnabled = computed(() => props.chatEnabled)
+const { navbar } = useContent()
 
 function toggleMenu() {
   menuOpen.value = !menuOpen.value
@@ -115,13 +116,14 @@ onMounted(() => {
     closeMenu()
   }
 })
+
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
 <style scoped>
-/* AnimaciÃ³n para el colapsable SOLO en mobile */
+/* Animación para el colapsable SOLO en mobile */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: max-height 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s;
@@ -138,7 +140,7 @@ onUnmounted(() => {
   opacity: 1;
 }
 
-/* Deshabilitar animaciÃ³n y altura extra en desktop */
+/* Deshabilitar animación y altura extra en desktop */
 @media (min-width: 992px) {
   .navbar-toggler {
     display: none !important;
@@ -162,5 +164,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
-
