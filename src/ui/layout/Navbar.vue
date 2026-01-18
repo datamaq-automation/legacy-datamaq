@@ -94,7 +94,8 @@ function handleClickOutside(event: MouseEvent) {
   if (
     menuOpen.value &&
     navRef.value &&
-    !navRef.value.contains(event.target as Node)
+    event.target instanceof Node &&
+    !navRef.value.contains(event.target)
   ) {
     closeMenu()
   }

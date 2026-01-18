@@ -6,6 +6,8 @@ import {
   type ContactBackendStatus
 } from '@/interfaces/controllers/contactBackendController'
 import type { ContactFormProps } from './contactTypes'
+import type { ContactError } from '@/application/types/errors'
+import { EmailContactSchema } from '@/application/validation/contactSchema'
 
 export function useContactForm(props: ContactFormProps) {
   const formRef = ref<HTMLFormElement | null>(null)
@@ -51,12 +53,17 @@ export function useContactForm(props: ContactFormProps) {
     }
     isSubmitting.value = true
     try {
-      const result = await props.onSubmit({
+      const parsed = EmailContactSchema.safeParse({
         name: form.name,
         email: form.email,
         company: form.company,
         message: form.message
       })
+      if (!parsed.success) {
+        await announceFeedback('Revisá los datos ingresados e intenta nuevamente.', false)
+        return
+      }
+      const result = await props.onSubmit(parsed.data)
       if (import.meta.env.DEV) {
         console.debug('[ContactFormSection] Resultado de onSubmit:', result)
       }
@@ -65,10 +72,7 @@ export function useContactForm(props: ContactFormProps) {
         resetForm()
         await announceFeedback('¡Consulta enviada correctamente! Te responderemos a la brevedad.', true)
       } else {
-        await announceFeedback(
-          result?.error || 'No se pudo enviar la consulta. Intenta nuevamente más tarde.',
-          false
-        )
+        await announceFeedback(mapContactError(result?.error), false)
       }
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -101,5 +105,26 @@ export function useContactForm(props: ContactFormProps) {
     feedback,
     feedbackMessageRef,
     handleSubmit
+  }
+}
+
+function mapContactError(error: ContactError | undefined): string {
+  if (!error) {
+    return 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
+  }
+  switch (error.type) {
+    case 'Unavailable':
+      return 'El canal de correo electrónico no se encuentra disponible en este momento.'
+    case 'NetworkError':
+      return 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
+    case 'BackendError':
+      if (error.status === 429) {
+        return 'Demasiadas solicitudes. Intenta nuevamente en unos minutos.'
+      }
+      return 'No se pudo enviar la consulta. Verifica los datos e intenta nuevamente.'
+    case 'ValidationError':
+      return 'Revisá los datos ingresados e intenta nuevamente.'
+    default:
+      return 'No se pudo enviar la consulta. Intenta nuevamente más tarde.'
   }
 }

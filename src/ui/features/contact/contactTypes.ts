@@ -1,8 +1,10 @@
-import type { EmailContactPayload } from '@/application/use-cases/submitEmailContact'
+import type { EmailContactPayload } from '@/application/dto/contact'
+import type { ContactError } from '@/application/types/errors'
+import type { Result } from '@/application/types/result'
 
 export type ContactFormSubmit = (
   payload: EmailContactPayload
-) => Promise<{ ok: boolean; error?: string }>
+) => Promise<Result<void, ContactError>>
 
 export interface ContactFormProps {
   contactEmail?: string

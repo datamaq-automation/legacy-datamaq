@@ -1,10 +1,11 @@
 import type { HttpClient, HttpResponse } from '@/application/ports/HttpClient'
 import type { LoggerPort } from '@/application/ports/Logger'
+import type { JsonValue } from '@/application/types/json'
 
 export class FetchHttpClient implements HttpClient {
   constructor(private logger: LoggerPort) {}
 
-  async postJson(url: string, body: unknown): Promise<HttpResponse> {
+  async postJson<T = unknown>(url: string, body: unknown): Promise<HttpResponse<T>> {
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -15,11 +16,13 @@ export class FetchHttpClient implements HttpClient {
       })
 
       const rawText = await response.text().catch(() => undefined)
+      const data = parseJson<T>(rawText)
       const text = normalizeErrorText(rawText)
       return {
         ok: response.ok,
         status: response.status,
-        text
+        text,
+        data
       }
     } catch (error) {
       this.logger.error('[http] Error en POST JSON:', error)
@@ -48,6 +51,17 @@ export class FetchHttpClient implements HttpClient {
         status: 0
       }
     }
+  }
+}
+
+function parseJson<T>(rawText: string | undefined): T | undefined {
+  if (!rawText) {
+    return undefined
+  }
+  try {
+    return JSON.parse(rawText) as T
+  } catch {
+    return undefined
   }
 }
 

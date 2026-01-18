@@ -1,5 +1,5 @@
 import { useContainer } from '@/di/container'
-import type { EmailContactPayload } from '@/application/use-cases/submitEmailContact'
+import type { EmailContactPayload } from '@/application/dto/contact'
 
 export function getChatEnabled(): boolean {
   return Boolean(useContainer().config.whatsappNumber)

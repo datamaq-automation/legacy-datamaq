@@ -1,16 +1,12 @@
+import type { EmailContactPayload } from '../dto/contact'
 import type { ConfigPort } from '../ports/Config'
 import type { LocationProvider } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
 import type { ContactBackendMonitor } from '../services/contactBackendStatus'
 import type { EngagementTracker } from '../services/engagementTracker'
-
-export interface EmailContactPayload {
-  name: string
-  email: string
-  company?: string
-  message?: string
-}
+import type { ContactError } from '../types/errors'
+import type { Result } from '../types/result'
 
 export class SubmitEmailContact {
   constructor(
@@ -25,20 +21,17 @@ export class SubmitEmailContact {
   async execute(
     section: string,
     payload: EmailContactPayload
-  ): Promise<{ ok: boolean; error?: string }> {
+  ): Promise<Result<void, ContactError>> {
     const apiUrl = this.config.contactApiUrl
     if (!apiUrl) {
       this.logger.error('CONTACT_API_URL no esta configurada')
       this.contactBackend.markUnavailable()
-      return { ok: false, error: 'No se encuentra configurado el backend de contacto.' }
+      return { ok: false, error: { type: 'Unavailable' } }
     }
 
     const backendStatus = await this.contactBackend.ensureStatus()
     if (backendStatus !== 'available') {
-      return {
-        ok: false,
-        error: 'El canal de correo electronico no se encuentra disponible en este momento.'
-      }
+      return { ok: false, error: { type: 'Unavailable' } }
     }
 
     this.logger.debug('[submitEmailContact] Enviando payload:', payload)
@@ -65,16 +58,22 @@ export class SubmitEmailContact {
           this.contactBackend.markAvailable()
         }
 
-        return { ok: false, error: mapBackendError(res.status) }
+        return {
+          ok: false,
+          error: {
+            type: res.status === 0 ? 'NetworkError' : 'BackendError',
+            status: res.status
+          }
+        }
       }
 
       this.contactBackend.markAvailable()
       this.engagementTracker.trackEmail(section, getTrafficSource(this.location))
-      return { ok: true }
+      return { ok: true, data: undefined }
     } catch (error) {
       this.contactBackend.markUnavailable()
       this.logger.error('Error al enviar la consulta de contacto:', error)
-      return { ok: false, error: 'No se pudo enviar la consulta. Intente mas tarde.' }
+      return { ok: false, error: { type: 'NetworkError' } }
     }
   }
 }
@@ -86,14 +85,4 @@ function getTrafficSource(location: LocationProvider): string {
     return utmSource
   }
   return location.referrer() || 'direct'
-}
-
-function mapBackendError(status: number): string {
-  if (status >= 500) {
-    return 'No se pudo enviar la consulta. Intente mas tarde.'
-  }
-  if (status === 429) {
-    return 'Demasiadas solicitudes. Intente nuevamente en unos minutos.'
-  }
-  return 'No se pudo enviar la consulta. Verifique los datos e intente nuevamente.'
 }
