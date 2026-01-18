@@ -1,4 +1,4 @@
-import type { AnalyticsPort } from '../ports/Analytics'
+import type { AnalyticsFacade } from './analyticsFacade'
 import type { Clock, LocationProvider } from '../ports/Environment'
 import type { LoggerPort } from '../ports/Logger'
 
@@ -18,7 +18,7 @@ export class EngagementTracker {
   private pageEntryTimestamp: number
 
   constructor(
-    private analytics: AnalyticsPort,
+    private analytics: AnalyticsFacade,
     private clock: Clock,
     private location: LocationProvider,
     private logger: LoggerPort

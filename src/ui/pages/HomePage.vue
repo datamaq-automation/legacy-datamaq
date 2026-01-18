@@ -3,7 +3,7 @@ import {
   getChatEnabled,
   getContactEmail,
   openWhatsApp,
-  submitEmailContact
+  submitContact
 } from '@/interfaces/controllers/contactController'
 import Navbar from '@/ui/layout/Navbar.vue'
 import HeroSection from '@/ui/sections/HeroSection.vue'
@@ -22,9 +22,9 @@ function handleWhatsapp(section: string) {
   openWhatsApp(section)
 }
 
-function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
+function handleEmailSubmit(payload: Parameters<typeof submitContact>[1]) {
   // El componente espera una promesa para feedback, asi que retornamos la llamada
-  return submitEmailContact('contacto-formulario', payload)
+  return submitContact('contacto-formulario', payload)
 }
 </script>
 

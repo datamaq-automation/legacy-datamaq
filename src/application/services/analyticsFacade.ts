@@ -1,9 +1,9 @@
-import type { AnalyticsPort } from '../ports/Analytics'
+import type { AnalyticsProvider } from '../ports/AnalyticsProvider'
 import type { LoggerPort } from '../ports/Logger'
 
-export class AnalyticsComposite implements AnalyticsPort {
+export class AnalyticsFacade {
   constructor(
-    private providers: AnalyticsPort[],
+    private providers: AnalyticsProvider[],
     private logger: LoggerPort
   ) {}
 

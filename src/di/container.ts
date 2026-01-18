@@ -1,8 +1,9 @@
 import { createConsentManager } from '@/application/services/consentManager'
-import { AnalyticsComposite } from '@/application/services/analyticsComposite'
+import { AnalyticsFacade } from '@/application/services/analyticsFacade'
 import { ContactBackendMonitor } from '@/application/services/contactBackendStatus'
 import { EngagementTracker } from '@/application/services/engagementTracker'
 import { SubmitContactApplicationService } from '@/application/services/submitContactApplicationService'
+import { ContactSubmittedHandler } from '@/application/services/handlers/contactSubmittedHandler'
 import { OpenWhatsapp } from '@/application/use-cases/openWhatsapp'
 import { BrowserAnalytics } from '@/infrastructure/analytics/browserAnalytics'
 import { ViteConfig } from '@/infrastructure/config/viteConfig'
@@ -13,6 +14,8 @@ import { ConsoleLogger } from '@/infrastructure/logging/consoleLogger'
 import { BrowserStorage } from '@/infrastructure/storage/browserStorage'
 import { ContactApiGateway } from '@/infrastructure/contact/contactApiGateway'
 import { ContactService } from '@/domain/contact/services/ContactService'
+import { NotificationFacade } from '@/application/services/notificationFacade'
+import { NoopNotificationProvider } from '@/infrastructure/notifications/noopNotificationProvider'
 import type { App, InjectionKey } from 'vue'
 import { inject } from 'vue'
 
@@ -20,7 +23,8 @@ const environment = new BrowserEnvironment()
 const logger = new ConsoleLogger(environment)
 const config = new ViteConfig()
 const http = new FetchHttpClient(logger)
-const analytics = new AnalyticsComposite([new BrowserAnalytics(logger)], logger)
+const analytics = new AnalyticsFacade([new BrowserAnalytics(logger)], logger)
+const notifications = new NotificationFacade([new NoopNotificationProvider()], logger)
 const contactBackend = new ContactBackendMonitor(http, config, environment, logger)
 const engagementTracker = new EngagementTracker(analytics, environment, environment, logger)
 const storage = new BrowserStorage()
@@ -28,6 +32,7 @@ const consentManager = createConsentManager(storage, logger)
 const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, logger)
+const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
 
 const openWhatsapp = new OpenWhatsapp(
   config,
@@ -50,6 +55,10 @@ const submitContact = new SubmitContactApplicationService(
   eventBus,
   logger
 )
+
+eventBus.subscribe('contact.submitted', (event) => {
+  contactSubmittedHandler.handle(event)
+})
 
 export const container = {
   config,

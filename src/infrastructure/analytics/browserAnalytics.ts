@@ -1,4 +1,4 @@
-import type { AnalyticsPort } from '@/application/ports/Analytics'
+import type { AnalyticsProvider } from '@/application/ports/AnalyticsProvider'
 import type { LoggerPort } from '@/application/ports/Logger'
 
 type DataLayer = Array<Record<string, unknown>>
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-export class BrowserAnalytics implements AnalyticsPort {
+export class BrowserAnalytics implements AnalyticsProvider {
   constructor(private logger: LoggerPort) {}
 
   track(event: string, payload: Record<string, unknown>): void {
