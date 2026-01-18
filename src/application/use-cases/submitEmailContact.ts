@@ -56,8 +56,8 @@ export class SubmitEmailContact {
       this.logger.debug('[submitEmailContact] Respuesta HTTP:', res.status)
 
       if (!res.ok) {
-        const errorText = res.text ?? 'Error desconocido'
-        this.logger.warn('[submitEmailContact] Error de backend:', errorText)
+        const rawError = res.text ?? 'Error desconocido'
+        this.logger.warn('[submitEmailContact] Error de backend:', rawError)
 
         if (res.status >= 500) {
           this.contactBackend.markUnavailable()
@@ -65,7 +65,7 @@ export class SubmitEmailContact {
           this.contactBackend.markAvailable()
         }
 
-        return { ok: false, error: errorText }
+        return { ok: false, error: mapBackendError(res.status) }
       }
 
       this.contactBackend.markAvailable()
@@ -86,4 +86,14 @@ function getTrafficSource(environment: EnvironmentPort): string {
     return utmSource
   }
   return environment.referrer() || 'direct'
+}
+
+function mapBackendError(status: number): string {
+  if (status >= 500) {
+    return 'No se pudo enviar la consulta. Intente mas tarde.'
+  }
+  if (status === 429) {
+    return 'Demasiadas solicitudes. Intente nuevamente en unos minutos.'
+  }
+  return 'No se pudo enviar la consulta. Verifique los datos e intente nuevamente.'
 }
