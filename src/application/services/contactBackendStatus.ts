@@ -1,5 +1,5 @@
 import type { ConfigPort } from '../ports/Config'
-import type { EnvironmentPort } from '../ports/Environment'
+import type { RuntimeFlags } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
 
@@ -15,7 +15,7 @@ export class ContactBackendMonitor {
   constructor(
     private http: HttpClient,
     private config: ConfigPort,
-    private environment: EnvironmentPort,
+    private runtime: RuntimeFlags,
     private logger: LoggerPort
   ) {
     this.status = config.contactApiUrl ? 'unknown' : 'unavailable'
@@ -68,7 +68,7 @@ export class ContactBackendMonitor {
 
   private async probe(): Promise<ContactBackendStatus> {
     const apiUrl = this.config.contactApiUrl
-    if (!apiUrl || !this.environment.isBrowser()) {
+    if (!apiUrl || !this.runtime.isBrowser()) {
       this.status = 'unavailable'
       this.notify()
       return this.status

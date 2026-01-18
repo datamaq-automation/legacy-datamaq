@@ -1,6 +1,14 @@
-import type { EnvironmentPort } from '@/application/ports/Environment'
+import type {
+  Clock,
+  LocationProvider,
+  NavigatorProvider,
+  RuntimeFlags,
+  WindowOpener
+} from '@/application/ports/Environment'
 
-export class BrowserEnvironment implements EnvironmentPort {
+export class BrowserEnvironment
+  implements Clock, LocationProvider, NavigatorProvider, WindowOpener, RuntimeFlags
+{
   now(): number {
     return Date.now()
   }

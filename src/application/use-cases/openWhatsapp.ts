@@ -1,5 +1,9 @@
 import type { ConfigPort } from '../ports/Config'
-import type { EnvironmentPort } from '../ports/Environment'
+import type {
+  LocationProvider,
+  NavigatorProvider,
+  WindowOpener
+} from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
 import type { ContactBackendMonitor } from '../services/contactBackendStatus'
@@ -8,7 +12,9 @@ import type { EngagementTracker } from '../services/engagementTracker'
 export class OpenWhatsapp {
   constructor(
     private config: ConfigPort,
-    private environment: EnvironmentPort,
+    private location: LocationProvider,
+    private navigator: NavigatorProvider,
+    private opener: WindowOpener,
     private http: HttpClient,
     private contactBackend: ContactBackendMonitor,
     private engagementTracker: EngagementTracker,
@@ -28,9 +34,9 @@ export class OpenWhatsapp {
       return
     }
 
-    this.environment.open(url)
+    this.opener.open(url)
 
-    const trafficSource = getTrafficSource(this.environment)
+    const trafficSource = getTrafficSource(this.location)
     this.engagementTracker.trackWhatsapp(section, trafficSource)
   }
 
@@ -67,9 +73,9 @@ export class OpenWhatsapp {
       email: 'whatsapp@profebustos.com.ar',
       company: 'from_whatsapp',
       message: 'from_whatsapp',
-      page_location: this.environment.href(),
-      traffic_source: getTrafficSource(this.environment),
-      user_agent: this.environment.userAgent(),
+      page_location: this.location.href(),
+      traffic_source: getTrafficSource(this.location),
+      user_agent: this.navigator.userAgent(),
       created_at: new Date().toISOString()
     }
 
@@ -92,11 +98,11 @@ export class OpenWhatsapp {
   }
 }
 
-function getTrafficSource(environment: EnvironmentPort): string {
-  const params = new URLSearchParams(environment.search())
+function getTrafficSource(location: LocationProvider): string {
+  const params = new URLSearchParams(location.search())
   const utmSource = params.get('utm_source')
   if (utmSource) {
     return utmSource
   }
-  return environment.referrer() || 'direct'
+  return location.referrer() || 'direct'
 }

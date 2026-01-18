@@ -23,7 +23,10 @@ export class FetchHttpClient implements HttpClient {
       }
     } catch (error) {
       this.logger.error('[http] Error en POST JSON:', error)
-      throw error
+      return {
+        ok: false,
+        status: 0
+      }
     }
   }
 
@@ -40,7 +43,10 @@ export class FetchHttpClient implements HttpClient {
       }
     } catch (error) {
       this.logger.warn('[http] Error en OPTIONS:', error)
-      throw error
+      return {
+        ok: false,
+        status: 0
+      }
     }
   }
 }

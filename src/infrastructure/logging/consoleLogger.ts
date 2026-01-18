@@ -1,8 +1,8 @@
-import type { EnvironmentPort } from '@/application/ports/Environment'
+import type { RuntimeFlags } from '@/application/ports/Environment'
 import type { LoggerPort } from '@/application/ports/Logger'
 
 export class ConsoleLogger implements LoggerPort {
-  constructor(private environment: EnvironmentPort) {}
+  constructor(private environment: RuntimeFlags) {}
 
   debug(message: string, ...meta: unknown[]): void {
     if (!this.environment.isDev()) {

@@ -5,10 +5,11 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import './assets/theme.css'
 import { installAnalytics } from './infrastructure/analytics'
 import { consentManagerKey } from './application/services/consentManager'
-import { container } from './di/container'
+import { container, provideContainer } from './di/container'
 
 const app = createApp(App)
 
+provideContainer(app, container)
 app.provide(consentManagerKey, container.consentManager)
 
 if (container.consentManager.getStatus() === 'granted') {

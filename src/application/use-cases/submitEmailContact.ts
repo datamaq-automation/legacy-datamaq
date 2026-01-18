@@ -1,5 +1,5 @@
 import type { ConfigPort } from '../ports/Config'
-import type { EnvironmentPort } from '../ports/Environment'
+import type { LocationProvider } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
 import type { ContactBackendMonitor } from '../services/contactBackendStatus'
@@ -15,7 +15,7 @@ export interface EmailContactPayload {
 export class SubmitEmailContact {
   constructor(
     private config: ConfigPort,
-    private environment: EnvironmentPort,
+    private location: LocationProvider,
     private http: HttpClient,
     private contactBackend: ContactBackendMonitor,
     private engagementTracker: EngagementTracker,
@@ -47,8 +47,8 @@ export class SubmitEmailContact {
     const extendedPayload = {
       ...payload,
       message: payload.message?.trim() ? payload.message : 'Null',
-      page_location: this.environment.href(),
-      traffic_source: getTrafficSource(this.environment)
+      page_location: this.location.href(),
+      traffic_source: getTrafficSource(this.location)
     }
 
     try {
@@ -69,7 +69,7 @@ export class SubmitEmailContact {
       }
 
       this.contactBackend.markAvailable()
-      this.engagementTracker.trackEmail(section, getTrafficSource(this.environment))
+      this.engagementTracker.trackEmail(section, getTrafficSource(this.location))
       return { ok: true }
     } catch (error) {
       this.contactBackend.markUnavailable()
@@ -79,13 +79,13 @@ export class SubmitEmailContact {
   }
 }
 
-function getTrafficSource(environment: EnvironmentPort): string {
-  const params = new URLSearchParams(environment.search())
+function getTrafficSource(location: LocationProvider): string {
+  const params = new URLSearchParams(location.search())
   const utmSource = params.get('utm_source')
   if (utmSource) {
     return utmSource
   }
-  return environment.referrer() || 'direct'
+  return location.referrer() || 'direct'
 }
 
 function mapBackendError(status: number): string {

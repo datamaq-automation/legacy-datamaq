@@ -1,5 +1,5 @@
 import type { AnalyticsPort } from '../ports/Analytics'
-import type { EnvironmentPort } from '../ports/Environment'
+import type { Clock, LocationProvider } from '../ports/Environment'
 import type { LoggerPort } from '../ports/Logger'
 
 export interface ContactEngagementContext {
@@ -19,10 +19,11 @@ export class EngagementTracker {
 
   constructor(
     private analytics: AnalyticsPort,
-    private environment: EnvironmentPort,
+    private clock: Clock,
+    private location: LocationProvider,
     private logger: LoggerPort
   ) {
-    this.pageEntryTimestamp = environment.now()
+    this.pageEntryTimestamp = clock.now()
   }
 
   trackWhatsapp(section: string, trafficSource: string): void {
@@ -42,11 +43,11 @@ export class EngagementTracker {
   }
 
   private buildContext(section: string, trafficSource: string): ContactEngagementContext {
-    const now = this.environment.now()
+    const now = this.clock.now()
 
     return {
       section,
-      pageUrl: this.environment.href(),
+      pageUrl: this.location.href(),
       trafficSource,
       navigationTimeMs: Math.max(now - this.pageEntryTimestamp, 0)
     }
@@ -56,7 +57,7 @@ export class EngagementTracker {
     eventName: string,
     context: ContactEngagementContext
   ): boolean {
-    const now = this.environment.now()
+    const now = this.clock.now()
     const key = `${eventName}:${context.section}:${context.pageUrl}:${context.trafficSource}`
     const lastDispatch = this.dispatchedEvents.get(key)
 
