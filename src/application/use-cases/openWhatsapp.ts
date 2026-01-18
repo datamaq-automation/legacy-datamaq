@@ -27,7 +27,9 @@ export class OpenWhatsappUseCase {
       return
     }
 
-    void this.sendWhatsappContactEvent(section)
+    if (!import.meta.env.DEV) {
+      void this.sendWhatsappContactEvent(section)
+    }
 
     const url = this.buildWhatsappUrl()
     if (!url) {

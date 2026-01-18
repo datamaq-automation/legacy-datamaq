@@ -17,7 +17,7 @@ import { ContactService } from '@/domain/contact/services/ContactService'
 import { NotificationFacade } from '@/application/notifications/notificationFacade'
 import { NoopNotificationProvider } from '@/infrastructure/notifications/noopNotificationProvider'
 import type { App, InjectionKey } from 'vue'
-import { inject } from 'vue'
+import { getCurrentInstance, inject } from 'vue'
 
 const environment = new BrowserEnvironment()
 const logger = new ConsoleLogger(environment)
@@ -80,5 +80,9 @@ export function provideContainer(app: App, value: AppContainer = container): voi
 }
 
 export function useContainer(): AppContainer {
+  if (!getCurrentInstance()) {
+    return container
+  }
+
   return inject(containerKey, container)
 }

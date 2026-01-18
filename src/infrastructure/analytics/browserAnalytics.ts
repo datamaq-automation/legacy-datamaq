@@ -33,7 +33,9 @@ export class BrowserAnalytics implements AnalyticsProvider {
 
   private sendGaEvent(event: string, payload: Record<string, unknown>): void {
     if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
-      this.logger.warn(`[GA4] gtag no se encuentra disponible. Evento "${event}" no enviado.`)
+      if (!import.meta.env.DEV) {
+        this.logger.warn(`[GA4] gtag no se encuentra disponible. Evento "${event}" no enviado.`)
+      }
       return
     }
 
@@ -45,9 +47,11 @@ export class BrowserAnalytics implements AnalyticsProvider {
 
   private sendClarityEvent(event: string, payload: Record<string, unknown>): void {
     if (typeof window === 'undefined' || typeof window.clarity !== 'function') {
-      this.logger.warn(
-        `[Clarity] clarity no se encuentra disponible. Evento "${event}" no enviado.`
-      )
+      if (!import.meta.env.DEV) {
+        this.logger.warn(
+          `[Clarity] clarity no se encuentra disponible. Evento "${event}" no enviado.`
+        )
+      }
       return
     }
 
