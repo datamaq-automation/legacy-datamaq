@@ -110,15 +110,12 @@ Path: src/ui/sections/HeroSection.vue
 <script setup lang="ts">
 import { computed } from 'vue'
 import { CTA_COPY } from '@/application/constants/ctaCopy'
+import type { HeroSectionEmits, HeroSectionProps } from '@/ui/types/sections'
 import heroIllustration from '@/assets/hero-energy.svg'
 
-const props = defineProps<{
-  chatEnabled: boolean
-}>()
+const props = defineProps<HeroSectionProps>()
 
-const emit = defineEmits<{
-  (e: 'primary-cta'): void
-}>()
+const emit = defineEmits<HeroSectionEmits>()
 
 const chatEnabled = computed(() => props.chatEnabled)
 

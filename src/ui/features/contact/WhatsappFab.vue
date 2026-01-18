@@ -20,7 +20,9 @@ Path: src/components/WhatsappFab.vue
 <script setup lang="ts">
 import { CTA_COPY } from '@/application/constants/ctaCopy'
 
-const emit = defineEmits<{ (e: 'whatsapp'): void }>()
+import type { WhatsappFabEmits } from '@/ui/types/sections'
+
+const emit = defineEmits<WhatsappFabEmits>()
 
 defineOptions({
   name: 'WhatsappFab'

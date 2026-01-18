@@ -149,17 +149,14 @@ Path: src/components/ServiciosSection.vue
 <script setup lang="ts">
 import { computed } from 'vue'
 import { CTA_COPY } from '@/application/constants/ctaCopy'
+import type { ServiciosSectionEmits, ServiciosSectionProps } from '@/ui/types/sections'
 import analytics from '@/assets/analytics-dashboard.svg'
 import installTools from '@/assets/install-tools.svg'
 import powermeter from '@/assets/powermeter.svg'
 
-const props = defineProps<{
-  chatEnabled: boolean
-}>()
+const props = defineProps<ServiciosSectionProps>()
 
-const emit = defineEmits<{
-  (e: 'contact', section: string): void
-}>()
+const emit = defineEmits<ServiciosSectionEmits>()
 
 const chatEnabled = computed(() => props.chatEnabled)
 

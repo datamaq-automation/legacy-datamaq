@@ -54,18 +54,17 @@ Path: src/ui/layout/Navbar.vue
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useBreakpoint } from '@/ui/composables/useBreakpoint'
+import { useClickOutside } from '@/ui/composables/useClickOutside'
 import { CTA_COPY } from '@/application/constants/ctaCopy'
+import type { NavbarEmits, NavbarProps } from '@/ui/types/layout'
 
-const props = defineProps<{
-  chatEnabled: boolean
-}>()
+const props = defineProps<NavbarProps>()
 
-const emit = defineEmits<{
-  (e: 'contact'): void
-}>()
+const emit = defineEmits<NavbarEmits>()
 
 const menuOpen = ref(false)
-const isDesktop = ref(typeof window !== 'undefined' ? window.innerWidth >= 992 : false)
+const { matches: isDesktop } = useBreakpoint(992)
 const navRef = ref<HTMLElement | null>(null)
 const toggleButtonRef = ref<HTMLButtonElement | null>(null)
 const chatEnabled = computed(() => props.chatEnabled)
@@ -81,24 +80,11 @@ function closeMenu(returnFocus = false) {
   }
 }
 
-// Actualiza isDesktop al cambiar el tamaño de ventana
-function handleResize() {
-  isDesktop.value = window.innerWidth >= 992
-  if (isDesktop.value) {
-    closeMenu()
+function onCloseOutside() {
+  if (!menuOpen.value) {
+    return
   }
-}
-
-// Cierra el menú si se hace click fuera del nav (solo mobile)
-function handleClickOutside(event: MouseEvent) {
-  if (
-    menuOpen.value &&
-    navRef.value &&
-    event.target instanceof Node &&
-    !navRef.value.contains(event.target)
-  ) {
-    closeMenu()
-  }
+  closeMenu()
 }
 
 function handleKeydown(event: KeyboardEvent) {
@@ -121,14 +107,15 @@ function handleContactClick() {
   }
 }
 
+useClickOutside(navRef, onCloseOutside, menuOpen)
+
 onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  document.addEventListener('mousedown', handleClickOutside)
   document.addEventListener('keydown', handleKeydown)
+  if (isDesktop.value) {
+    closeMenu()
+  }
 })
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-  document.removeEventListener('mousedown', handleClickOutside)
   document.removeEventListener('keydown', handleKeydown)
 })
 </script>
@@ -175,4 +162,5 @@ onUnmounted(() => {
   }
 }
 </style>
+
 

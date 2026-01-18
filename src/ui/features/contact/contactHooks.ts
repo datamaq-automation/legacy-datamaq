@@ -7,7 +7,7 @@ import {
 } from '@/interfaces/controllers/contactBackendController'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
-import { EmailContactSchema } from '@/application/validation/contactSchema'
+import { useContactValidation } from './useContactValidation'
 
 export function useContactForm(props: ContactFormProps) {
   const formRef = ref<HTMLFormElement | null>(null)
@@ -40,6 +40,8 @@ export function useContactForm(props: ContactFormProps) {
     feedbackMessageRef.value?.focus()
   }
 
+  const { validate } = useContactValidation()
+
   async function handleSubmit(): Promise<void> {
     const formElement = formRef.value
     feedback.message = ''
@@ -53,13 +55,13 @@ export function useContactForm(props: ContactFormProps) {
     }
     isSubmitting.value = true
     try {
-      const parsed = EmailContactSchema.safeParse({
+      const parsed = validate({
         name: form.name,
         email: form.email,
         company: form.company,
         message: form.message
       })
-      if (!parsed.success) {
+      if (!parsed.ok) {
         await announceFeedback('Revisá los datos ingresados e intenta nuevamente.', false)
         return
       }
