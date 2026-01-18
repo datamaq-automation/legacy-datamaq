@@ -1,5 +1,5 @@
 <!--
-Path: src/components/Navbar.vue
+Path: src/ui/layout/Navbar.vue
 -->
 
 <template>
@@ -174,3 +174,4 @@ onUnmounted(() => {
   }
 }
 </style>
+

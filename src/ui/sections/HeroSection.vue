@@ -1,5 +1,5 @@
 <!--
-path: src/components/HeroSection.vue
+Path: src/ui/sections/HeroSection.vue
 -->
 
 <template>
@@ -158,3 +158,4 @@ defineOptions({
   }
 }
 </style>
+

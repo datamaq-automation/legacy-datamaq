@@ -1,5 +1,5 @@
 <!--
-Path: src/components/LegalSection.vue
+Path: src/ui/sections/LegalSection.vue
 -->
 
 <template>
@@ -13,3 +13,4 @@ Path: src/components/LegalSection.vue
     </div>
   </section>
 </template>
+
