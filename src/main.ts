@@ -4,17 +4,18 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import './assets/theme.css'
 import { installAnalytics } from './infrastructure/analytics'
-import { consentManager, consentManagerKey } from './application/services/consentManager'
+import { consentManagerKey } from './application/services/consentManager'
+import { container } from './di/container'
 
 const app = createApp(App)
 
-app.provide(consentManagerKey, consentManager)
+app.provide(consentManagerKey, container.consentManager)
 
-if (consentManager.getStatus() === 'granted') {
+if (container.consentManager.getStatus() === 'granted') {
   installAnalytics(app)
 }
 
-consentManager.subscribe((status) => {
+container.consentManager.subscribe((status) => {
   if (status === 'granted') {
     installAnalytics(app)
   }

@@ -3,7 +3,12 @@
 Path: src/App.vue
 */
 
-import { CHAT_ENABLED, CONTACT_EMAIL, openWhatsApp, submitEmailContact } from './appLogic'
+import {
+  getChatEnabled,
+  getContactEmail,
+  openWhatsApp,
+  submitEmailContact
+} from './interfaces/controllers/contactController'
 import Navbar from './components/Navbar.vue'
 import HeroSection from './components/HeroSection.vue'
 import ServiciosSection from './components/ServiciosSection.vue'
@@ -13,6 +18,9 @@ import WhatsappFab from './components/WhatsappFab.vue'
 import Footer from './components/Footer.vue'
 import LegalSection from './components/LegalSection.vue'
 import ConsentBanner from './components/ConsentBanner.vue'
+
+const chatEnabled = getChatEnabled()
+const contactEmail = getContactEmail()
 
 function handleWhatsapp(section: string) {
   openWhatsApp(section)
@@ -27,22 +35,22 @@ function handleEmailSubmit(payload: Parameters<typeof submitEmailContact>[1]) {
 <template>
   <div class="app-shell bg-dark text-white min-vh-100">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
-    <Navbar :chatEnabled="CHAT_ENABLED" @contact="handleWhatsapp('navbar')" />
+    <Navbar :chatEnabled="chatEnabled" @contact="handleWhatsapp('navbar')" />
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta">
-      <HeroSection :chatEnabled="CHAT_ENABLED" @primary-cta="handleWhatsapp('hero')" />
+      <HeroSection :chatEnabled="chatEnabled" @primary-cta="handleWhatsapp('hero')" />
       <ServiciosSection
-        :chatEnabled="CHAT_ENABLED"
+        :chatEnabled="chatEnabled"
         @contact="handleWhatsapp($event)"
       />
       <ContactFormSection
-        :contact-email="CONTACT_EMAIL"
+        :contact-email="contactEmail"
         :on-submit="handleEmailSubmit"
       />
       <SobreProfeBustos />
       <LegalSection />
     </main>
     <Footer />
-    <WhatsappFab v-if="CHAT_ENABLED" @whatsapp="handleWhatsapp('fab')" />
+    <WhatsappFab v-if="chatEnabled" @whatsapp="handleWhatsapp('fab')" />
     <ConsentBanner />
   </div>
 </template>

@@ -1,88 +1,95 @@
-import { config } from '@/infrastructure/config'
+import type { ConfigPort } from '../ports/Config'
+import type { EnvironmentPort } from '../ports/Environment'
+import type { HttpClient } from '../ports/HttpClient'
+import type { LoggerPort } from '../ports/Logger'
 
 export type ContactBackendStatus = 'unknown' | 'available' | 'unavailable'
 
 type StatusListener = (status: ContactBackendStatus) => void
 
-const listeners = new Set<StatusListener>()
-let status: ContactBackendStatus = config.CONTACT_API_URL ? 'unknown' : 'unavailable'
-let inFlightProbe: Promise<ContactBackendStatus> | null = null
-const isDev = import.meta.env.DEV
-const isBrowser = typeof window !== 'undefined'
+export class ContactBackendMonitor {
+  private listeners = new Set<StatusListener>()
+  private status: ContactBackendStatus
+  private inFlightProbe: Promise<ContactBackendStatus> | null = null
 
-function notify(): void {
-  listeners.forEach((listener) => listener(status))
-}
-
-async function probeContactBackend(): Promise<ContactBackendStatus> {
-  const apiUrl = config.CONTACT_API_URL
-  if (!apiUrl || !isBrowser) {
-    status = 'unavailable'
-    notify()
-    return status
+  constructor(
+    private http: HttpClient,
+    private config: ConfigPort,
+    private environment: EnvironmentPort,
+    private logger: LoggerPort
+  ) {
+    this.status = config.contactApiUrl ? 'unknown' : 'unavailable'
   }
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: 'OPTIONS',
-      mode: 'cors'
-    })
+  getStatus(): ContactBackendStatus {
+    return this.status
+  }
 
-    if (response.ok || response.status === 405 || response.status === 400) {
-      status = 'available'
-    } else {
-      status = 'unavailable'
+  subscribe(listener: StatusListener): () => void {
+    this.listeners.add(listener)
+    return () => {
+      this.listeners.delete(listener)
     }
-  } catch (error) {
-    if (isDev) {
-      console.warn('[contactBackendStatus] Error al verificar disponibilidad del backend:', error)
+  }
+
+  async ensureStatus(): Promise<ContactBackendStatus> {
+    if (this.status !== 'unknown') {
+      return this.status
     }
-    status = 'unavailable'
+
+    if (!this.inFlightProbe) {
+      this.inFlightProbe = this.probe().finally(() => {
+        this.inFlightProbe = null
+      })
+    }
+
+    return this.inFlightProbe
   }
 
-  notify()
-  return status
-}
-
-export function getContactBackendStatus(): ContactBackendStatus {
-  return status
-}
-
-export function subscribeToContactBackendStatus(listener: StatusListener): () => void {
-  listeners.add(listener)
-  return () => {
-    listeners.delete(listener)
-  }
-}
-
-export async function ensureContactBackendStatus(): Promise<ContactBackendStatus> {
-  if (status !== 'unknown') {
-    return status
+  markAvailable(): void {
+    if (this.status === 'available') {
+      return
+    }
+    this.status = 'available'
+    this.notify()
   }
 
-  if (!inFlightProbe) {
-    inFlightProbe = probeContactBackend().finally(() => {
-      inFlightProbe = null
-    })
+  markUnavailable(): void {
+    if (this.status === 'unavailable') {
+      return
+    }
+    this.status = 'unavailable'
+    this.notify()
   }
 
-  return inFlightProbe
-}
-
-export function markContactBackendAvailable(): void {
-  if (status === 'available') {
-    return
+  private notify(): void {
+    this.listeners.forEach((listener) => listener(this.status))
   }
 
-  status = 'available'
-  notify()
-}
+  private async probe(): Promise<ContactBackendStatus> {
+    const apiUrl = this.config.contactApiUrl
+    if (!apiUrl || !this.environment.isBrowser()) {
+      this.status = 'unavailable'
+      this.notify()
+      return this.status
+    }
 
-export function markContactBackendUnavailable(): void {
-  if (status === 'unavailable') {
-    return
+    try {
+      const response = await this.http.options(apiUrl)
+      if (response.ok || response.status === 405 || response.status === 400) {
+        this.status = 'available'
+      } else {
+        this.status = 'unavailable'
+      }
+    } catch (error) {
+      this.logger.warn(
+        '[contactBackendStatus] Error al verificar disponibilidad del backend:',
+        error
+      )
+      this.status = 'unavailable'
+    }
+
+    this.notify()
+    return this.status
   }
-
-  status = 'unavailable'
-  notify()
 }

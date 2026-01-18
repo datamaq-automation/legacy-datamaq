@@ -127,13 +127,13 @@ Path: src/components/ContactFormSection.vue
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { CTA_COPY } from '@/application/constants/ctaCopy'
-import type { EmailContactPayload } from '@/application/services/emailChannelService'
+import type { EmailContactPayload } from '@/application/use-cases/submitEmailContact'
 import {
   ensureContactBackendStatus,
   getContactBackendStatus,
   subscribeToContactBackendStatus,
   type ContactBackendStatus
-} from '@/application/services/contactBackendStatus'
+} from '@/interfaces/controllers/contactBackendController'
 
 const props = defineProps<{
   contactEmail?: string,
@@ -204,8 +204,6 @@ async function handleSubmit(): Promise<void> {
     isSubmitting.value = false
   }
 }
-
-const contactEmail = computed(() => props.contactEmail)
 
 async function announceFeedback(message: string, success: boolean): Promise<void> {
   feedback.message = message
