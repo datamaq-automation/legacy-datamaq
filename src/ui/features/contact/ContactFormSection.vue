@@ -8,7 +8,7 @@ Path: src/components/ContactFormSection.vue
         <div class="col-lg-8">
           <div class="card border-0 shadow-lg bg-body text-body">
             <div class="card-body p-4 p-md-5">
-              <h2 id="contacto-title" class="h3 correo-title mb-3">
+              <h2 id="contacto-title" class="h3 contact-form__title mb-3">
                 Preferís coordinar por correo electrónico
               </h2>
               <p class="text-body mb-4">
@@ -171,3 +171,4 @@ const {
   }
 }
 </style>
+

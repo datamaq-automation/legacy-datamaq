@@ -1,0 +1,35 @@
+body {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+body.has-consent-banner {
+  --cookie-banner-height: var(--cookie-banner-visible-height);
+}
+
+section[aria-labelledby],
+section[id] {
+  content-visibility: auto;
+  contain-intrinsic-size: 600px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+:focus-visible {
+  outline: 3px solid #ffd43b;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

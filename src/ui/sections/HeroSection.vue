@@ -20,9 +20,9 @@ Path: src/ui/sections/HeroSection.vue
             operativa.
           </p>
           <div
-            class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 hero-primary-actions cta-stack"
+            class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 hero-primary-actions hero-cta-stack"
           >
-            <div class="cta-stack__item">
+            <div class="hero-cta-stack__item">
               <button
                 type="button"
                 class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm primary-whatsapp-cta w-100"
@@ -34,7 +34,7 @@ Path: src/ui/sections/HeroSection.vue
                 {{ chatEnabled ? CTA_COPY.PRIMARY_WHATSAPP : CTA_COPY.WHATSAPP_UNAVAILABLE }}
               </button>
             </div>
-            <div class="cta-stack__item">
+            <div class="hero-cta-stack__item">
               <a
                 class="btn btn-outline-secondary btn-lg px-4 hero-secondary-cta w-100"
                 href="#servicios"
@@ -55,29 +55,29 @@ Path: src/ui/sections/HeroSection.vue
           </p>
           <ul class="row list-unstyled gy-3 text-start hero-benefits" aria-label="Beneficios">
             <li class="col-12 col-sm-6">
-              <div class="benefit-card benefit-card--success h-100">
-                <span class="benefit-card__badge">1</span>
+              <div class="hero-benefit-card hero-benefit-card--success h-100">
+                <span class="hero-benefit-card__badge">1</span>
                 <div>
-                  <p class="benefit-card__title">Línea base en semanas</p>
-                  <p class="benefit-card__text">Lecturas continuas de energía y producción con checklist validado.</p>
+                  <p class="hero-benefit-card__title">Línea base en semanas</p>
+                  <p class="hero-benefit-card__text">Lecturas continuas de energía y producción con checklist validado.</p>
                 </div>
               </div>
             </li>
             <li class="col-12 col-sm-6">
-              <div class="benefit-card benefit-card--primary h-100">
-                <span class="benefit-card__badge">2</span>
+              <div class="hero-benefit-card hero-benefit-card--primary h-100">
+                <span class="hero-benefit-card__badge">2</span>
                 <div>
-                  <p class="benefit-card__title">Decisiones guiadas por OEE</p>
-                  <p class="benefit-card__text">Disponibilidad, rendimiento y calidad listos para priorizar mejoras.</p>
+                  <p class="hero-benefit-card__title">Decisiones guiadas por OEE</p>
+                  <p class="hero-benefit-card__text">Disponibilidad, rendimiento y calidad listos para priorizar mejoras.</p>
                 </div>
               </div>
             </li>
             <li class="col-12">
-              <div class="benefit-card benefit-card--warning h-100">
-                <span class="benefit-card__badge">3</span>
+              <div class="hero-benefit-card hero-benefit-card--warning h-100">
+                <span class="hero-benefit-card__badge">3</span>
                 <div>
-                  <p class="benefit-card__title">Preferencia cooperativas y sector gráfico</p>
-                  <p class="benefit-card__text">Planes ajustados a industrias del GBA Norte sin exclusiones.</p>
+                  <p class="hero-benefit-card__title">Preferencia cooperativas y sector gráfico</p>
+                  <p class="hero-benefit-card__text">Planes ajustados a industrias del GBA Norte sin exclusiones.</p>
                 </div>
               </div>
             </li>
@@ -155,4 +155,7 @@ defineOptions({
   }
 }
 </style>
+
+
+
 
