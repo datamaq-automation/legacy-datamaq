@@ -4,3 +4,10 @@ export interface EmailContactPayload {
   company?: string
   message?: string
 }
+
+export interface ContactSubmitPayload extends EmailContactPayload {
+  pageLocation: string
+  trafficSource: string
+  userAgent: string
+  createdAt: string
+}

@@ -15,5 +15,5 @@ export function openWhatsApp(section: string = 'fab'): void {
 }
 
 export function submitEmailContact(section: string, payload: EmailContactPayload) {
-  return useContainer().useCases.submitEmailContact.execute(section, payload)
+  return useContainer().useCases.submitContact.execute(section, payload)
 }
