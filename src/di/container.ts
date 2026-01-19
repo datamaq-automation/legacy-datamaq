@@ -5,6 +5,7 @@ import { EngagementTracker } from '@/application/analytics/engagementTracker'
 import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import { ContactSubmittedHandler } from '@/application/contact/handlers/contactSubmittedHandler'
 import { OpenWhatsappUseCase } from '@/application/use-cases/openWhatsapp'
+import { BrowserAttribution } from '@/infrastructure/attribution/browserAttribution'
 import { BrowserAnalytics } from '@/infrastructure/analytics/browserAnalytics'
 import { ViteConfig } from '@/infrastructure/config/viteConfig'
 import { BrowserEnvironment } from '@/infrastructure/environment/browserEnvironment'
@@ -27,6 +28,7 @@ const analytics = new AnalyticsFacade([new BrowserAnalytics(logger)], logger)
 const notifications = new NotificationFacade([new NoopNotificationProvider()], logger)
 const contactBackend = new ContactBackendMonitor(http, config, environment, logger)
 const engagementTracker = new EngagementTracker(analytics, environment, environment, logger)
+const attribution = new BrowserAttribution()
 const storage = new BrowserStorage()
 const consentManager = createConsentManager(storage, logger)
 const eventBus = new InMemoryEventBus()
@@ -42,6 +44,7 @@ const openWhatsapp = new OpenWhatsappUseCase(
   http,
   contactBackend,
   engagementTracker,
+  attribution,
   logger
 )
 

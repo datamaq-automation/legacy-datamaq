@@ -13,10 +13,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:a11y": "node scripts/run-a11y.mjs"
+    "test:a11y": "node scripts/run-a11y.mjs",
+    "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {
+    "@vueuse/head": "^2.0.0",
     "@microsoft/clarity": "^1.0.0",
+    "@vueuse/head": "^2.0.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "vue": "^3.5.22",

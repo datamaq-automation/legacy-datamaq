@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.profebustos.com.ar/sitemap.xml

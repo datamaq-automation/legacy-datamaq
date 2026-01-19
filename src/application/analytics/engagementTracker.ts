@@ -1,6 +1,7 @@
 import type { AnalyticsFacade } from './analyticsFacade'
 import type { Clock, LocationProvider } from '../ports/Environment'
 import type { LoggerPort } from '../ports/Logger'
+import { conversionEvents } from './conversionEvents'
 
 export interface ContactEngagementContext {
   section: string
@@ -9,8 +10,8 @@ export interface ContactEngagementContext {
   navigationTimeMs: number
 }
 
-const WHATSAPP_EVENT_NAME = 'whatsapp_click'
-const EMAIL_EVENT_NAME = 'email_contact_submit'
+const WHATSAPP_EVENT_NAME = conversionEvents.contact
+const EMAIL_EVENT_NAME = conversionEvents.generateLead
 const DEDUPE_WINDOW_MS = 2000
 
 export class EngagementTracker {

@@ -8,6 +8,7 @@ import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
 import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
 import type { EngagementTracker } from '../analytics/engagementTracker'
+import type { AttributionProvider } from '../ports/Attribution'
 
 export class OpenWhatsappUseCase {
   constructor(
@@ -18,6 +19,7 @@ export class OpenWhatsappUseCase {
     private http: HttpClient,
     private contactBackend: ContactBackendMonitor,
     private engagementTracker: EngagementTracker,
+    private attribution: AttributionProvider,
     private logger: LoggerPort
   ) {}
 
@@ -78,7 +80,8 @@ export class OpenWhatsappUseCase {
       page_location: this.location.href(),
       traffic_source: getTrafficSource(this.location),
       user_agent: this.navigator.userAgent(),
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      ...mapAttribution(this.attribution.getAttribution())
     }
 
     this.logger.debug('[sendWhatsappContactEvent] Payload:', payload)
@@ -107,4 +110,19 @@ function getTrafficSource(location: LocationProvider): string {
     return utmSource
   }
   return location.referrer() || 'direct'
+}
+
+function mapAttribution(attribution: ReturnType<AttributionProvider['getAttribution']>) {
+  if (!attribution) {
+    return {}
+  }
+
+  const params: Record<string, string> = {}
+  if (attribution.utmSource) params.utm_source = attribution.utmSource
+  if (attribution.utmMedium) params.utm_medium = attribution.utmMedium
+  if (attribution.utmCampaign) params.utm_campaign = attribution.utmCampaign
+  if (attribution.utmTerm) params.utm_term = attribution.utmTerm
+  if (attribution.utmContent) params.utm_content = attribution.utmContent
+  if (attribution.gclid) params.gclid = attribution.gclid
+  return params
 }
