@@ -35,3 +35,5 @@ coverage
 # Vitest
 __screenshots__/
 .env.remote
+public/robots.txt
+public/sitemap.xml

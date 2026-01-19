@@ -5,7 +5,7 @@ import type { ContactError } from '@/application/types/errors'
 import type { HttpClient } from '@/application/ports/HttpClient'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
-import { getAttributionParams } from '@/infrastructure/attribution/utm'
+import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
 
 export class ContactApiGateway implements ContactGateway {
   constructor(
@@ -21,10 +21,9 @@ export class ContactApiGateway implements ContactGateway {
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
-    const attribution = getAttributionParams()
+    const enrichedPayload = attachAttributionToPayload(payload)
     const response = await this.http.postJson(apiUrl, {
-      ...payload,
-      ...attribution,
+      ...enrichedPayload,
       page_location: payload.pageLocation,
       traffic_source: payload.trafficSource,
       user_agent: payload.userAgent,

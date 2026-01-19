@@ -10,4 +10,12 @@ export interface ContactSubmitPayload extends EmailContactPayload {
   trafficSource: string
   userAgent: string
   createdAt: string
+  attribution?: {
+    utmSource?: string
+    utmMedium?: string
+    utmCampaign?: string
+    utmTerm?: string
+    utmContent?: string
+    gclid?: string
+  }
 }

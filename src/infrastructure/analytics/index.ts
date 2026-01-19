@@ -1,16 +1,18 @@
-import clarity from '@microsoft/clarity'
+import { getAnalyticsConsent } from './consent'
+import { initClarity } from './clarity'
 import { initGa4, trackGa4Event, trackGa4PageView } from './ga4'
 import { initGtm, pushToDataLayer } from './gtm'
 
 type PageViewPayload = {
   path: string
-  title: string
+  title?: string
 }
 
 let analyticsReady = false
 let gtmEnabled = false
 let ga4Enabled = false
 let spaTrackingEnabled = false
+let spaCleanup: (() => void) | null = null
 
 export function initAnalytics(): void {
   if (analyticsReady) {
@@ -19,6 +21,10 @@ export function initAnalytics(): void {
 
   const enabled = parseBoolean(import.meta.env.VITE_ANALYTICS_ENABLED, true)
   if (!enabled) {
+    return
+  }
+
+  if (getAnalyticsConsent() !== 'granted') {
     return
   }
 
@@ -37,7 +43,7 @@ export function initAnalytics(): void {
   }
 
   if (clarityId) {
-    clarity.init(clarityId)
+    initClarity({ id: clarityId })
   }
 
   analyticsReady = true
@@ -45,6 +51,10 @@ export function initAnalytics(): void {
 
 export function trackPageView({ path, title }: PageViewPayload): void {
   if (!analyticsReady) {
+    return
+  }
+
+  if (getAnalyticsConsent() !== 'granted') {
     return
   }
 
@@ -68,6 +78,10 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}): 
     return
   }
 
+  if (getAnalyticsConsent() !== 'granted') {
+    return
+  }
+
   if (gtmEnabled) {
     pushToDataLayer({
       event: name,
@@ -81,9 +95,9 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}): 
   }
 }
 
-export function enableSpaPageTracking(): void {
+export function enableSpaPageTracking(): () => void {
   if (spaTrackingEnabled || typeof window === 'undefined') {
-    return
+    return spaCleanup ?? (() => {})
   }
 
   let lastPath = `${window.location.pathname}${window.location.search}${window.location.hash}`
@@ -113,6 +127,14 @@ export function enableSpaPageTracking(): void {
 
   window.addEventListener('popstate', sendPageView)
   spaTrackingEnabled = true
+  spaCleanup = () => {
+    history.pushState = originalPushState
+    history.replaceState = originalReplaceState
+    window.removeEventListener('popstate', sendPageView)
+    spaTrackingEnabled = false
+  }
+
+  return spaCleanup
 }
 
 function normalize(value: string | undefined): string | undefined {

@@ -18,6 +18,18 @@ Notas:
 - `VITE_ANALYTICS_ENABLED=false` deshabilita toda la carga de tags.
 - Los IDs se cargan solo si el consentimiento esta en `granted`.
 
+## Consentimiento
+
+El consentimiento se guarda en `localStorage` con la clave `consent.analytics`:
+- `granted`
+- `denied`
+- `unset`
+
+En desarrollo podes setearlo manualmente:
+```
+localStorage.setItem('consent.analytics', 'granted')
+```
+
 ## Arquitectura
 
 - Inicializacion: `src/infrastructure/analytics/index.ts`
@@ -44,7 +56,7 @@ Se disparan desde `src/application/analytics/engagementTracker.ts` (WhatsApp y f
 ## UTMs / click IDs
 
 - Se leen desde URL y se guardan 30 dias en localStorage.
-- Se anexan automaticamente al payload de leads.
+- Se anexan automaticamente al payload de leads como `attribution`.
 
 ## SEO base
 

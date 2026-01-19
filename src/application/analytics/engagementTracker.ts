@@ -1,7 +1,7 @@
-import type { AnalyticsFacade } from './analyticsFacade'
 import type { Clock, LocationProvider } from '../ports/Environment'
 import type { LoggerPort } from '../ports/Logger'
 import { conversionEvents } from './conversionEvents'
+import { trackEvent } from '@/infrastructure/analytics'
 
 export interface ContactEngagementContext {
   section: string
@@ -19,7 +19,6 @@ export class EngagementTracker {
   private pageEntryTimestamp: number
 
   constructor(
-    private analytics: AnalyticsFacade,
     private clock: Clock,
     private location: LocationProvider,
     private logger: LoggerPort
@@ -32,7 +31,7 @@ export class EngagementTracker {
     if (this.shouldSkipEvent(WHATSAPP_EVENT_NAME, context)) {
       return
     }
-    this.analytics.track(WHATSAPP_EVENT_NAME, context)
+    trackEvent(WHATSAPP_EVENT_NAME, context)
   }
 
   trackEmail(section: string, trafficSource: string): void {
@@ -40,7 +39,7 @@ export class EngagementTracker {
     if (this.shouldSkipEvent(EMAIL_EVENT_NAME, context)) {
       return
     }
-    this.analytics.track(EMAIL_EVENT_NAME, context)
+    trackEvent(EMAIL_EVENT_NAME, context)
   }
 
   private buildContext(section: string, trafficSource: string): ContactEngagementContext {

@@ -81,7 +81,7 @@ export class OpenWhatsappUseCase {
       traffic_source: getTrafficSource(this.location),
       user_agent: this.navigator.userAgent(),
       created_at: new Date().toISOString(),
-      ...mapAttribution(this.attribution.getAttribution())
+      attribution: this.attribution.getAttribution() ?? undefined
     }
 
     this.logger.debug('[sendWhatsappContactEvent] Payload:', payload)
@@ -110,19 +110,4 @@ function getTrafficSource(location: LocationProvider): string {
     return utmSource
   }
   return location.referrer() || 'direct'
-}
-
-function mapAttribution(attribution: ReturnType<AttributionProvider['getAttribution']>) {
-  if (!attribution) {
-    return {}
-  }
-
-  const params: Record<string, string> = {}
-  if (attribution.utmSource) params.utm_source = attribution.utmSource
-  if (attribution.utmMedium) params.utm_medium = attribution.utmMedium
-  if (attribution.utmCampaign) params.utm_campaign = attribution.utmCampaign
-  if (attribution.utmTerm) params.utm_term = attribution.utmTerm
-  if (attribution.utmContent) params.utm_content = attribution.utmContent
-  if (attribution.gclid) params.gclid = attribution.gclid
-  return params
 }

@@ -82,18 +82,16 @@ export function getAttribution(): Attribution | null {
   }
 }
 
-export function getAttributionParams(): Record<string, string> {
+export function attachAttributionToPayload<T extends object>(
+  payload: T
+): T & { attribution?: Attribution } {
   const attribution = getAttribution()
   if (!attribution) {
-    return {}
+    return payload
   }
 
-  const params: Record<string, string> = {}
-  if (attribution.utmSource) params.utm_source = attribution.utmSource
-  if (attribution.utmMedium) params.utm_medium = attribution.utmMedium
-  if (attribution.utmCampaign) params.utm_campaign = attribution.utmCampaign
-  if (attribution.utmTerm) params.utm_term = attribution.utmTerm
-  if (attribution.utmContent) params.utm_content = attribution.utmContent
-  if (attribution.gclid) params.gclid = attribution.gclid
-  return params
+  return {
+    ...payload,
+    attribution
+  }
 }

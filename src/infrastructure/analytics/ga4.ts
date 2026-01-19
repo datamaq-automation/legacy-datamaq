@@ -39,7 +39,7 @@ export function initGa4({ id, debug }: Ga4Config): void {
   ga4Loaded = true
 }
 
-export function trackGa4PageView(path: string, title: string): void {
+export function trackGa4PageView(path: string, title?: string): void {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
     return
   }
