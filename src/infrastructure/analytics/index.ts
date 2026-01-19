@@ -1,7 +1,6 @@
 import { getAnalyticsConsent } from './consent'
 import { initClarity } from './clarity'
 import { initGa4, trackGa4Event, trackGa4PageView } from './ga4'
-import { initGtm, pushToDataLayer } from './gtm'
 
 type PageViewPayload = {
   path: string
@@ -9,7 +8,6 @@ type PageViewPayload = {
 }
 
 let analyticsReady = false
-let gtmEnabled = false
 let ga4Enabled = false
 let spaTrackingEnabled = false
 let spaCleanup: (() => void) | null = null
@@ -28,16 +26,10 @@ export function initAnalytics(): void {
     return
   }
 
-  const gtmId = normalize(import.meta.env.VITE_GTM_ID)
   const ga4Id = normalize(import.meta.env.VITE_GA4_ID)
   const clarityId = normalize(import.meta.env.VITE_CLARITY_PROJECT_ID)
 
-  if (gtmId) {
-    initGtm({ id: gtmId })
-    gtmEnabled = true
-  }
-
-  if (ga4Id && !gtmId) {
+  if (ga4Id) {
     initGa4({ id: ga4Id, debug: import.meta.env.DEV })
     ga4Enabled = true
   }
@@ -58,16 +50,6 @@ export function trackPageView({ path, title }: PageViewPayload): void {
     return
   }
 
-  if (gtmEnabled) {
-    pushToDataLayer({
-      event: 'page_view',
-      page_path: path,
-      page_title: title,
-      page_location: typeof window === 'undefined' ? undefined : window.location.href
-    })
-    return
-  }
-
   if (ga4Enabled) {
     trackGa4PageView(path, title)
   }
@@ -79,14 +61,6 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}): 
   }
 
   if (getAnalyticsConsent() !== 'granted') {
-    return
-  }
-
-  if (gtmEnabled) {
-    pushToDataLayer({
-      event: name,
-      ...params
-    })
     return
   }
 

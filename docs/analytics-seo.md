@@ -5,16 +5,14 @@
 ```
 VITE_ANALYTICS_ENABLED=true
 VITE_GA4_ID=G-XXXXXXXXXX
-VITE_GTM_ID=GTM-XXXXXXX
-VITE_CLARITY_PROJECT_ID=
-VITE_SITE_URL=https://www.profebustos.com.ar
-VITE_SITE_NAME=ProfeBustos
-VITE_SITE_DESCRIPTION=Servicios industriales y eficiencia energetica para empresas.
-VITE_SITE_OG_IMAGE=https://www.profebustos.com.ar/og-default.png
+VITE_CLARITY_PROJECT_ID=c-xxx
+VITE_SITE_URL=https://www.tu_sitio_web.com.ar
+VITE_SITE_NAME=tu_nombre_de_tu_sitio
+VITE_SITE_DESCRIPTION=tu_descripcion
+VITE_SITE_OG_IMAGE=https://www.tu_sitio_web.com.ar/og-default.png
 ```
 
 Notas:
-- Si hay `VITE_GTM_ID`, no se inicializa GA4 directo para evitar doble page_view.
 - `VITE_ANALYTICS_ENABLED=false` deshabilita toda la carga de tags.
 - Los IDs se cargan solo si el consentimiento esta en `granted`.
 
@@ -34,7 +32,6 @@ localStorage.setItem('consent.analytics', 'granted')
 
 - Inicializacion: `src/infrastructure/analytics/index.ts`
 - GA4: `src/infrastructure/analytics/ga4.ts`
-- GTM: `src/infrastructure/analytics/gtm.ts`
 - Atribucion UTM: `src/infrastructure/attribution/utm.ts`
 - Enriquecimiento de leads: `src/infrastructure/contact/contactApiGateway.ts`
 
@@ -86,18 +83,13 @@ Luego:
 
 ## Google Ads - conversiones
 
-Opcion A (recomendada): importar desde GA4.
+Opcion recomendada: importar desde GA4.
 1. En GA4, marcar eventos como conversion.
 2. En Google Ads, importar conversiones desde GA4.
-
-Opcion B: via GTM.
-1. Crear tags de conversion de Google Ads.
-2. Disparar con eventos `generate_lead` / `contact`.
 
 ## Validacion
 
 - GA4 DebugView: GA4 > Admin > DebugView.
-- GTM Preview: Tag Assistant en modo Preview.
 - Confirmar `page_view` en cada navegacion SPA.
 
 ## Checklist pre-produccion

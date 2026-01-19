@@ -4,7 +4,6 @@ interface ImportMetaEnv {
   readonly VITE_WHATSAPP_PRESET_MESSAGE?: string
   readonly VITE_CLARITY_PROJECT_ID?: string
   readonly VITE_GA4_ID?: string
-  readonly VITE_GTM_ID?: string
   readonly VITE_ANALYTICS_ENABLED?: string
   readonly VITE_SITE_URL?: string
   readonly VITE_SITE_NAME?: string
@@ -17,15 +16,6 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
   readonly env: ImportMetaEnv
-}
-
-type DataLayerEvent = {
-  event: string
-  section?: string
-  traffic_source?: string
-  navigation_time_ms?: number
-  page_location?: string
-  [key: string]: unknown
 }
 
 type GtagFunction = (
@@ -41,7 +31,6 @@ type ClarityFunction = (
 ) => void
 
 interface Window {
-  dataLayer?: DataLayerEvent[]
   gtag?: GtagFunction
   clarity?: ClarityFunction
 }
