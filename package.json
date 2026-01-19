@@ -10,6 +10,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:a11y": "node scripts/run-a11y.mjs"
   },
   "dependencies": {
@@ -21,10 +24,16 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/vue": "^8.1.0",
     "@vitejs/plugin-vue": "^6.0.1",
+    "@vitest/coverage-v8": "^4.0.17",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^27.4.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.11",
     "vite-plugin-remove-console": "^2.2.0",
-    "vite-plugin-vue-devtools": "^8.0.3"
+    "vite-plugin-vue-devtools": "^8.0.3",
+    "vitest": "^4.0.17"
   }
 }

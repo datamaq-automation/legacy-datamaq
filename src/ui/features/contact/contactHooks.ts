@@ -4,7 +4,7 @@ import {
   getContactBackendStatus,
   subscribeToContactBackendStatus,
   type ContactBackendStatus
-} from '@/interfaces/controllers/contactBackendController'
+} from '@/ui/controllers/contactBackendController'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
 import { useContent } from '@/ui/composables/useContent'

@@ -2,7 +2,7 @@ import { createConsentManager } from '@/application/consent/consentManager'
 import { AnalyticsFacade } from '@/application/analytics/analyticsFacade'
 import { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
 import { EngagementTracker } from '@/application/analytics/engagementTracker'
-import { SubmitContactApplicationService } from '@/application/contact/submitContactApplicationService'
+import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import { ContactSubmittedHandler } from '@/application/contact/handlers/contactSubmittedHandler'
 import { OpenWhatsappUseCase } from '@/application/use-cases/openWhatsapp'
 import { BrowserAnalytics } from '@/infrastructure/analytics/browserAnalytics'
@@ -45,7 +45,7 @@ const openWhatsapp = new OpenWhatsappUseCase(
   logger
 )
 
-const submitContact = new SubmitContactApplicationService(
+const submitContact = new SubmitContactUseCase(
   contactService,
   contactGateway,
   contactBackend,

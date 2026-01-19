@@ -39,3 +39,8 @@ interface Window {
   gtag?: GtagFunction
   clarity?: ClarityFunction
 }
+
+declare module '*.svg' {
+  const src: string
+  export default src
+}

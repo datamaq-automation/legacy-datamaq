@@ -26,6 +26,13 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
+    },
+    test: {
+      environment: 'jsdom',
+      globals: true,
+      setupFiles: './tests/setup.ts',
+      include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
+      css: true
     }
   }
 })

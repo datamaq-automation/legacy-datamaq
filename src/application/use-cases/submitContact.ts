@@ -1,5 +1,5 @@
-import type { ContactGateway } from './ports/ContactGateway'
-import type { ContactBackendMonitor } from './contactBackendStatus'
+import type { ContactGateway } from '../contact/ports/ContactGateway'
+import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
 import type { EngagementTracker } from '../analytics/engagementTracker'
 import type { LoggerPort } from '../ports/Logger'
 import type { LocationProvider, NavigatorProvider } from '../ports/Environment'
@@ -10,7 +10,7 @@ import { ContactService } from '@/domain/contact/services/ContactService'
 import { ContactSubmitted } from '@/domain/contact/events/ContactSubmitted'
 import type { EventBus } from '../ports/EventBus'
 
-export class SubmitContactApplicationService {
+export class SubmitContactUseCase {
   constructor(
     private contactService: ContactService,
     private contactGateway: ContactGateway,
