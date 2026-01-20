@@ -8,7 +8,7 @@ import type { EmailContactPayload } from '../dto/contact'
 import { ContactService } from '@/domain/contact/services/ContactService'
 import { ContactSubmitted } from '@/domain/contact/events/ContactSubmitted'
 import type { EventBus } from '../ports/EventBus'
-import { registerLeadForThanksPage } from '../analytics/leadTracking'
+import type { LeadTracking } from '../analytics/leadTracking'
 
 export class SubmitContactUseCase {
   constructor(
@@ -18,6 +18,7 @@ export class SubmitContactUseCase {
     private location: LocationProvider,
     private navigator: NavigatorProvider,
     private eventBus: EventBus,
+    private leadTracking: LeadTracking,
     private logger: LoggerPort
   ) {}
 
@@ -63,7 +64,7 @@ export class SubmitContactUseCase {
     }
 
     this.contactBackend.markAvailable()
-    registerLeadForThanksPage()
+    this.leadTracking.registerLeadForThanksPage()
     this.eventBus.publish(new ContactSubmitted(contactResult.data.id))
     return { ok: true, data: undefined }
   }

@@ -2,17 +2,21 @@ import { createConsentManager } from '@/application/consent/consentManager'
 import { AnalyticsFacade } from '@/application/analytics/analyticsFacade'
 import { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
 import { EngagementTracker } from '@/application/analytics/engagementTracker'
+import { LeadTracking } from '@/application/analytics/leadTracking'
 import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import { ContactSubmittedHandler } from '@/application/contact/handlers/contactSubmittedHandler'
 import { OpenWhatsappUseCase } from '@/application/use-cases/openWhatsapp'
 import { BrowserAttribution } from '@/infrastructure/attribution/browserAttribution'
 import { BrowserAnalytics } from '@/infrastructure/analytics/browserAnalytics'
+import { BrowserAnalyticsAdapter } from '@/infrastructure/analytics/browserAnalyticsAdapter'
+import { BrowserConsentAdapter } from '@/infrastructure/analytics/browserConsentAdapter'
 import { ViteConfig } from '@/infrastructure/config/viteConfig'
 import { BrowserEnvironment } from '@/infrastructure/environment/browserEnvironment'
 import { InMemoryEventBus } from '@/infrastructure/events/inMemoryEventBus'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { ConsoleLogger } from '@/infrastructure/logging/consoleLogger'
 import { BrowserStorage } from '@/infrastructure/storage/browserStorage'
+import { BrowserSessionStorage } from '@/infrastructure/storage/browserSessionStorage'
 import { ContactApiGateway } from '@/infrastructure/contact/contactApiGateway'
 import { ContactService } from '@/domain/contact/services/ContactService'
 import { NotificationFacade } from '@/application/notifications/notificationFacade'
@@ -24,13 +28,17 @@ const environment = new BrowserEnvironment()
 const logger = new ConsoleLogger(environment)
 const config = new ViteConfig()
 const http = new FetchHttpClient(logger)
+const analyticsPort = new BrowserAnalyticsAdapter()
+const consentPort = new BrowserConsentAdapter()
 const analytics = new AnalyticsFacade([new BrowserAnalytics(logger)], logger)
 const notifications = new NotificationFacade([new NoopNotificationProvider()], logger)
 const contactBackend = new ContactBackendMonitor(http, config, environment, logger)
-const engagementTracker = new EngagementTracker(environment, environment, logger)
+const engagementTracker = new EngagementTracker(environment, environment, analyticsPort, logger)
 const attribution = new BrowserAttribution()
 const storage = new BrowserStorage()
+const sessionStorage = new BrowserSessionStorage()
 const consentManager = createConsentManager(storage, logger)
+const leadTracking = new LeadTracking(sessionStorage, analyticsPort, consentPort)
 const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, logger)
@@ -55,6 +63,7 @@ const submitContact = new SubmitContactUseCase(
   environment,
   environment,
   eventBus,
+  leadTracking,
   logger
 )
 
@@ -67,6 +76,7 @@ export const container = {
   consentManager,
   contactBackend,
   eventBus,
+  leadTracking,
   useCases: {
     openWhatsapp,
     submitContact

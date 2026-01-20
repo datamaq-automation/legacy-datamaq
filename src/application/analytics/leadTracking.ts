@@ -1,51 +1,50 @@
+import type { AnalyticsPort } from '../ports/Analytics'
+import type { ConsentPort } from '../ports/Consent'
+import type { StoragePort } from '../ports/Storage'
 import { conversionEvents } from './conversionEvents'
-import { trackEvent } from '@/infrastructure/analytics'
-import { getAnalyticsConsent } from '@/infrastructure/analytics/consent'
 
 const LAST_LEAD_KEY = 'last_lead_id'
 const TRACKED_PREFIX = 'lead_tracked_'
 
-export function registerLeadForThanksPage(): string {
-  const leadId = buildLeadId()
+export class LeadTracking {
+  constructor(
+    private storage: StoragePort,
+    private analytics: AnalyticsPort,
+    private consent: ConsentPort
+  ) {}
 
-  if (typeof window !== 'undefined') {
-    window.sessionStorage.setItem(LAST_LEAD_KEY, leadId)
+  registerLeadForThanksPage(): string {
+    const leadId = buildLeadId()
+    this.storage.set(LAST_LEAD_KEY, leadId)
+    return leadId
   }
 
-  return leadId
-}
+  trackGenerateLeadOnce(params: Record<string, unknown> = {}): boolean {
+    if (!isAnalyticsEnabled()) {
+      return false
+    }
 
-export function trackGenerateLeadOnce(
-  params: Record<string, unknown> = {}
-): boolean {
-  if (typeof window === 'undefined') {
-    return false
+    if (this.consent.getAnalyticsConsent() !== 'granted') {
+      return false
+    }
+
+    const leadId = this.storage.get(LAST_LEAD_KEY)
+    if (!leadId) {
+      return false
+    }
+
+    if (this.storage.get(`${TRACKED_PREFIX}${leadId}`)) {
+      return false
+    }
+
+    this.analytics.trackEvent(conversionEvents.generateLead, {
+      ...params,
+      lead_id: leadId
+    })
+
+    this.storage.set(`${TRACKED_PREFIX}${leadId}`, '1')
+    return true
   }
-
-  if (!isAnalyticsEnabled()) {
-    return false
-  }
-
-  if (getAnalyticsConsent() !== 'granted') {
-    return false
-  }
-
-  const leadId = window.sessionStorage.getItem(LAST_LEAD_KEY)
-  if (!leadId) {
-    return false
-  }
-
-  if (window.sessionStorage.getItem(`${TRACKED_PREFIX}${leadId}`)) {
-    return false
-  }
-
-  trackEvent(conversionEvents.generateLead, {
-    ...params,
-    lead_id: leadId
-  })
-
-  window.sessionStorage.setItem(`${TRACKED_PREFIX}${leadId}`, '1')
-  return true
 }
 
 function buildLeadId(): string {

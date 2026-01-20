@@ -5,9 +5,10 @@ import Footer from '@/ui/layout/Footer.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import { getChatEnabled, openWhatsApp } from '@/ui/controllers/contactController'
 import { navigateTo } from '@/infrastructure/navigation/spaNavigation'
-import { trackGenerateLeadOnce } from '@/application/analytics/leadTracking'
+import { useContainer } from '@/di/container'
 
 const chatEnabled = getChatEnabled()
+const { leadTracking } = useContainer()
 
 function handleWhatsapp() {
   openWhatsApp('gracias')
@@ -19,7 +20,7 @@ function handleGoHome() {
 
 onMounted(() => {
   const pageLocation = typeof window !== 'undefined' ? window.location.href : ''
-  trackGenerateLeadOnce({ page_location: pageLocation })
+  leadTracking.trackGenerateLeadOnce({ page_location: pageLocation })
 })
 </script>
 

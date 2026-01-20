@@ -1,7 +1,7 @@
 import type { Clock, LocationProvider } from '../ports/Environment'
+import type { AnalyticsPort } from '../ports/Analytics'
 import type { LoggerPort } from '../ports/Logger'
 import { conversionEvents } from './conversionEvents'
-import { trackEvent } from '@/infrastructure/analytics'
 
 export interface ContactEngagementContext {
   section: string
@@ -21,6 +21,7 @@ export class EngagementTracker {
   constructor(
     private clock: Clock,
     private location: LocationProvider,
+    private analytics: AnalyticsPort,
     private logger: LoggerPort
   ) {
     this.pageEntryTimestamp = clock.now()
@@ -31,7 +32,7 @@ export class EngagementTracker {
     if (this.shouldSkipEvent(WHATSAPP_EVENT_NAME, context)) {
       return
     }
-    trackEvent(WHATSAPP_EVENT_NAME, context)
+    this.analytics.trackEvent(WHATSAPP_EVENT_NAME, context)
   }
 
   trackEmail(section: string, trafficSource: string): void {
@@ -39,7 +40,7 @@ export class EngagementTracker {
     if (this.shouldSkipEvent(EMAIL_EVENT_NAME, context)) {
       return
     }
-    trackEvent(EMAIL_EVENT_NAME, context)
+    this.analytics.trackEvent(EMAIL_EVENT_NAME, context)
   }
 
   private buildContext(section: string, trafficSource: string): ContactEngagementContext {
