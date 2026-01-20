@@ -1,9 +1,9 @@
 import type { AppContent } from '@/domain/types/content'
 import { AppContentSchema } from '@/domain/schemas/contentSchema'
-import { es } from '@/infrastructure/content/locales/es'
+import { content } from '@/infrastructure/content/content'
 
 export function useContent(): AppContent {
-  const parsed = AppContentSchema.safeParse(es)
+  const parsed = AppContentSchema.safeParse(content)
   if (!parsed.success) {
     throw new Error('Invalid content schema')
   }
