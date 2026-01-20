@@ -1,6 +1,5 @@
 import type { ContactGateway } from '../contact/ports/ContactGateway'
 import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
-import type { EngagementTracker } from '../analytics/engagementTracker'
 import type { LoggerPort } from '../ports/Logger'
 import type { LocationProvider, NavigatorProvider } from '../ports/Environment'
 import type { ContactError } from '../types/errors'
@@ -9,13 +8,13 @@ import type { EmailContactPayload } from '../dto/contact'
 import { ContactService } from '@/domain/contact/services/ContactService'
 import { ContactSubmitted } from '@/domain/contact/events/ContactSubmitted'
 import type { EventBus } from '../ports/EventBus'
+import { registerLeadForThanksPage } from '../analytics/leadTracking'
 
 export class SubmitContactUseCase {
   constructor(
     private contactService: ContactService,
     private contactGateway: ContactGateway,
     private contactBackend: ContactBackendMonitor,
-    private engagementTracker: EngagementTracker,
     private location: LocationProvider,
     private navigator: NavigatorProvider,
     private eventBus: EventBus,
@@ -64,7 +63,7 @@ export class SubmitContactUseCase {
     }
 
     this.contactBackend.markAvailable()
-    this.engagementTracker.trackEmail(section, getTrafficSource(this.location))
+    registerLeadForThanksPage()
     this.eventBus.publish(new ContactSubmitted(contactResult.data.id))
     return { ok: true, data: undefined }
   }

@@ -52,7 +52,6 @@ const submitContact = new SubmitContactUseCase(
   contactService,
   contactGateway,
   contactBackend,
-  engagementTracker,
   environment,
   environment,
   eventBus,

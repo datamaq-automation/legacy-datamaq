@@ -48,7 +48,8 @@ Eventos recomendados (GA4):
 - `sign_up`
 - `purchase`
 
-Se disparan desde `src/application/analytics/engagementTracker.ts` (WhatsApp y formulario).
+WhatsApp se dispara desde `src/application/analytics/engagementTracker.ts`.
+`generate_lead` se dispara en `/gracias` via `src/application/analytics/leadTracking.ts`.
 
 ## UTMs / click IDs
 
@@ -86,6 +87,14 @@ Luego:
 Opcion recomendada: importar desde GA4.
 1. En GA4, marcar eventos como conversion.
 2. En Google Ads, importar conversiones desde GA4.
+
+## Pagina de gracias `/gracias`
+
+- Se usa como URL de conversion en Google Ads: `https://TU_DOMINIO/gracias`.
+- El formulario redirige a `/gracias` al enviar correctamente.
+- La pagina incluye `meta robots: noindex, nofollow` y canonical hacia `/gracias`.
+- En `/gracias` se dispara una vez el evento GA4 `generate_lead` usando `sessionStorage`.
+- Si el hosting no sirve rutas SPA, configurar fallback para que `/gracias` entregue `index.html`.
 
 ## Validacion
 

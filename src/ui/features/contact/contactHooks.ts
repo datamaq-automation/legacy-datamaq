@@ -9,6 +9,7 @@ import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
 import { useContent } from '@/ui/composables/useContent'
 import { useContactValidation } from './useContactValidation'
+import { navigateTo } from '@/infrastructure/navigation/spaNavigation'
 
 export function useContactForm(props: ContactFormProps) {
   const formRef = ref<HTMLFormElement | null>(null)
@@ -27,13 +28,6 @@ export function useContactForm(props: ContactFormProps) {
   const feedbackMessageRef = ref<HTMLParagraphElement | null>(null)
   const { contact } = useContent()
   let unsubscribeFromStatus: (() => void) | undefined
-
-  function resetForm(): void {
-    form.name = ''
-    form.email = ''
-    form.company = ''
-    form.message = ''
-  }
 
   async function announceFeedback(message: string, success: boolean): Promise<void> {
     feedback.message = message
@@ -72,9 +66,8 @@ export function useContactForm(props: ContactFormProps) {
         console.debug('[ContactFormSection] Resultado de onSubmit:', result)
       }
       if (result && result.ok) {
-        if (formElement) formElement.reset()
-        resetForm()
-        await announceFeedback(contact.successMessage, true)
+        navigateTo('/gracias')
+        return
       } else {
         await announceFeedback(
           mapContactError(result?.error, {
