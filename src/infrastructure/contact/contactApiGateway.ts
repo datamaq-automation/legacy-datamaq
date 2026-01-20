@@ -26,7 +26,8 @@ export class ContactApiGateway implements ContactGateway {
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
     console.log('[contactApiGateway] submit start:', {
       apiUrl,
-      hasOriginVerify: Boolean(originVerify)
+      hasOriginVerify: Boolean(originVerify),
+      originVerifyLength: originVerify ? originVerify.length : 0
     })
     console.log('[contactApiGateway] submit payload:', {
       apiUrl,

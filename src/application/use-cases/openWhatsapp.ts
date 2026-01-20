@@ -92,6 +92,7 @@ export class OpenWhatsappUseCase {
     console.log('[sendWhatsappContactEvent] Request:', {
       apiUrl,
       hasOriginVerify: Boolean(originVerify),
+      originVerifyLength: originVerify ? originVerify.length : 0,
       payload
     })
 
