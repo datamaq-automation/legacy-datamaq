@@ -6,6 +6,10 @@ export interface HttpResponse<T = unknown> {
 }
 
 export interface HttpClient {
-  postJson<T = unknown>(url: string, body: unknown): Promise<HttpResponse<T>>
+  postJson<T = unknown>(
+    url: string,
+    body: unknown,
+    headers?: Record<string, string>
+  ): Promise<HttpResponse<T>>
   options(url: string): Promise<HttpResponse>
 }

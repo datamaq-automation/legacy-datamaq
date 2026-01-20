@@ -5,12 +5,17 @@ import type { JsonValue } from '@/application/types/json'
 export class FetchHttpClient implements HttpClient {
   constructor(private logger: LoggerPort) {}
 
-  async postJson<T = unknown>(url: string, body: unknown): Promise<HttpResponse<T>> {
+  async postJson<T = unknown>(
+    url: string,
+    body: unknown,
+    headers: Record<string, string> = {}
+  ): Promise<HttpResponse<T>> {
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...headers
         },
         body: JSON.stringify(body)
       })

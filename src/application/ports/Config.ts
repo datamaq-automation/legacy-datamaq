@@ -5,4 +5,5 @@ export interface ConfigPort {
   contactEmail: NullableString
   whatsappNumber: NullableString
   whatsappPresetMessage: NullableString
+  originVerifySecret: NullableString
 }

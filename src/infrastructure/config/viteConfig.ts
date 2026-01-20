@@ -10,6 +10,7 @@ export class ViteConfig implements ConfigPort {
   contactEmail: NullableString
   whatsappNumber: NullableString
   whatsappPresetMessage: NullableString
+  originVerifySecret: NullableString
 
   constructor() {
     this.whatsappNumber = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
@@ -22,6 +23,7 @@ export class ViteConfig implements ConfigPort {
       normalize(import.meta.env.VITE_CONTACT_API_URL),
       'VITE_CONTACT_API_URL'
     )
+    this.originVerifySecret = normalize(import.meta.env.VITE_ORIGIN_VERIFY_SECRET)
   }
 }
 

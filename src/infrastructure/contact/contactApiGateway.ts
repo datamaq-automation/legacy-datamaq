@@ -22,13 +22,15 @@ export class ContactApiGateway implements ContactGateway {
     }
 
     const enrichedPayload = attachAttributionToPayload(payload)
+    const originVerify = this.config.originVerifySecret
+    const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
     const response = await this.http.postJson(apiUrl, {
       ...enrichedPayload,
       page_location: payload.pageLocation,
       traffic_source: payload.trafficSource,
       user_agent: payload.userAgent,
       created_at: payload.createdAt
-    })
+    }, headers)
 
     if (!response.ok) {
       return {
