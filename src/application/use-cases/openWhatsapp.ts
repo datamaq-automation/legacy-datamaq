@@ -88,9 +88,23 @@ export class OpenWhatsappUseCase {
 
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
+    if (import.meta.env.DEV) {
+      console.log('[sendWhatsappContactEvent] Request:', {
+        apiUrl,
+        hasOriginVerify: Boolean(originVerify),
+        payload
+      })
+    }
 
     try {
       const response = await this.http.postJson(apiUrl, payload, headers)
+      if (!response.ok && import.meta.env.DEV) {
+        console.warn('[sendWhatsappContactEvent] response no OK:', {
+          status: response.status,
+          text: response.text,
+          data: response.data
+        })
+      }
       if (!response.ok && response.status >= 500) {
         this.contactBackend.markUnavailable()
         this.logger.warn(

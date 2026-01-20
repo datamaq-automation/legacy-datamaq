@@ -63,7 +63,7 @@ export function useContactForm(props: ContactFormProps) {
       }
       const result = await props.onSubmit(parsed.data)
       if (import.meta.env.DEV) {
-        console.debug('[ContactFormSection] Resultado de onSubmit:', result)
+        console.log('[ContactFormSection] Resultado de onSubmit:', result)
       }
       if (result && result.ok) {
         navigateTo('/gracias')

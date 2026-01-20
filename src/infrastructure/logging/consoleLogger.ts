@@ -8,7 +8,7 @@ export class ConsoleLogger implements LoggerPort {
     if (!this.environment.isDev()) {
       return
     }
-    console.debug(message, ...meta)
+    console.log(message, ...meta)
   }
 
   warn(message: string, ...meta: unknown[]): void {
