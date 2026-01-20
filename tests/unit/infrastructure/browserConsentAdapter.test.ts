@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest'
-import { BrowserConsentAdapter } from '@/infrastructure/analytics/browserConsentAdapter'
+import { BrowserConsentAdapter } from '@/infrastructure/consent/browserConsentAdapter'
 
 describe('BrowserConsentAdapter', () => {
   beforeEach(() => {

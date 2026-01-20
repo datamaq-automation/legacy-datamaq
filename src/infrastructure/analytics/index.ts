@@ -1,5 +1,5 @@
 import type { AnalyticsPort } from '@/application/ports/Analytics'
-import { getAnalyticsConsent } from './consent'
+import { getAnalyticsConsent } from '../consent/consent'
 import { initClarity } from './clarity'
 import { initGa4, trackGa4Event, trackGa4PageView } from './ga4'
 
