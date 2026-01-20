@@ -38,14 +38,14 @@ syncConsent()
 
 if (container.consentManager.getStatus() === 'granted') {
   initAnalytics()
-  enableSpaPageTracking()
+  enableSpaPageTracking(container.analyticsPort)
 }
 
 container.consentManager.subscribe((status) => {
   syncConsent()
   if (status === 'granted') {
     initAnalytics()
-    enableSpaPageTracking()
+    enableSpaPageTracking(container.analyticsPort)
   }
 })
 

@@ -1,3 +1,4 @@
+import type { AnalyticsPort } from '@/application/ports/Analytics'
 import { getAnalyticsConsent } from './consent'
 import { initClarity } from './clarity'
 import { initGa4, trackGa4Event, trackGa4PageView } from './ga4'
@@ -69,7 +70,7 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}): 
   }
 }
 
-export function enableSpaPageTracking(): () => void {
+export function enableSpaPageTracking(analytics: AnalyticsPort): () => void {
   if (spaTrackingEnabled || typeof window === 'undefined') {
     return spaCleanup ?? (() => {})
   }
@@ -82,10 +83,10 @@ export function enableSpaPageTracking(): () => void {
       return
     }
     lastPath = nextPath
-    trackPageView({ path: nextPath, title: document.title })
+    analytics.trackPageView({ path: nextPath, title: document.title })
   }
 
-  trackPageView({ path: lastPath, title: document.title })
+  analytics.trackPageView({ path: lastPath, title: document.title })
 
   const originalPushState = history.pushState.bind(history)
   history.pushState = (...args) => {

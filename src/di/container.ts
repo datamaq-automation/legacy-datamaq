@@ -73,6 +73,7 @@ eventBus.subscribe('contact.submitted', (event) => {
 
 export const container = {
   config,
+  analyticsPort,
   consentManager,
   consentPort,
   contactBackend,
