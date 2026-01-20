@@ -18,11 +18,18 @@ export class FetchHttpClient implements HttpClient {
       const rawText = await response.text().catch(() => undefined)
       const data = parseJson<T>(rawText)
       const text = normalizeErrorText(rawText)
+      if (!response.ok) {
+        this.logger.warn('[http] POST JSON no OK:', {
+          url,
+          status: response.status,
+          text
+        })
+      }
       return {
         ok: response.ok,
         status: response.status,
-        text,
-        data
+        ...(text ? { text } : {}),
+        ...(typeof data !== 'undefined' ? { data } : {})
       }
     } catch (error) {
       this.logger.error('[http] Error en POST JSON:', error)
