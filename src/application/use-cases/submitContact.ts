@@ -6,9 +6,10 @@ import type { ContactError } from '../types/errors'
 import type { Result } from '@/domain/shared/result'
 import type { EmailContactPayload } from '../dto/contact'
 import { ContactService } from '@/domain/contact/services/ContactService'
-import { ContactSubmitted } from '@/domain/contact/events/ContactSubmitted'
+import { ContactSubmitted } from '@/application/contact/events/ContactSubmitted'
 import type { EventBus } from '../ports/EventBus'
 import type { LeadTracking } from '../analytics/leadTracking'
+import { mapContactRequestToSubmitPayload } from '@/application/contact/mappers/contactPayloadMapper'
 
 export class SubmitContactUseCase {
   constructor(
@@ -43,16 +44,14 @@ export class SubmitContactUseCase {
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
-    const submitResult = await this.contactGateway.submit({
-      name: contactResult.data.name.value,
-      email: contactResult.data.email.value,
-      company: contactResult.data.company ?? undefined,
-      message: contactResult.data.message ?? undefined,
-      pageLocation: this.location.href(),
-      trafficSource: getTrafficSource(this.location),
-      userAgent: this.navigator.userAgent(),
-      createdAt: new Date().toISOString()
-    })
+    const submitResult = await this.contactGateway.submit(
+      mapContactRequestToSubmitPayload(contactResult.data, {
+        pageLocation: this.location.href(),
+        trafficSource: getTrafficSource(this.location),
+        userAgent: this.navigator.userAgent(),
+        createdAt: new Date().toISOString()
+      })
+    )
 
     if (!submitResult.ok) {
       if (submitResult.error.type === 'BackendError' && submitResult.error.status >= 500) {
