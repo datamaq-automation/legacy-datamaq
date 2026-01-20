@@ -1,0 +1,29 @@
+.hero-section .hero-illustration {
+  max-width: 420px;
+}
+
+.hero-section .hero-primary-actions .btn {
+  min-height: 3.25rem;
+}
+
+@media (max-width: 575.98px) {
+  .hero-section .hero-primary-actions {
+    align-items: stretch !important;
+  }
+
+  .hero-section .hero-secondary-cta {
+    font-size: 1rem;
+    line-height: 1.5;
+    padding-block: 0.75rem;
+    border-width: 1px;
+  }
+
+  .hero-section .primary-whatsapp-cta {
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .hero-section .hero-benefits {
+    row-gap: 1.5rem !important;
+  }
+}

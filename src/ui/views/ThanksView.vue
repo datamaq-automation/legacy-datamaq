@@ -5,7 +5,7 @@ const { chatEnabled, handleWhatsapp, handleGoHome } = useThanksView()
 </script>
 
 <template>
-  <div class="app-shell bg-dark text-white min-vh-100">
+  <div class="thanks-view app-shell bg-dark text-white min-vh-100">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
     <Navbar :chatEnabled="chatEnabled" @contact="handleWhatsapp" />
     <main
@@ -49,30 +49,3 @@ const { chatEnabled, handleWhatsapp, handleGoHome } = useThanksView()
     <ConsentBanner />
   </div>
 </template>
-
-<style scoped>
-.app-shell {
-  display: flex;
-  flex-direction: column;
-}
-
-.thanks-hero {
-  background: radial-gradient(circle at top, rgba(13, 110, 253, 0.2), transparent 55%);
-}
-
-.skip-link {
-  position: absolute;
-  left: -999px;
-  top: 1rem;
-  z-index: 1000;
-  padding: 0.75rem 1rem;
-  background-color: #0d6efd;
-  color: #fff;
-  border-radius: 0.5rem;
-  transition: left 0.2s ease-in-out;
-}
-
-.skip-link:focus {
-  left: 1rem;
-}
-</style>

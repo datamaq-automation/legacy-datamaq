@@ -3,7 +3,7 @@ Path: src/ui/layout/Navbar.vue
 -->
 
 <template>
-  <header class="navbar navbar-dark bg-dark sticky-top border-bottom" role="banner">
+  <header class="navbar navbar-dark bg-dark sticky-top border-bottom navbar-shell" role="banner">
     <div class="container-fluid px-3">
       <!-- Botón hamburguesa a la izquierda, visible solo en mobile -->
       <button
@@ -71,46 +71,3 @@ const {
   handleContactClick
 } = useNavbar(props, emit)
 </script>
-
-<style scoped>
-/* Animación para el colapsable SOLO en mobile */
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: max-height 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s;
-  overflow: hidden;
-}
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  max-height: 0;
-  opacity: 0;
-}
-.slide-fade-enter-to,
-.slide-fade-leave-from {
-  max-height: 200px;
-  opacity: 1;
-}
-
-/* Deshabilitar animación y altura extra en desktop */
-@media (min-width: 992px) {
-  .navbar-toggler {
-    display: none !important;
-  }
-  .slide-fade-enter-active,
-  .slide-fade-leave-active,
-  .slide-fade-enter-from,
-  .slide-fade-leave-to,
-  .slide-fade-enter-to,
-  .slide-fade-leave-from {
-    transition: none !important;
-    max-height: none !important;
-    opacity: 1 !important;
-    overflow: visible !important;
-  }
-  .navbar-collapse {
-    padding: 0 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-  }
-}
-</style>

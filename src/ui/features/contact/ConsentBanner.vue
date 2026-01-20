@@ -4,7 +4,7 @@ Path: src/ui/features/contact/ConsentBanner.vue
 <template>
   <div
     v-if="visible"
-    class="consent-banner position-fixed bottom-0 start-50 translate-middle-x w-100 shadow-lg"
+    class="consent-banner consent-banner-shell position-fixed bottom-0 start-50 translate-middle-x w-100 shadow-lg"
     role="dialog"
     aria-modal="true"
     aria-labelledby="consent-banner-title"
@@ -50,40 +50,3 @@ const {
   reject
 } = useConsentBanner()
 </script>
-
-<style scoped>
-.consent-banner {
-  background-color: rgba(248, 249, 250, 0.95);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 1080;
-}
-
-.consent-banner__actions {
-  flex-wrap: wrap;
-}
-
-.consent-banner__button {
-  min-height: 2.75rem;
-  padding-inline: 1.5rem;
-  flex: 1 1 45%;
-}
-
-@media (min-width: 992px) {
-  .consent-banner {
-    width: auto;
-    min-width: 60rem;
-    border-radius: 0.75rem 0.75rem 0 0;
-  }
-}
-
-@media (max-width: 991.98px) {
-  .consent-banner {
-    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0);
-  }
-
-  .consent-banner__button {
-    flex: 1 1 100%;
-  }
-}
-</style>
-

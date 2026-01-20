@@ -1,8 +1,8 @@
-<!--
+﻿<!--
 Path: src/ui/features/contact/ContactFormSection.vue
 -->
 <template>
-  <section id="contacto" class="section-mobile py-5 bg-dark text-white" aria-labelledby="contacto-title">
+  <section id="contacto" class="section-mobile py-5 bg-dark text-white contact-form-section" aria-labelledby="contacto-title">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -142,31 +142,3 @@ const {
   handleSubmit
 } = useContactFormSection(props)
 </script>
-
-<style scoped>
-.email-submit-cta {
-  min-height: 3.25rem;
-  letter-spacing: 0.01em;
-}
-
-.disabled-channel {
-  color: rgba(248, 249, 250, 0.7);
-  border-color: rgba(248, 249, 250, 0.35);
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-.contact-alert {
-  line-height: 1.6;
-}
-
-@media (max-width: 767.98px) {
-  .email-submit-cta {
-    padding-block: 0.85rem;
-    font-size: 1.02rem;
-  }
-
-  .contact-alert {
-    margin-top: 0.5rem;
-  }
-}
-</style>

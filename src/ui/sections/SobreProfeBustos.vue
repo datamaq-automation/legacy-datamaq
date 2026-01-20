@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 Path: src/ui/sections/SobreProfeBustos.vue
 -->
 
@@ -40,27 +40,3 @@ defineOptions({
   name: 'SobreProfeBustos'
 })
 </script>
-
-<style scoped>
-.sobre-section {
-  background: rgba(12, 18, 30, 0.92);
-}
-
-.sobre-text {
-  color: var(--bs-secondary-color);
-  line-height: 1.7;
-  max-width: 60ch;
-}
-
-@media (max-width: 767.98px) {
-  .sobre-section {
-    border-radius: 1.25rem;
-    padding-inline: 1.25rem;
-  }
-
-  .sobre-text {
-    font-size: 1.05rem;
-    line-height: 1.75;
-  }
-}
-</style>

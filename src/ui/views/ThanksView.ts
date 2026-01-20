@@ -5,6 +5,7 @@ import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import { getChatEnabled, openWhatsApp } from '@/ui/controllers/contactController'
 import { navigateTo } from '@/infrastructure/navigation/spaNavigation'
 import { useContainer } from '@/di/container'
+import './ThanksView.css'
 
 export function useThanksView() {
   const chatEnabled = getChatEnabled()

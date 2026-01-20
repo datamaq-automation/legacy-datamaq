@@ -3,6 +3,7 @@ import { useBreakpoint } from '@/ui/composables/useBreakpoint'
 import { useClickOutside } from '@/ui/composables/useClickOutside'
 import { useContent } from '@/ui/composables/useContent'
 import type { NavbarEmits, NavbarProps } from '@/ui/types/layout'
+import './Navbar.css'
 
 export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
   const menuOpen = ref(false)

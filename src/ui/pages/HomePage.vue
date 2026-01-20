@@ -26,26 +26,3 @@ const { chatEnabled, contactEmail, handleWhatsapp, handleEmailSubmit } = useHome
     <ConsentBanner />
   </div>
 </template>
-
-<style>
-.app-shell {
-  display: flex;
-  flex-direction: column;
-}
-
-.skip-link {
-  position: absolute;
-  left: -999px;
-  top: 1rem;
-  z-index: 1000;
-  padding: 0.75rem 1rem;
-  background-color: #0d6efd;
-  color: #fff;
-  border-radius: 0.5rem;
-  transition: left 0.2s ease-in-out;
-}
-
-.skip-link:focus {
-  left: 1rem;
-}
-</style>

@@ -3,7 +3,7 @@ Path: src/ui/sections/HeroSection.vue
 -->
 
 <template>
-  <section class="section-mobile py-5 bg-body-tertiary text-body" aria-labelledby="hero-title">
+  <section class="section-mobile py-5 bg-body-tertiary text-body hero-section" aria-labelledby="hero-title">
     <div class="container py-4">
       <div class="row align-items-center gy-5">
         <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start">
@@ -119,36 +119,3 @@ defineOptions({
   name: 'HeroSection'
 })
 </script>
-
-<style scoped>
-.hero-illustration {
-  max-width: 420px;
-}
-
-.hero-primary-actions :deep(.btn) {
-  min-height: 3.25rem;
-}
-
-@media (max-width: 575.98px) {
-  .hero-primary-actions {
-    align-items: stretch !important;
-  }
-
-  .hero-secondary-cta {
-    font-size: 1rem;
-    line-height: 1.5;
-    padding-block: 0.75rem;
-    border-width: 1px;
-  }
-
-  .primary-whatsapp-cta {
-    font-size: 1.05rem;
-    line-height: 1.55;
-  }
-
-  .hero-benefits {
-    row-gap: 1.5rem !important;
-  }
-}
-</style>
-

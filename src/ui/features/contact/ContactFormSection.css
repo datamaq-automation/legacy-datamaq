@@ -1,0 +1,25 @@
+.contact-form-section .email-submit-cta {
+  min-height: 3.25rem;
+  letter-spacing: 0.01em;
+}
+
+.contact-form-section .disabled-channel {
+  color: rgba(248, 249, 250, 0.7);
+  border-color: rgba(248, 249, 250, 0.35);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.contact-form-section .contact-alert {
+  line-height: 1.6;
+}
+
+@media (max-width: 767.98px) {
+  .contact-form-section .email-submit-cta {
+    padding-block: 0.85rem;
+    font-size: 1.02rem;
+  }
+
+  .contact-form-section .contact-alert {
+    margin-top: 0.5rem;
+  }
+}
