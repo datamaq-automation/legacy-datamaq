@@ -5,12 +5,14 @@ import type { ContactError } from '@/application/types/errors'
 import type { HttpClient } from '@/application/ports/HttpClient'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
+import type { StoragePort } from '@/application/ports/Storage'
 import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
 
 export class ContactApiGateway implements ContactGateway {
   constructor(
     private http: HttpClient,
     private config: ConfigPort,
+    private storage: StoragePort,
     private logger: LoggerPort
   ) {}
 
@@ -21,7 +23,7 @@ export class ContactApiGateway implements ContactGateway {
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
-    const enrichedPayload = attachAttributionToPayload(payload)
+    const enrichedPayload = attachAttributionToPayload(payload, this.storage)
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
     console.log('[contactApiGateway] submit start:', {

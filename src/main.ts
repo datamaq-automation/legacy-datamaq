@@ -9,7 +9,6 @@ import './styles/layout.css'
 import './styles/components.css'
 import './assets/theme.css'
 import { enableSpaPageTracking, initAnalytics } from './infrastructure/analytics'
-import { setAnalyticsConsent } from './infrastructure/analytics/consent'
 import { initAttribution } from './infrastructure/attribution/utm'
 import { consentManagerKey } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
@@ -22,16 +21,16 @@ app.use(head)
 provideContainer(app, container)
 app.provide(consentManagerKey, container.consentManager)
 
-initAttribution()
+initAttribution(container.storage)
 
 const syncConsent = () => {
   const status = container.consentManager.getStatus()
   if (status === 'granted') {
-    setAnalyticsConsent('granted')
+    container.consentPort.setAnalyticsConsent('granted')
   } else if (status === 'denied') {
-    setAnalyticsConsent('denied')
+    container.consentPort.setAnalyticsConsent('denied')
   } else {
-    setAnalyticsConsent('unset')
+    container.consentPort.setAnalyticsConsent('unset')
   }
 }
 

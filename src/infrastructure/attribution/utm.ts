@@ -1,4 +1,5 @@
 import type { Attribution } from '@/application/ports/Attribution'
+import type { StoragePort } from '@/application/ports/Storage'
 
 type StoredAttribution = {
   data: Attribution
@@ -8,12 +9,15 @@ type StoredAttribution = {
 const STORAGE_KEY = 'profebustos_attribution'
 const DEFAULT_TTL_DAYS = 30
 
-export function initAttribution(ttlDays: number = DEFAULT_TTL_DAYS): void {
+export function initAttribution(
+  storage: StoragePort,
+  ttlDays: number = DEFAULT_TTL_DAYS
+): void {
   const attribution = readAttributionFromUrl()
   if (!attribution) {
     return
   }
-  persistAttribution(attribution, ttlDays)
+  persistAttribution(storage, attribution, ttlDays)
 }
 
 export function readAttributionFromUrl(): Attribution | null {
@@ -46,25 +50,18 @@ export function readAttributionFromUrl(): Attribution | null {
 }
 
 export function persistAttribution(
+  storage: StoragePort,
   attribution: Attribution,
   ttlDays: number = DEFAULT_TTL_DAYS
 ): void {
-  if (typeof window === 'undefined') {
-    return
-  }
-
   const expiresAt = Date.now() + ttlDays * 24 * 60 * 60 * 1000
   const stored: StoredAttribution = { data: attribution, expiresAt }
 
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stored))
+  storage.set(STORAGE_KEY, JSON.stringify(stored))
 }
 
-export function getAttribution(): Attribution | null {
-  if (typeof window === 'undefined') {
-    return null
-  }
-
-  const raw = window.localStorage.getItem(STORAGE_KEY)
+export function getAttribution(storage: StoragePort): Attribution | null {
+  const raw = storage.get(STORAGE_KEY)
   if (!raw) {
     return null
   }
@@ -72,20 +69,21 @@ export function getAttribution(): Attribution | null {
   try {
     const stored = JSON.parse(raw) as StoredAttribution
     if (!stored.expiresAt || stored.expiresAt < Date.now()) {
-      window.localStorage.removeItem(STORAGE_KEY)
+      storage.remove(STORAGE_KEY)
       return null
     }
     return stored.data
   } catch {
-    window.localStorage.removeItem(STORAGE_KEY)
+    storage.remove(STORAGE_KEY)
     return null
   }
 }
 
 export function attachAttributionToPayload<T extends object>(
-  payload: T
+  payload: T,
+  storage: StoragePort
 ): T & { attribution?: Attribution } {
-  const attribution = getAttribution()
+  const attribution = getAttribution(storage)
   if (!attribution) {
     return payload
   }

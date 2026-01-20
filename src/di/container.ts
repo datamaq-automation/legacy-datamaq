@@ -34,14 +34,14 @@ const analytics = new AnalyticsFacade([new BrowserAnalytics(logger)], logger)
 const notifications = new NotificationFacade([new NoopNotificationProvider()], logger)
 const contactBackend = new ContactBackendMonitor(http, config, environment, logger)
 const engagementTracker = new EngagementTracker(environment, environment, analyticsPort, logger)
-const attribution = new BrowserAttribution()
 const storage = new BrowserStorage()
+const attribution = new BrowserAttribution(storage)
 const sessionStorage = new BrowserSessionStorage()
 const consentManager = createConsentManager(storage, logger)
 const leadTracking = new LeadTracking(sessionStorage, analyticsPort, consentPort)
 const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
-const contactGateway = new ContactApiGateway(http, config, logger)
+const contactGateway = new ContactApiGateway(http, config, storage, logger)
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
 
 const openWhatsapp = new OpenWhatsappUseCase(
@@ -74,9 +74,11 @@ eventBus.subscribe('contact.submitted', (event) => {
 export const container = {
   config,
   consentManager,
+  consentPort,
   contactBackend,
   eventBus,
   leadTracking,
+  storage,
   useCases: {
     openWhatsapp,
     submitContact
