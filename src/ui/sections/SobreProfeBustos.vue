@@ -32,9 +32,9 @@ Path: src/ui/sections/SobreProfeBustos.vue
 </template>
 
 <script setup lang="ts">
-import { useContent } from '@/ui/composables/useContent'
+import { useSobreProfeBustos } from './SobreProfeBustos'
 
-const { about } = useContent()
+const { about } = useSobreProfeBustos()
 
 defineOptions({
   name: 'SobreProfeBustos'

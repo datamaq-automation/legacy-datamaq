@@ -1,4 +1,4 @@
-<!--
+ï»¿<!--
 Path: src/ui/sections/ServiciosSection.vue
 -->
 
@@ -30,15 +30,15 @@ Path: src/ui/sections/ServiciosSection.vue
               <h4 class="h6 text-uppercase text-secondary fw-semibold mb-1 services-card__subtitle">{{ primaryCard.subtitle }}</h4>
               <ul class="list-unstyled mb-0 services-card__list">
                 <li class="d-flex gap-2 mb-2 services-card__item">
-                  <span class="text-success fw-bold services-card__bullet">•</span>
+                  <span class="text-success fw-bold services-card__bullet">â€¢</span>
                   <span class="text-body-secondary services-card__item-text">{{ primaryCard.items[0] }}</span>
                 </li>
                 <li class="d-flex gap-2 mb-2 services-card__item">
-                  <span class="text-success fw-bold services-card__bullet">•</span>
+                  <span class="text-success fw-bold services-card__bullet">â€¢</span>
                   <span class="text-body-secondary services-card__item-text">{{ primaryCard.items[1] }}</span>
                 </li>
                 <li class="d-flex gap-2 services-card__item">
-                  <span class="text-success fw-bold services-card__bullet">•</span>
+                  <span class="text-success fw-bold services-card__bullet">â€¢</span>
                   <span class="text-body-secondary services-card__item-text">{{ primaryCard.items[2] }}</span>
                 </li>
               </ul>
@@ -102,15 +102,15 @@ Path: src/ui/sections/ServiciosSection.vue
               <h4 class="h6 text-uppercase text-secondary fw-semibold mb-1 services-card__subtitle">{{ secondaryCard.subtitle }}</h4>
               <ul class="list-unstyled mb-0 services-card__list">
                 <li class="d-flex gap-2 mb-2 services-card__item">
-                  <span class="text-success fw-bold services-card__bullet">•</span>
+                  <span class="text-success fw-bold services-card__bullet">â€¢</span>
                   <span class="text-body-secondary services-card__item-text">{{ secondaryCard.items[0] }}</span>
                 </li>
                 <li class="d-flex gap-2 mb-2 services-card__item">
-                  <span class="text-success fw-bold services-card__bullet">•</span>
+                  <span class="text-success fw-bold services-card__bullet">â€¢</span>
                   <span class="text-body-secondary services-card__item-text">{{ secondaryCard.items[1] }}</span>
                 </li>
                 <li class="d-flex gap-2 services-card__item">
-                  <span class="text-success fw-bold services-card__bullet">•</span>
+                  <span class="text-success fw-bold services-card__bullet">â€¢</span>
                   <span class="text-body-secondary services-card__item-text">{{ secondaryCard.items[2] }}</span>
                 </li>
               </ul>
@@ -145,18 +145,13 @@ Path: src/ui/sections/ServiciosSection.vue
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useContent } from '@/ui/composables/useContent'
 import type { ServiciosSectionEmits, ServiciosSectionProps } from '@/ui/types/sections'
+import { useServiciosSection } from './ServiciosSection'
 
 const props = defineProps<ServiciosSectionProps>()
-
 const emit = defineEmits<ServiciosSectionEmits>()
 
-const chatEnabled = computed(() => props.chatEnabled)
-const { services } = useContent()
-const primaryCard = services.cards[0]
-const secondaryCard = services.cards[1]
+const { chatEnabled, services, primaryCard, secondaryCard } = useServiciosSection(props)
 
 defineOptions({
   name: 'ServiciosSection'

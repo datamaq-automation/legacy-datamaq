@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 Path: src/ui/sections/HeroSection.vue
 -->
 
@@ -57,8 +57,8 @@ Path: src/ui/sections/HeroSection.vue
               <div class="hero-benefit-card hero-benefit-card--success h-100">
                 <span class="hero-benefit-card__badge">1</span>
                 <div>
-                  <p class="hero-benefit-card__title">{{ hero.benefits[0].title }}</p>
-                  <p class="hero-benefit-card__text">{{ hero.benefits[0].text }}</p>
+                  <p class="hero-benefit-card__title">{{ benefit1.title }}</p>
+                  <p class="hero-benefit-card__text">{{ benefit1.text }}</p>
                 </div>
               </div>
             </li>
@@ -66,8 +66,8 @@ Path: src/ui/sections/HeroSection.vue
               <div class="hero-benefit-card hero-benefit-card--primary h-100">
                 <span class="hero-benefit-card__badge">2</span>
                 <div>
-                  <p class="hero-benefit-card__title">{{ hero.benefits[1].title }}</p>
-                  <p class="hero-benefit-card__text">{{ hero.benefits[1].text }}</p>
+                  <p class="hero-benefit-card__title">{{ benefit2.title }}</p>
+                  <p class="hero-benefit-card__text">{{ benefit2.text }}</p>
                 </div>
               </div>
             </li>
@@ -75,8 +75,8 @@ Path: src/ui/sections/HeroSection.vue
               <div class="hero-benefit-card hero-benefit-card--warning h-100">
                 <span class="hero-benefit-card__badge">3</span>
                 <div>
-                  <p class="hero-benefit-card__title">{{ hero.benefits[2].title }}</p>
-                  <p class="hero-benefit-card__text">{{ hero.benefits[2].text }}</p>
+                  <p class="hero-benefit-card__title">{{ benefit3.title }}</p>
+                  <p class="hero-benefit-card__text">{{ benefit3.text }}</p>
                 </div>
               </div>
             </li>
@@ -107,16 +107,13 @@ Path: src/ui/sections/HeroSection.vue
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { HeroSectionEmits, HeroSectionProps } from '@/ui/types/sections'
-import { useContent } from '@/ui/composables/useContent'
+import { useHeroSection } from './HeroSection'
 
 const props = defineProps<HeroSectionProps>()
-
 const emit = defineEmits<HeroSectionEmits>()
 
-const chatEnabled = computed(() => props.chatEnabled)
-const { hero } = useContent()
+const { chatEnabled, hero, benefit1, benefit2, benefit3 } = useHeroSection(props)
 
 defineOptions({
   name: 'HeroSection'
@@ -154,3 +151,4 @@ defineOptions({
   }
 }
 </style>
+

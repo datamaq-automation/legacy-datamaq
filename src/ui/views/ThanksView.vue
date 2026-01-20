@@ -1,27 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import Navbar from '@/ui/layout/Navbar.vue'
-import Footer from '@/ui/layout/Footer.vue'
-import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
-import { getChatEnabled, openWhatsApp } from '@/ui/controllers/contactController'
-import { navigateTo } from '@/infrastructure/navigation/spaNavigation'
-import { useContainer } from '@/di/container'
+import { useThanksView } from './ThanksView'
 
-const chatEnabled = getChatEnabled()
-const { leadTracking } = useContainer()
-
-function handleWhatsapp() {
-  openWhatsApp('gracias')
-}
-
-function handleGoHome() {
-  navigateTo('/')
-}
-
-onMounted(() => {
-  const pageLocation = typeof window !== 'undefined' ? window.location.href : ''
-  leadTracking.trackGenerateLeadOnce({ page_location: pageLocation })
-})
+const { chatEnabled, handleWhatsapp, handleGoHome } = useThanksView()
 </script>
 
 <template>

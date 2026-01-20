@@ -1,4 +1,4 @@
-<!--
+ï»¿<!--
 Path: src/ui/layout/Footer.vue
 -->
 
@@ -6,16 +6,14 @@ Path: src/ui/layout/Footer.vue
   <footer class="section-mobile bg-dark text-light py-3 mt-5" role="contentinfo">
     <div class="container">
       <small>
-        © {{ year }} profebustos — {{ footer.note }}
+        Â© {{ year }} profebustos â€” {{ footer.note }}
       </small>
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useContent } from '@/ui/composables/useContent'
+import { useFooter } from './Footer'
 
-const { footer } = useContent()
-const year = computed(() => new Date().getFullYear())
+const { footer, year } = useFooter()
 </script>

@@ -1,16 +1,16 @@
-<!--
+ï»¿<!--
 Path: src/ui/layout/Navbar.vue
 -->
 
 <template>
   <header class="navbar navbar-dark bg-dark sticky-top border-bottom" role="banner">
     <div class="container-fluid px-3">
-      <!-- Botón hamburguesa a la izquierda, visible solo en mobile -->
+      <!-- BotÃ³n hamburguesa a la izquierda, visible solo en mobile -->
       <button
         ref="toggleButtonRef"
         class="navbar-toggler me-2"
         type="button"
-        aria-label="Abrir menú"
+        aria-label="Abrir menÃº"
         @click="toggleMenu"
         :aria-expanded="menuOpen"
         aria-controls="main-navbar"
@@ -18,7 +18,7 @@ Path: src/ui/layout/Navbar.vue
         <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand fw-bold" href="#" :aria-label="navbar.brandAriaLabel">{{ navbar.brand }}</a>
-      <!-- Menú colapsable -->
+      <!-- MenÃº colapsable -->
       <transition name="slide-fade">
         <nav
           v-if="menuOpen || isDesktop"
@@ -53,77 +53,27 @@ Path: src/ui/layout/Navbar.vue
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useBreakpoint } from '@/ui/composables/useBreakpoint'
-import { useClickOutside } from '@/ui/composables/useClickOutside'
-import { useContent } from '@/ui/composables/useContent'
 import type { NavbarEmits, NavbarProps } from '@/ui/types/layout'
+import { useNavbar } from './Navbar'
 
 const props = defineProps<NavbarProps>()
-
 const emit = defineEmits<NavbarEmits>()
 
-const menuOpen = ref(false)
-const { matches: isDesktop } = useBreakpoint(992)
-const navRef = ref<HTMLElement | null>(null)
-const toggleButtonRef = ref<HTMLButtonElement | null>(null)
-const chatEnabled = computed(() => props.chatEnabled)
-const { navbar } = useContent()
-
-function toggleMenu() {
-  menuOpen.value = !menuOpen.value
-}
-
-function closeMenu(returnFocus = false) {
-  menuOpen.value = false
-  if (returnFocus) {
-    toggleButtonRef.value?.focus()
-  }
-}
-
-function onCloseOutside() {
-  if (!menuOpen.value) {
-    return
-  }
-  closeMenu()
-}
-
-function handleKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape' && menuOpen.value) {
-    event.preventDefault()
-    closeMenu(true)
-  }
-}
-
-function handleNavLinkClick() {
-  if (!isDesktop.value) {
-    closeMenu()
-  }
-}
-
-function handleContactClick() {
-  emit('contact')
-  if (!isDesktop.value) {
-    closeMenu(true)
-  }
-}
-
-useClickOutside(navRef, onCloseOutside, menuOpen)
-
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-  if (isDesktop.value) {
-    closeMenu()
-  }
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+const {
+  menuOpen,
+  isDesktop,
+  navRef,
+  toggleButtonRef,
+  chatEnabled,
+  navbar,
+  toggleMenu,
+  handleNavLinkClick,
+  handleContactClick
+} = useNavbar(props, emit)
 </script>
 
 <style scoped>
-/* Animación para el colapsable SOLO en mobile */
+/* AnimaciÃ³n para el colapsable SOLO en mobile */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: max-height 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s;
@@ -140,7 +90,7 @@ onUnmounted(() => {
   opacity: 1;
 }
 
-/* Deshabilitar animación y altura extra en desktop */
+/* Deshabilitar animaciÃ³n y altura extra en desktop */
 @media (min-width: 992px) {
   .navbar-toggler {
     display: none !important;

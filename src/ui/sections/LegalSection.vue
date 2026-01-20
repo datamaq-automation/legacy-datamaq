@@ -13,7 +13,7 @@ Path: src/ui/sections/LegalSection.vue
 </template>
 
 <script setup lang="ts">
-import { useContent } from '@/ui/composables/useContent'
+import { useLegalSection } from './LegalSection'
 
-const { legal } = useContent()
+const { legal } = useLegalSection()
 </script>

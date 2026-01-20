@@ -19,10 +19,10 @@ Path: src/ui/features/contact/WhatsappFab.vue
 
 <script setup lang="ts">
 import type { WhatsappFabEmits } from '@/ui/types/sections'
-import { useContent } from '@/ui/composables/useContent'
+import { useWhatsappFab } from './WhatsappFab'
 
 const emit = defineEmits<WhatsappFabEmits>()
-const { whatsappFab } = useContent()
+const { whatsappFab } = useWhatsappFab()
 
 defineOptions({
   name: 'WhatsappFab'

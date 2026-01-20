@@ -124,14 +124,13 @@ Path: src/ui/features/contact/ContactFormSection.vue
 </template>
 
 <script setup lang="ts">
-import { useContent } from '@/ui/composables/useContent'
-import { useContactForm } from './contactHooks'
 import type { ContactFormProps } from './contactTypes'
+import { useContactFormSection } from './ContactFormSection'
 
 const props = defineProps<ContactFormProps>()
-const { contact } = useContent()
 
 const {
+  contact,
   formRef,
   form,
   isBackendAvailable,
@@ -141,7 +140,7 @@ const {
   feedback,
   feedbackMessageRef,
   handleSubmit
-} = useContactForm(props)
+} = useContactFormSection(props)
 </script>
 
 <style scoped>
