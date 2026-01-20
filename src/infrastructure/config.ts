@@ -30,7 +30,7 @@ function ensureApiUrl(value: NullableString, envKey: string): NullableString {
     return undefined
   }
 
-  // Permitir http en desarrollo, exigir https en producción
+  // Permitir http en desarrollo, exigir https en producción.
   if (import.meta.env.DEV) {
     if (!value.startsWith('http://') && !value.startsWith('https://')) {
       console.warn(
