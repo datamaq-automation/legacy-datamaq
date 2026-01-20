@@ -43,10 +43,13 @@ export function useContactForm(props: ContactFormProps) {
     feedback.message = ''
     feedback.success = false
 
+    console.log('[ContactFormSection] submit start')
     if (!isChannelEnabled.value) {
+      console.log('[ContactFormSection] channel disabled')
       return
     }
     if (formElement && !formElement.reportValidity()) {
+      console.log('[ContactFormSection] browser validation failed')
       return
     }
     isSubmitting.value = true
@@ -58,17 +61,18 @@ export function useContactForm(props: ContactFormProps) {
         message: form.message
       })
       if (!parsed.ok) {
+        console.log('[ContactFormSection] validation failed', parsed.error)
         await announceFeedback(contact.errorMessage, false)
         return
       }
       const result = await props.onSubmit(parsed.data)
-      if (import.meta.env.DEV) {
-        console.log('[ContactFormSection] Resultado de onSubmit:', result)
-      }
+      console.log('[ContactFormSection] Resultado de onSubmit:', result)
       if (result && result.ok) {
+        console.log('[ContactFormSection] submit success, redirecting to /gracias')
         navigateTo('/gracias')
         return
       } else {
+        console.log('[ContactFormSection] submit failed', result?.error)
         await announceFeedback(
           mapContactError(result?.error, {
             unavailable: contact.unavailableMessage,
@@ -78,9 +82,7 @@ export function useContactForm(props: ContactFormProps) {
         )
       }
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('[ContactFormSection] Error inesperado en handleSubmit:', error)
-      }
+      console.error('[ContactFormSection] Error inesperado en handleSubmit:', error)
       await announceFeedback(contact.unexpectedErrorMessage, false)
     } finally {
       isSubmitting.value = false

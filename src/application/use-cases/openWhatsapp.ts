@@ -69,6 +69,7 @@ export class OpenWhatsappUseCase {
       this.logger.warn(
         '[sendWhatsappContactEvent] Backend de contacto no disponible, omitiendo envio.'
       )
+      console.log('[sendWhatsappContactEvent] backend status:', backendStatus)
       return
     }
 
@@ -88,17 +89,19 @@ export class OpenWhatsappUseCase {
 
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
-    if (import.meta.env.DEV) {
-      console.log('[sendWhatsappContactEvent] Request:', {
-        apiUrl,
-        hasOriginVerify: Boolean(originVerify),
-        payload
-      })
-    }
+    console.log('[sendWhatsappContactEvent] Request:', {
+      apiUrl,
+      hasOriginVerify: Boolean(originVerify),
+      payload
+    })
 
     try {
       const response = await this.http.postJson(apiUrl, payload, headers)
-      if (!response.ok && import.meta.env.DEV) {
+      console.log('[sendWhatsappContactEvent] Response:', {
+        status: response.status,
+        ok: response.ok
+      })
+      if (!response.ok) {
         console.warn('[sendWhatsappContactEvent] response no OK:', {
           status: response.status,
           text: response.text,

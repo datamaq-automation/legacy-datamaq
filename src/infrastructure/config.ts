@@ -16,12 +16,9 @@ function ensureEmail(value: NullableString, envKey: string): NullableString {
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailPattern.test(value)) {
-    if (import.meta.env.DEV) {
       console.warn(
         `[config] La variable ${envKey} debe ser un correo electrónico válido. Valor recibido: ${value}`
       )
-    }
-
     return undefined
   }
 

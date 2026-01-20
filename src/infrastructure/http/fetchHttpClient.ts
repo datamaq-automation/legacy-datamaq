@@ -11,13 +11,11 @@ export class FetchHttpClient implements HttpClient {
     headers: Record<string, string> = {}
   ): Promise<HttpResponse<T>> {
     try {
-      if (import.meta.env.DEV) {
-        console.log('[http] POST JSON request:', {
-          url,
-          headers: Object.keys(headers),
-          body
-        })
-      }
+      console.log('[http] POST JSON request:', {
+        url,
+        headers: Object.keys(headers),
+        body
+      })
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -30,27 +28,23 @@ export class FetchHttpClient implements HttpClient {
       const rawText = await response.text().catch(() => undefined)
       const data = parseJson<T>(rawText)
       const text = normalizeErrorText(rawText)
-      if (import.meta.env.DEV) {
-        console.log('[http] POST JSON response:', {
-          url,
-          status: response.status,
-          ok: response.ok,
-          text
-        })
-      }
+      console.log('[http] POST JSON response:', {
+        url,
+        status: response.status,
+        ok: response.ok,
+        text
+      })
       if (!response.ok) {
         this.logger.warn('[http] POST JSON no OK:', {
           url,
           status: response.status,
           text
         })
-        if (import.meta.env.DEV) {
-          console.warn('[http] POST JSON no OK (debug):', {
-            url,
-            status: response.status,
-            text
-          })
-        }
+        console.warn('[http] POST JSON no OK (debug):', {
+          url,
+          status: response.status,
+          text
+        })
       }
       return {
         ok: response.ok,
@@ -60,9 +54,7 @@ export class FetchHttpClient implements HttpClient {
       }
     } catch (error) {
       this.logger.error('[http] Error en POST JSON:', error)
-      if (import.meta.env.DEV) {
-        console.error('[http] POST JSON exception:', { url, body, headers, error })
-      }
+      console.error('[http] POST JSON exception:', { url, body, headers, error })
       return {
         ok: false,
         status: 0

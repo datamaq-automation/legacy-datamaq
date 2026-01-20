@@ -24,19 +24,21 @@ export class ContactApiGateway implements ContactGateway {
     const enrichedPayload = attachAttributionToPayload(payload)
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
-    if (import.meta.env.DEV) {
-      console.log('[contactApiGateway] submit payload:', {
-        apiUrl,
-        hasOriginVerify: Boolean(originVerify),
-        payload: {
-          ...enrichedPayload,
-          page_location: payload.pageLocation,
-          traffic_source: payload.trafficSource,
-          user_agent: payload.userAgent,
-          created_at: payload.createdAt
-        }
-      })
-    }
+    console.log('[contactApiGateway] submit start:', {
+      apiUrl,
+      hasOriginVerify: Boolean(originVerify)
+    })
+    console.log('[contactApiGateway] submit payload:', {
+      apiUrl,
+      hasOriginVerify: Boolean(originVerify),
+      payload: {
+        ...enrichedPayload,
+        page_location: payload.pageLocation,
+        traffic_source: payload.trafficSource,
+        user_agent: payload.userAgent,
+        created_at: payload.createdAt
+      }
+    })
     const response = await this.http.postJson(apiUrl, {
       ...enrichedPayload,
       page_location: payload.pageLocation,
@@ -44,15 +46,17 @@ export class ContactApiGateway implements ContactGateway {
       user_agent: payload.userAgent,
       created_at: payload.createdAt
     }, headers)
+    console.log('[contactApiGateway] submit response:', {
+      status: response.status,
+      ok: response.ok
+    })
 
     if (!response.ok) {
-      if (import.meta.env.DEV) {
-        console.warn('[contactApiGateway] response no OK:', {
-          status: response.status,
-          text: response.text,
-          data: response.data
-        })
-      }
+      console.warn('[contactApiGateway] response no OK:', {
+        status: response.status,
+        text: response.text,
+        data: response.data
+      })
       return {
         ok: false,
         error: {
