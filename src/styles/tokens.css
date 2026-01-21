@@ -10,6 +10,7 @@
   --bs-info-rgb: 15, 76, 117;
   --bs-body-bg: #0b1626;
   --bs-body-color: #f8f9fa;
+  --bs-emphasis-color: var(--ui-neutral-100);
   --bs-secondary-color: rgba(248, 249, 250, 0.75);
   --ui-neutral-100: #f8f9fa;
   --ui-neutral-100-12: rgba(248, 249, 250, 0.12);

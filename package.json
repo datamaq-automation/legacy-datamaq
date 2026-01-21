@@ -15,6 +15,7 @@
     "test:coverage": "vitest run --coverage",
     "test:a11y": "node scripts/run-a11y.mjs",
     "report:css": "npm run build && node scripts/report-css-size.mjs",
+    "check:css": "npm run build && node scripts/check-css-size.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {
