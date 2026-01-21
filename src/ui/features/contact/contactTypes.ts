@@ -7,6 +7,6 @@ export type ContactFormSubmit = (
 ) => Promise<Result<void, ContactError>>
 
 export interface ContactFormProps {
-  contactEmail?: string
+  contactEmail?: string | undefined
   onSubmit: ContactFormSubmit
 }

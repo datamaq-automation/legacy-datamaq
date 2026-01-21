@@ -4,7 +4,6 @@ import {
   openWhatsApp,
   submitContact
 } from '@/ui/controllers/contactController'
-import './HomePage.css'
 import Navbar from '@/ui/layout/Navbar.vue'
 import HeroSection from '@/ui/sections/HeroSection.vue'
 import ServiciosSection from '@/ui/sections/ServiciosSection.vue'

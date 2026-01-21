@@ -6,6 +6,7 @@ import { LeadTracking } from '@/application/analytics/leadTracking'
 import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import { ContactSubmittedHandler } from '@/application/contact/handlers/contactSubmittedHandler'
 import { OpenWhatsappUseCase } from '@/application/use-cases/openWhatsapp'
+import { TrackingFacade } from '@/application/analytics/trackingFacade'
 import { BrowserAttribution } from '@/infrastructure/attribution/browserAttribution'
 import { BrowserAnalytics } from '@/infrastructure/analytics/browserAnalytics'
 import { BrowserAnalyticsAdapter } from '@/infrastructure/analytics/browserAnalyticsAdapter'
@@ -30,15 +31,16 @@ const config = new ViteConfig()
 const http = new FetchHttpClient(logger)
 const analyticsPort = new BrowserAnalyticsAdapter()
 const consentPort = new BrowserConsentAdapter()
+const tracking = new TrackingFacade(analyticsPort, consentPort)
 const analytics = new AnalyticsFacade([new BrowserAnalytics(logger)], logger)
 const notifications = new NotificationFacade([new NoopNotificationProvider()], logger)
 const contactBackend = new ContactBackendMonitor(http, config, environment, logger)
-const engagementTracker = new EngagementTracker(environment, environment, analyticsPort, logger)
+const engagementTracker = new EngagementTracker(environment, environment, tracking, logger)
 const storage = new BrowserStorage()
 const attribution = new BrowserAttribution(storage)
 const sessionStorage = new BrowserSessionStorage()
 const consentManager = createConsentManager(storage, logger)
-const leadTracking = new LeadTracking(sessionStorage, analyticsPort, consentPort)
+const leadTracking = new LeadTracking(sessionStorage, tracking)
 const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, storage, logger)

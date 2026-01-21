@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { useContent } from '@/ui/composables/useContent'
 import type { ServiciosSectionProps } from '@/ui/types/sections'
+import './ServiciosSection.css'
 
 export function useServiciosSection(props: ServiciosSectionProps) {
   const chatEnabled = computed(() => props.chatEnabled)

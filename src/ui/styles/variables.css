@@ -1,0 +1,7 @@
+/* UI-level variables placeholder. Use src/styles/tokens.css for global tokens. */
+:root {
+  --ui-skip-link-bg: #0d6efd;
+  --ui-skip-link-color: #fff;
+  --ui-skip-link-radius: 0.5rem;
+  --ui-skip-link-z: 1000;
+}

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { EngagementTracker } from '@/application/analytics/engagementTracker'
 import { conversionEvents } from '@/application/analytics/conversionEvents'
-import type { AnalyticsPort } from '@/application/ports/Analytics'
+import type { TrackingPort } from '@/application/analytics/trackingFacade'
 import type { Clock, LocationProvider } from '@/application/ports/Environment'
 import type { LoggerPort } from '@/application/ports/Logger'
 
@@ -15,7 +15,7 @@ describe('EngagementTracker', () => {
       search: () => ''
     }
     const sent: Array<{ name: string; params: Record<string, unknown> }> = []
-    const analytics: AnalyticsPort = {
+    const tracking: TrackingPort = {
       trackEvent: (name, params = {}) => {
         sent.push({ name, params })
       },
@@ -27,7 +27,7 @@ describe('EngagementTracker', () => {
       error: vi.fn()
     }
 
-    const tracker = new EngagementTracker(clock, location, analytics, logger)
+    const tracker = new EngagementTracker(clock, location, tracking, logger)
 
     tracker.trackWhatsapp('hero', 'direct')
     now = 1500

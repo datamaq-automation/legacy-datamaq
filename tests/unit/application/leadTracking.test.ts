@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { LeadTracking } from '@/application/analytics/leadTracking'
-import type { AnalyticsPort } from '@/application/ports/Analytics'
-import type { ConsentPort } from '@/application/ports/Consent'
 import type { StoragePort } from '@/application/ports/Storage'
+import type { TrackingPort } from '@/application/analytics/trackingFacade'
 
 class MemoryStorage implements StoragePort {
   private store = new Map<string, string>()
@@ -23,14 +22,11 @@ class MemoryStorage implements StoragePort {
 describe('LeadTracking', () => {
   it('tracks generate_lead once per lead id', () => {
     const storage = new MemoryStorage()
-    const analytics: AnalyticsPort = {
+    const tracking: TrackingPort = {
       trackEvent: vi.fn(),
       trackPageView: () => {}
     }
-    const consent: ConsentPort = {
-      getAnalyticsConsent: () => 'granted'
-    }
-    const tracker = new LeadTracking(storage, analytics, consent)
+    const tracker = new LeadTracking(storage, tracking)
 
     const leadId = tracker.registerLeadForThanksPage()
     const first = tracker.trackGenerateLeadOnce({ origin: 'thanks' })
@@ -38,8 +34,8 @@ describe('LeadTracking', () => {
 
     expect(first).toBe(true)
     expect(second).toBe(false)
-    expect(analytics.trackEvent).toHaveBeenCalledTimes(1)
-    expect(analytics.trackEvent).toHaveBeenCalledWith(
+    expect(tracking.trackEvent).toHaveBeenCalledTimes(1)
+    expect(tracking.trackEvent).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({ lead_id: leadId })
     )

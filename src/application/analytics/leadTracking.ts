@@ -1,7 +1,6 @@
-import type { AnalyticsPort } from '../ports/Analytics'
-import type { ConsentPort } from '../ports/Consent'
 import type { StoragePort } from '../ports/Storage'
 import { conversionEvents } from './conversionEvents'
+import type { TrackingPort } from './trackingFacade'
 
 const LAST_LEAD_KEY = 'last_lead_id'
 const TRACKED_PREFIX = 'lead_tracked_'
@@ -9,8 +8,7 @@ const TRACKED_PREFIX = 'lead_tracked_'
 export class LeadTracking {
   constructor(
     private storage: StoragePort,
-    private analytics: AnalyticsPort,
-    private consent: ConsentPort
+    private tracking: TrackingPort
   ) {}
 
   registerLeadForThanksPage(): string {
@@ -24,10 +22,6 @@ export class LeadTracking {
       return false
     }
 
-    if (this.consent.getAnalyticsConsent() !== 'granted') {
-      return false
-    }
-
     const leadId = this.storage.get(LAST_LEAD_KEY)
     if (!leadId) {
       return false
@@ -37,7 +31,7 @@ export class LeadTracking {
       return false
     }
 
-    this.analytics.trackEvent(conversionEvents.generateLead, {
+    this.tracking.trackEvent(conversionEvents.generateLead, {
       ...params,
       lead_id: leadId
     })
