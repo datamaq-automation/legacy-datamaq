@@ -8,24 +8,24 @@
 }
 
 .btn-outline-secondary {
-  --bs-btn-color: #f8f9fa;
-  --bs-btn-border-color: rgba(248, 249, 250, 0.6);
-  --bs-btn-hover-bg: rgba(248, 249, 250, 0.15);
+  --bs-btn-color: var(--ui-neutral-100);
+  --bs-btn-border-color: var(--ui-neutral-100-60);
+  --bs-btn-hover-bg: var(--ui-neutral-100-15);
   --bs-btn-hover-color: #ffffff;
 }
 
 .card {
   background-color: rgba(15, 22, 38, 0.86);
   color: var(--bs-body-color);
-  border: 1px solid rgba(248, 249, 250, 0.12);
+  border: 1px solid var(--ui-neutral-100-12);
 }
 
 .text-body-emphasis {
-  color: #f8f9fa !important;
+  color: var(--ui-neutral-100) !important;
 }
 
 .text-secondary {
-  color: rgba(248, 249, 250, 0.72) !important;
+  color: var(--ui-neutral-100-72) !important;
 }
 
 .bg-body-secondary {

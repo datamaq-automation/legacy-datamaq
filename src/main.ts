@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createHead } from '@vueuse/head'
 import App from './ui/App.vue'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import './styles/vendors/bootstrap.custom.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import './styles/tokens.css'
 import './styles/base.css'

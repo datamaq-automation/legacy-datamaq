@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:a11y": "node scripts/run-a11y.mjs",
+    "report:css": "npm run build && node scripts/report-css-size.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "@vitest/coverage-v8": "^4.0.17",
     "@vue/test-utils": "^2.4.6",
     "jsdom": "^27.4.0",
+    "sass": "^1.92.1",
     "typescript": "^5.9.3",
     "vite": "^7.1.11",
     "vite-plugin-remove-console": "^2.2.0",

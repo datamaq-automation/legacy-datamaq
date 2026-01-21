@@ -11,6 +11,11 @@
   --bs-body-bg: #0b1626;
   --bs-body-color: #f8f9fa;
   --bs-secondary-color: rgba(248, 249, 250, 0.75);
+  --ui-neutral-100: #f8f9fa;
+  --ui-neutral-100-12: rgba(248, 249, 250, 0.12);
+  --ui-neutral-100-15: rgba(248, 249, 250, 0.15);
+  --ui-neutral-100-60: rgba(248, 249, 250, 0.6);
+  --ui-neutral-100-72: rgba(248, 249, 250, 0.72);
   --bs-border-radius-lg: 1rem;
   --bs-border-radius: 0.75rem;
 
@@ -23,7 +28,13 @@
   --mobile-card-surface: rgba(6, 12, 20, 0.92);
   --mobile-card-border: rgba(248, 249, 250, 0.18);
   --mobile-card-text: rgba(248, 249, 250, 0.82);
+  --ui-letter-spacing-sm: 0.01em;
   --floating-safe-area: 0;
   --cookie-banner-height: 0;
   --cookie-banner-visible-height: 5rem;
+
+  --ui-skip-link-bg: #0d6efd;
+  --ui-skip-link-color: #fff;
+  --ui-skip-link-radius: 0.5rem;
+  --ui-skip-link-z: 1000;
 }

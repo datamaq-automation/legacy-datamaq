@@ -7,11 +7,11 @@
 }
 
 .hero-section .primary-whatsapp-cta {
-  letter-spacing: 0.01em;
+  letter-spacing: var(--ui-letter-spacing-sm);
 }
 
 .hero-section .secondary-whatsapp-cta {
-  letter-spacing: 0.01em;
+  letter-spacing: var(--ui-letter-spacing-sm);
   border-width: 2px;
   --bs-btn-color: #f8f9fa;
   --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.6);
@@ -78,7 +78,7 @@
 
 @media (max-width: 575.98px) {
   .hero-section .hero-primary-actions {
-    align-items: stretch !important;
+    align-items: stretch;
   }
 
   .hero-section .hero-secondary-cta {
@@ -95,7 +95,7 @@
   }
 
   .hero-section .hero-benefits {
-    row-gap: 1.5rem !important;
+    row-gap: 1.5rem;
   }
 }
 

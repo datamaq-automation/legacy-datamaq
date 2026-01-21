@@ -33,6 +33,14 @@ export default defineConfig(({ mode }) => {
       setupFiles: './tests/setup.ts',
       include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
       css: true
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          quietDeps: true,
+          silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function']
+        }
+      }
     }
   }
 })
