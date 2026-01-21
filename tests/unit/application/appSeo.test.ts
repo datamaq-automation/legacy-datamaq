@@ -35,4 +35,13 @@ describe('buildAppHead', () => {
       ])
     )
   })
+
+  it('maneja canonical vacío cuando siteUrl está ausente', () => {
+    const seoWithoutUrl = { ...baseSeo, siteUrl: '' }
+    const head = buildAppHead(seoWithoutUrl, false)
+
+    expect(head.link).toEqual(
+      expect.arrayContaining([{ rel: 'canonical', href: '' }])
+    )
+  })
 })

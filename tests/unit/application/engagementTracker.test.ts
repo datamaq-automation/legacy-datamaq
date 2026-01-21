@@ -37,4 +37,38 @@ describe('EngagementTracker', () => {
     expect(sent[0]?.name).toBe(conversionEvents.contact)
     expect(logger.warn).toHaveBeenCalledTimes(1)
   })
+
+  it('deduplica eventos de email y mantiene el contexto', () => {
+    let now = 0
+    const clock: Clock = { now: () => now }
+    const location: LocationProvider = {
+      href: () => 'https://example.com/contact',
+      referrer: () => '',
+      search: () => ''
+    }
+    const tracking: TrackingPort = {
+      trackEvent: vi.fn(),
+      trackPageView: () => {}
+    }
+    const logger: LoggerPort = {
+      debug: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn()
+    }
+
+    const tracker = new EngagementTracker(clock, location, tracking, logger)
+
+    tracker.trackEmail('footer', 'organic')
+    now = 1000
+    tracker.trackEmail('footer', 'organic')
+
+    expect(tracking.trackEvent).toHaveBeenCalledTimes(1)
+    expect(tracking.trackEvent).toHaveBeenCalledWith(conversionEvents.generateLead, {
+      section: 'footer',
+      pageUrl: 'https://example.com/contact',
+      trafficSource: 'organic',
+      navigationTimeMs: 0
+    })
+    expect(logger.warn).toHaveBeenCalledTimes(1)
+  })
 })

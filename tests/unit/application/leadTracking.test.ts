@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { LeadTracking } from '@/application/analytics/leadTracking'
 import type { StoragePort } from '@/application/ports/Storage'
 import type { TrackingPort } from '@/application/analytics/trackingFacade'
@@ -20,6 +20,10 @@ class MemoryStorage implements StoragePort {
 }
 
 describe('LeadTracking', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
   it('tracks generate_lead once per lead id', () => {
     const storage = new MemoryStorage()
     const tracking: TrackingPort = {
@@ -39,5 +43,35 @@ describe('LeadTracking', () => {
       expect.any(String),
       expect.objectContaining({ lead_id: leadId })
     )
+  })
+
+  it('no envía eventos si analytics está desactivado', () => {
+    vi.stubEnv('VITE_ANALYTICS_ENABLED', 'false')
+    const storage = new MemoryStorage()
+    const tracking: TrackingPort = {
+      trackEvent: vi.fn(),
+      trackPageView: () => {}
+    }
+    const tracker = new LeadTracking(storage, tracking)
+
+    tracker.registerLeadForThanksPage()
+    const result = tracker.trackGenerateLeadOnce()
+
+    expect(result).toBe(false)
+    expect(tracking.trackEvent).not.toHaveBeenCalled()
+  })
+
+  it('no envía eventos si no hay lead pendiente', () => {
+    const storage = new MemoryStorage()
+    const tracking: TrackingPort = {
+      trackEvent: vi.fn(),
+      trackPageView: () => {}
+    }
+    const tracker = new LeadTracking(storage, tracking)
+
+    const result = tracker.trackGenerateLeadOnce({ origin: 'thanks' })
+
+    expect(result).toBe(false)
+    expect(tracking.trackEvent).not.toHaveBeenCalled()
   })
 })

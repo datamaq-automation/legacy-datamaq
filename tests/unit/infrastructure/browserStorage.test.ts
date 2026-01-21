@@ -15,4 +15,19 @@ describe('BrowserStorage', () => {
     storage.remove('key')
     expect(storage.get('key')).toBeNull()
   })
+
+  it('tolera la ausencia de window sin lanzar errores', () => {
+    const originalWindow = globalThis.window
+    // @ts-expect-error simulamos entorno sin window
+    globalThis.window = undefined
+
+    const storage = new BrowserStorage()
+
+    expect(storage.get('key')).toBeNull()
+    expect(() => storage.set('key', 'value')).not.toThrow()
+    expect(() => storage.remove('key')).not.toThrow()
+
+    // @ts-expect-error restauramos window
+    globalThis.window = originalWindow
+  })
 })

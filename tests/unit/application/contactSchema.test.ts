@@ -24,4 +24,16 @@ describe('validateContactDomainRules', () => {
       expect(result.error.type).toBe('InvalidEmail')
     }
   })
+
+  it('rechaza nombre demasiado corto', () => {
+    const result = validateContactDomainRules({
+      name: 'A',
+      email: 'ada@example.com'
+    })
+
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error.type).toBe('InvalidName')
+    }
+  })
 })

@@ -45,4 +45,19 @@ describe('ContactRequest', () => {
       expect(result.error.type).toBe('InvalidEmail')
     }
   })
+
+  it('acepta createdAt personalizado', () => {
+    const customDate = new Date('2025-01-01T00:00:00.000Z')
+    const result = ContactRequest.createFromPrimitives({
+      id: 'contact_4',
+      name: 'Grace Hopper',
+      email: 'grace@example.com',
+      createdAt: customDate
+    })
+
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.data.createdAt).toBe(customDate)
+    }
+  })
 })
