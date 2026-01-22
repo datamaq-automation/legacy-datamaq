@@ -1,3 +1,7 @@
+/*
+Path: src/domain/types/content.ts
+*/
+
 export type CTAAction = 'whatsapp' | 'contact' | 'services'
 
 export interface CTAContent {
@@ -108,4 +112,18 @@ export interface AppContent {
   contact: ContactContent
   consent: ConsentContent
   whatsappFab: WhatsappFabContent
+}
+
+export interface CommercialConfig {
+  baseOperativa: string
+  tarifaBaseDesdeARS: number
+  trasladoMinimoARS: number
+  descuentos: {
+    cooperativasPct: number
+    pymeGraficaPct: number
+  }
+  equipos: {
+    medidorNombre: string // "Powermeter"
+    automateNombre: string // "Automate"
+  }
 }
