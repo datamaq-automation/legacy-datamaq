@@ -1,7 +1,6 @@
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { consentManagerKey, type ConsentStatus } from '@/application/consent/consentManager'
 import { useContent } from '@/ui/composables/useContent'
-import './ConsentBanner.css'
 
 export function useConsentBanner() {
   const manager = inject(consentManagerKey)

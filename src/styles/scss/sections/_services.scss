@@ -1,0 +1,75 @@
+.c-services {
+  &__title {
+    letter-spacing: var(--ui-letter-spacing-sm);
+  }
+
+  &__media {
+    flex-shrink: 0;
+  }
+
+  &__list {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  &__item {
+    align-items: flex-start;
+  }
+
+  &__note {
+    line-height: 1.55;
+  }
+
+  &__alert {
+    margin-top: 1rem;
+  }
+
+  &__body {
+    gap: 1.25rem;
+  }
+
+  &__header {
+    align-items: center;
+  }
+
+  &__card-title {
+    letter-spacing: var(--ui-letter-spacing-sm);
+  }
+
+  &__card-text {
+    color: var(--mobile-card-text);
+  }
+
+  &__subtitle {
+    letter-spacing: var(--ui-letter-spacing-sm);
+  }
+
+  &__list-item {
+    align-items: flex-start;
+  }
+
+  &__list-bullet {
+    font-size: 1.05rem;
+  }
+
+  &__list-text {
+    line-height: 1.4;
+  }
+
+  &__cta {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  &__cta-button {
+    letter-spacing: var(--ui-letter-spacing-sm);
+  }
+
+  &__figure {
+    margin-bottom: 1.5rem;
+  }
+
+  &__caption {
+    color: var(--ui-neutral-100-72);
+  }
+}

@@ -4,7 +4,7 @@ Path: src/ui/features/contact/ConsentBanner.vue
 <template>
   <div
     v-if="visible"
-    class="consent-banner consent-banner-shell position-fixed bottom-0 start-50 translate-middle-x w-100 shadow-lg"
+    class="c-consent-banner c-consent-banner--shell position-fixed bottom-0 start-50 translate-middle-x w-100 shadow-lg"
     role="dialog"
     aria-modal="true"
     aria-labelledby="consent-banner-title"
@@ -17,10 +17,10 @@ Path: src/ui/features/contact/ConsentBanner.vue
             {{ consent.description }}
           </p>
         </div>
-        <div class="col-12 col-lg-auto d-flex gap-2 justify-content-lg-end consent-banner__actions">
+        <div class="col-12 col-lg-auto d-flex gap-2 justify-content-lg-end c-consent-banner__actions">
           <button
             type="button"
-            class="btn btn-outline-secondary consent-banner__button"
+            class="btn btn-outline-secondary c-consent-banner__button"
             @click="reject"
             data-testid="consent-reject"
           >
@@ -28,7 +28,7 @@ Path: src/ui/features/contact/ConsentBanner.vue
           </button>
           <button
             type="button"
-            class="btn btn-primary consent-banner__button"
+            class="btn btn-primary c-consent-banner__button"
             @click="accept"
             data-testid="consent-accept"
           >

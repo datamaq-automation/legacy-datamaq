@@ -3,10 +3,9 @@ Path: src/ui/features/contact/WhatsappFab.vue
 -->
 
 <template>
-  <div class="position-fixed bottom-0 end-0 p-3 z-3 WhatsappFab">
+  <div class="position-fixed bottom-0 end-0 p-3 z-3 c-whatsapp-fab">
     <button
-      class="btn btn-success rounded-circle shadow-lg whatsapp-track d-flex align-items-center justify-content-center"
-      style="width:60px;height:60px;"
+      class="btn btn-success rounded-circle shadow-lg whatsapp-track d-flex align-items-center justify-content-center c-whatsapp-fab__button"
       type="button"
       @click="emit('whatsapp')"
       :aria-label="whatsappFab.ariaLabel"

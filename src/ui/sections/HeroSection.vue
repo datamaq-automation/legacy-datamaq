@@ -3,7 +3,7 @@ Path: src/ui/sections/HeroSection.vue
 -->
 
 <template>
-  <section class="section-mobile py-5 bg-body-tertiary text-body hero-section" aria-labelledby="hero-title">
+  <section class="section-mobile py-5 bg-body-tertiary text-body c-hero" aria-labelledby="hero-title">
     <div class="container py-4">
       <div class="row align-items-center gy-5">
         <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start">
@@ -19,12 +19,12 @@ Path: src/ui/sections/HeroSection.vue
             {{ hero.subtitle }}
           </p>
           <div
-            class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 hero-primary-actions hero-cta-stack"
+            class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 c-hero__actions c-cta-stack"
           >
-            <div class="hero-cta-stack__item">
+            <div class="c-cta-stack__item">
               <button
                 type="button"
-                class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm primary-whatsapp-cta w-100"
+                class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm c-hero__primary-cta w-100"
                 :disabled="!chatEnabled"
                 :aria-disabled="!chatEnabled"
                 :aria-describedby="!chatEnabled ? 'hero-chat-disabled' : undefined"
@@ -33,9 +33,9 @@ Path: src/ui/sections/HeroSection.vue
                 {{ chatEnabled ? hero.primaryCta.label : hero.chatUnavailableMessage }}
               </button>
             </div>
-            <div class="hero-cta-stack__item">
+            <div class="c-cta-stack__item">
               <a
-                class="btn btn-outline-secondary btn-lg px-4 hero-secondary-cta w-100"
+                class="btn btn-outline-secondary btn-lg px-4 c-hero__secondary-cta w-100"
                 :href="hero.secondaryCta.href"
               >
                 {{ hero.secondaryCta.label }}
@@ -52,38 +52,38 @@ Path: src/ui/sections/HeroSection.vue
           >
             {{ hero.chatUnavailableMessage }}
           </p>
-          <ul class="row list-unstyled gy-3 text-start hero-benefits" aria-label="Beneficios">
+          <ul class="row list-unstyled gy-3 text-start c-hero__benefits" aria-label="Beneficios">
             <li class="col-12 col-sm-6">
-              <div class="hero-benefit-card hero-benefit-card--success h-100">
-                <span class="hero-benefit-card__badge">1</span>
+              <div class="c-hero__benefit-card c-hero__benefit-card--success h-100">
+                <span class="c-hero__benefit-badge">1</span>
                 <div>
-                  <p class="hero-benefit-card__title">{{ benefit1.title }}</p>
-                  <p class="hero-benefit-card__text">{{ benefit1.text }}</p>
+                  <p class="c-hero__benefit-title">{{ benefit1.title }}</p>
+                  <p class="c-hero__benefit-text">{{ benefit1.text }}</p>
                 </div>
               </div>
             </li>
             <li class="col-12 col-sm-6">
-              <div class="hero-benefit-card hero-benefit-card--primary h-100">
-                <span class="hero-benefit-card__badge">2</span>
+              <div class="c-hero__benefit-card c-hero__benefit-card--primary h-100">
+                <span class="c-hero__benefit-badge">2</span>
                 <div>
-                  <p class="hero-benefit-card__title">{{ benefit2.title }}</p>
-                  <p class="hero-benefit-card__text">{{ benefit2.text }}</p>
+                  <p class="c-hero__benefit-title">{{ benefit2.title }}</p>
+                  <p class="c-hero__benefit-text">{{ benefit2.text }}</p>
                 </div>
               </div>
             </li>
             <li class="col-12">
-              <div class="hero-benefit-card hero-benefit-card--warning h-100">
-                <span class="hero-benefit-card__badge">3</span>
+              <div class="c-hero__benefit-card c-hero__benefit-card--warning h-100">
+                <span class="c-hero__benefit-badge">3</span>
                 <div>
-                  <p class="hero-benefit-card__title">{{ benefit3.title }}</p>
-                  <p class="hero-benefit-card__text">{{ benefit3.text }}</p>
+                  <p class="c-hero__benefit-title">{{ benefit3.title }}</p>
+                  <p class="c-hero__benefit-text">{{ benefit3.text }}</p>
                 </div>
               </div>
             </li>
           </ul>
         </div>
         <div class="col-lg-6 order-1 order-lg-2 text-center">
-          <div class="position-relative mx-auto hero-illustration">
+          <div class="position-relative mx-auto c-hero__illustration">
             <div
               class="bg-primary rounded-circle position-absolute top-50 start-50 translate-middle"
               style="width: 320px; height: 320px; opacity: 0.25;"

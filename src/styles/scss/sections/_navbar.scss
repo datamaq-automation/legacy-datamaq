@@ -1,0 +1,42 @@
+.c-navbar .slide-fade-enter-active,
+.c-navbar .slide-fade-leave-active {
+  transition: max-height 0.3s cubic-bezier(.4, 0, .2, 1), opacity 0.3s;
+  overflow: hidden;
+}
+
+.c-navbar .slide-fade-enter-from,
+.c-navbar .slide-fade-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.c-navbar .slide-fade-enter-to,
+.c-navbar .slide-fade-leave-from {
+  max-height: 200px;
+  opacity: 1;
+}
+
+@media (min-width: 992px) {
+  .c-navbar .navbar-toggler {
+    display: none !important;
+  }
+
+  .c-navbar .slide-fade-enter-active,
+  .c-navbar .slide-fade-leave-active,
+  .c-navbar .slide-fade-enter-from,
+  .c-navbar .slide-fade-leave-to,
+  .c-navbar .slide-fade-enter-to,
+  .c-navbar .slide-fade-leave-from {
+    transition: none !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+  }
+
+  .c-navbar .navbar-collapse {
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+}

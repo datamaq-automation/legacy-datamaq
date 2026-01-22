@@ -1,7 +1,6 @@
 import { computed } from 'vue'
 import { useContent } from '@/ui/composables/useContent'
 import type { HeroSectionProps } from '@/ui/types/sections'
-import './HeroSection.css'
 
 export function useHeroSection(props: HeroSectionProps) {
   const chatEnabled = computed(() => props.chatEnabled)

@@ -1,0 +1,35 @@
+.c-consent-banner {
+  &--shell {
+    background-color: rgba(248, 249, 250, 0.95);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 1080;
+  }
+
+  &__actions {
+    flex-wrap: wrap;
+  }
+
+  &__button {
+    min-height: 2.75rem;
+    padding-inline: 1.5rem;
+    flex: 1 1 45%;
+  }
+}
+
+@media (min-width: 992px) {
+  .c-consent-banner--shell {
+    width: auto;
+    min-width: 60rem;
+    border-radius: 0.75rem 0.75rem 0 0;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .c-consent-banner--shell {
+    @include safe-area-bottom(0px);
+  }
+
+  .c-consent-banner__button {
+    flex: 1 1 100%;
+  }
+}

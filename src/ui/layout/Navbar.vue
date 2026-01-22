@@ -3,7 +3,7 @@ Path: src/ui/layout/Navbar.vue
 -->
 
 <template>
-  <header class="navbar navbar-dark bg-dark sticky-top border-bottom navbar-shell" role="banner">
+  <header class="navbar navbar-dark bg-dark sticky-top border-bottom c-navbar" role="banner">
     <div class="container-fluid px-3">
       <!-- Botón hamburguesa a la izquierda, visible solo en mobile -->
       <button
@@ -23,7 +23,7 @@ Path: src/ui/layout/Navbar.vue
         <nav
           v-if="menuOpen || isDesktop"
           id="main-navbar"
-          class="navbar-collapse"
+          class="navbar-collapse c-navbar__collapse"
           :class="{
             'd-lg-flex': isDesktop,
             'd-none d-lg-flex': !menuOpen && !isDesktop,

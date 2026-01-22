@@ -1,7 +1,6 @@
 import { useContent } from '@/ui/composables/useContent'
 import { useContactForm } from './contactHooks'
 import type { ContactFormProps } from './contactTypes'
-import './ContactFormSection.css'
 
 export function useContactFormSection(props: ContactFormProps) {
   const { contact } = useContent()

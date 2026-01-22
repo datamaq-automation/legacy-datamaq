@@ -1,9 +1,14 @@
-.WhatsappFab {
+.c-whatsapp-fab {
   padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
+.c-whatsapp-fab__button {
+  width: 60px;
+  height: 60px;
+}
+
 @media (max-width: 767.98px) {
-  .WhatsappFab {
+  .c-whatsapp-fab {
     padding-bottom: max(env(safe-area-inset-bottom, 0px) + 1.25rem, 2.5rem);
     right: clamp(1rem, 4vw, 1.75rem);
   }

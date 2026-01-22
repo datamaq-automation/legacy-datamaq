@@ -1,0 +1,114 @@
+.c-hero {
+  &__illustration {
+    max-width: 420px;
+  }
+
+  &__primary-cta {
+    letter-spacing: var(--ui-letter-spacing-sm);
+  }
+
+  &__secondary-cta {
+    letter-spacing: var(--ui-letter-spacing-sm);
+    border-width: 2px;
+    --bs-btn-color: #f8f9fa;
+    --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.6);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: rgba(var(--bs-primary-rgb), 0.2);
+    --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.85);
+    --bs-btn-disabled-opacity: 0.55;
+  }
+
+  &__secondary-cta:disabled,
+  &__secondary-cta[aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  &__benefits {
+    row-gap: 1.1rem;
+  }
+
+  &__benefit-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.35rem 1.5rem;
+    border-radius: 1rem;
+    @include glass(var(--mobile-card-surface), var(--mobile-card-border));
+    color: var(--bs-body-color);
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
+  }
+
+  &__benefit-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #0b1626;
+  }
+
+  &__benefit-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--bs-body-color);
+    margin-bottom: 0.35rem;
+  }
+
+  &__benefit-text {
+    margin: 0;
+    color: var(--mobile-card-text);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  &__benefit-card--success .c-hero__benefit-badge {
+    background: rgba(var(--bs-success-rgb), 0.85);
+  }
+
+  &__benefit-card--primary .c-hero__benefit-badge {
+    background: rgba(var(--bs-primary-rgb), 0.85);
+  }
+
+  &__benefit-card--warning .c-hero__benefit-badge {
+    background: rgba(var(--bs-warning-rgb), 0.85);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .c-hero__secondary-cta {
+    font-size: 1rem;
+    line-height: 1.5;
+    padding-block: 0.75rem;
+    border-width: 1px;
+  }
+
+  .c-hero__primary-cta {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    padding-block: 0.9rem;
+  }
+
+  .c-hero__benefits {
+    row-gap: 1.5rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .c-hero__benefit-card {
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .c-hero__benefit-title {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  .c-hero__benefit-text {
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+}

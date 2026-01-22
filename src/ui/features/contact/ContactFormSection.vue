@@ -2,13 +2,13 @@
 Path: src/ui/features/contact/ContactFormSection.vue
 -->
 <template>
-  <section id="contacto" class="section-mobile py-5 bg-dark text-white contact-form-section" aria-labelledby="contacto-title">
+  <section id="contacto" class="section-mobile py-5 bg-dark text-white c-contact" aria-labelledby="contacto-title">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8">
-          <div class="card border-0 shadow-lg bg-body text-body">
+          <div class="card border-0 shadow-lg bg-body text-body c-contact__card">
             <div class="card-body p-4 p-md-5">
-              <h2 id="contacto-title" class="h3 ContactForm-title mb-3">
+              <h2 id="contacto-title" class="h3 c-contact__title mb-3">
                 {{ contact.title }}
               </h2>
               <p class="text-body mb-4">
@@ -77,7 +77,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
                 <div class="col-12 mt-2">
                   <button
                     type="submit"
-                    class="btn w-100 email-submit-cta"
+                    class="btn w-100 c-contact__submit"
                     :class="isChannelEnabled ? 'btn-primary' : 'btn-outline-secondary disabled-channel'"
                     :disabled="!isChannelEnabled || isSubmitting"
                     :aria-disabled="!isChannelEnabled || isSubmitting"
@@ -100,7 +100,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
                   </p>
                   <p
                     v-else-if="!isBackendAvailable"
-                    class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small contact-alert"
+                    class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small c-contact__alert"
                   >
                     {{ contact.unavailableMessage }}
                   </p>

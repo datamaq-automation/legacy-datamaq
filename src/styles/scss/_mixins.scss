@@ -1,0 +1,24 @@
+@mixin focus-ring($color: #ffd43b, $offset: 4px) {
+  &:focus-visible {
+    outline: 3px solid $color;
+    outline-offset: $offset;
+  }
+}
+
+@mixin glass(
+  $bg: rgba(6, 12, 20, 0.92),
+  $border: rgba(248, 249, 250, 0.18),
+  $blur: none
+) {
+  background: $bg;
+  border: 1px solid $border;
+  @if $blur != none {
+    backdrop-filter: $blur;
+  } @else {
+    backdrop-filter: none;
+  }
+}
+
+@mixin safe-area-bottom($extra: 0px) {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + #{$extra});
+}

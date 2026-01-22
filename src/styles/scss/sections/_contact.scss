@@ -1,0 +1,30 @@
+.c-contact {
+  &__title {
+    color: #222 !important;
+    font-weight: 400;
+    font-size: 1.18rem;
+    letter-spacing: var(--ui-letter-spacing-sm);
+  }
+
+  &__alert {
+    margin-top: 0.75rem;
+  }
+
+  &__submit {
+    font-weight: 600;
+    letter-spacing: var(--ui-letter-spacing-sm);
+    @include focus-ring();
+  }
+
+  &__card {
+    border-radius: 1rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .c-contact__title {
+    font-size: 1.08rem;
+    font-weight: 400;
+    margin-bottom: 1.1rem;
+  }
+}

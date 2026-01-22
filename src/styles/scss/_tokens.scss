@@ -19,11 +19,9 @@
   --ui-neutral-100-72: rgba(248, 249, 250, 0.72);
   --bs-border-radius-lg: 1rem;
   --bs-border-radius: 0.75rem;
-
   --bp-sm: 575.98px;
   --bp-md: 767.98px;
   --bp-lg: 991.98px;
-
   --section-mobile-padding: 3.25rem;
   --section-mobile-gap: 1.75rem;
   --mobile-card-surface: rgba(6, 12, 20, 0.92);
@@ -33,9 +31,37 @@
   --floating-safe-area: 0;
   --cookie-banner-height: 0;
   --cookie-banner-visible-height: 5rem;
-
   --ui-skip-link-bg: #0d6efd;
   --ui-skip-link-color: #fff;
   --ui-skip-link-radius: 0.5rem;
   --ui-skip-link-z: 1000;
+  --fab-offset: 1.5rem;
+  --fab-safe-gap: 2.5rem;
+  --floating-cta-height: 0;
 }
+
+$ui-color-map: (
+  primary: #1b4ed7,
+  success: #1f8a4c,
+  warning: #f08c00,
+  info: #0f4c75,
+  body: #0b1626,
+  body-color: #f8f9fa,
+  neutral-100: #f8f9fa,
+  neutral-100-60: rgba(248, 249, 250, 0.6)
+);
+
+$ui-radius-map: (
+  sm: 0.5rem,
+  base: 0.75rem,
+  lg: 1rem
+);
+
+$ui-spacing-map: (
+  section-mobile-padding: 3.25rem,
+  section-mobile-gap: 1.75rem,
+  floating-safe-area: 0,
+  cookie-banner-height: 0,
+  fab-offset: 1.5rem,
+  fab-safe-gap: 2.5rem
+);
