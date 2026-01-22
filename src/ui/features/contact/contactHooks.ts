@@ -9,7 +9,7 @@ import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
 import { useContent } from '@/ui/composables/useContent'
 import { useContactValidation } from './useContactValidation'
-import { navigateTo } from '@/infrastructure/navigation/spaNavigation'
+import { useRouter } from 'vue-router'
 
 export function useContactForm(props: ContactFormProps) {
   const formRef = ref<HTMLFormElement | null>(null)
@@ -37,6 +37,8 @@ export function useContactForm(props: ContactFormProps) {
   }
 
   const { validate } = useContactValidation()
+
+  const router = useRouter()
 
   async function handleSubmit(): Promise<void> {
     const formElement = formRef.value
@@ -69,7 +71,7 @@ export function useContactForm(props: ContactFormProps) {
       console.log('[ContactFormSection] Resultado de onSubmit:', result)
       if (result && result.ok) {
         console.log('[ContactFormSection] submit success, redirecting to /gracias')
-        navigateTo('/gracias')
+        void router.push('/gracias')
         return
       } else {
         console.log('[ContactFormSection] submit failed', result?.error)

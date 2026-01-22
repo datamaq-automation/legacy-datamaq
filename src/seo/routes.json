@@ -1,0 +1,12 @@
+[
+  {
+    "name": "home",
+    "path": "/",
+    "indexable": true
+  },
+  {
+    "name": "thanks",
+    "path": "/gracias",
+    "indexable": false
+  }
+]

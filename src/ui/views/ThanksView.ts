@@ -3,20 +3,21 @@ import Navbar from '@/ui/layout/Navbar.vue'
 import Footer from '@/ui/layout/Footer.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import { getChatEnabled, openWhatsApp } from '@/ui/controllers/contactController'
-import { navigateTo } from '@/infrastructure/navigation/spaNavigation'
 import { useContainer } from '@/di/container'
+import { useRouter } from 'vue-router'
 import './ThanksView.css'
 
 export function useThanksView() {
   const chatEnabled = getChatEnabled()
   const { leadTracking } = useContainer()
+  const router = useRouter()
 
   function handleWhatsapp() {
     openWhatsApp('gracias')
   }
 
   function handleGoHome() {
-    navigateTo('/')
+    void router.push('/')
   }
 
   onMounted(() => {

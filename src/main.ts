@@ -1,6 +1,7 @@
-import { createApp } from 'vue'
 import { createHead } from '@vueuse/head'
+import { ViteSSG } from 'vite-ssg'
 import App from './ui/App.vue'
+import { routes } from './router/routes'
 import './styles/main.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import './assets/theme.css'
@@ -10,40 +11,19 @@ import { initAttribution } from './infrastructure/attribution/utm'
 import { consentManagerKey } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
 
-const app = createApp(App)
-const head = createHead()
+export const createApp = ViteSSG(
+  App,
+  { routes },
+  ({ app, isClient }) => {
+    const head = createHead()
+    app.use(head)
+    provideContainer(app, container)
+    app.provide(consentManagerKey, container.consentManager)
 
-app.use(head)
-
-provideContainer(app, container)
-app.provide(consentManagerKey, container.consentManager)
-
-initAttribution(container.storage)
-
-const syncConsent = () => {
-  const status = container.consentManager.getStatus()
-  if (status === 'granted') {
-    container.consentPort.setAnalyticsConsent('granted')
-  } else if (status === 'denied') {
-    container.consentPort.setAnalyticsConsent('denied')
-  } else {
-    container.consentPort.setAnalyticsConsent('unset')
+    if (isClient) {
+      initAttribution(container.storage)
+      initAnalytics()
+      enableSpaPageTracking(container.analyticsPort)
+    }
   }
-}
-
-syncConsent()
-
-if (container.consentManager.getStatus() === 'granted') {
-  initAnalytics()
-  enableSpaPageTracking(container.analyticsPort)
-}
-
-container.consentManager.subscribe((status) => {
-  syncConsent()
-  if (status === 'granted') {
-    initAnalytics()
-    enableSpaPageTracking(container.analyticsPort)
-  }
-})
-
-app.mount('#app')
+)

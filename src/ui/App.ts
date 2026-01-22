@@ -1,23 +1,15 @@
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed } from 'vue'
 import { useHead } from '@vueuse/head'
+import { useRoute } from 'vue-router'
 import { getDefaultSeo } from '@/ui/seo/defaultSeo'
 import { buildAppHead } from '@/ui/seo/appSeo'
-import { getCurrentPath, subscribeToNavigation } from '@/infrastructure/navigation/spaNavigation'
 
 export function useApp() {
   const seo = getDefaultSeo()
-  const currentPath = ref(getCurrentPath())
-  const isThanksPage = computed(() => currentPath.value === '/gracias')
+  const route = useRoute()
+  const isThanksPage = computed(() => route.path === '/gracias')
 
-  const unsubscribe = subscribeToNavigation(() => {
-    currentPath.value = getCurrentPath()
-  })
+  useHead(() => buildAppHead(seo, route.path, isThanksPage.value))
 
-  onBeforeUnmount(() => {
-    unsubscribe()
-  })
-
-  useHead(() => buildAppHead(seo, isThanksPage.value))
-
-  return { isThanksPage }
+  return {}
 }

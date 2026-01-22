@@ -37,3 +37,4 @@ __screenshots__/
 .env.remote
 public/robots.txt
 public/sitemap.xml
+public/_redirects

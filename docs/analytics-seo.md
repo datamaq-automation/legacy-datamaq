@@ -10,6 +10,19 @@ VITE_SITE_URL=https://www.tu_sitio_web.com.ar
 VITE_SITE_NAME=tu_nombre_de_tu_sitio
 VITE_SITE_DESCRIPTION=tu_descripcion
 VITE_SITE_OG_IMAGE=https://www.tu_sitio_web.com.ar/og-default.png
+VITE_SITE_LOCALE=es_AR
+VITE_GSC_VERIFICATION=XXXXXXXXXX
+VITE_BUSINESS_NAME=Tu Empresa
+VITE_BUSINESS_TELEPHONE=5491111111111
+VITE_BUSINESS_EMAIL=hola@tuempresa.com.ar
+VITE_BUSINESS_STREET=Av. Siempre Viva 742
+VITE_BUSINESS_LOCALITY=Martinez
+VITE_BUSINESS_REGION=Buenos Aires
+VITE_BUSINESS_POSTAL_CODE=1650
+VITE_BUSINESS_COUNTRY=AR
+VITE_BUSINESS_LAT=-34.449
+VITE_BUSINESS_LNG=-58.644
+VITE_BUSINESS_AREA=GBA Norte,Argentina
 ```
 
 Notas:
@@ -58,25 +71,24 @@ WhatsApp se dispara desde `src/application/analytics/engagementTracker.ts`.
 
 ## SEO base
 
-- Metas globales en `src/ui/App.vue` via `@vueuse/head`.
-- JSON-LD de Organization + WebSite en `src/ui/seo/defaultSeo.ts`.
+- Metas globales y canonicales generadas en `src/ui/App.ts` con `@vueuse/head`.
+- JSON-LD de Organization, WebSite, LocalBusiness y OfferCatalog en `src/ui/seo/defaultSeo.ts` salvo que falten datos.
+- `og:locale` y `link rel="alternate"` usan `VITE_SITE_LOCALE`.
+- La meta `google-site-verification` se inyecta cuando `VITE_GSC_VERIFICATION` está presente.
+- El sitemap/robots se generan automáticamente antes de cada `npm run build` y se publican con `_redirects` basado en `VITE_SITE_URL`.
 
 ## Sitemap y robots
 
-Generar archivos con:
-```
-npm run sitemap
-```
-
-Eso crea:
-- `public/sitemap.xml`
-- `public/robots.txt`
+- `npm run build` ejecuta `npm run sitemap` antes de compilar, por lo que el sitemap/robots/_redirects siempre se actualizan con `VITE_SITE_URL`.
+- El sitemap solo incluye rutas marcadas como indexables (`/`) y añade `<lastmod>` con fecha del build.
+- `robots.txt` referencia `Sitemap: {VITE_SITE_URL}/sitemap.xml` y no bloquea assets.
+- `_redirects` crea reglas 301 desde non-www/http hacia la URL canónica de `VITE_SITE_URL`.
 
 ## Search Console
 
 Opciones de verificacion:
 1. DNS (recomendada): agregar TXT en el proveedor de dominio.
-2. Meta tag: agregar meta `google-site-verification` en `src/ui/App.vue`.
+2. Meta tag: configurar `VITE_GSC_VERIFICATION` para que el meta se inyecte automáticamente.
 3. Archivo HTML: colocar el archivo de verificacion en `public/`.
 
 Luego:
@@ -103,8 +115,8 @@ Opcion recomendada: importar desde GA4.
 
 ## Checklist pre-produccion
 
-- Variables de entorno configuradas.
+- Variables de entorno SEO/analytics completas (Analytics, VITE_SITE_*, VITE_BUSINESS_*, VITE_GSC_VERIFICATION).
 - Consentimiento activo antes de cargar tags.
-- `npm run sitemap` ejecutado y publicado.
+- `npm run build` (genera sitemap/robots/_redirects) exitoso.
 - Eventos de conversion visibles en GA4 DebugView.
 - Search Console verificada y sitemap enviado.
