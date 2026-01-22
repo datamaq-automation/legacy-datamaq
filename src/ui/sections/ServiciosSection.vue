@@ -42,7 +42,7 @@ Path: src/ui/sections/ServiciosSection.vue
                   <span class="text-body-secondary c-services__list-text">{{ primaryCard.items[2] }}</span>
                 </li>
               </ul>
-              <figure class="text-center mb-4 c-services__figure">
+              <figure v-if="primaryCard.figure" class="text-center mb-4 c-services__figure">
                 <img
                   :src="primaryCard.figure.src"
                   :alt="primaryCard.figure.alt"
@@ -52,7 +52,10 @@ Path: src/ui/sections/ServiciosSection.vue
                   loading="lazy"
                   decoding="async"
                 />
-                <figcaption class="small text-secondary mt-2 c-services__caption">
+                <figcaption
+                  v-if="primaryCard.figure.caption"
+                  class="small text-secondary mt-2 c-services__caption"
+                >
                   {{ primaryCard.figure.caption }}
                 </figcaption>
               </figure>

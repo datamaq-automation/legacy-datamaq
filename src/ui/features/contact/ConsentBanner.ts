@@ -9,22 +9,24 @@ export function useConsentBanner() {
     throw new Error('ConsentManager no está disponible en el árbol de la aplicación.')
   }
 
-  const status = ref<ConsentStatus>(manager.getStatus())
+  const consentManager = manager
+
+  const status = ref<ConsentStatus>(consentManager.getStatus())
   let unsubscribe: (() => void) | undefined
   const { consent } = useContent()
 
   const visible = computed(() => status.value === 'unknown')
 
   function accept(): void {
-    manager.grant()
+    consentManager.grant()
   }
 
   function reject(): void {
-    manager.deny()
+    consentManager.deny()
   }
 
   onMounted(() => {
-    unsubscribe = manager.subscribe((newStatus) => {
+    unsubscribe = consentManager.subscribe((newStatus) => {
       status.value = newStatus
     })
   })
