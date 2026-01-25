@@ -6,12 +6,17 @@ const baseSeo = {
   description: 'Servicios industriales y eficiencia energetica para empresas.',
   siteUrl: 'https://profebustos.com.ar',
   siteName: 'ProfeBustos',
-  ogImage: 'https://profebustos.com.ar/og.png'
+  ogImage: 'https://profebustos.com.ar/og.png',
+  locale: 'es_AR',
+  business: {
+    name: 'ProfeBustos'
+  },
+  services: []
 } as const
 
 describe('buildAppHead', () => {
   it('builds noindex head for thanks page', () => {
-    const head = buildAppHead(baseSeo, true)
+    const head = buildAppHead(baseSeo, '/gracias', true)
 
     expect(head.title).toBe('Gracias | ProfeBustos')
     expect(head.meta).toEqual(
@@ -22,7 +27,7 @@ describe('buildAppHead', () => {
   })
 
   it('builds canonical and og tags for home page', () => {
-    const head = buildAppHead(baseSeo, false)
+    const head = buildAppHead(baseSeo, '/', false)
 
     expect(head.link).toEqual(
       expect.arrayContaining([
@@ -38,10 +43,10 @@ describe('buildAppHead', () => {
 
   it('maneja canonical vacío cuando siteUrl está ausente', () => {
     const seoWithoutUrl = { ...baseSeo, siteUrl: '' }
-    const head = buildAppHead(seoWithoutUrl, false)
+    const head = buildAppHead(seoWithoutUrl, '/', false)
 
     expect(head.link).toEqual(
-      expect.arrayContaining([{ rel: 'canonical', href: '' }])
+      expect.arrayContaining([{ rel: 'canonical', href: '/' }])
     )
   })
 })

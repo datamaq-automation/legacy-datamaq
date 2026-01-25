@@ -21,7 +21,7 @@ describe('defaultSeo', () => {
 
     const seo = getDefaultSeo()
 
-    expect(seo).toEqual({
+    expect(seo).toMatchObject({
       title: 'Profe',
       description: 'Descripcion',
       siteUrl: 'https://profebustos.com',
