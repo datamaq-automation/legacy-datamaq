@@ -13,16 +13,16 @@ theme styles.
 - root, reboot, type
 - images
 - containers, grid
-- buttons, forms, card, nav, navbar
+- buttons, forms, card, alert, nav, navbar
 - spinners
 - helpers
 - utilities/api
 
 ## Excluded modules
-- accordion, alerts, badge, breadcrumb, button-group
+- accordion, badge, breadcrumb, button-group
 - carousel, close, code, dropdown
-- images, list-group, modal, offcanvas, pagination
-- placeholders, popover, progress, spinner, tables
+- list-group, modal, offcanvas, pagination
+- placeholders, popover, progress, tables
 - toast, tooltip, transitions, utilities (legacy), other components not listed
 
 ## How to add a module

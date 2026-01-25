@@ -85,8 +85,7 @@ Path: src/ui/sections/HeroSection.vue
         <div class="col-lg-6 order-1 order-lg-2 text-center">
           <div class="position-relative mx-auto c-hero__illustration">
             <div
-              class="bg-primary rounded-circle position-absolute top-50 start-50 translate-middle"
-              style="width: 320px; height: 320px; opacity: 0.25;"
+              class="bg-primary rounded-circle position-absolute top-50 start-50 translate-middle opacity-25 c-hero__halo"
             ></div>
             <picture class="d-inline-block position-relative">
               <img
