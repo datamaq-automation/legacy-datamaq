@@ -1,6 +1,7 @@
-import { useContent } from '@/ui/composables/useContent'
+import { useContainer } from '@/di/container'
 
 export function useWhatsappFab() {
-  const { whatsappFab } = useContent()
+  const { content } = useContainer()
+  const whatsappFab = content.getWhatsappFabContent()
   return { whatsappFab }
 }

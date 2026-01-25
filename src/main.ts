@@ -11,12 +11,17 @@ import { initAttribution } from './infrastructure/attribution/utm'
 import { consentManagerKey } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
 
+const head = createHead()
+
 export const createApp = ViteSSG(
   App,
   { routes },
   ({ app, isClient }) => {
-    const head = createHead()
-    app.use(head)
+    const provides = (app as unknown as { _context?: { provides?: Record<string, unknown> } })._context
+      ?.provides
+    if (!provides || !('usehead' in provides)) {
+      app.use(head)
+    }
     provideContainer(app, container)
     app.provide(consentManagerKey, container.consentManager)
 

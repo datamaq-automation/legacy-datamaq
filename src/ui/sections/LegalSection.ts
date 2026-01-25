@@ -1,6 +1,7 @@
-import { useContent } from '@/ui/composables/useContent'
+import { useContainer } from '@/di/container'
 
 export function useLegalSection() {
-  const { legal } = useContent()
+  const { content } = useContainer()
+  const legal = content.getLegalContent()
   return { legal }
 }

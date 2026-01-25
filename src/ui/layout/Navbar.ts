@@ -1,7 +1,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useBreakpoint } from '@/ui/composables/useBreakpoint'
 import { useClickOutside } from '@/ui/composables/useClickOutside'
-import { useContent } from '@/ui/composables/useContent'
+import { useContainer } from '@/di/container'
 import type { NavbarEmits, NavbarProps } from '@/ui/types/layout'
 
 export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
@@ -10,7 +10,8 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
   const navRef = ref<HTMLElement | null>(null)
   const toggleButtonRef = ref<HTMLButtonElement | null>(null)
   const chatEnabled = computed(() => props.chatEnabled)
-  const { navbar } = useContent()
+  const { content } = useContainer()
+  const navbar = content.getNavbarContent()
 
   function toggleMenu() {
     menuOpen.value = !menuOpen.value

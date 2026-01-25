@@ -7,7 +7,7 @@ import {
 } from '@/ui/controllers/contactBackendController'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
-import { useContent } from '@/ui/composables/useContent'
+import { useContainer } from '@/di/container'
 import { useContactValidation } from './useContactValidation'
 import { useRouter } from 'vue-router'
 
@@ -26,7 +26,8 @@ export function useContactForm(props: ContactFormProps) {
   const isSubmitting = ref(false)
   const feedback = reactive<{ message: string; success: boolean }>({ message: '', success: false })
   const feedbackMessageRef = ref<HTMLParagraphElement | null>(null)
-  const { contact } = useContent()
+  const { content } = useContainer()
+  const contact = content.getContactContent()
   let unsubscribeFromStatus: (() => void) | undefined
 
   async function announceFeedback(message: string, success: boolean): Promise<void> {

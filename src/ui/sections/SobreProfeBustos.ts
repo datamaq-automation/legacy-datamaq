@@ -1,7 +1,8 @@
-import { useContent } from '@/ui/composables/useContent'
+import { useContainer } from '@/di/container'
 import './SobreProfeBustos.css'
 
 export function useSobreProfeBustos() {
-  const { about } = useContent()
+  const { content } = useContainer()
+  const about = content.getAboutContent()
   return { about }
 }

@@ -1,6 +1,6 @@
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { consentManagerKey, type ConsentStatus } from '@/application/consent/consentManager'
-import { useContent } from '@/ui/composables/useContent'
+import { useContainer } from '@/di/container'
 
 export function useConsentBanner() {
   const manager = inject(consentManagerKey)
@@ -13,7 +13,8 @@ export function useConsentBanner() {
 
   const status = ref<ConsentStatus>(consentManager.getStatus())
   let unsubscribe: (() => void) | undefined
-  const { consent } = useContent()
+  const { content } = useContainer()
+  const consent = content.getConsentContent()
 
   const visible = computed(() => status.value === 'unknown')
 

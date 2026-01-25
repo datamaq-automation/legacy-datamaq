@@ -1,3 +1,7 @@
+/*
+Path: src/di/container.ts
+*/
+
 import { createConsentManager } from '@/application/consent/consentManager'
 import { AnalyticsFacade } from '@/application/analytics/analyticsFacade'
 import { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
@@ -22,6 +26,7 @@ import { ContactApiGateway } from '@/infrastructure/contact/contactApiGateway'
 import { ContactService } from '@/domain/contact/services/ContactService'
 import { NotificationFacade } from '@/application/notifications/notificationFacade'
 import { NoopNotificationProvider } from '@/infrastructure/notifications/noopNotificationProvider'
+import { ContentRepository } from '@/infrastructure/content/contentRepository'
 import type { App, InjectionKey } from 'vue'
 import { getCurrentInstance, inject } from 'vue'
 
@@ -45,6 +50,7 @@ const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, storage, logger)
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
+const contentRepository = new ContentRepository()
 
 const openWhatsapp = new OpenWhatsappUseCase(
   config,
@@ -79,6 +85,7 @@ export const container = {
   consentManager,
   consentPort,
   contactBackend,
+  content: contentRepository,
   eventBus,
   leadTracking,
   storage,
