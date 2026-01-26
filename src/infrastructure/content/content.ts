@@ -152,6 +152,33 @@ export const content: AppContent = {
         },
         unavailableMessage:
           'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+      },
+      {
+        id: 'urgencias',
+        title: 'Urgencias industriales fuera de horario docente',
+        description:
+          'Atendemos casos urgentes en planta cuando hay criticidad operativa. Incluye disponibilidad fuera de horario docente y cobertura en sabados, domingos y feriados segun agenda.',
+        subtitle: 'Incluye',
+        media: {
+          src: analyticsDashboard,
+          alt: 'Ilustracion de atencion de urgencias y diagnostico en planta',
+          width: 160,
+          height: 140
+        },
+        items: [
+          'Priorizacion segun criticidad, seguridad y disponibilidad operativa.',
+          'Intervenciones fuera de horario docente y fines de semana con coordinacion previa.',
+          'Relevamiento y plan de accion inmediato o programado segun el caso.'
+        ],
+        note:
+          'Condiciones: no se interviene si el entorno no es seguro, se agenda por prioridad y puede aplicar recargo por urgencia.',
+        cta: {
+          label: 'Solicitar urgencia por WhatsApp',
+          action: 'whatsapp',
+          section: 'servicios-urgencias'
+        },
+        unavailableMessage:
+          'El canal de WhatsApp se encuentra temporalmente fuera de linea. Volve a intentar en unos minutos.'
       }
     ]
   },

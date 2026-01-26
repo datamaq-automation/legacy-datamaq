@@ -9,8 +9,7 @@ import type { ServiceCardContent, ServicesContent } from '@/domain/types/content
 interface ServiciosSectionState {
   chatEnabled: ComputedRef<boolean>
   services: ServicesContent
-  primaryCard: ServiceCardContent
-  secondaryCard: ServiceCardContent
+  cards: ServiceCardContent[]
 }
 
 export function useServiciosSection(
@@ -18,13 +17,11 @@ export function useServiciosSection(
   chatEnabled: ComputedRef<boolean>
 ): ServiciosSectionState {
   const services = contentPort.getServicesContent()
-  const primaryCard = services.cards[0]!
-  const secondaryCard = services.cards[1]!
+  const cards = services.cards
 
   return {
     chatEnabled,
     services,
-    primaryCard,
-    secondaryCard
+    cards
   }
 }

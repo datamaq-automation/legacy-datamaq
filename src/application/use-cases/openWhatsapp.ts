@@ -23,7 +23,7 @@ export class OpenWhatsappUseCase {
     private logger: LoggerPort
   ) {}
 
-  async execute(section: string = 'fab'): Promise<void> {
+  async execute(section: string = 'fab', messageOverride?: string): Promise<void> {
     if (!this.config.whatsappNumber) {
       this.logger.warn('Intento de abrir WhatsApp cuando el canal esta deshabilitado')
       return
@@ -33,7 +33,7 @@ export class OpenWhatsappUseCase {
       void this.sendWhatsappContactEvent(section)
     }
 
-    const url = this.buildWhatsappUrl()
+    const url = this.buildWhatsappUrl(messageOverride)
     if (!url) {
       return
     }
@@ -44,13 +44,13 @@ export class OpenWhatsappUseCase {
     this.engagementTracker.trackWhatsapp(section, trafficSource)
   }
 
-  private buildWhatsappUrl(): string | null {
+  private buildWhatsappUrl(messageOverride?: string): string | null {
     if (!this.config.whatsappNumber) {
       this.logger.error('WhatsApp number is not configured')
       return null
     }
 
-    const presetMessage = this.config.whatsappPresetMessage ?? ''
+    const presetMessage = messageOverride ?? this.config.whatsappPresetMessage ?? ''
     return `https://wa.me/${this.config.whatsappNumber}?text=${encodeURIComponent(
       presetMessage
     )}`

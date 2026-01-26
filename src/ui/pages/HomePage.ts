@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import {
   getChatEnabled,
   getContactEmail,
@@ -13,13 +14,20 @@ import WhatsappFab from '@/ui/features/contact/WhatsappFab.vue'
 import Footer from '@/ui/layout/Footer.vue'
 import LegalSection from '@/ui/sections/LegalSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
+import {
+  buildPrequalificationMessage,
+  type PrequalificationPayload
+} from '@/ui/features/contact/prequalification'
 
 export function useHomePage() {
   const chatEnabled = getChatEnabled()
   const contactEmail = getContactEmail()
+  const prequalOpen = ref(false)
+  const prequalSection = ref('hero')
 
   function handleWhatsapp(section: string) {
-    openWhatsApp(section)
+    prequalSection.value = section
+    prequalOpen.value = true
   }
 
   function handleEmailSubmit(payload: Parameters<typeof submitContact>[1]) {
@@ -27,10 +35,23 @@ export function useHomePage() {
     return submitContact('contacto-formulario', payload)
   }
 
+  function handlePrequalClose() {
+    prequalOpen.value = false
+  }
+
+  function handlePrequalSubmit(payload: PrequalificationPayload) {
+    prequalOpen.value = false
+    const message = buildPrequalificationMessage(payload)
+    openWhatsApp(prequalSection.value, message)
+  }
+
   return {
     chatEnabled,
     contactEmail,
     handleWhatsapp,
-    handleEmailSubmit
+    handleEmailSubmit,
+    prequalOpen,
+    handlePrequalClose,
+    handlePrequalSubmit
   }
 }

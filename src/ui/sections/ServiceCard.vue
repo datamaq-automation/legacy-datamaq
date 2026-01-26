@@ -20,6 +20,17 @@ Path: src/ui/sections/ServiceCard.vue
           <p class="text-secondary mb-0 c-services__card-text">
             {{ card.description }}
           </p>
+          <ul
+            v-if="showChips"
+            class="list-unstyled d-flex flex-wrap gap-2 mt-3 mb-0 c-services__chips"
+            aria-label="Condiciones operativas"
+          >
+            <li v-for="chip in installationChips" :key="chip">
+              <span class="badge rounded-pill bg-body text-body border border-secondary-subtle">
+                {{ chip }}
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
       <h4 class="h6 text-uppercase text-secondary fw-semibold mb-1 c-services__subtitle">{{ card.subtitle }}</h4>
@@ -70,9 +81,10 @@ Path: src/ui/sections/ServiceCard.vue
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { ServiceCardContent } from '@/domain/types/content'
 
-defineProps<{
+const props = defineProps<{
   card: ServiceCardContent
   chatEnabled: boolean
 }>()
@@ -80,4 +92,12 @@ defineProps<{
 const emit = defineEmits<{
   (event: 'contact', section: string): void
 }>()
+
+const installationChips = [
+  'Industria',
+  'GBA Norte prioritario',
+  'Equipo provisto por el cliente',
+  'Instalacion tipica ~4h'
+]
+const showChips = computed(() => props.card.id === 'instalacion')
 </script>

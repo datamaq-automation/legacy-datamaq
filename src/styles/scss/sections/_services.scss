@@ -72,4 +72,8 @@
   &__caption {
     color: var(--ui-neutral-100-72);
   }
+
+  &__chips .badge {
+    font-weight: 600;
+  }
 }

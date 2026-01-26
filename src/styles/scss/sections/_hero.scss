@@ -32,6 +32,11 @@
     row-gap: 1.1rem;
   }
 
+  &__chips .badge {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
   &__benefit-card {
     display: flex;
     align-items: flex-start;

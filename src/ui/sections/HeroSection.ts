@@ -9,12 +9,19 @@ export function useHeroSection(props: HeroSectionProps) {
   const benefit1 = hero.benefits[0]!
   const benefit2 = hero.benefits[1]!
   const benefit3 = hero.benefits[2]!
+  const heroChips = [
+    'Industria',
+    'GBA Norte prioritario',
+    'Equipo provisto por el cliente',
+    'Instalacion tipica ~4h'
+  ]
 
   return {
     chatEnabled,
     hero,
     benefit1,
     benefit2,
-    benefit3
+    benefit3,
+    heroChips
   }
 }

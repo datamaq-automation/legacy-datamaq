@@ -7,11 +7,12 @@ Path: src/ui/sections/ServiciosSection.vue
     <div class="container">
       <h2 id="servicios-title" class="mb-5 text-center text-body-emphasis c-services__title">{{ services.title }}</h2>
       <div class="row g-4">
-        <div class="col-12 col-lg-6">
-          <ServiceCard :card="primaryCard" :chat-enabled="chatEnabled" @contact="emit('contact', $event)" />
-        </div>
-        <div class="col-12 col-lg-6">
-          <ServiceCard :card="secondaryCard" :chat-enabled="chatEnabled" @contact="emit('contact', $event)" />
+        <div
+          v-for="card in cards"
+          :key="card.id"
+          :class="cardColumnClass"
+        >
+          <ServiceCard :card="card" :chat-enabled="chatEnabled" @contact="emit('contact', $event)" />
         </div>
       </div>
     </div>
@@ -30,7 +31,10 @@ const emit = defineEmits<ServiciosSectionEmits>()
 
 const { content } = useContainer()
 const chatEnabled = computed(() => props.chatEnabled)
-const { services, primaryCard, secondaryCard } = useServiciosSection(content, chatEnabled)
+const { services, cards } = useServiciosSection(content, chatEnabled)
+const cardColumnClass = computed(() =>
+  cards.length > 2 ? 'col-12 col-lg-4' : 'col-12 col-lg-6'
+)
 
 defineOptions({
   name: 'ServiciosSection'

@@ -11,8 +11,8 @@ export function getContactEmail(): string | undefined {
   return value?.trim() ? value : undefined
 }
 
-export function openWhatsApp(section: string = 'fab'): void {
-  void useContainer().useCases.openWhatsapp.execute(section)
+export function openWhatsApp(section: string = 'fab', messageOverride?: string): void {
+  void useContainer().useCases.openWhatsapp.execute(section, messageOverride)
 }
 
 export function submitContact(section: string, payload: EmailContactPayload) {

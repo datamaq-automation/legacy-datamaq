@@ -18,6 +18,16 @@ Path: src/ui/sections/HeroSection.vue
           <p class="fs-5 text-secondary mb-4">
             {{ hero.subtitle }}
           </p>
+          <ul
+            class="list-unstyled d-flex flex-wrap gap-2 mb-4 c-hero__chips"
+            aria-label="Condiciones operativas"
+          >
+            <li v-for="chip in heroChips" :key="chip">
+              <span class="badge rounded-pill bg-body text-body border border-secondary-subtle">
+                {{ chip }}
+              </span>
+            </li>
+          </ul>
           <div
             class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 c-hero__actions c-cta-stack"
           >
@@ -112,7 +122,7 @@ import { useHeroSection } from './HeroSection'
 const props = defineProps<HeroSectionProps>()
 const emit = defineEmits<HeroSectionEmits>()
 
-const { chatEnabled, hero, benefit1, benefit2, benefit3 } = useHeroSection(props)
+const { chatEnabled, hero, benefit1, benefit2, benefit3, heroChips } = useHeroSection(props)
 
 defineOptions({
   name: 'HeroSection'
