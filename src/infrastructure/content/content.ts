@@ -10,9 +10,9 @@ import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
 export const commercialConfig: CommercialConfig = {
-  baseOperativa: 'Garín', // <-- tu base operativa
-  tarifaBaseDesdeARS: 0, // <-- completar
-  trasladoMinimoARS: 0, // <-- completar
+  baseOperativa: 'Garín (GBA Norte)', // base prioritaria
+  tarifaBaseDesdeARS: 180000, // instalación típica 1 Powermeter (equipo provisto por el cliente)
+  trasladoMinimoARS: 0, // si querés publicar mínimo, setear valor (ej. 25000)
   descuentos: {
     cooperativasPct: 0,
     pymeGraficaPct: 0
@@ -31,20 +31,21 @@ const formatARS = (value: number) =>
   }).format(value)
 
 const TARIFA_BASE = formatARS(commercialConfig.tarifaBaseDesdeARS)
-const TRASLADO_MIN = formatARS(commercialConfig.trasladoMinimoARS)
 const BASE = commercialConfig.baseOperativa
 const POWERMETER = commercialConfig.equipos.medidorNombre
-const AUTOMATE = commercialConfig.equipos.automateNombre
 
+const HAS_TRASLADO_MIN = commercialConfig.trasladoMinimoARS > 0
+const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARS(commercialConfig.trasladoMinimoARS) : ''
+const TRASLADO_TEXT = HAS_TRASLADO_MIN ? ` (mínimo ${TRASLADO_MIN})` : ''
 
 export const content: AppContent = {
   hero: {
-    badge: 'Diagnóstico sin cargo + tarifa base publicada',
-    title: 'Medición eléctrica lista y segura en tu planta',
+    badge: 'Tarifa base publicada · Respuesta en menos de 24 horas',
+    title: 'Instalación Powermeter industrial, prolija y segura',
     subtitle:
-      `Instalamos 1 ${POWERMETER} y dejamos la medición operativa junto al ${AUTOMATE} (configuración inicial y verificación), con documentación para que el punto de medición quede confiable desde el primer día.`,
+      `Instalamos 1 ${POWERMETER} (equipo provisto por el cliente) y dejamos la medición operativa desde el primer día: verificación en tablero, prueba de lectura y documentación del punto de medición.`,
     responseNote:
-      `Respuesta en menos de 24 horas con: tarifa base desde ${TARIFA_BASE}, traslado según distancia desde ${BASE} (mínimo ${TRASLADO_MIN}) y agenda de visita. Descuentos para cooperativas y PyME gráfica.`,
+      `En menos de 24 horas te respondemos con: tarifa base desde ${TARIFA_BASE} (instalación típica ~4 horas), traslado según distancia desde ${BASE}${TRASLADO_TEXT}, y agenda de visita. Atención de urgencias y fuera de horario docente (incluye sábados, domingos y feriados).`,
     chatUnavailableMessage:
       'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.',
     primaryCta: {
@@ -52,29 +53,29 @@ export const content: AppContent = {
       action: 'whatsapp'
     },
     secondaryCta: {
-      label: 'Ver el pack de instalación',
+      label: 'Ver servicios',
       href: '#servicios'
     },
     benefits: [
       {
         title: 'Tarifa base clara',
-        text: `Pack base: instalación de 1 ${POWERMETER} desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE} (mínimo ${TRASLADO_MIN}).`,
+        text: `Pack base: instalación de 1 ${POWERMETER} desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}.`,
         variant: 'success'
       },
       {
-        title: 'Instalación segura y documentada',
-        text: 'Checklist de seguridad, verificación en tablero y registro inicial de referencia para evitar lecturas “raras” desde el arranque.',
+        title: 'Instalación documentada y verificable',
+        text: 'Checklist de seguridad, revisión del tablero y lectura de referencia al finalizar. Queda registrado qué se instaló y cómo quedó.',
         variant: 'primary'
       },
       {
-        title: 'Descuentos cooperativas y PyME gráfica',
-        text: 'Si sos cooperativa o PyME del sector gráfico, aplicamos descuento sobre la tarifa base.',
+        title: 'Urgencias y disponibilidad extendida',
+        text: 'Atención fuera de horario docente. Disponible sábados, domingos y feriados (con agenda y prioridad según caso).',
         variant: 'warning'
       }
     ],
     image: {
       src: heroIllustration,
-      alt: 'Ilustración de tablero digital con medición eléctrica',
+      alt: 'Ilustración de medición eléctrica industrial y tablero',
       width: 420,
       height: 320
     }
@@ -85,31 +86,31 @@ export const content: AppContent = {
     cards: [
       {
         id: 'instalacion',
-        title: 'Pack base: instalación de 1 Powermeter + Automate',
+        title: `Instalación industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
         description:
-          'Relevamos el tablero, instalamos el Powermeter y dejamos el Automate configurado para la puesta en marcha. Ideal para empezar a medir con criterios de seguridad y con documentación.',
+          `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medición funcionando con una verificación de referencia. Ideal para arrancar a medir consumo y variables eléctricas con criterios de seguridad y trazabilidad.`,
         subtitle: 'Incluye',
         media: {
           src: installTools,
-          alt: 'Ilustración de herramientas y plano técnico',
+          alt: 'Ilustración de herramientas e instalación técnica',
           width: 140,
           height: 120
         },
         items: [
-          'Diagnóstico en sitio (tablero, protecciones, accesibilidad y punto de instalación).',
-          'Instalación del Powermeter + verificación básica (lectura de referencia).',
-          'Configuración inicial del Automate + documentación (fotos, checklist y parámetros).'
+          'Relevamiento del tablero: accesibilidad, punto de instalación, protecciones y condiciones de seguridad.',
+          `Instalación del ${POWERMETER} + verificación de lectura de referencia (validación básica del punto de medición).`,
+          'Registro y documentación: fotos del tablero/punto de medición, checklist y observaciones relevantes.',
+          'Tiempo típico: media jornada (aprox. 4 horas), según condiciones del tablero.'
         ],
         figure: {
           src: powermeter,
-          alt: 'Ilustración de medidor Powermeter',
+          alt: `Ilustración de medidor ${POWERMETER}`,
           width: 220,
           height: 140,
-          caption:
-            'Tarifa base desde $[TARIFA_BASE]. Traslado según distancia desde [BASE_OPERATIVA] (mínimo $[TRASLADO_MIN]). Descuento disponible para cooperativas y PyME gráfica.'
+          caption: `Tarifa base desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}. No vendemos el equipo: instalamos el ${POWERMETER} provisto por el cliente.`
         },
         cta: {
-          label: 'Agendar visita por WhatsApp',
+          label: 'Cotizar / Agendar por WhatsApp',
           action: 'whatsapp',
           section: 'servicios-instalacion'
         },
@@ -118,34 +119,36 @@ export const content: AppContent = {
       },
 
       {
-        id: 'consultoria',
-        title: 'Diagnóstico de tablero y adecuación (si aplica)',
+        id: 'diagnostico',
+        title: 'Diagnóstico y reparación de fallas eléctricas/electrónicas (industria)',
         description:
-          'Si el tablero no está en condiciones seguras (orden, señalización, posibilidad de corte, protecciones, etc.), primero diagnosticamos y cotizamos la adecuación necesaria. Luego reprogramamos la instalación del Powermeter.',
+          'Diagnóstico en planta para fallas intermitentes o críticas: medición, prueba, aislamiento del problema y propuesta de reparación. Ideal cuando “la línea no puede parar” y necesitás un criterio técnico confiable.',
         subtitle: 'Resultado',
         media: {
           src: analyticsDashboard,
-          alt: 'Ilustración de checklist y evaluación técnica',
+          alt: 'Ilustración de diagnóstico técnico y mediciones',
           width: 160,
           height: 140
         },
         items: [
-          'Checklist de seguridad y buenas prácticas en el tablero.',
-          'Listado de correcciones requeridas y recomendaciones mínimas.',
-          'Presupuesto de adecuación + reprogramación de la instalación del Powermeter.'
+          'Diagnóstico en campo con instrumental y método (medición, hipótesis, pruebas, descarte).',
+          'Identificación de causa probable y plan de reparación / corrección (inmediata o programada).',
+          'Recomendaciones para prevenir recurrencia (ajustes, protecciones, orden/seguridad del tablero, etc.).'
         ],
         note:
-          'No instalamos en condiciones inseguras. El objetivo es que el trabajo se pueda hacer con corte, orden y criterios claros de seguridad.',
+          'Priorizamos condiciones seguras de trabajo. Si el tablero/instalación no permite intervenir con seguridad, se propone adecuación mínima y se reprograma la reparación.',
         figure: {
           src: analyticsDashboard,
-          alt: 'Ilustración de checklist y evaluación técnica',
+          alt: 'Ilustración de mediciones y checklist',
           width: 160,
-          height: 140
+          height: 140,
+          caption:
+            'Servicio orientado a industria (GBA Norte prioritario). Atención fuera de horario docente y fines de semana según urgencia.'
         },
         cta: {
-          label: 'Consultar diagnóstico por WhatsApp',
+          label: 'Reportar falla por WhatsApp',
           action: 'whatsapp',
-          section: 'servicios-adecuacion'
+          section: 'servicios-diagnostico'
         },
         unavailableMessage:
           'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
@@ -154,44 +157,44 @@ export const content: AppContent = {
   },
 
   about: {
-    title: 'Sobre profebustos',
+    title: 'Sobre DataMaq',
     paragraphs: [
-      'profebustos está liderado por profesionales con experiencia en instalaciones industriales y docencia técnica. Nuestro foco es dejar medición eléctrica operativa con criterios de seguridad, documentación y puesta en marcha ordenada.',
-      'Trabajamos principalmente en GBA y priorizamos intervenciones claras: diagnóstico, condiciones de seguridad, instalación de Powermeter, configuración inicial del Automate y verificación de referencia.'
+      'DataMaq brinda servicios técnicos industriales con foco en medición eléctrica y diagnóstico confiable. El objetivo es que tu planta tenga datos reales (no suposiciones) y que las intervenciones queden prolijas, seguras y documentadas.',
+      `Base operativa: ${BASE}. Cobertura prioritaria GBA Norte y AMBA según disponibilidad. Trabajo por objetivos y disponibilidad extendida (incluye sábados, domingos y feriados).`
     ],
     image: {
       src: teamTraining,
-      alt: 'Ilustración de equipo técnico en sesión de formación',
+      alt: 'Ilustración de formación técnica y equipo de trabajo',
       width: 240,
       height: 180
     }
   },
 
   navbar: {
-    brand: 'profebustos',
-    brandAriaLabel: 'profebustos, inicio',
+    brand: 'DataMaq',
+    brandAriaLabel: 'DataMaq, inicio',
     links: [
       {
         label: 'Servicios',
         href: '#servicios'
       }
     ],
-    contactLabel: 'Agendar visita por WhatsApp'
+    contactLabel: 'Agendar por WhatsApp'
   },
 
   footer: {
-    note: 'Cobertura: GBA (traslado por distancia) · Descuento: cooperativas y PyME gráfica'
+    note: `Cobertura: ${BASE} (prioridad GBA Norte) · Servicios industriales por objetivos · Atención extendida`
   },
 
   legal: {
     text:
-      'La tarifa base publicada corresponde al pack de instalación de 1 Powermeter (con configuración inicial del Automate). El traslado se cotiza según distancia desde [BASE_OPERATIVA] con un mínimo de $[TRASLADO_MIN]. Si el tablero requiere adecuación, se presupone tras el diagnóstico y se reprograma la instalación. Canal principal: WhatsApp (y chat cuando esté disponible). Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.'
+      `La tarifa base publicada corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. Canal principal: WhatsApp. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
   },
 
   contact: {
-    title: '¿Necesitás recibir la propuesta por correo?',
+    title: '¿Querés recibir una propuesta por correo?',
     subtitle:
-      'Completá el formulario y te enviamos la tarifa base, condiciones de traslado y próximos pasos. Si el tablero requiere adecuación, te enviamos el presupuesto por separado.',
+      `Completá el formulario y te enviamos: tarifa base (${TARIFA_BASE}), condiciones de traslado desde ${BASE}${TRASLADO_TEXT} y próximos pasos para coordinar la visita. Si es una urgencia, el canal más rápido es WhatsApp.`,
     labels: {
       name: 'Nombre y apellido',
       email: 'Correo electrónico',
