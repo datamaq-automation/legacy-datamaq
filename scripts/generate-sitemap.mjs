@@ -52,8 +52,7 @@ function buildRobots(origin) {
 
 function buildRedirectRules() {
   return [
-    '/index.html /index.html 200',
-    '/* /index.html 200'
+    '/ /index.html 200'
   ]
 }
 
