@@ -10,15 +10,15 @@ import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
 export const publicConfig = {
-  whatsappNumber: '5491135162685',
+  whatsappNumber: '5491156297160',
   whatsappPresetMessage: 'Vengo de la página web, quiero más información.',
   clarityProjectId: 'u24qtujrmg',
   ga4Id: 'G-X1ZQB8QLJC',
   analyticsEnabled: true,
-  siteUrl: 'https://www.profebustos.com.ar',
-  siteName: 'ProfeBustos',
+  siteUrl: 'https://www.datamaq.com.ar',
+  siteName: 'DataMaq',
   siteDescription: 'Servicios industriales y eficiencia energetica para empresas del GBA Norte.',
-  siteOgImage: 'https://www.profebustos.com.ar/og-default.png',
+  siteOgImage: 'https://www.datamaq.com.ar/og-default.png',
   siteLocale: 'es_AR',
   gscVerification: undefined,
   businessName: undefined,
@@ -32,8 +32,8 @@ export const publicConfig = {
   businessLat: undefined,
   businessLng: undefined,
   businessArea: undefined,
-  contactEmail: 'contacto@profebustos.com.ar',
-  contactApiUrl: 'http://localhost:5000/v1/contact/email'
+  contactEmail: 'contacto@datamaq.com.ar',
+  contactApiUrl: 'profebustos-flask-production.up.railway.app/v1/contact/email'
 } as const
 
 export const commercialConfig: CommercialConfig = {
