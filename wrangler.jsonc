@@ -2,6 +2,7 @@
   "name": "profebustos-www",
   "compatibility_date": "2026-01-19",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "html_handling": "none"
   }
 }
