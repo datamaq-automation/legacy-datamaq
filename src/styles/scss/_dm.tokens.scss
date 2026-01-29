@@ -29,6 +29,7 @@ $dm-text-muted: #99a9d1;
 $dm-line-blueprint: #99a9d1;
 $dm-data-cyan: #1996db;
 $dm-accent-orange: #f2a353;
+$dm-whatsapp-green: #25d366;
 
 /* UI helpers (still within palette family) */
 $dm-surface-0: #0f1b3a;
@@ -56,6 +57,7 @@ $dm-info: $dm-line-blueprint;
   --dm-line-blueprint: #{$dm-line-blueprint};
   --dm-data-cyan: #{$dm-data-cyan};
   --dm-accent-orange: #{$dm-accent-orange};
+  --dm-whatsapp-green: #{$dm-whatsapp-green};
 
   /* Surfaces & borders */
   --dm-surface-0: #{$dm-surface-0};
@@ -76,6 +78,7 @@ $dm-info: $dm-line-blueprint;
   --dm-line-blueprint-rgb: #{red($dm-line-blueprint)}, #{green($dm-line-blueprint)}, #{blue($dm-line-blueprint)};
   --dm-data-cyan-rgb: #{red($dm-data-cyan)}, #{green($dm-data-cyan)}, #{blue($dm-data-cyan)};
   --dm-accent-orange-rgb: #{red($dm-accent-orange)}, #{green($dm-accent-orange)}, #{blue($dm-accent-orange)};
+  --dm-whatsapp-green-rgb: #{red($dm-whatsapp-green)}, #{green($dm-whatsapp-green)}, #{blue($dm-whatsapp-green)};
   --dm-border-0-rgb: #{red($dm-border-0)}, #{green($dm-border-0)}, #{blue($dm-border-0)};
   --dm-border-1-rgb: #{red($dm-border-1)}, #{green($dm-border-1)}, #{blue($dm-border-1)};
 }
