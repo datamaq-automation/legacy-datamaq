@@ -9,6 +9,33 @@ import installTools from '@/assets/install-tools.svg'
 import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
+export const publicConfig = {
+  whatsappNumber: '5491135162685',
+  whatsappPresetMessage: 'Vengo de la página web, quiero más información.',
+  clarityProjectId: 'u24qtujrmg',
+  ga4Id: 'G-X1ZQB8QLJC',
+  analyticsEnabled: true,
+  siteUrl: 'https://www.profebustos.com.ar',
+  siteName: 'ProfeBustos',
+  siteDescription: 'Servicios industriales y eficiencia energetica para empresas del GBA Norte.',
+  siteOgImage: 'https://www.profebustos.com.ar/og-default.png',
+  siteLocale: 'es_AR',
+  gscVerification: undefined,
+  businessName: undefined,
+  businessTelephone: undefined,
+  businessEmail: undefined,
+  businessStreet: undefined,
+  businessLocality: undefined,
+  businessRegion: undefined,
+  businessPostalCode: undefined,
+  businessCountry: 'AR',
+  businessLat: undefined,
+  businessLng: undefined,
+  businessArea: undefined,
+  contactEmail: 'contacto@profebustos.com.ar',
+  contactApiUrl: 'http://localhost:5000/v1/contact/email'
+} as const
+
 export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garín (GBA Norte)', // base prioritaria
   tarifaBaseDesdeARS: 180000, // instalación típica 1 Powermeter (equipo provisto por el cliente)

@@ -2,6 +2,8 @@
 Path: src/infrastructure/config.ts
 */
 
+import { publicConfig } from '@/infrastructure/content/content'
+
 type NullableString = string | undefined
 
 function normalize(value: string | undefined): NullableString {
@@ -54,17 +56,17 @@ const WHATSAPP_PRESET_FALLBACK = 'Vengo de la página web, quiero más informaci
 const CONTACT_EMAIL_FALLBACK = 'contacto@profebustos.com.ar'
 
 
-const whatsappNumber = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
+const whatsappNumber = normalize(publicConfig.whatsappNumber)
 const whatsappPresetMessage =
-  normalize(import.meta.env.VITE_WHATSAPP_PRESET_MESSAGE) ?? WHATSAPP_PRESET_FALLBACK
-const clarityProjectId = normalize(import.meta.env.VITE_CLARITY_PROJECT_ID)
-const ga4Id = normalize(import.meta.env.VITE_GA4_ID)
+  normalize(publicConfig.whatsappPresetMessage) ?? WHATSAPP_PRESET_FALLBACK
+const clarityProjectId = normalize(publicConfig.clarityProjectId)
+const ga4Id = normalize(publicConfig.ga4Id)
 const contactEmail =
-  ensureEmail(normalize(import.meta.env.VITE_CONTACT_EMAIL), 'VITE_CONTACT_EMAIL') ??
+  ensureEmail(normalize(publicConfig.contactEmail), 'contactEmail') ??
   CONTACT_EMAIL_FALLBACK
 const contactApiUrl = ensureApiUrl(
-  normalize(import.meta.env.VITE_CONTACT_API_URL),
-  'VITE_CONTACT_API_URL'
+  normalize(publicConfig.contactApiUrl),
+  'contactApiUrl'
 )
 
 export const config = {

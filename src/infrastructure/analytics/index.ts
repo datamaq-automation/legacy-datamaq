@@ -2,6 +2,7 @@ import type { AnalyticsPort } from '@/application/ports/Analytics'
 import { getAnalyticsConsent } from '../consent/consent'
 import { initClarity } from './clarity'
 import { initGa4, trackGa4Event, trackGa4PageView } from './ga4'
+import { publicConfig } from '@/infrastructure/content/content'
 
 type PageViewPayload = {
   path: string
@@ -18,7 +19,7 @@ export function initAnalytics(): void {
     return
   }
 
-  const enabled = parseBoolean(import.meta.env.VITE_ANALYTICS_ENABLED, true)
+  const enabled = parseBoolean(publicConfig.analyticsEnabled, true)
   if (!enabled) {
     return
   }
@@ -27,8 +28,8 @@ export function initAnalytics(): void {
     return
   }
 
-  const ga4Id = normalize(import.meta.env.VITE_GA4_ID)
-  const clarityId = normalize(import.meta.env.VITE_CLARITY_PROJECT_ID)
+  const ga4Id = normalize(publicConfig.ga4Id)
+  const clarityId = normalize(publicConfig.clarityProjectId)
 
   if (ga4Id) {
     initGa4({ id: ga4Id, debug: import.meta.env.DEV })
@@ -117,9 +118,12 @@ function normalize(value: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined
 }
 
-function parseBoolean(value: string | undefined, fallback: boolean): boolean {
+function parseBoolean(value: string | boolean | undefined, fallback: boolean): boolean {
   if (typeof value === 'undefined') {
     return fallback
+  }
+  if (typeof value === 'boolean') {
+    return value
   }
   return value.toLowerCase() === 'true'
 }

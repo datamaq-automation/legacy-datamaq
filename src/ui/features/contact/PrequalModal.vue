@@ -63,13 +63,32 @@ Path: src/ui/features/contact/PrequalModal.vue
               <option value="Trifasica">Trifasica</option>
             </select>
           </div>
+
           <div>
+            <label class="form-label" for="prequal-service">Motivo de la consulta</label>
+            <select
+              id="prequal-service"
+              v-model="form.serviceInquiry"
+              class="form-select"
+              required
+              aria-label="Motivo de la consulta"
+            >
+              <option value="" disabled>Selecciona una opcion</option>
+              <option value="Instalacion powermeter/automate">
+                1 - instalacion de powermeter/automate
+              </option>
+              <option value="Diagnostico y reparacion de falla electronica/electrica">
+                2 - diagnostico y reparacion de falla electronica/electrica
+              </option>
+            </select>
+          </div>
+          <div v-if="isInstallation">
             <label class="form-label" for="prequal-points">Cantidad de puntos de medicion</label>
             <select
               id="prequal-points"
               v-model="form.measurementPoints"
               class="form-select"
-              required
+              :required="isInstallation"
               aria-label="Cantidad de puntos de medicion"
             >
               <option value="" disabled>Selecciona una opcion</option>
@@ -78,13 +97,13 @@ Path: src/ui/features/contact/PrequalModal.vue
               <option value="4+">4+</option>
             </select>
           </div>
-          <div>
+          <div v-if="isInstallation">
             <label class="form-label" for="prequal-cut">Se puede cortar energia para intervenir</label>
             <select
               id="prequal-cut"
               v-model="form.canCutPower"
               class="form-select"
-              required
+              :required="isInstallation"
               aria-label="Se puede cortar energia para intervenir"
             >
               <option value="" disabled>Selecciona una opcion</option>
@@ -92,13 +111,13 @@ Path: src/ui/features/contact/PrequalModal.vue
               <option value="No">No</option>
             </select>
           </div>
-          <div>
+          <div v-if="isDiagnostic">
             <label class="form-label" for="prequal-urgency">Urgencia</label>
             <select
               id="prequal-urgency"
               v-model="form.urgency"
               class="form-select"
-              required
+              :required="isDiagnostic"
               aria-label="Urgencia"
             >
               <option value="" disabled>Selecciona una opcion</option>
@@ -122,7 +141,7 @@ Path: src/ui/features/contact/PrequalModal.vue
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import type { PrequalificationPayload } from './prequalification'
 
 const props = defineProps<{
@@ -137,9 +156,10 @@ const emit = defineEmits<{
 type FormState = {
   location: string
   networkType: PrequalificationPayload['networkType'] | ''
-  measurementPoints: PrequalificationPayload['measurementPoints'] | ''
-  canCutPower: PrequalificationPayload['canCutPower'] | ''
-  urgency: PrequalificationPayload['urgency'] | ''
+  serviceInquiry: PrequalificationPayload['serviceInquiry'] | ''
+  measurementPoints: PrequalificationPayload['measurementPoints'] | undefined
+  canCutPower: PrequalificationPayload['canCutPower'] | undefined
+  urgency: PrequalificationPayload['urgency'] | undefined
 }
 
 const dialogRef = ref<HTMLElement | null>(null)
@@ -147,10 +167,18 @@ const locationInputRef = ref<HTMLInputElement | null>(null)
 const form = reactive<FormState>({
   location: '',
   networkType: '',
-  measurementPoints: '',
-  canCutPower: '',
-  urgency: ''
+  serviceInquiry: '',
+  measurementPoints: undefined,
+  canCutPower: undefined,
+  urgency: undefined
 })
+
+const isInstallation = computed(
+  () => form.serviceInquiry === 'Instalacion powermeter/automate'
+)
+const isDiagnostic = computed(
+  () => form.serviceInquiry === 'Diagnostico y reparacion de falla electronica/electrica'
+)
 
 const focusableSelector =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -168,12 +196,25 @@ watch(
     }
     form.location = ''
     form.networkType = ''
-    form.measurementPoints = ''
-    form.canCutPower = ''
-    form.urgency = ''
+    form.serviceInquiry = ''
+    form.measurementPoints = undefined
+    form.canCutPower = undefined
+    form.urgency = undefined
     lockScroll(true)
     await nextTick()
     locationInputRef.value?.focus()
+  }
+)
+
+watch(
+  () => form.serviceInquiry,
+  (value) => {
+    if (value === 'Instalacion powermeter/automate') {
+      form.urgency = undefined
+    } else if (value === 'Diagnostico y reparacion de falla electronica/electrica') {
+      form.measurementPoints = undefined
+      form.canCutPower = undefined
+    }
   }
 )
 
@@ -207,10 +248,12 @@ const handleKeydown = (event: KeyboardEvent) => {
   const last = focusable[focusable.length - 1]
   if (event.shiftKey && document.activeElement === first) {
     event.preventDefault()
-    last.focus()
+    last?.focus() // Use optional chaining to safely call focus
   } else if (!event.shiftKey && document.activeElement === last) {
     event.preventDefault()
-    first.focus()
+    if (first) {
+      first.focus()
+    }
   }
 }
 
@@ -218,19 +261,28 @@ const handleSubmit = () => {
   if (
     !form.location ||
     !form.networkType ||
-    !form.measurementPoints ||
-    !form.canCutPower ||
-    !form.urgency
+    !form.serviceInquiry ||
+    (isInstallation.value && (!form.measurementPoints || !form.canCutPower)) ||
+    (isDiagnostic.value && !form.urgency)
   ) {
     return
   }
 
-  emit('submit', {
+  const payload: PrequalificationPayload = {
     location: form.location,
     networkType: form.networkType,
-    measurementPoints: form.measurementPoints,
-    canCutPower: form.canCutPower,
-    urgency: form.urgency
-  })
+    serviceInquiry: form.serviceInquiry
+  }
+
+  if (isInstallation.value && form.measurementPoints && form.canCutPower) {
+    payload.measurementPoints = form.measurementPoints
+    payload.canCutPower = form.canCutPower
+  }
+
+  if (isDiagnostic.value && form.urgency) {
+    payload.urgency = form.urgency
+  }
+
+  emit('submit', payload)
 }
 </script>

@@ -1,4 +1,5 @@
 import type { ConfigPort } from '@/application/ports/Config'
+import { publicConfig } from '@/infrastructure/content/content'
 
 type NullableString = string | undefined
 
@@ -13,15 +14,15 @@ export class ViteConfig implements ConfigPort {
   originVerifySecret: NullableString
 
   constructor() {
-    this.whatsappNumber = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
+    this.whatsappNumber = normalize(publicConfig.whatsappNumber)
     this.whatsappPresetMessage =
-      normalize(import.meta.env.VITE_WHATSAPP_PRESET_MESSAGE) ?? WHATSAPP_PRESET_FALLBACK
+      normalize(publicConfig.whatsappPresetMessage) ?? WHATSAPP_PRESET_FALLBACK
     this.contactEmail =
-      ensureEmail(normalize(import.meta.env.VITE_CONTACT_EMAIL), 'VITE_CONTACT_EMAIL') ??
+      ensureEmail(normalize(publicConfig.contactEmail), 'contactEmail') ??
       CONTACT_EMAIL_FALLBACK
     this.contactApiUrl = ensureApiUrl(
-      normalize(import.meta.env.VITE_CONTACT_API_URL),
-      'VITE_CONTACT_API_URL'
+      normalize(publicConfig.contactApiUrl),
+      'contactApiUrl'
     )
     this.originVerifySecret = normalize(import.meta.env.VITE_ORIGIN_VERIFY_SECRET)
   }

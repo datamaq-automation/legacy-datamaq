@@ -3,70 +3,69 @@ Path: src/application/seo/defaultSeo.ts
 */
 
 import type { BusinessInfo, SeoMeta } from '@/domain/seo/types'
-import { content } from '@/infrastructure/content/content'
+import { content, publicConfig } from '@/infrastructure/content/content'
 
 export function getDefaultSeo(): SeoMeta {
   const siteUrl =
-    normalize(import.meta.env.VITE_SITE_URL) ||
-    (typeof window !== 'undefined' ? window.location.origin : '')
-  const siteName = normalize(import.meta.env.VITE_SITE_NAME) || 'ProfeBustos'
+    normalize(publicConfig.siteUrl) || (typeof window !== 'undefined' ? window.location.origin : '')
+  const siteName = normalize(publicConfig.siteName) || 'ProfeBustos'
   const description =
-    normalize(import.meta.env.VITE_SITE_DESCRIPTION) ||
+    normalize(publicConfig.siteDescription) ||
     'Servicios industriales y eficiencia energetica para empresas.'
   const ogImage =
-    normalize(import.meta.env.VITE_SITE_OG_IMAGE) ||
+    normalize(publicConfig.siteOgImage) ||
     (siteUrl ? `${siteUrl.replace(/\/$/, '')}/og-default.png` : '')
-  const verificationToken = normalize(import.meta.env.VITE_GSC_VERIFICATION)
-  const locale = normalize(import.meta.env.VITE_SITE_LOCALE) || 'es_AR'
+  const verificationToken = normalize(publicConfig.gscVerification)
+  const locale = normalize(publicConfig.siteLocale) || 'es_AR'
 
-  const businessName = normalize(import.meta.env.VITE_BUSINESS_NAME) || siteName
+  const businessName = normalize(publicConfig.businessName) || siteName
   const businessInfo: BusinessInfo = {
     name: businessName,
-    country: normalize(import.meta.env.VITE_BUSINESS_COUNTRY) || 'AR',
+    country: normalize(publicConfig.businessCountry) || 'AR',
     areaServed: buildAreaServed()
   }
 
-  const telephone = normalize(import.meta.env.VITE_BUSINESS_TELEPHONE)
+  const telephone = normalize(publicConfig.businessTelephone)
   if (telephone) {
     businessInfo.telephone = telephone
   }
 
-  const email = normalize(import.meta.env.VITE_BUSINESS_EMAIL)
+  const email = normalize(publicConfig.businessEmail)
   if (email) {
     businessInfo.email = email
   }
 
-  const street = normalize(import.meta.env.VITE_BUSINESS_STREET)
+  const street = normalize(publicConfig.businessStreet)
   if (street) {
     businessInfo.street = street
   }
 
-  const locality = normalize(import.meta.env.VITE_BUSINESS_LOCALITY)
+  const locality = normalize(publicConfig.businessLocality)
   if (locality) {
     businessInfo.locality = locality
   }
 
-  const region = normalize(import.meta.env.VITE_BUSINESS_REGION)
+  const region = normalize(publicConfig.businessRegion)
   if (region) {
     businessInfo.region = region
   }
 
-  const postalCode = normalize(import.meta.env.VITE_BUSINESS_POSTAL_CODE)
+  const postalCode = normalize(publicConfig.businessPostalCode)
   if (postalCode) {
     businessInfo.postalCode = postalCode
   }
 
-  const lat = parseNumber(import.meta.env.VITE_BUSINESS_LAT)
+  const lat = parseNumber(publicConfig.businessLat)
   if (typeof lat === 'number') {
     businessInfo.lat = lat
   }
 
-  const lng = parseNumber(import.meta.env.VITE_BUSINESS_LNG)
+  const lng = parseNumber(publicConfig.businessLng)
   if (typeof lng === 'number') {
     businessInfo.lng = lng
   }
 
-  const whatsapp = normalize(import.meta.env.VITE_WHATSAPP_NUMBER)
+  const whatsapp = normalize(publicConfig.whatsappNumber)
   if (whatsapp) {
     businessInfo.whatsapp = whatsapp
   }
@@ -90,7 +89,7 @@ export function getDefaultSeo(): SeoMeta {
 }
 
 function buildAreaServed(): string[] {
-  const configured = parseCsv(import.meta.env.VITE_BUSINESS_AREA)
+  const configured = parseCsv(publicConfig.businessArea)
   if (configured.length) {
     return configured
   }

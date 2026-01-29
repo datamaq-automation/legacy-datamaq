@@ -1,6 +1,7 @@
 import type { StoragePort } from '../ports/Storage'
 import { conversionEvents } from './conversionEvents'
 import type { TrackingPort } from './trackingFacade'
+import { publicConfig } from '@/infrastructure/content/content'
 
 const LAST_LEAD_KEY = 'last_lead_id'
 const TRACKED_PREFIX = 'lead_tracked_'
@@ -46,8 +47,12 @@ function buildLeadId(): string {
 }
 
 function isAnalyticsEnabled(): boolean {
-  if (typeof import.meta.env.VITE_ANALYTICS_ENABLED === 'undefined') {
+  const value = publicConfig.analyticsEnabled
+  if (typeof value === 'undefined') {
     return true
   }
-  return import.meta.env.VITE_ANALYTICS_ENABLED.toLowerCase() === 'true'
+  if (typeof value === 'boolean') {
+    return value
+  }
+  return value.toLowerCase() === 'true'
 }
