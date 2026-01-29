@@ -16,6 +16,7 @@
     "test:a11y": "node scripts/run-a11y.mjs",
     "report:css": "npm run build && node scripts/report-css-size.mjs",
     "check:css": "npm run build && node scripts/check-css-size.mjs",
+    "lint:colors": "node scripts/no-hex-check.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {

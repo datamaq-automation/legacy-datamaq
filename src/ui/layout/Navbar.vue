@@ -3,7 +3,7 @@ Path: src/ui/layout/Navbar.vue
 -->
 
 <template>
-  <header class="navbar navbar-dark bg-dark sticky-top border-bottom c-navbar" role="banner">
+  <header class="navbar navbar-dark sticky-top border-bottom c-navbar" role="banner">
     <div class="container-fluid px-3">
       <!-- Botón hamburguesa a la izquierda, visible solo en mobile -->
       <button
@@ -27,7 +27,6 @@ Path: src/ui/layout/Navbar.vue
           :class="{
             'd-lg-flex': isDesktop,
             'd-none d-lg-flex': !menuOpen && !isDesktop,
-            'bg-dark': !isDesktop,
             'p-3 rounded shadow': !isDesktop
           }"
           ref="navRef"
@@ -37,11 +36,7 @@ Path: src/ui/layout/Navbar.vue
               <a class="nav-link" :href="link.href" @click="handleNavLinkClick">{{ link.label }}</a>
             </li>
             <li v-if="chatEnabled" class="nav-item ms-lg-3">
-              <button
-                type="button"
-                class="btn btn-success"
-                @click="handleContactClick"
-              >
+              <button type="button" class="btn btn-primary" @click="handleContactClick">
                 {{ navbar.contactLabel }}
               </button>
             </li>

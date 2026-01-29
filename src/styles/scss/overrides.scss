@@ -1,33 +1,34 @@
 .btn-primary {
-  --bs-btn-color: #ffffff;
-  --bs-btn-bg: var(--bs-primary);
-  --bs-btn-border-color: var(--bs-primary);
-  --bs-btn-hover-bg: #153fad;
-  --bs-btn-hover-border-color: #153fad;
-  --bs-btn-focus-shadow-rgb: 60, 115, 227;
+  --bs-btn-color: var(--dm-bg-0);
+  --bs-btn-bg: var(--dm-data-cyan);
+  --bs-btn-border-color: var(--dm-data-cyan);
+  --bs-btn-hover-bg: rgba(var(--dm-data-cyan-rgb), 0.82);
+  --bs-btn-hover-border-color: rgba(var(--dm-data-cyan-rgb), 0.9);
+  --bs-btn-hover-color: var(--dm-bg-0);
+  --bs-btn-focus-shadow-rgb: var(--dm-data-cyan-rgb);
 }
 
 .btn-outline-secondary {
-  --bs-btn-color: var(--ui-neutral-100);
-  --bs-btn-border-color: var(--ui-neutral-100-60);
-  --bs-btn-hover-bg: var(--ui-neutral-100-15);
-  --bs-btn-hover-color: #ffffff;
+  --bs-btn-color: var(--dm-text-0);
+  --bs-btn-border-color: rgba(var(--dm-text-0-rgb), 0.6);
+  --bs-btn-hover-bg: rgba(var(--dm-data-cyan-rgb), 0.12);
+  --bs-btn-hover-color: var(--dm-text-0);
 }
 
 .card {
-  background-color: rgba(15, 22, 38, 0.86);
-  color: var(--bs-body-color);
-  border: 1px solid var(--ui-neutral-100-12);
+  background-color: rgba(var(--dm-bg-0-rgb), 0.86);
+  color: var(--dm-text-0);
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.12);
 }
 
 .text-secondary {
-  color: var(--ui-neutral-100-72) !important;
+  color: rgba(var(--dm-text-0-rgb), 0.72) !important;
 }
 
 .bg-body-secondary {
-  background-color: rgba(15, 22, 38, 0.92) !important;
+  background-color: rgba(var(--dm-bg-0-rgb), 0.92) !important;
 }
 
 .bg-body-tertiary {
-  background-color: rgba(15, 22, 38, 0.78) !important;
+  background-color: rgba(var(--dm-bg-0-rgb), 0.78) !important;
 }

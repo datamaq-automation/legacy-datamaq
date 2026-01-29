@@ -16,6 +16,15 @@
   opacity: 1;
 }
 
+.c-navbar {
+  background: var(--dm-bg-0);
+  border-color: rgba(var(--dm-border-0-rgb), 0.7) !important;
+}
+
+.c-navbar .c-navbar__collapse {
+  background: var(--dm-bg-1);
+}
+
 @media (min-width: 992px) {
   .c-navbar .navbar-toggler {
     display: none !important;

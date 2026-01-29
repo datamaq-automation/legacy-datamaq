@@ -1,4 +1,31 @@
 .c-hero {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    var(--dm-bg-0) 0%,
+    var(--dm-bg-1) 48%,
+    var(--dm-bg-2) 100%
+  );
+  color: var(--dm-text-0);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--dm-line-blueprint) 1px, transparent 1px),
+      linear-gradient(90deg, var(--dm-line-blueprint) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: var(--dm-blueprint-opacity);
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
   &__illustration {
     max-width: 420px;
   }
@@ -15,11 +42,11 @@
   &__secondary-cta {
     letter-spacing: var(--ui-letter-spacing-sm);
     border-width: 2px;
-    --bs-btn-color: #f8f9fa;
-    --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.6);
-    --bs-btn-hover-color: #ffffff;
-    --bs-btn-hover-bg: rgba(var(--bs-primary-rgb), 0.2);
-    --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.85);
+    --bs-btn-color: var(--dm-text-0);
+    --bs-btn-border-color: rgba(var(--dm-text-0-rgb), 0.6);
+    --bs-btn-hover-color: var(--dm-text-0);
+    --bs-btn-hover-bg: rgba(var(--dm-data-cyan-rgb), 0.2);
+    --bs-btn-hover-border-color: rgba(var(--dm-data-cyan-rgb), 0.85);
     --bs-btn-disabled-opacity: 0.55;
   }
 
@@ -45,7 +72,7 @@
     border-radius: 1rem;
     @include glass(var(--mobile-card-surface), var(--mobile-card-border));
     color: var(--bs-body-color);
-    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1.5rem 3rem rgba(var(--dm-shadow-rgb), 0.25);
   }
 
   &__benefit-badge {
@@ -57,7 +84,7 @@
     border-radius: 50%;
     font-weight: 600;
     font-size: 1.05rem;
-    color: #0b1626;
+    color: var(--dm-bg-0);
   }
 
   &__benefit-title {

@@ -1,0 +1,81 @@
+/*
+DataMaq Blueprint Tokens (dark only)
+
+REGLA ANTI-HEX:
+- Prohibido usar HEX directo fuera de este archivo.
+- Excepciones: SVGs externos o librerías de terceros (documentar con: // EXCEPCION: motivo).
+
+Tokens (rol -> uso recomendado):
+- --dm-bg-0 / --dm-bg-1 / --dm-bg-2: fondos base y gradientes (NO usar para texto).
+- --dm-text-0: texto principal sobre fondos dark.
+- --dm-text-muted: texto secundario y notas.
+- --dm-line-blueprint: líneas blueprint (usar opacidad separada).
+- --dm-data-cyan: data/indicadores/CTA primario.
+- --dm-accent-orange: underline/énfasis puntual (<=10% layout).
+- --dm-surface-0/1: superficies de cards y paneles.
+- --dm-border-0/1: bordes y separadores.
+
+Accesibilidad (AA aprox.):
+- Texto principal --dm-text-0 sobre --dm-bg-0/1/2: >4.5:1.
+- CTA primario: texto --dm-bg-0 sobre --dm-data-cyan: >=4.5:1.
+*/
+
+/* Sass tokens (HEX viven SOLO acá) */
+$dm-bg-0: #0c092f;
+$dm-bg-1: #0b2766;
+$dm-bg-2: #155697;
+$dm-text-0: #e2e9f3;
+$dm-text-muted: #99a9d1;
+$dm-line-blueprint: #99a9d1;
+$dm-data-cyan: #1996db;
+$dm-accent-orange: #f2a353;
+
+/* UI helpers (still within palette family) */
+$dm-surface-0: #0f1b3a;
+$dm-surface-1: #132449;
+$dm-border-0: #2b3d6a;
+$dm-border-1: #40527f;
+$dm-shadow: #0c092f;
+
+/* Bootstrap-like roles */
+$dm-primary: $dm-data-cyan;
+$dm-secondary: $dm-border-1;
+$dm-success: $dm-data-cyan;
+$dm-warning: $dm-accent-orange;
+$dm-info: $dm-line-blueprint;
+
+:root {
+  color-scheme: dark;
+
+  /* Core */
+  --dm-bg-0: #{$dm-bg-0};
+  --dm-bg-1: #{$dm-bg-1};
+  --dm-bg-2: #{$dm-bg-2};
+  --dm-text-0: #{$dm-text-0};
+  --dm-text-muted: #{$dm-text-muted};
+  --dm-line-blueprint: #{$dm-line-blueprint};
+  --dm-data-cyan: #{$dm-data-cyan};
+  --dm-accent-orange: #{$dm-accent-orange};
+
+  /* Surfaces & borders */
+  --dm-surface-0: #{$dm-surface-0};
+  --dm-surface-1: #{$dm-surface-1};
+  --dm-border-0: #{$dm-border-0};
+  --dm-border-1: #{$dm-border-1};
+
+  /* Opacity & overlays */
+  --dm-blueprint-opacity: 0.15;
+  --dm-overlay-vignette: 0.35;
+  --dm-radius-1: 0.75rem;
+  --dm-shadow-rgb: #{red($dm-shadow)}, #{green($dm-shadow)}, #{blue($dm-shadow)};
+
+  /* RGB helpers */
+  --dm-bg-0-rgb: #{red($dm-bg-0)}, #{green($dm-bg-0)}, #{blue($dm-bg-0)};
+  --dm-text-0-rgb: #{red($dm-text-0)}, #{green($dm-text-0)}, #{blue($dm-text-0)};
+  --dm-text-muted-rgb: #{red($dm-text-muted)}, #{green($dm-text-muted)}, #{blue($dm-text-muted)};
+  --dm-line-blueprint-rgb: #{red($dm-line-blueprint)}, #{green($dm-line-blueprint)}, #{blue($dm-line-blueprint)};
+  --dm-data-cyan-rgb: #{red($dm-data-cyan)}, #{green($dm-data-cyan)}, #{blue($dm-data-cyan)};
+  --dm-accent-orange-rgb: #{red($dm-accent-orange)}, #{green($dm-accent-orange)}, #{blue($dm-accent-orange)};
+  --dm-border-0-rgb: #{red($dm-border-0)}, #{green($dm-border-0)}, #{blue($dm-border-0)};
+  --dm-border-1-rgb: #{red($dm-border-1)}, #{green($dm-border-1)}, #{blue($dm-border-1)};
+}

@@ -1,4 +1,19 @@
 @import "bootstrap/scss/functions";
+
+$body-bg: $dm-bg-0;
+$body-color: $dm-text-0;
+$primary: $dm-primary;
+$secondary: $dm-secondary;
+$success: $dm-success;
+$warning: $dm-warning;
+$info: $dm-info;
+$card-bg: $dm-surface-0;
+$border-color: $dm-border-0;
+$link-color: $dm-primary;
+$link-hover-color: lighten($dm-primary, 8%);
+$btn-border-radius: 0.75rem;
+$btn-border-radius-lg: 1rem;
+
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/maps";
 @import "bootstrap/scss/mixins";
@@ -63,3 +78,16 @@ $utilities: map-merge(
 
 @import "bootstrap/scss/helpers";
 @import "bootstrap/scss/utilities/api";
+
+:root {
+  --bs-body-bg: var(--dm-bg-0);
+  --bs-body-color: var(--dm-text-0);
+  --bs-primary: var(--dm-data-cyan);
+  --bs-primary-rgb: var(--dm-data-cyan-rgb);
+  --bs-secondary: var(--dm-border-1);
+  --bs-secondary-rgb: var(--dm-border-1-rgb);
+  --bs-border-color: var(--dm-border-0);
+  --bs-link-color: var(--dm-data-cyan);
+  --bs-link-hover-color: rgba(var(--dm-data-cyan-rgb), 0.85);
+  --bs-btn-focus-shadow-rgb: var(--dm-data-cyan-rgb);
+}

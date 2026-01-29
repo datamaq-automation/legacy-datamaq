@@ -3,7 +3,7 @@ Path: src/ui/sections/HeroSection.vue
 -->
 
 <template>
-  <section class="section-mobile py-5 bg-body-tertiary text-body c-hero" aria-labelledby="hero-title">
+  <section class="section-mobile py-5 text-body c-hero" aria-labelledby="hero-title">
     <div class="container py-4">
       <div class="row align-items-center gy-5">
         <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start">

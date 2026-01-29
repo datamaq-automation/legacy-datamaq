@@ -19,7 +19,7 @@ img {
 }
 
 :focus-visible {
-  outline: 3px solid #ffd43b;
+  outline: 3px solid var(--dm-accent-orange);
   outline-offset: 4px;
 }
 
