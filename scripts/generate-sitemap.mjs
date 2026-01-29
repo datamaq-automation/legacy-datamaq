@@ -51,7 +51,10 @@ function buildRobots(origin) {
 }
 
 function buildRedirectRules() {
-  return ['/* /index.html 200']
+  return [
+    '/index.html /index.html 200',
+    '/* /index.html 200'
+  ]
 }
 
 function normalizeRoutePath(route) {
