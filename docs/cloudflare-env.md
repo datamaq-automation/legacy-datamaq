@@ -32,3 +32,32 @@ Notas:
 
 - Abrir la app y setear `localStorage.setItem('consent.analytics', 'granted')`.
 - Verificar en GA4 DebugView que aparecen `page_view` y eventos.
+
+## Token para Wrangler (deploy)
+
+El deploy con `wrangler` requiere un token API y **no** debe guardarse en `.env` del repo.
+
+### Como generar el token
+1) Entrar al panel de Cloudflare y abrir **My Profile**.
+2) Ir a **API Tokens** > **Create Token**.
+3) Elegir el template **Edit Cloudflare Workers** (o crear un token personalizado).
+4) Si es personalizado, permisos recomendados:
+   - Account > Workers Scripts: Edit
+   - Account > Workers Routes: Edit (si usas routes)
+   - Account > Account Settings: Read
+   - Zone > Zone: Read (si aplica)
+5) Crear el token y copiarlo una sola vez.
+
+### Donde guardarlo
+- En tu maquina (PowerShell):
+  ```
+  setx CLOUDFLARE_API_TOKEN "TU_TOKEN"
+  ```
+  Abrir una nueva terminal para que tome la variable.
+
+- En CI/CD: agregarlo como secret/variable de entorno con el nombre `CLOUDFLARE_API_TOKEN`.
+
+### Probar deploy
+```
+npx wrangler deploy
+```

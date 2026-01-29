@@ -17,16 +17,13 @@ const indexablePaths = Array.from(
 
 const sitemap = buildSitemap(baseUrl.replace(/\/$/, ''), indexablePaths, timestamp)
 const robots = buildRobots(baseUrl.replace(/\/$/, ''))
-const redirectRules = buildRedirectRules(baseUrl)
+const redirectRules = buildRedirectRules()
 
 const publicDir = path.resolve('public')
 fs.mkdirSync(publicDir, { recursive: true })
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap, 'utf8')
 fs.writeFileSync(path.join(publicDir, 'robots.txt'), robots, 'utf8')
-
-if (redirectRules.length) {
-  fs.writeFileSync(path.join(publicDir, '_redirects'), redirectRules.join('\n') + '\n', 'utf8')
-}
+fs.writeFileSync(path.join(publicDir, '_redirects'), redirectRules.join('\n') + '\n', 'utf8')
 
 console.log('[sitemap] sitemap.xml, robots.txt y _redirects generados.')
 
@@ -53,41 +50,8 @@ function buildRobots(origin) {
   return `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`
 }
 
-function buildRedirectRules(origin) {
-  if (!origin.startsWith('http')) {
-    return []
-  }
-
-  const canonicalUrl = new URL(origin)
-  const canonicalHost = canonicalUrl.host
-  const canonicalOrigin = canonicalUrl.origin.replace(/\/$/, '')
-  const rules = new Set()
-
-  const nonWwwHost = canonicalHost.replace(/^www\./, '')
-
-  if (nonWwwHost !== canonicalHost) {
-    addRule(`https://${nonWwwHost}/*`, `${canonicalOrigin}/:splat`, rules)
-    addRule(`https://${nonWwwHost}`, `${canonicalOrigin}/`, rules)
-    addRule(`http://${nonWwwHost}/*`, `${canonicalOrigin}/:splat`, rules)
-    addRule(`http://${nonWwwHost}`, `${canonicalOrigin}/`, rules)
-  } else {
-    const wwwHost = `www.${canonicalHost}`
-    addRule(`https://${wwwHost}/*`, `${canonicalOrigin}/:splat`, rules)
-    addRule(`https://${wwwHost}`, `${canonicalOrigin}/`, rules)
-    addRule(`http://${wwwHost}/*`, `${canonicalOrigin}/:splat`, rules)
-    addRule(`http://${wwwHost}`, `${canonicalOrigin}/`, rules)
-  }
-
-  if (canonicalUrl.protocol === 'https:') {
-    addRule(`http://${canonicalHost}/*`, `${canonicalOrigin}/:splat`, rules)
-    addRule(`http://${canonicalHost}`, `${canonicalOrigin}/`, rules)
-  }
-
-  return Array.from(rules)
-}
-
-function addRule(from, to, set) {
-  set.add(`${from} ${to} 301`)
+function buildRedirectRules() {
+  return ['/* /index.html 200']
 }
 
 function normalizeRoutePath(route) {
