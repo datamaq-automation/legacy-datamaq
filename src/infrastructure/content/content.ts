@@ -33,7 +33,7 @@ export const publicConfig = {
   businessLng: undefined,
   businessArea: undefined,
   contactEmail: 'contacto@datamaq.com.ar',
-  contactApiUrl: 'profebustos-flask-production.up.railway.app/v1/contact/email'
+  contactApiUrl: 'https://profebustos-flask-production.up.railway.app/v1/contact/email'
 } as const
 
 export const commercialConfig: CommercialConfig = {
