@@ -1,5 +1,7 @@
 
 interface ImportMetaEnv {
+  readonly VITE_CONTACT_API_URL?: string
+  readonly VITE_CONTACT_EMAIL?: string
   readonly VITE_ORIGIN_VERIFY_SECRET?: string
   readonly DEV: boolean
 }

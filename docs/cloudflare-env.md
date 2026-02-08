@@ -12,7 +12,7 @@ VITE_SITE_URL=https://www.datamaq.com.ar
 VITE_SITE_NAME=Datamaq
 VITE_SITE_DESCRIPTION=Servicios industriales y eficiencia energetica para empresas.
 VITE_SITE_OG_IMAGE=https://www.datamaq.com.ar/og-default.png
-VITE_CONTACT_API_URL=https://api.datamaq.com.ar/contact
+VITE_CONTACT_API_URL=https://chatwoot-production-2d73.up.railway.app/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts
 VITE_CONTACT_EMAIL=contacto@datamaq.com.ar
 VITE_WHATSAPP_NUMBER=5491100000000
 VITE_WHATSAPP_PRESET_MESSAGE=Vengo de la pagina web, quiero mas informacion.
@@ -27,6 +27,24 @@ Notas:
 2) Settings > Environment variables.  
 3) Agregar cada variable en Production y Preview.  
 4) Guardar y disparar un nuevo deploy.
+
+## Variables de Chatwoot (como obtenerlas)
+
+### `VITE_CONTACT_API_URL`
+Se construye con el `inbox_identifier` del **API Channel** de Chatwoot:
+
+```
+https://chatwoot-production-xyz123.up.railway.app/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts
+```
+
+Para obtener el `inbox_identifier`:
+- Chatwoot → Settings → Inboxes → tu API Channel → Settings → Configuration.
+
+### Custom attributes (para `company`, `message`, metadata)
+Si querés ver esos datos dentro de Chatwoot, crealos como **Contact Attributes**:
+- Chatwoot → Settings → Custom Attributes → Add Custom Attribute.
+
+Para mas detalle, ver `docs/chatwoot-contact.md`.
 
 ## Validacion rapida
 

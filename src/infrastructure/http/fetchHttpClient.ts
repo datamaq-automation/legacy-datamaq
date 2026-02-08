@@ -57,9 +57,16 @@ export class FetchHttpClient implements HttpClient {
 
   async options(url: string): Promise<HttpResponse> {
     try {
+      this.logger.debug('[http] OPTIONS request', { url })
       const response = await fetch(url, {
         method: 'OPTIONS',
         mode: 'cors'
+      })
+
+      this.logger.debug('[http] OPTIONS response', {
+        url,
+        status: response.status,
+        ok: response.ok
       })
 
       return {
@@ -67,7 +74,7 @@ export class FetchHttpClient implements HttpClient {
         status: response.status
       }
     } catch (error) {
-      this.logger.warn('[http] Error en OPTIONS:', error)
+      this.logger.warn('[http] Error en OPTIONS:', { url, error })
       return {
         ok: false,
         status: 0

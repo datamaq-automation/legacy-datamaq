@@ -36,10 +36,14 @@ export class ViteConfig implements ConfigPort {
     this.whatsappPresetMessage =
       normalize(publicConfig.whatsappPresetMessage) ?? WHATSAPP_PRESET_FALLBACK
     this.contactEmail =
-      ensureEmail(normalize(publicConfig.contactEmail), 'contactEmail') ??
-      CONTACT_EMAIL_FALLBACK
+      ensureEmail(
+        normalize(import.meta.env.VITE_CONTACT_EMAIL) ??
+          normalize(publicConfig.contactEmail),
+        'contactEmail'
+      ) ?? CONTACT_EMAIL_FALLBACK
     this.contactApiUrl = ensureApiUrl(
-      normalize(publicConfig.contactApiUrl),
+      normalize(import.meta.env.VITE_CONTACT_API_URL) ??
+        normalize(publicConfig.contactApiUrl),
       'contactApiUrl'
     )
     this.originVerifySecret = normalize(import.meta.env.VITE_ORIGIN_VERIFY_SECRET)

@@ -9,6 +9,7 @@ import type { LoggerPort } from '../ports/Logger'
 import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
 import type { EngagementTracker } from '../analytics/engagementTracker'
 import type { AttributionProvider } from '../ports/Attribution'
+import { buildChatwootContactPayload } from '@/application/contact/chatwootPayload'
 
 export class OpenWhatsappUseCase {
   constructor(
@@ -75,24 +76,37 @@ export class OpenWhatsappUseCase {
     const payload = {
       name: 'from_whatsapp',
       email: 'whatsapp@datamaq.com.ar',
-      company: 'from_whatsapp',
-      message: 'from_whatsapp',
-      page_location: this.location.href(),
-      traffic_source: getTrafficSource(this.location),
-      user_agent: this.navigator.userAgent(),
-      created_at: new Date().toISOString(),
-      attribution: this.attribution.getAttribution() ?? undefined
-    }
+      customAttributes: {
+        company: 'from_whatsapp',
+        message: 'from_whatsapp',
+        channel: 'whatsapp',
+        section,
+        page_location: this.location.href(),
+        traffic_source: getTrafficSource(this.location),
+        user_agent: this.navigator.userAgent(),
+        created_at: new Date().toISOString(),
+        attribution: this.attribution.getAttribution() ?? undefined
+      }
+    } as const
 
     this.logger.debug('[sendWhatsappContactEvent] Enviando evento de WhatsApp')
 
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
     try {
-      const response = await this.http.postJson(apiUrl, payload, headers)
+      this.logger.debug('[sendWhatsappContactEvent] payload keys', {
+        payloadKeys: Object.keys(payload),
+        customAttributeKeys: Object.keys(payload.customAttributes)
+      })
+      const response = await this.http.postJson(
+        apiUrl,
+        buildChatwootContactPayload(payload),
+        headers
+      )
       if (!response.ok) {
         this.logger.warn('[sendWhatsappContactEvent] response no OK', {
-          status: response.status
+          status: response.status,
+          text: response.text
         })
       }
       if (!response.ok && response.status >= 500) {

@@ -28,5 +28,5 @@ export const publicConfig = {
   businessLng: undefined,
   businessArea: undefined,
   contactEmail: 'contacto@datamaq.com.ar',
-  contactApiUrl: 'https://datamaq-flask-production.up.railway.app/v1/contact/email'
+  contactApiUrl: undefined
 } as const

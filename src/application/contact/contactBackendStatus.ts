@@ -69,14 +69,32 @@ export class ContactBackendMonitor {
   private async probe(): Promise<ContactBackendStatus> {
     const apiUrl = this.config.contactApiUrl
     if (!apiUrl || !this.runtime.isBrowser()) {
+      this.logger.debug('[contactBackendStatus] Probe omitida', {
+        apiUrl: apiUrl ?? null,
+        isBrowser: this.runtime.isBrowser()
+      })
       this.status = 'unavailable'
       this.notify()
       return this.status
     }
 
     try {
+      const looksLikeChatwootPublicEndpoint =
+        apiUrl.includes('/public/api/v1/inboxes/') && apiUrl.endsWith('/contacts')
+      if (looksLikeChatwootPublicEndpoint) {
+        this.status = 'available'
+        this.notify()
+        return this.status
+      }
+
+      this.logger.debug('[contactBackendStatus] Probe start', { apiUrl })
       const response = await this.http.options(apiUrl)
-      if (response.ok || response.status === 405 || response.status === 400) {
+      if (
+        response.ok ||
+        response.status === 405 ||
+        response.status === 400 ||
+        response.status === 404
+      ) {
         this.status = 'available'
       } else {
         this.status = 'unavailable'
@@ -84,7 +102,7 @@ export class ContactBackendMonitor {
     } catch (error) {
       this.logger.warn(
         '[contactBackendStatus] Error al verificar disponibilidad del backend:',
-        error
+        { apiUrl, error }
       )
       this.status = 'unavailable'
     }

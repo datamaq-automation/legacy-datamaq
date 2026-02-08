@@ -19,7 +19,7 @@ import { ViteConfig } from '@/infrastructure/config/viteConfig'
 import { BrowserEnvironment } from '@/infrastructure/environment/browserEnvironment'
 import { InMemoryEventBus } from '@/infrastructure/events/inMemoryEventBus'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
-import { ConsoleLogger } from '@/infrastructure/logging/consoleLogger'
+import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import { BrowserStorage } from '@/infrastructure/storage/browserStorage'
 import { BrowserSessionStorage } from '@/infrastructure/storage/browserSessionStorage'
 import { ContactApiGateway } from '@/infrastructure/contact/contactApiGateway'
@@ -31,7 +31,7 @@ import type { App, InjectionKey } from 'vue'
 import { getCurrentInstance, inject } from 'vue'
 
 const environment = new BrowserEnvironment()
-const logger = new ConsoleLogger(environment)
+const logger = new NoopLogger()
 const config = new ViteConfig()
 const http = new FetchHttpClient(logger)
 const analyticsPort = new BrowserAnalyticsAdapter()

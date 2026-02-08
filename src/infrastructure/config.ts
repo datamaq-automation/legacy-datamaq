@@ -62,10 +62,14 @@ const whatsappPresetMessage =
 const clarityProjectId = normalize(publicConfig.clarityProjectId)
 const ga4Id = normalize(publicConfig.ga4Id)
 const contactEmail =
-  ensureEmail(normalize(publicConfig.contactEmail), 'contactEmail') ??
-  CONTACT_EMAIL_FALLBACK
+  ensureEmail(
+    normalize(import.meta.env.VITE_CONTACT_EMAIL) ??
+      normalize(publicConfig.contactEmail),
+    'contactEmail'
+  ) ?? CONTACT_EMAIL_FALLBACK
 const contactApiUrl = ensureApiUrl(
-  normalize(publicConfig.contactApiUrl),
+  normalize(import.meta.env.VITE_CONTACT_API_URL) ??
+    normalize(publicConfig.contactApiUrl),
   'contactApiUrl'
 )
 

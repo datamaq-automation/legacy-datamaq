@@ -7,6 +7,7 @@ import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { StoragePort } from '@/application/ports/Storage'
 import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
+import { buildChatwootContactPayload } from '@/application/contact/chatwootPayload'
 
 export class ContactApiGateway implements ContactGateway {
   constructor(
@@ -26,20 +27,32 @@ export class ContactApiGateway implements ContactGateway {
     const enrichedPayload = attachAttributionToPayload(payload, this.storage)
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
+    const chatwootPayload = buildChatwootContactPayload({
+      name: enrichedPayload.name,
+      email: enrichedPayload.email,
+      customAttributes: {
+        company: enrichedPayload.company,
+        message: enrichedPayload.message,
+        page_location: payload.pageLocation,
+        traffic_source: payload.trafficSource,
+        user_agent: payload.userAgent,
+        created_at: payload.createdAt,
+        attribution: enrichedPayload.attribution
+      }
+    })
     this.logger.debug('[contactApiGateway] submit start', {
       apiUrl,
-      hasOriginVerify: Boolean(originVerify)
+      hasOriginVerify: Boolean(originVerify),
+      payloadKeys: Object.keys(chatwootPayload),
+      customAttributeKeys: chatwootPayload.custom_attributes
+        ? Object.keys(chatwootPayload.custom_attributes)
+        : []
     })
-    const response = await this.http.postJson(apiUrl, {
-      ...enrichedPayload,
-      page_location: payload.pageLocation,
-      traffic_source: payload.trafficSource,
-      user_agent: payload.userAgent,
-      created_at: payload.createdAt
-    }, headers)
+    const response = await this.http.postJson(apiUrl, chatwootPayload, headers)
     this.logger.debug('[contactApiGateway] submit response', {
       status: response.status,
-      ok: response.ok
+      ok: response.ok,
+      text: response.text
     })
 
     if (!response.ok) {
