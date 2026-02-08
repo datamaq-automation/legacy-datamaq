@@ -10,6 +10,7 @@ import { enableSpaPageTracking, initAnalytics } from './infrastructure/analytics
 import { initAttribution } from './infrastructure/attribution/utm'
 import { consentManagerKey } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
+import { initChatwootWidget } from './infrastructure/chatwoot/widget'
 
 const head = createHead()
 
@@ -29,6 +30,7 @@ export const createApp = ViteSSG(
       initAttribution(container.storage)
       initAnalytics()
       enableSpaPageTracking(container.analyticsPort)
+      initChatwootWidget()
     }
   }
 )

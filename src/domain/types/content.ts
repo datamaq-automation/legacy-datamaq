@@ -2,7 +2,7 @@
 Path: src/domain/types/content.ts
 */
 
-export type CTAAction = 'whatsapp' | 'contact' | 'services'
+export type CTAAction = 'chat' | 'contact' | 'services'
 
 export interface CTAContent {
   label: string

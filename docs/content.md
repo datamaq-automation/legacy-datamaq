@@ -12,7 +12,7 @@ Este documento describe el contenido estatico definido en `src/infrastructure/co
 - `legal`: texto legal y de cookies.
 - `contact`: labels y mensajes del formulario de contacto por email.
 - `consent`: textos del banner de cookies.
-- `whatsappFab`: etiqueta accesible del boton flotante.
+- `whatsappFab`: etiqueta accesible heredada (el boton flotante fue removido).
 
 ## Imagenes
 
@@ -28,7 +28,7 @@ Contiene el contenido principal de apertura:
 
 - `badge`, `title`, `subtitle`: textos destacados.
 - `responseNote` y `chatUnavailableMessage`: mensajes informativos.
-- `primaryCta` y `secondaryCta`: CTA principal (accion `whatsapp`) y secundario (ancla).
+- `primaryCta` y `secondaryCta`: CTA principal (accion `chat`) y secundario (ancla).
 - `benefits`: lista de beneficios con `title`, `text` y `variant`.
 
 ## Services
@@ -39,7 +39,7 @@ Contiene el contenido principal de apertura:
 - `subtitle`, `items` y `note` (cuando aplica).
 - `media` y `figure` para imagenes.
 - `cta` con `label`, `action` y `section`.
-- `unavailableMessage` para el canal de WhatsApp.
+- `unavailableMessage` para el canal de chat.
 
 ## Contact y consent
 

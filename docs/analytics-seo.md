@@ -61,7 +61,7 @@ Eventos recomendados (GA4):
 - `sign_up`
 - `purchase`
 
-WhatsApp se dispara desde `src/application/analytics/engagementTracker.ts`.
+Chat se dispara desde `src/application/analytics/engagementTracker.ts`.
 `generate_lead` se dispara en `/gracias` via `src/application/analytics/leadTracking.ts`.
 
 ## UTMs / click IDs

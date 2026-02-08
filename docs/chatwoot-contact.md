@@ -1,6 +1,8 @@
 # Integracion con Chatwoot (solo contactos)
 
 Este sitio envia el formulario de contacto al endpoint publico de Chatwoot para crear contactos, sin generar conversaciones.
+En este flujo solo se guardan `custom_attributes` (si existen en Chatwoot). Los campos por defecto
+Company/Ciudad/Pais no se actualizan con la API publica.
 
 ## Endpoint del formulario
 
@@ -43,7 +45,8 @@ Investigacion (2026-02-08):
 Implicancias:
 
 - Si la app usa el endpoint publico (`/public/api/v1/inboxes/{inbox_identifier}/contacts`), los datos de Company/Ciudad/Pais no van a persistirse porque no se pueden enviar en `additional_attributes`.
-- Si usa el backend (Account API) y aun asi no aparecen, validar con un GET a `/api/v1/accounts/{account_id}/contacts/{id}` si `additional_attributes` llega con `city`/`country` y si `custom_attributes` tiene las claves esperadas. Si no estan, el problema es previo (payload/endpoint/credenciales). Si estan, el problema es de visualizacion en UI.
+- Para ver esos datos en la UI sin backend, deben existir como **Contact Attributes** y se veran en Custom Attributes.
+- Si se necesita poblar Company/Ciudad/Pais en los campos por defecto, hace falta un backend propio usando la Account API (no incluido en este repo).
 
 Referencias:
 
@@ -54,13 +57,10 @@ Referencias:
 - https://developers.chatwoot.com/api-reference/contacts/show-contact
 - https://www.chatwoot.com/hc/user-guide/articles/1677502327-how-to-create-and-use-custom-attributes
 
-## Backend recomendado (Account API)
+## Backend (opcional, no incluido)
 
-Este repo incluye un backend Python en `backend/` que llama a la Account API y completa `additional_attributes`.
-
-- Endpoint del backend: `POST /v1/contact`
-- Apunta el frontend a este endpoint usando `VITE_CONTACT_API_URL`.
-- Configura las variables en `backend/.env.example`.
+Si se necesita completar Company/Ciudad/Pais en los campos por defecto, hace falta un backend que use la
+Account API. Este repo no incluye backend en la version actual.
 
 ## Custom attributes recomendados
 
@@ -101,8 +101,16 @@ Settings → Custom Attributes → Add Custom Attribute.
 Ejemplo (Cloudflare Pages / `.env`):
 
 ```
-VITE_CONTACT_API_URL=https://<BACKEND_HOST>/v1/contact
+VITE_CONTACT_API_URL=https://chatwoot-production-2d73.up.railway.app/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts
 VITE_CONTACT_EMAIL=contacto@datamaq.com.ar
+VITE_CHATWOOT_BASE_URL=https://chatwoot-production-2d73.up.railway.app
+VITE_CHATWOOT_WEBSITE_TOKEN=<WEBSITE_TOKEN>
 ```
 
 `VITE_ORIGIN_VERIFY_SECRET` solo aplica si tu backend valida un header propio. En el flujo directo a Chatwoot no es necesario.
+
+## Widget web (Chatwoot)
+
+- Configura `VITE_CHATWOOT_BASE_URL` y `VITE_CHATWOOT_WEBSITE_TOKEN` (o los mismos campos en `publicConfig`).
+- Cuando el widget esta configurado, los CTAs que antes abrían WhatsApp abren el widget.
+- El ícono flotante de WhatsApp fue removido; el canal principal pasa a ser el widget.

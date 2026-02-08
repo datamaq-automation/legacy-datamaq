@@ -35,6 +35,10 @@ export class EngagementTracker {
     this.tracking.trackEvent(WHATSAPP_EVENT_NAME, context)
   }
 
+  trackChat(section: string, trafficSource: string): void {
+    this.trackWhatsapp(section, trafficSource)
+  }
+
   trackEmail(section: string, trafficSource: string): void {
     const context = this.buildContext(section, trafficSource)
     if (this.shouldSkipEvent(EMAIL_EVENT_NAME, context)) {

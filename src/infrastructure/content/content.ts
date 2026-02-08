@@ -63,10 +63,10 @@ export const content: AppContent = {
     responseNote:
       `En menos de 24 horas te respondemos con: tarifas base publicadas (Powermeter desde ${TARIFA_BASE}, ${CHATWOOT} desde ${TARIFA_CHATWOOT}, ${RASA} desde ${TARIFA_RASA}), traslado según distancia desde ${BASE}${TRASLADO_TEXT} (solo servicios presenciales) y próximos pasos para coordinar.`,
     chatUnavailableMessage:
-      'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.',
+      'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.',
     primaryCta: {
-      label: 'Cotizar por WhatsApp',
-      action: 'whatsapp'
+      label: 'Abrir chat',
+      action: 'chat'
     },
     secondaryCta: {
       label: 'Ver servicios',
@@ -126,12 +126,12 @@ export const content: AppContent = {
           caption: `Tarifa base desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}. No vendemos el equipo: instalamos el ${POWERMETER} provisto por el cliente.`
         },
         cta: {
-          label: 'Cotizar / Agendar por WhatsApp',
-          action: 'whatsapp',
+          label: 'Cotizar / Agendar por chat',
+          action: 'chat',
           section: 'servicios-instalacion'
         },
         unavailableMessage:
-          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
       },
 
       {
@@ -162,12 +162,12 @@ export const content: AppContent = {
             'Servicio orientado a industria (GBA Norte prioritario). Disponibilidad extendida según agenda.'
         },
         cta: {
-          label: 'Reportar falla por WhatsApp',
-          action: 'whatsapp',
+          label: 'Reportar falla por chat',
+          action: 'chat',
           section: 'servicios-diagnostico'
         },
         unavailableMessage:
-          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
       },
 
       {
@@ -190,12 +190,12 @@ export const content: AppContent = {
         note:
           'Condiciones: no se interviene si el entorno no es seguro, se agenda por prioridad y puede aplicar recargo por urgencia.',
         cta: {
-          label: 'Solicitar urgencia por WhatsApp',
-          action: 'whatsapp',
+          label: 'Solicitar urgencia por chat',
+          action: 'chat',
           section: 'servicios-urgencias'
         },
         unavailableMessage:
-          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
       },
 
       {
@@ -226,12 +226,12 @@ export const content: AppContent = {
           caption: `Tarifa base desde ${TARIFA_CHATWOOT}. Alcance y complejidad (canales, integraciones, infraestructura) ajustan el presupuesto final.`
         },
         cta: {
-          label: `Cotizar ${CHATWOOT} por WhatsApp`,
-          action: 'whatsapp',
+          label: `Cotizar ${CHATWOOT} por chat`,
+          action: 'chat',
           section: 'servicios-chatwoot'
         },
         unavailableMessage:
-          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
       },
 
       {
@@ -262,12 +262,12 @@ export const content: AppContent = {
           caption: `Tarifa base desde ${TARIFA_RASA}. El alcance final depende de cantidad de intenciones, canales e integración requerida.`
         },
         cta: {
-          label: `Cotizar ${RASA} por WhatsApp`,
-          action: 'whatsapp',
+          label: `Cotizar ${RASA} por chat`,
+          action: 'chat',
           section: 'servicios-rasa'
         },
         unavailableMessage:
-          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
       }
     ]
   },
@@ -295,7 +295,7 @@ export const content: AppContent = {
         href: '#servicios'
       }
     ],
-    contactLabel: 'Cotizar por WhatsApp'
+    contactLabel: 'Abrir chat'
   },
 
   footer: {
@@ -310,7 +310,7 @@ export const content: AppContent = {
   contact: {
     title: '¿Querés recibir una propuesta por correo?',
     subtitle:
-      `Completá el formulario y te enviamos una propuesta según el servicio: Powermeter (${TARIFA_BASE}), ${CHATWOOT} (${TARIFA_CHATWOOT}) o ${RASA} (${TARIFA_RASA}). Si es urgente, el canal más rápido es WhatsApp.`,
+      `Completá el formulario y te enviamos una propuesta según el servicio: Powermeter (${TARIFA_BASE}), ${CHATWOOT} (${TARIFA_CHATWOOT}) o ${RASA} (${TARIFA_RASA}). Si es urgente, el canal más rápido es el chat en línea.`,
     labels: {
       firstName: 'Nombre',
       lastName: 'Apellido',
@@ -323,7 +323,7 @@ export const content: AppContent = {
     submitLabel: 'Enviar consulta por correo',
     checkingMessage: 'Verificando la disponibilidad del servicio de correo electrónico…',
     unavailableMessage:
-      'El canal de correo electrónico está en mantenimiento. Nuestro canal principal es WhatsApp: escribinos por ahí y retomá este formulario más tarde si necesitás documentación.',
+      'El canal de correo electrónico está en mantenimiento. Nuestro canal principal es el chat en línea: escribinos por ahí y retomá este formulario más tarde si necesitás documentación.',
     successMessage: '¡Consulta enviada correctamente! Te responderemos a la brevedad.',
     errorMessage: 'No se pudo enviar la consulta. Intentá nuevamente más tarde.',
     unexpectedErrorMessage: 'Ocurrió un error inesperado. Intentá nuevamente más tarde.'
@@ -338,6 +338,6 @@ export const content: AppContent = {
   },
 
   whatsappFab: {
-    ariaLabel: 'Abrir chat de WhatsApp'
+    ariaLabel: 'Abrir chat en línea'
   }
 }

@@ -3,7 +3,7 @@ import { z } from 'zod'
 const CTAContentSchema = z.object({
   label: z.string(),
   href: z.string().optional(),
-  action: z.enum(['whatsapp', 'contact', 'services']).optional()
+  action: z.enum(['chat', 'contact', 'services']).optional()
 })
 
 const ImageContentSchema = z.object({

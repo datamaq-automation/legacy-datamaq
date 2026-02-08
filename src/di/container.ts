@@ -88,6 +88,7 @@ export const container = {
   consentPort,
   contactBackend,
   content: contentRepository,
+  engagementTracker,
   eventBus,
   leadTracking,
   storage,

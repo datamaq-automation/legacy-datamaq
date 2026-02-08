@@ -13,7 +13,3 @@ export interface ServiciosSectionProps {
 export interface ServiciosSectionEmits {
   (e: 'contact', section: string): void
 }
-
-export interface WhatsappFabEmits {
-  (e: 'whatsapp'): void
-}

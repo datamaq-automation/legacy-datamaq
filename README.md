@@ -3,8 +3,8 @@
 Landing corporativa construida con **Vue 3** y **Vite** para promocionar los servicios industriales de datamaq.
 
 ## CaracterÃ­sticas principales
-- SPA liviana optimizada para CTAs de WhatsApp, chat y correo electrÃ³nico.
-- IntegraciÃ³n con API externa para registrar contactos de WhatsApp y formularios.
+- SPA liviana optimizada para CTAs de chat y correo electrÃ³nico.
+- IntegraciÃ³n con API externa para registrar contactos del formulario.
 - InstrumentaciÃ³n analÃ­tica con **GA4** y **Microsoft Clarity**.
 - Componentes accesibles y reutilizables que siguen la guÃ­a de diseÃ±o definida en `docs/`.
 - Banner de consentimiento que bloquea GA4/Clarity hasta que la persona usuaria otorgue permiso.
@@ -47,7 +47,7 @@ npm run test:a11y # ejecuta la auditorÃ­a heurÃ­stica de accesibilidad y gen
 1. Ejecutar `npm run build` y publicar el contenido de `dist/` en el hosting estÃ¡tico elegido (Cloudflare Pages, Netlify, etc.).
 2. Configurar las variables de entorno en el servicio de hosting replicando los valores de `.env`.
 3. Validar que las solicitudes al endpoint `VITE_CONTACT_API_URL` respondan con cÃ³digo `2xx` sobre HTTPS. El monitoreo automÃ¡tico mostrarÃ¡ mensajes de indisponibilidad si falla.
-4. Verificar en QA que los eventos de WhatsApp, chat y correo se registran una sola vez en GA4 y Clarity.
+4. Verificar en QA que los eventos de chat y correo se registran una sola vez en GA4 y Clarity.
 
 ## Recursos adicionales
 - DocumentaciÃ³n funcional y no funcional: `docs/srs-datamaq-www.md`.

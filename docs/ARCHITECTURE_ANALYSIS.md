@@ -707,7 +707,7 @@ export const es: AppContent = {
   legal: legalData,         // Textos en español
   contact: contactData,     // Textos en español
   consent: consentData,     // Textos en español
-  whatsappFab: whatsappFabData // Textos en español
+  whatsappFab: whatsappFabData // Etiqueta accesible heredada (boton flotante removido)
 }
 
 // infrastructure/content/locales/en.ts
