@@ -5,15 +5,6 @@ import {
   openWhatsApp,
   submitContact
 } from '@/ui/controllers/contactController'
-import Navbar from '@/ui/layout/Navbar.vue'
-import HeroSection from '@/ui/sections/HeroSection.vue'
-import ServiciosSection from '@/ui/sections/ServiciosSection.vue'
-import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
-import SobreProfeBustos from '@/ui/sections/SobreProfeBustos.vue'
-import WhatsappFab from '@/ui/features/contact/WhatsappFab.vue'
-import Footer from '@/ui/layout/Footer.vue'
-import LegalSection from '@/ui/sections/LegalSection.vue'
-import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import {
   buildPrequalificationMessage,
   type PrequalificationPayload

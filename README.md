@@ -1,6 +1,6 @@
-﻿# profebustos-www
+﻿# datamaq-www
 
-Landing corporativa construida con **Vue 3** y **Vite** para promocionar los servicios industriales de profebustos.
+Landing corporativa construida con **Vue 3** y **Vite** para promocionar los servicios industriales de datamaq.
 
 ## CaracterÃ­sticas principales
 - SPA liviana optimizada para CTAs de WhatsApp, chat y correo electrÃ³nico.
@@ -13,7 +13,7 @@ Landing corporativa construida con **Vue 3** y **Vite** para promocionar los ser
 ## Requisitos previos
 - **Node.js** `>= 20.19.0` (ver `.nvmrc` si corresponde).
 - **npm** `>= 8`.
-- Acceso a los endpoints HTTPS provistos por el backend de profebustos para recibir formularios/contactos.
+- Acceso a los endpoints HTTPS provistos por el backend de datamaq para recibir formularios/contactos.
 
 ## ConfiguraciÃ³n de entorno
 1. CopiÃ¡ `.env.example` a `.env` y completÃ¡ los valores reales para cada entorno (desarrollo, staging, producciÃ³n).
@@ -34,7 +34,7 @@ npm run test:a11y # ejecuta la auditorÃ­a heurÃ­stica de accesibilidad y gen
   `src/application/services/analyticsTracker.ts` y en las declaraciones globales de `src/env.d.ts`.
 - Para evitar duplicidades, se deduplican los eventos en una ventana de 2 segundos antes de propagarlos a cada destino.
 - GA4 y Clarity solo se inicializan cuando el banner de consentimiento registra una aceptaciÃ³n explÃ­cita.
-- RevisÃ¡ `docs/srs-profebustos-www.md` y `docs/improvement-options-2025-02-18.md` para el detalle de mÃ©tricas,
+- RevisÃ¡ `docs/srs-datamaq-www.md` y `docs/improvement-options-2025-02-18.md` para el detalle de mÃ©tricas,
   supuestos y decisiones abiertas.
 
 ## Accesibilidad
@@ -49,9 +49,9 @@ npm run test:a11y # ejecuta la auditorÃ­a heurÃ­stica de accesibilidad y gen
 4. Verificar en QA que los eventos de WhatsApp, chat y correo se registran una sola vez en GA4 y Clarity.
 
 ## Recursos adicionales
-- DocumentaciÃ³n funcional y no funcional: `docs/srs-profebustos-www.md`.
+- DocumentaciÃ³n funcional y no funcional: `docs/srs-datamaq-www.md`.
 - AuditorÃ­a y alternativas de mejora: `docs/audit-2025-02-17.md` y `docs/improvement-options-2025-02-18.md`.
 - GuÃ­a rÃ¡pida de componentes: revisar `src/components/` y comentarios en lÃ­nea.
 
-Â¿Dudas o sugerencias? Escribinos a [contacto@profebustos.com.ar](mailto:contacto@profebustos.com.ar).
+Â¿Dudas o sugerencias? Escribinos a [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).
 

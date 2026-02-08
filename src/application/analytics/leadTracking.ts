@@ -1,7 +1,8 @@
 import type { StoragePort } from '../ports/Storage'
 import { conversionEvents } from './conversionEvents'
 import type { TrackingPort } from './trackingFacade'
-import { publicConfig } from '@/infrastructure/content/content'
+import type { ConfigPort } from '../ports/Config'
+import type { Clock } from '../ports/Environment'
 
 const LAST_LEAD_KEY = 'last_lead_id'
 const TRACKED_PREFIX = 'lead_tracked_'
@@ -9,17 +10,19 @@ const TRACKED_PREFIX = 'lead_tracked_'
 export class LeadTracking {
   constructor(
     private storage: StoragePort,
-    private tracking: TrackingPort
+    private tracking: TrackingPort,
+    private config: ConfigPort,
+    private clock: Clock
   ) {}
 
   registerLeadForThanksPage(): string {
-    const leadId = buildLeadId()
+    const leadId = buildLeadId(this.clock.now())
     this.storage.set(LAST_LEAD_KEY, leadId)
     return leadId
   }
 
   trackGenerateLeadOnce(params: Record<string, unknown> = {}): boolean {
-    if (!isAnalyticsEnabled()) {
+    if (!isAnalyticsEnabled(this.config)) {
       return false
     }
 
@@ -42,17 +45,14 @@ export class LeadTracking {
   }
 }
 
-function buildLeadId(): string {
-  return `lead_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+function buildLeadId(now: number): string {
+  return `lead_${now}_${Math.random().toString(36).slice(2, 10)}`
 }
 
-function isAnalyticsEnabled(): boolean {
-  const value = publicConfig.analyticsEnabled
+function isAnalyticsEnabled(config: ConfigPort): boolean {
+  const value = config.analyticsEnabled
   if (typeof value === 'undefined') {
     return true
   }
-  if (typeof value === 'boolean') {
-    return value
-  }
-  return value.toLowerCase() === 'true'
+  return value
 }

@@ -8,12 +8,12 @@ Este proyecto usa variables `VITE_*` que se exponen al bundle del frontend. Conf
 VITE_ANALYTICS_ENABLED=true
 VITE_GA4_ID=G-XXXXXXXXXX
 VITE_CLARITY_PROJECT_ID=
-VITE_SITE_URL=https://www.profebustos.com.ar
-VITE_SITE_NAME=ProfeBustos
+VITE_SITE_URL=https://www.datamaq.com.ar
+VITE_SITE_NAME=Datamaq
 VITE_SITE_DESCRIPTION=Servicios industriales y eficiencia energetica para empresas.
-VITE_SITE_OG_IMAGE=https://www.profebustos.com.ar/og-default.png
-VITE_CONTACT_API_URL=https://api.profebustos.com.ar/contact
-VITE_CONTACT_EMAIL=contacto@profebustos.com.ar
+VITE_SITE_OG_IMAGE=https://www.datamaq.com.ar/og-default.png
+VITE_CONTACT_API_URL=https://api.datamaq.com.ar/contact
+VITE_CONTACT_EMAIL=contacto@datamaq.com.ar
 VITE_WHATSAPP_NUMBER=5491100000000
 VITE_WHATSAPP_PRESET_MESSAGE=Vengo de la pagina web, quiero mas informacion.
 ```

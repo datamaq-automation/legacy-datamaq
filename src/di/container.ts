@@ -45,7 +45,7 @@ const storage = new BrowserStorage()
 const attribution = new BrowserAttribution(storage)
 const sessionStorage = new BrowserSessionStorage()
 const consentManager = createConsentManager(storage, logger)
-const leadTracking = new LeadTracking(sessionStorage, tracking)
+const leadTracking = new LeadTracking(sessionStorage, tracking, config, environment)
 const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, storage, logger)
@@ -72,7 +72,8 @@ const submitContact = new SubmitContactUseCase(
   environment,
   eventBus,
   leadTracking,
-  logger
+  logger,
+  environment
 )
 
 eventBus.subscribe('contact.submitted', (event) => {
@@ -81,6 +82,7 @@ eventBus.subscribe('contact.submitted', (event) => {
 
 export const container = {
   config,
+  environment,
   analyticsPort,
   consentManager,
   consentPort,

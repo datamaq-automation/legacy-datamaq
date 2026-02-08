@@ -164,7 +164,7 @@ ui/
 │
 ├── sections/              ← Componentes reutilizables
 │   ├── HeroSection.vue
-│   ├── SobreProfeBustos.vue
+│   ├── SobreDatamaq.vue
 │   └── ...
 │
 └── layout/                ← Layout global

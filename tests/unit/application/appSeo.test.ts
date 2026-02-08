@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { buildAppHead } from '@/ui/seo/appSeo'
 
 const baseSeo = {
-  title: 'ProfeBustos',
+  title: 'Datamaq',
   description: 'Servicios industriales y eficiencia energetica para empresas.',
-  siteUrl: 'https://profebustos.com.ar',
-  siteName: 'ProfeBustos',
-  ogImage: 'https://profebustos.com.ar/og.png',
+  siteUrl: 'https://datamaq.com.ar',
+  siteName: 'Datamaq',
+  ogImage: 'https://datamaq.com.ar/og.png',
   locale: 'es_AR',
   business: {
-    name: 'ProfeBustos'
+    name: 'Datamaq'
   },
   services: []
 } as const
@@ -18,7 +18,7 @@ describe('buildAppHead', () => {
   it('builds noindex head for thanks page', () => {
     const head = buildAppHead(baseSeo, '/gracias', true)
 
-    expect(head.title).toBe('Gracias | ProfeBustos')
+    expect(head.title).toBe('Gracias | Datamaq')
     expect(head.meta).toEqual(
       expect.arrayContaining([
         { name: 'robots', content: 'noindex,nofollow' }
@@ -31,7 +31,7 @@ describe('buildAppHead', () => {
 
     expect(head.link).toEqual(
       expect.arrayContaining([
-        { rel: 'canonical', href: 'https://profebustos.com.ar/' }
+        { rel: 'canonical', href: 'https://datamaq.com.ar/' }
       ])
     )
     expect(head.meta).toEqual(

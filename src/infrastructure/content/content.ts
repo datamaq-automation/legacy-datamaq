@@ -9,37 +9,15 @@ import installTools from '@/assets/install-tools.svg'
 import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
-export const publicConfig = {
-  whatsappNumber: '5491156297160',
-  whatsappPresetMessage: 'Vengo de la página web, quiero más información.',
-  clarityProjectId: 'u24qtujrmg',
-  ga4Id: 'G-X1ZQB8QLJC',
-  analyticsEnabled: true,
-  siteUrl: 'https://www.datamaq.com.ar',
-  siteName: 'DataMaq',
-  siteDescription: 'Servicios industriales y eficiencia energetica para empresas del GBA Norte.',
-  siteOgImage: 'https://www.datamaq.com.ar/og-default.png',
-  siteLocale: 'es_AR',
-  gscVerification: undefined,
-  businessName: undefined,
-  businessTelephone: undefined,
-  businessEmail: undefined,
-  businessStreet: undefined,
-  businessLocality: undefined,
-  businessRegion: undefined,
-  businessPostalCode: undefined,
-  businessCountry: 'AR',
-  businessLat: undefined,
-  businessLng: undefined,
-  businessArea: undefined,
-  contactEmail: 'contacto@datamaq.com.ar',
-  contactApiUrl: 'https://profebustos-flask-production.up.railway.app/v1/contact/email'
-} as const
 
 export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garín (GBA Norte)', // base prioritaria
   tarifaBaseDesdeARS: 180000, // instalación típica 1 Powermeter (equipo provisto por el cliente)
   trasladoMinimoARS: 0, // si querés publicar mínimo, setear valor (ej. 25000)
+  // Tarifa base publicada para automatización comercial (setup / implementación mínima).
+  // Ajustá estos valores según tu estrategia comercial.
+  tarifaChatwootDesdeARS: 260000,
+  tarifaRasaDesdeARS: 320000,
   descuentos: {
     cooperativasPct: 0,
     pymeGraficaPct: 0
@@ -47,6 +25,10 @@ export const commercialConfig: CommercialConfig = {
   equipos: {
     medidorNombre: 'Powermeter',
     automateNombre: 'Automate'
+  },
+  software: {
+    chatwootNombre: 'Chatwoot',
+    rasaNombre: 'Rasa'
   }
 }
 
@@ -58,8 +40,15 @@ const formatARS = (value: number) =>
   }).format(value)
 
 const TARIFA_BASE = formatARS(commercialConfig.tarifaBaseDesdeARS)
+const TARIFA_CHATWOOT = formatARS(commercialConfig.tarifaChatwootDesdeARS)
+const TARIFA_RASA = formatARS(commercialConfig.tarifaRasaDesdeARS)
+
 const BASE = commercialConfig.baseOperativa
 const POWERMETER = commercialConfig.equipos.medidorNombre
+const AUTOMATE = commercialConfig.equipos.automateNombre
+
+const CHATWOOT = commercialConfig.software.chatwootNombre
+const RASA = commercialConfig.software.rasaNombre
 
 const HAS_TRASLADO_MIN = commercialConfig.trasladoMinimoARS > 0
 const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARS(commercialConfig.trasladoMinimoARS) : ''
@@ -68,15 +57,15 @@ const TRASLADO_TEXT = HAS_TRASLADO_MIN ? ` (mínimo ${TRASLADO_MIN})` : ''
 export const content: AppContent = {
   hero: {
     badge: 'Tarifa base publicada · Respuesta en menos de 24 horas',
-    title: 'Instalación Powermeter industrial, prolija y segura',
+    title: 'Servicios industriales + automatización comercial, prolijos y documentados',
     subtitle:
-      `Instalamos 1 ${POWERMETER} (equipo provisto por el cliente) y dejamos la medición operativa desde el primer día: verificación en tablero, prueba de lectura y documentación del punto de medición.`,
+      `Industrial: instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico. Comercial: implementamos ${CHATWOOT} + ${RASA} para ordenar atención, calificar consultas y derivar más rápido.`,
     responseNote:
-      `En menos de 24 horas te respondemos con: tarifa base desde ${TARIFA_BASE} (instalación típica ~4 horas), traslado según distancia desde ${BASE}${TRASLADO_TEXT}, y agenda de visita. Atención de urgencias y fuera de horario docente (incluye sábados, domingos y feriados).`,
+      `En menos de 24 horas te respondemos con: tarifas base publicadas (Powermeter desde ${TARIFA_BASE}, ${CHATWOOT} desde ${TARIFA_CHATWOOT}, ${RASA} desde ${TARIFA_RASA}), traslado según distancia desde ${BASE}${TRASLADO_TEXT} (solo servicios presenciales) y próximos pasos para coordinar.`,
     chatUnavailableMessage:
       'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.',
     primaryCta: {
-      label: 'Agendar visita por WhatsApp',
+      label: 'Cotizar por WhatsApp',
       action: 'whatsapp'
     },
     secondaryCta: {
@@ -85,24 +74,24 @@ export const content: AppContent = {
     },
     benefits: [
       {
-        title: 'Tarifa base clara',
-        text: `Pack base: instalación de 1 ${POWERMETER} desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}.`,
+        title: 'Tarifas base claras',
+        text: `Industrial: instalación de 1 ${POWERMETER} desde ${TARIFA_BASE}. Comercial: ${CHATWOOT} desde ${TARIFA_CHATWOOT} y ${RASA} desde ${TARIFA_RASA}.`,
         variant: 'success'
       },
       {
-        title: 'Instalación documentada y verificable',
-        text: 'Checklist de seguridad, revisión del tablero y lectura de referencia al finalizar. Queda registrado qué se instaló y cómo quedó.',
+        title: 'Implementación documentada',
+        text: 'Checklist, configuración verificable, pruebas de funcionamiento y entrega de documentación para operación y mejora.',
         variant: 'primary'
       },
       {
-        title: 'Urgencias y disponibilidad extendida',
-        text: 'Atención fuera de horario docente. Disponible sábados, domingos y feriados (con agenda y prioridad según caso).',
+        title: 'Enfoque por objetivos',
+        text: 'Industrial: medición/diagnóstico confiable. Comercial: ordenar atención, reducir carga manual y acelerar respuestas.',
         variant: 'warning'
       }
     ],
     image: {
       src: heroIllustration,
-      alt: 'Ilustración de medición eléctrica industrial y tablero',
+      alt: 'Ilustración de medición industrial y automatización',
       width: 420,
       height: 320
     }
@@ -170,7 +159,7 @@ export const content: AppContent = {
           width: 160,
           height: 140,
           caption:
-            'Servicio orientado a industria (GBA Norte prioritario). Atención fuera de horario docente y fines de semana según urgencia.'
+            'Servicio orientado a industria (GBA Norte prioritario). Disponibilidad extendida según agenda.'
         },
         cta: {
           label: 'Reportar falla por WhatsApp',
@@ -180,22 +169,23 @@ export const content: AppContent = {
         unavailableMessage:
           'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
       },
+
       {
         id: 'urgencias',
-        title: 'Urgencias industriales fuera de horario docente',
+        title: 'Urgencias industriales fuera de horario',
         description:
-          'Atendemos casos urgentes en planta cuando hay criticidad operativa. Incluye disponibilidad fuera de horario docente y cobertura en sabados, domingos y feriados segun agenda.',
+          'Atendemos casos urgentes en planta cuando hay criticidad operativa. Incluye disponibilidad extendida (sábados, domingos y feriados) según agenda.',
         subtitle: 'Incluye',
         media: {
           src: analyticsDashboard,
-          alt: 'Ilustracion de atencion de urgencias y diagnostico en planta',
+          alt: 'Ilustración de atención de urgencias y diagnóstico en planta',
           width: 160,
           height: 140
         },
         items: [
-          'Priorizacion segun criticidad, seguridad y disponibilidad operativa.',
-          'Intervenciones fuera de horario docente y fines de semana con coordinacion previa.',
-          'Relevamiento y plan de accion inmediato o programado segun el caso.'
+          'Priorización según criticidad, seguridad y disponibilidad operativa.',
+          'Intervenciones fuera de horario y fines de semana con coordinación previa.',
+          'Relevamiento y plan de acción inmediato o programado según el caso.'
         ],
         note:
           'Condiciones: no se interviene si el entorno no es seguro, se agenda por prioridad y puede aplicar recargo por urgencia.',
@@ -205,7 +195,79 @@ export const content: AppContent = {
           section: 'servicios-urgencias'
         },
         unavailableMessage:
-          'El canal de WhatsApp se encuentra temporalmente fuera de linea. Volve a intentar en unos minutos.'
+          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+      },
+
+      {
+        id: 'chatwoot',
+        title: `Instalación y puesta en marcha de ${CHATWOOT} (automatización comercial)`,
+        description:
+          `Implementamos ${CHATWOOT} para centralizar WhatsApp/Telegram/webchat, ordenar la atención y dar trazabilidad (etiquetas, equipos, macros y reportes). Ideal para equipos de ventas y soporte que necesitan responder más rápido y con criterio.`,
+        subtitle: 'Incluye',
+        media: {
+          src: analyticsDashboard,
+          alt: 'Ilustración de CRM de mensajería y flujo de atención',
+          width: 160,
+          height: 140
+        },
+        items: [
+          `Instalación de ${CHATWOOT} (self-hosted en servidor del cliente o VPS administrado por nosotros) + healthcheck.`,
+          'Configuración inicial: cuentas, inboxes, equipos/roles, etiquetas y macros básicas.',
+          'Buenas prácticas operativas: asignación, estado de conversación y métricas mínimas.',
+          'Documentación de handoff: accesos, backups básicos y checklist de operación.'
+        ],
+        note:
+          'No incluye costo de servidor/hosting, ni integraciones avanzadas (se cotizan según alcance).',
+        figure: {
+          src: installTools,
+          alt: 'Ilustración de instalación y configuración de herramientas',
+          width: 220,
+          height: 140,
+          caption: `Tarifa base desde ${TARIFA_CHATWOOT}. Alcance y complejidad (canales, integraciones, infraestructura) ajustan el presupuesto final.`
+        },
+        cta: {
+          label: `Cotizar ${CHATWOOT} por WhatsApp`,
+          action: 'whatsapp',
+          section: 'servicios-chatwoot'
+        },
+        unavailableMessage:
+          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+      },
+
+      {
+        id: 'rasa',
+        title: `Implementación mínima de ${RASA} (intenciones iniciales + flujo base)`,
+        description:
+          `Implementamos ${RASA} para automatizar preguntas frecuentes, clasificar mensajes y calificar consultas. Dejamos un bot base funcionando con intenciones iniciales, respuestas y fallback, listo para iterar con datos reales.`,
+        subtitle: 'Incluye',
+        media: {
+          src: analyticsDashboard,
+          alt: 'Ilustración de automatización conversacional y clasificación de mensajes',
+          width: 160,
+          height: 140
+        },
+        items: [
+          `Instalación y configuración de entorno de ${RASA} (self-hosted en servidor del cliente o VPS administrado por nosotros) + healthcheck.`,
+          'Base conversacional mínima: intents, ejemplos, respuestas y reglas esenciales (happy path + fallback).',
+          'Entrenamiento inicial y pruebas de flujo con casos típicos.',
+          'Documentación para mejora continua: cómo agregar intents, ejemplos y ajustar respuestas.'
+        ],
+        note:
+          'Integración con Chatwoot y entrenamiento avanzado se cotizan según complejidad y material disponible (FAQs, conversaciones, categorías).',
+        figure: {
+          src: analyticsDashboard,
+          alt: 'Ilustración de flujo conversacional y métricas',
+          width: 160,
+          height: 140,
+          caption: `Tarifa base desde ${TARIFA_RASA}. El alcance final depende de cantidad de intenciones, canales e integración requerida.`
+        },
+        cta: {
+          label: `Cotizar ${RASA} por WhatsApp`,
+          action: 'whatsapp',
+          section: 'servicios-rasa'
+        },
+        unavailableMessage:
+          'El canal de WhatsApp se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
       }
     ]
   },
@@ -213,8 +275,8 @@ export const content: AppContent = {
   about: {
     title: 'Sobre DataMaq',
     paragraphs: [
-      'DataMaq brinda servicios técnicos industriales con foco en medición eléctrica y diagnóstico confiable. El objetivo es que tu planta tenga datos reales (no suposiciones) y que las intervenciones queden prolijas, seguras y documentadas.',
-      `Base operativa: ${BASE}. Cobertura prioritaria GBA Norte y AMBA según disponibilidad. Trabajo por objetivos y disponibilidad extendida (incluye sábados, domingos y feriados).`
+      'DataMaq brinda servicios técnicos con dos focos: (1) industria (medición/diagnóstico) y (2) automatización comercial (atención y calificación de consultas). El objetivo es que tomes decisiones con datos reales y que tu operación quede ordenada, medible y documentada.',
+      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA según disponibilidad. Servicios de software disponibles en modalidad self-hosted (servidor del cliente) o VPS administrado por DataMaq.`
     ],
     image: {
       src: teamTraining,
@@ -233,22 +295,22 @@ export const content: AppContent = {
         href: '#servicios'
       }
     ],
-    contactLabel: 'Agendar por WhatsApp'
+    contactLabel: 'Cotizar por WhatsApp'
   },
 
   footer: {
-    note: `Cobertura: ${BASE} (prioridad GBA Norte) · Servicios industriales por objetivos · Atención extendida`
+    note: `Base: ${BASE} · Industria + Automatización comercial · Implementación por objetivos · Documentación y handoff`
   },
 
   legal: {
     text:
-      `La tarifa base publicada corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. Canal principal: WhatsApp. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
+      `La tarifa base publicada para Powermeter corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. Para servicios de software (Chatwoot/Rasa), el alcance, infraestructura (servidor/hosting), integraciones y nivel de implementación se definen y cotizan por separado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
   },
 
   contact: {
     title: '¿Querés recibir una propuesta por correo?',
     subtitle:
-      `Completá el formulario y te enviamos: tarifa base (${TARIFA_BASE}), condiciones de traslado desde ${BASE}${TRASLADO_TEXT} y próximos pasos para coordinar la visita. Si es una urgencia, el canal más rápido es WhatsApp.`,
+      `Completá el formulario y te enviamos una propuesta según el servicio: Powermeter (${TARIFA_BASE}), ${CHATWOOT} (${TARIFA_CHATWOOT}) o ${RASA} (${TARIFA_RASA}). Si es urgente, el canal más rápido es WhatsApp.`,
     labels: {
       name: 'Nombre y apellido',
       email: 'Correo electrónico',
@@ -258,10 +320,10 @@ export const content: AppContent = {
     submitLabel: 'Enviar consulta por correo',
     checkingMessage: 'Verificando la disponibilidad del servicio de correo electrónico…',
     unavailableMessage:
-      'El canal de correo electrónico está en mantenimiento. Nuestro canal principal es WhatsApp: agendá la visita allí y retomá este formulario más tarde si necesitás documentación.',
+      'El canal de correo electrónico está en mantenimiento. Nuestro canal principal es WhatsApp: escribinos por ahí y retomá este formulario más tarde si necesitás documentación.',
     successMessage: '¡Consulta enviada correctamente! Te responderemos a la brevedad.',
-    errorMessage: 'No se pudo enviar la consulta. Intenta nuevamente más tarde.',
-    unexpectedErrorMessage: 'Ocurrió un error inesperado. Intenta nuevamente más tarde.'
+    errorMessage: 'No se pudo enviar la consulta. Intentá nuevamente más tarde.',
+    unexpectedErrorMessage: 'Ocurrió un error inesperado. Intentá nuevamente más tarde.'
   },
 
   consent: {

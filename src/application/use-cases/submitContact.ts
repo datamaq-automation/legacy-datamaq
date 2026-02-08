@@ -1,7 +1,7 @@
 import type { ContactGateway } from '../contact/ports/ContactGateway'
 import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
 import type { LoggerPort } from '../ports/Logger'
-import type { LocationProvider, NavigatorProvider } from '../ports/Environment'
+import type { Clock, LocationProvider, NavigatorProvider } from '../ports/Environment'
 import type { ContactError } from '../types/errors'
 import type { Result } from '@/domain/shared/result'
 import type { EmailContactPayload } from '../dto/contact'
@@ -20,7 +20,8 @@ export class SubmitContactUseCase {
     private navigator: NavigatorProvider,
     private eventBus: EventBus,
     private leadTracking: LeadTracking,
-    private logger: LoggerPort
+    private logger: LoggerPort,
+    private clock: Clock
   ) {}
 
   async execute(
@@ -28,7 +29,7 @@ export class SubmitContactUseCase {
     payload: EmailContactPayload
   ): Promise<Result<void, ContactError>> {
     const contactResult = this.contactService.createContact({
-      id: buildContactId(),
+      id: buildContactId(this.clock.now()),
       name: payload.name,
       email: payload.email,
       company: payload.company,
@@ -49,7 +50,7 @@ export class SubmitContactUseCase {
         pageLocation: this.location.href(),
         trafficSource: getTrafficSource(this.location),
         userAgent: this.navigator.userAgent(),
-        createdAt: new Date().toISOString()
+        createdAt: new Date(this.clock.now()).toISOString()
       })
     )
 
@@ -69,8 +70,8 @@ export class SubmitContactUseCase {
   }
 }
 
-function buildContactId(): string {
-  return `contact_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+function buildContactId(now: number): string {
+  return `contact_${now}_${Math.random().toString(36).slice(2, 8)}`
 }
 
 function getTrafficSource(location: LocationProvider): string {

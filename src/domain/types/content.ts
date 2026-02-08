@@ -118,12 +118,23 @@ export interface CommercialConfig {
   baseOperativa: string
   tarifaBaseDesdeARS: number
   trasladoMinimoARS: number
+
+  // Automatización comercial (tarifas base publicadas)
+  tarifaChatwootDesdeARS: number
+  tarifaRasaDesdeARS: number
+
   descuentos: {
     cooperativasPct: number
     pymeGraficaPct: number
   }
+
   equipos: {
     medidorNombre: string // "Powermeter"
     automateNombre: string // "Automate"
+  }
+
+  software: {
+    chatwootNombre: string // "Chatwoot"
+    rasaNombre: string // "Rasa"
   }
 }

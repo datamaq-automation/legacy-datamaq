@@ -69,13 +69,12 @@ export class OpenWhatsappUseCase {
       this.logger.warn(
         '[sendWhatsappContactEvent] Backend de contacto no disponible, omitiendo envio.'
       )
-      console.log('[sendWhatsappContactEvent] backend status:', backendStatus)
       return
     }
 
     const payload = {
       name: 'from_whatsapp',
-      email: 'whatsapp@profebustos.com.ar',
+      email: 'whatsapp@datamaq.com.ar',
       company: 'from_whatsapp',
       message: 'from_whatsapp',
       page_location: this.location.href(),
@@ -85,28 +84,15 @@ export class OpenWhatsappUseCase {
       attribution: this.attribution.getAttribution() ?? undefined
     }
 
-    this.logger.debug('[sendWhatsappContactEvent] Payload:', payload)
+    this.logger.debug('[sendWhatsappContactEvent] Enviando evento de WhatsApp')
 
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
-    console.log('[sendWhatsappContactEvent] Request:', {
-      apiUrl,
-      hasOriginVerify: Boolean(originVerify),
-      originVerifyLength: originVerify ? originVerify.length : 0,
-      payload
-    })
-
     try {
       const response = await this.http.postJson(apiUrl, payload, headers)
-      console.log('[sendWhatsappContactEvent] Response:', {
-        status: response.status,
-        ok: response.ok
-      })
       if (!response.ok) {
-        console.warn('[sendWhatsappContactEvent] response no OK:', {
-          status: response.status,
-          text: response.text,
-          data: response.data
+        this.logger.warn('[sendWhatsappContactEvent] response no OK', {
+          status: response.status
         })
       }
       if (!response.ok && response.status >= 500) {

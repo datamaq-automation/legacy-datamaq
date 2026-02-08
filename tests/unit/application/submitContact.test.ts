@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import type { ContactGateway } from '@/application/contact/ports/ContactGateway'
 import type { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
-import type { LocationProvider, NavigatorProvider } from '@/application/ports/Environment'
+import type { Clock, LocationProvider, NavigatorProvider } from '@/application/ports/Environment'
 import type { EventBus } from '@/application/ports/EventBus'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { LeadTracking } from '@/application/analytics/leadTracking'
@@ -42,6 +42,7 @@ describe('SubmitContactUseCase', () => {
       warn: vi.fn(),
       error: vi.fn()
     }
+    const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
       contactService,
@@ -51,7 +52,8 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger
+      logger,
+      clock
     )
 
     const result = await useCase.execute('hero', {
@@ -103,6 +105,7 @@ describe('SubmitContactUseCase', () => {
       warn: vi.fn(),
       error: vi.fn()
     }
+    const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
       contactService,
@@ -112,7 +115,8 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger
+      logger,
+      clock
     )
 
     const result = await useCase.execute('hero', {
@@ -162,6 +166,7 @@ describe('SubmitContactUseCase', () => {
       warn: vi.fn(),
       error: vi.fn()
     }
+    const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
       contactService,
@@ -171,7 +176,8 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger
+      logger,
+      clock
     )
 
     const result = await useCase.execute('hero', {
@@ -224,6 +230,7 @@ describe('SubmitContactUseCase', () => {
       warn: vi.fn(),
       error: vi.fn()
     }
+    const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
       contactService,
@@ -233,7 +240,8 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger
+      logger,
+      clock
     )
 
     const result = await useCase.execute('hero', {
@@ -283,6 +291,7 @@ describe('SubmitContactUseCase', () => {
       warn: vi.fn(),
       error: vi.fn()
     }
+    const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
       contactService,
@@ -292,7 +301,8 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger
+      logger,
+      clock
     )
 
     const result = await useCase.execute('hero', {
@@ -342,6 +352,7 @@ describe('SubmitContactUseCase', () => {
       warn: vi.fn(),
       error: vi.fn()
     }
+    const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
       contactService,
@@ -351,7 +362,8 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger
+      logger,
+      clock
     )
 
     const result = await useCase.execute('hero', {

@@ -6,7 +6,7 @@ export type ConsentStatus = 'unknown' | 'granted' | 'denied'
 
 type Listener = (status: ConsentStatus) => void
 
-const STORAGE_KEY = 'profebustos-www-consent'
+const STORAGE_KEY = 'datamaq-www-consent'
 
 export interface ConsentManager {
   getStatus(): ConsentStatus

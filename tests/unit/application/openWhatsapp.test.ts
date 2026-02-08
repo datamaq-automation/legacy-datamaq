@@ -12,19 +12,49 @@ import type { LoggerPort } from '@/application/ports/Logger'
 import type { EngagementTracker } from '@/application/analytics/engagementTracker'
 import type { AttributionProvider } from '@/application/ports/Attribution'
 
+
+function buildConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
+  return {
+    contactApiUrl: undefined,
+    contactEmail: undefined,
+    whatsappNumber: undefined,
+    whatsappPresetMessage: undefined,
+    originVerifySecret: undefined,
+    analyticsEnabled: true,
+    siteUrl: undefined,
+    siteName: undefined,
+    siteDescription: undefined,
+    siteOgImage: undefined,
+    siteLocale: undefined,
+    gscVerification: undefined,
+    businessName: undefined,
+    businessTelephone: undefined,
+    businessEmail: undefined,
+    businessStreet: undefined,
+    businessLocality: undefined,
+    businessRegion: undefined,
+    businessPostalCode: undefined,
+    businessCountry: undefined,
+    businessLat: undefined,
+    businessLng: undefined,
+    businessArea: undefined,
+    ...overrides
+  }
+}
+
 describe('OpenWhatsappUseCase', () => {
   afterEach(() => {
     vi.unstubAllEnvs()
   })
 
   it('opens whatsapp and tracks engagement', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -81,13 +111,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('does not open whatsapp when the channel is disabled', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: undefined,
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -143,13 +173,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('marks backend unavailable when contact api url is missing', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: undefined,
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -204,13 +234,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('skips backend call when backend status is not available', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -265,13 +295,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('marks backend unavailable when response is not ok and status >= 500', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -326,13 +356,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('marks backend available when response is ok', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -386,13 +416,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('no construye URL cuando whatsappNumber es null después de check', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: undefined,
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -448,13 +478,13 @@ describe('OpenWhatsappUseCase', () => {
 
   it('omite envío de evento backend en modo DEV', async () => {
     vi.stubEnv('DEV', true)
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -509,13 +539,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('construye URL con mensaje vacío cuando preset no está definido', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: undefined,
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -571,13 +601,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('incluye header originVerify cuando secret está presente', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: 'super-secret'
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -635,13 +665,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('marks backend unavailable when request throws', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',
@@ -696,13 +726,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('trackea con referrer cuando no hay utm_source', async () => {
-    const config: ConfigPort = {
+    const config: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => 'https://google.com',
@@ -759,13 +789,13 @@ describe('OpenWhatsappUseCase', () => {
   })
 
   it('no abre whatsapp si buildWhatsappUrl falla internamente', async () => {
-    const configMutable: ConfigPort = {
+    const configMutable: ConfigPort = buildConfig({
       contactApiUrl: 'https://api.example.com',
       contactEmail: undefined,
       whatsappNumber: '5491112345678',
       whatsappPresetMessage: 'Hola',
       originVerifySecret: undefined
-    }
+    })
     const location: LocationProvider = {
       href: () => 'https://example.com',
       referrer: () => '',

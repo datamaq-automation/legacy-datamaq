@@ -1,79 +1,114 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   buildOrganizationJsonLd,
   buildWebsiteJsonLd,
   getDefaultSeo
 } from '@/ui/seo/defaultSeo'
+import type { ContentPort } from '@/application/ports/Content'
+import type { ConfigPort } from '@/application/ports/Config'
+import type { LocationProvider } from '@/application/ports/Environment'
 
-const originalWindow = globalThis.window
+const contentPort: ContentPort = {
+  getContent: () => ({
+    services: {
+      title: 'Servicios',
+      cards: []
+    }
+  }) as ReturnType<ContentPort['getContent']>
+}
+
+const location: LocationProvider = {
+  href: () => 'https://datamaq.com/ruta',
+  referrer: () => '',
+  search: () => ''
+}
+
+function buildConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
+  return {
+    contactApiUrl: undefined,
+    contactEmail: undefined,
+    whatsappNumber: undefined,
+    whatsappPresetMessage: undefined,
+    originVerifySecret: undefined,
+    analyticsEnabled: true,
+    siteUrl: undefined,
+    siteName: undefined,
+    siteDescription: undefined,
+    siteOgImage: undefined,
+    siteLocale: undefined,
+    gscVerification: undefined,
+    businessName: undefined,
+    businessTelephone: undefined,
+    businessEmail: undefined,
+    businessStreet: undefined,
+    businessLocality: undefined,
+    businessRegion: undefined,
+    businessPostalCode: undefined,
+    businessCountry: undefined,
+    businessLat: undefined,
+    businessLng: undefined,
+    businessArea: undefined,
+    ...overrides
+  }
+}
 
 describe('defaultSeo', () => {
-  afterEach(() => {
-    vi.unstubAllEnvs()
-    globalThis.window = originalWindow
-  })
-
-  it('usa valores de entorno y los normaliza', () => {
-    vi.stubEnv('VITE_SITE_URL', ' https://profebustos.com ')
-    vi.stubEnv('VITE_SITE_NAME', ' Profe ')
-    vi.stubEnv('VITE_SITE_DESCRIPTION', '  Descripcion  ')
-    vi.stubEnv('VITE_SITE_OG_IMAGE', ' https://profebustos.com/og.png ')
-
-    const seo = getDefaultSeo()
+  it('usa valores de configuracion y los normaliza', () => {
+    const seo = getDefaultSeo(
+      contentPort,
+      buildConfig({
+        siteUrl: ' https://datamaq.com ',
+        siteName: ' Profe ',
+        siteDescription: '  Descripcion  ',
+        siteOgImage: ' https://datamaq.com/og.png '
+      }),
+      location
+    )
 
     expect(seo).toMatchObject({
       title: 'Profe',
       description: 'Descripcion',
-      siteUrl: 'https://profebustos.com',
+      siteUrl: 'https://datamaq.com',
       siteName: 'Profe',
-      ogImage: 'https://profebustos.com/og.png'
+      ogImage: 'https://datamaq.com/og.png'
     })
     expect(buildOrganizationJsonLd(seo)).toEqual({
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: 'Profe',
-      url: 'https://profebustos.com'
+      url: 'https://datamaq.com'
     })
     expect(buildWebsiteJsonLd(seo)).toEqual({
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'Profe',
-      url: 'https://profebustos.com'
+      url: 'https://datamaq.com'
     })
   })
 
-  it('usa fallbacks cuando las env no están definidas', () => {
-    vi.stubEnv('VITE_SITE_URL', '')
-    vi.stubEnv('VITE_SITE_NAME', '')
-    vi.stubEnv('VITE_SITE_DESCRIPTION', '')
-    vi.stubEnv('VITE_SITE_OG_IMAGE', '')
+  it('usa fallbacks cuando la configuracion no esta definida', () => {
+    const seo = getDefaultSeo(contentPort, buildConfig(), location)
 
-    const seo = getDefaultSeo()
-
-    expect(seo.siteUrl).toBe(window.location.origin)
-    expect(seo.ogImage).toBe(`${window.location.origin}/og-default.png`)
-    expect(seo.siteName).toBe('ProfeBustos')
-    expect(seo.title).toBe('ProfeBustos')
+    expect(seo.siteUrl).toBe('https://datamaq.com')
+    expect(seo.ogImage).toBe('https://datamaq.com/og-default.png')
+    expect(seo.siteName).toBe('Datamaq')
+    expect(seo.title).toBe('Datamaq')
     expect(seo.description).toBe('Servicios industriales y eficiencia energetica para empresas.')
   })
 
-  it('maneja ausencia de window devolviendo campos vacíos', () => {
-    vi.stubEnv('VITE_SITE_URL', '')
-    vi.stubEnv('VITE_SITE_NAME', '')
-    vi.stubEnv('VITE_SITE_DESCRIPTION', '')
-    vi.stubEnv('VITE_SITE_OG_IMAGE', '')
-
-    const backupWindow = globalThis.window
-
-    globalThis.window = undefined
-
-    const seo = getDefaultSeo()
+  it('maneja ausencia de href devolviendo campos vacios', () => {
+    const seo = getDefaultSeo(
+      contentPort,
+      buildConfig(),
+      {
+        href: () => '',
+        referrer: () => '',
+        search: () => ''
+      }
+    )
 
     expect(seo.siteUrl).toBe('')
     expect(seo.ogImage).toBe('')
-    expect(seo.title).toBe('ProfeBustos')
-
-
-    globalThis.window = backupWindow
+    expect(seo.title).toBe('Datamaq')
   })
 })

@@ -27,7 +27,7 @@ Documentar en `docs/cloudflare-env.md` y `docs/analytics-seo.md` cada variable r
 
 ## 4. Canonical domain / Cloudflare Pages
 
-- Cloudflare Pages reconoce `_redirects`. Con el script actual basta con mantener `VITE_SITE_URL` al valor deseado (`https://www.profebustos.com.ar`). Si alguna vez se cambia el dominio, actualizar el env y redeploy para regenerar `_redirects`.
+- Cloudflare Pages reconoce `_redirects`. Con el script actual basta con mantener `VITE_SITE_URL` al valor deseado (`https://www.datamaq.com.ar`). Si alguna vez se cambia el dominio, actualizar el env y redeploy para regenerar `_redirects`.
 - Si se prefiere controlar redirecciones desde Cloudflare (en lugar de `_redirects`), configurar reglas del tipo `non-www` → canonical (https + www) y `http` → `https` para asegurar un solo dominio. Registrar la URL canónica en Cloudflare SSL/TLS y DNS.
 
 ## 5. Validaciones recomendadas

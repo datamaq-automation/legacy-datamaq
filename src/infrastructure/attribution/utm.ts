@@ -6,7 +6,7 @@ type StoredAttribution = {
   expiresAt: number
 }
 
-const STORAGE_KEY = 'profebustos_attribution'
+const STORAGE_KEY = 'datamaq_attribution'
 const DEFAULT_TTL_DAYS = 30
 
 export function initAttribution(

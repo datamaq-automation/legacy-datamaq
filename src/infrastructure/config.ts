@@ -2,7 +2,7 @@
 Path: src/infrastructure/config.ts
 */
 
-import { publicConfig } from '@/infrastructure/content/content'
+import { publicConfig } from '@/infrastructure/config/publicConfig'
 
 type NullableString = string | undefined
 
@@ -53,7 +53,7 @@ function ensureApiUrl(value: NullableString, envKey: string): NullableString {
 }
 
 const WHATSAPP_PRESET_FALLBACK = 'Vengo de la página web, quiero más información.'
-const CONTACT_EMAIL_FALLBACK = 'contacto@profebustos.com.ar'
+const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
 
 
 const whatsappNumber = normalize(publicConfig.whatsappNumber)

@@ -1,7 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { LeadTracking } from '@/application/analytics/leadTracking'
 import type { StoragePort } from '@/application/ports/Storage'
 import type { TrackingPort } from '@/application/analytics/trackingFacade'
+import type { ConfigPort } from '@/application/ports/Config'
+import type { Clock } from '@/application/ports/Environment'
 
 class MemoryStorage implements StoragePort {
   private store = new Map<string, string>()
@@ -20,17 +22,15 @@ class MemoryStorage implements StoragePort {
 }
 
 describe('LeadTracking', () => {
-  afterEach(() => {
-    vi.unstubAllEnvs()
-  })
-
   it('tracks generate_lead once per lead id', () => {
     const storage = new MemoryStorage()
     const tracking: TrackingPort = {
       trackEvent: vi.fn(),
       trackPageView: () => {}
     }
-    const tracker = new LeadTracking(storage, tracking)
+    const config: ConfigPort = { analyticsEnabled: true } as ConfigPort
+    const clock: Clock = { now: () => 1700000000000 }
+    const tracker = new LeadTracking(storage, tracking, config, clock)
 
     const leadId = tracker.registerLeadForThanksPage()
     const first = tracker.trackGenerateLeadOnce({ origin: 'thanks' })
@@ -46,13 +46,14 @@ describe('LeadTracking', () => {
   })
 
   it('no envía eventos si analytics está desactivado', () => {
-    vi.stubEnv('VITE_ANALYTICS_ENABLED', 'false')
     const storage = new MemoryStorage()
     const tracking: TrackingPort = {
       trackEvent: vi.fn(),
       trackPageView: () => {}
     }
-    const tracker = new LeadTracking(storage, tracking)
+    const config: ConfigPort = { analyticsEnabled: false } as ConfigPort
+    const clock: Clock = { now: () => 1700000000000 }
+    const tracker = new LeadTracking(storage, tracking, config, clock)
 
     tracker.registerLeadForThanksPage()
     const result = tracker.trackGenerateLeadOnce()
@@ -67,7 +68,9 @@ describe('LeadTracking', () => {
       trackEvent: vi.fn(),
       trackPageView: () => {}
     }
-    const tracker = new LeadTracking(storage, tracking)
+    const config: ConfigPort = { analyticsEnabled: true } as ConfigPort
+    const clock: Clock = { now: () => 1700000000000 }
+    const tracker = new LeadTracking(storage, tracking, config, clock)
 
     const result = tracker.trackGenerateLeadOnce({ origin: 'thanks' })
 

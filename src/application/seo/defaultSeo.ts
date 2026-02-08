@@ -3,69 +3,75 @@ Path: src/application/seo/defaultSeo.ts
 */
 
 import type { BusinessInfo, SeoMeta } from '@/domain/seo/types'
-import { content, publicConfig } from '@/infrastructure/content/content'
+import type { ContentPort } from '@/application/ports/Content'
+import type { ConfigPort } from '@/application/ports/Config'
+import type { LocationProvider } from '@/application/ports/Environment'
 
-export function getDefaultSeo(): SeoMeta {
-  const siteUrl =
-    normalize(publicConfig.siteUrl) || (typeof window !== 'undefined' ? window.location.origin : '')
-  const siteName = normalize(publicConfig.siteName) || 'ProfeBustos'
+export function getDefaultSeo(
+  content: ContentPort,
+  config: ConfigPort,
+  location: LocationProvider
+): SeoMeta {
+  const fallbackOrigin = getOrigin(location.href())
+  const siteUrl = normalize(config.siteUrl) || fallbackOrigin
+  const siteName = normalize(config.siteName) || 'Datamaq'
   const description =
-    normalize(publicConfig.siteDescription) ||
+    normalize(config.siteDescription) ||
     'Servicios industriales y eficiencia energetica para empresas.'
   const ogImage =
-    normalize(publicConfig.siteOgImage) ||
+    normalize(config.siteOgImage) ||
     (siteUrl ? `${siteUrl.replace(/\/$/, '')}/og-default.png` : '')
-  const verificationToken = normalize(publicConfig.gscVerification)
-  const locale = normalize(publicConfig.siteLocale) || 'es_AR'
+  const verificationToken = normalize(config.gscVerification)
+  const locale = normalize(config.siteLocale) || 'es_AR'
 
-  const businessName = normalize(publicConfig.businessName) || siteName
+  const businessName = normalize(config.businessName) || siteName
   const businessInfo: BusinessInfo = {
     name: businessName,
-    country: normalize(publicConfig.businessCountry) || 'AR',
-    areaServed: buildAreaServed()
+    country: normalize(config.businessCountry) || 'AR',
+    areaServed: buildAreaServed(config)
   }
 
-  const telephone = normalize(publicConfig.businessTelephone)
+  const telephone = normalize(config.businessTelephone)
   if (telephone) {
     businessInfo.telephone = telephone
   }
 
-  const email = normalize(publicConfig.businessEmail)
+  const email = normalize(config.businessEmail)
   if (email) {
     businessInfo.email = email
   }
 
-  const street = normalize(publicConfig.businessStreet)
+  const street = normalize(config.businessStreet)
   if (street) {
     businessInfo.street = street
   }
 
-  const locality = normalize(publicConfig.businessLocality)
+  const locality = normalize(config.businessLocality)
   if (locality) {
     businessInfo.locality = locality
   }
 
-  const region = normalize(publicConfig.businessRegion)
+  const region = normalize(config.businessRegion)
   if (region) {
     businessInfo.region = region
   }
 
-  const postalCode = normalize(publicConfig.businessPostalCode)
+  const postalCode = normalize(config.businessPostalCode)
   if (postalCode) {
     businessInfo.postalCode = postalCode
   }
 
-  const lat = parseNumber(publicConfig.businessLat)
+  const lat = parseNumber(config.businessLat)
   if (typeof lat === 'number') {
     businessInfo.lat = lat
   }
 
-  const lng = parseNumber(publicConfig.businessLng)
+  const lng = parseNumber(config.businessLng)
   if (typeof lng === 'number') {
     businessInfo.lng = lng
   }
 
-  const whatsapp = normalize(publicConfig.whatsappNumber)
+  const whatsapp = normalize(config.whatsappNumber)
   if (whatsapp) {
     businessInfo.whatsapp = whatsapp
   }
@@ -78,7 +84,7 @@ export function getDefaultSeo(): SeoMeta {
     ogImage,
     locale,
     business: businessInfo,
-    services: content.services.cards
+    services: content.getContent().services.cards
   }
 
   if (verificationToken) {
@@ -88,12 +94,23 @@ export function getDefaultSeo(): SeoMeta {
   return meta
 }
 
-function buildAreaServed(): string[] {
-  const configured = parseCsv(publicConfig.businessArea)
+function buildAreaServed(config: ConfigPort): string[] {
+  const configured = parseCsv(config.businessArea)
   if (configured.length) {
     return configured
   }
   return ['GBA Norte', 'Argentina']
+}
+
+function getOrigin(href: string): string {
+  if (!href) {
+    return ''
+  }
+  try {
+    return new URL(href).origin
+  } catch {
+    return ''
+  }
 }
 
 function parseCsv(value: string | undefined): string[] {
