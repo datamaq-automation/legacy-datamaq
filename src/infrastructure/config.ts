@@ -72,15 +72,6 @@ const contactApiUrl = ensureApiUrl(
     normalize(publicConfig.contactApiUrl),
   'contactApiUrl'
 )
-if (
-  contactApiUrl &&
-  contactApiUrl.includes('/public/api/v1/inboxes/') &&
-  contactApiUrl.endsWith('/contacts')
-) {
-  console.warn(
-    '[config] VITE_CONTACT_API_URL apunta al endpoint publico de Chatwoot; Company/City/Country no se guardan sin backend.'
-  )
-}
 
 export const config = {
   WHATSAPP_NUMBER: whatsappNumber,
