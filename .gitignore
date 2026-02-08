@@ -38,3 +38,5 @@ __screenshots__/
 public/robots.txt
 public/sitemap.xml
 public/_redirects
+backend/.env
+__pycache__/

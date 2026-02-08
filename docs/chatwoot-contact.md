@@ -29,6 +29,39 @@ Ejemplo recomendado:
 https://chatwoot-production-2d73.up.railway.app/chatwoot/webhook
 ```
 
+
+## Campos por defecto (Company/Ciudad/Pais/Bio)
+
+Investigacion (2026-02-08):
+
+- La API publica (API Channel) para crear contactos acepta `custom_attributes`, pero no expone `additional_attributes` en el body. Por lo tanto, si se usa el endpoint publico, los campos que dependen de `additional_attributes` no se van a persistir.
+- La Account API (create/update contact) acepta `additional_attributes` y `custom_attributes`. En la documentacion indica que `custom_attributes` "debe tener una definicion valida".
+- El endpoint "Show Contact" de la Account API devuelve `additional_attributes` con claves como `city`, `country` y `country_code`. Eso confirma que esos campos viven en `additional_attributes`.
+- La API publica para "Get/Update contact" solo devuelve `id`, `source_id`, `name`, `email` y `pubsub_token`; no expone `additional_attributes`. Si se valida solo por la API publica, esos datos no se van a ver aunque existan.
+- Para que `custom_attributes` se guarden y se vean en la UI, los atributos deben existir en Settings -> Custom Attributes y aplicarse a Contact, con un `key` exacto.
+
+Implicancias:
+
+- Si la app usa el endpoint publico (`/public/api/v1/inboxes/{inbox_identifier}/contacts`), los datos de Company/Ciudad/Pais no van a persistirse porque no se pueden enviar en `additional_attributes`.
+- Si usa el backend (Account API) y aun asi no aparecen, validar con un GET a `/api/v1/accounts/{account_id}/contacts/{id}` si `additional_attributes` llega con `city`/`country` y si `custom_attributes` tiene las claves esperadas. Si no estan, el problema es previo (payload/endpoint/credenciales). Si estan, el problema es de visualizacion en UI.
+
+Referencias:
+
+- https://developers.chatwoot.com/api-reference/contacts-api/create-a-contact
+- https://developers.chatwoot.com/api-reference/contacts-api/get-a-contact
+- https://developers.chatwoot.com/api-reference/contacts-api/update-a-contact
+- https://developers.chatwoot.com/api-reference/contacts/create-contact
+- https://developers.chatwoot.com/api-reference/contacts/show-contact
+- https://www.chatwoot.com/hc/user-guide/articles/1677502327-how-to-create-and-use-custom-attributes
+
+## Backend recomendado (Account API)
+
+Este repo incluye un backend Python en `backend/` que llama a la Account API y completa `additional_attributes`.
+
+- Endpoint del backend: `POST /v1/contact`
+- Apunta el frontend a este endpoint usando `VITE_CONTACT_API_URL`.
+- Configura las variables en `backend/.env.example`.
+
 ## Custom attributes recomendados
 
 Para ver los datos del formulario en Chatwoot, crea **Contact Attributes** para:
@@ -68,7 +101,7 @@ Settings → Custom Attributes → Add Custom Attribute.
 Ejemplo (Cloudflare Pages / `.env`):
 
 ```
-VITE_CONTACT_API_URL=https://chatwoot-production-2d73.up.railway.app/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts
+VITE_CONTACT_API_URL=https://<BACKEND_HOST>/v1/contact
 VITE_CONTACT_EMAIL=contacto@datamaq.com.ar
 ```
 

@@ -19,7 +19,7 @@ export function mapContactRequestToSubmitPayload(
     country?: string
   }
 ): ContactSubmitPayload {
-  return {
+  const submitPayload: ContactSubmitPayload = {
     name: contact.name.value,
     email: contact.email.value,
     firstName: details?.firstName ?? contact.name.value.split(' ')[0] ?? '',
@@ -36,4 +36,12 @@ export function mapContactRequestToSubmitPayload(
     userAgent: meta.userAgent,
     createdAt: meta.createdAt
   }
+  if (import.meta.env.DEV) {
+    console.log('[contactPayloadMapper] mapped submit payload', {
+      details: details ?? null,
+      meta,
+      result: submitPayload
+    })
+  }
+  return submitPayload
 }

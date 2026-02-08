@@ -49,10 +49,16 @@ export class SubmitContactUseCase {
     })
 
     if (!contactResult.ok) {
+      if (import.meta.env.DEV) {
+        console.warn('[submitContact] contact domain validation failed')
+      }
       return { ok: false, error: { type: 'ValidationError' } }
     }
 
     const backendStatus = await this.contactBackend.ensureStatus()
+    if (import.meta.env.DEV) {
+      console.log('[submitContact] backend status', { status: backendStatus })
+    }
     if (backendStatus !== 'available') {
       return { ok: false, error: { type: 'Unavailable' } }
     }
@@ -73,6 +79,12 @@ export class SubmitContactUseCase {
     )
 
     if (!submitResult.ok) {
+      if (import.meta.env.DEV) {
+        console.log('[submitContact] submit result', {
+          ok: submitResult.ok,
+          error: submitResult.error
+        })
+      }
       if (submitResult.error.type === 'BackendError' && submitResult.error.status >= 500) {
         this.contactBackend.markUnavailable()
       } else if (submitResult.error.type !== 'NetworkError') {
@@ -81,6 +93,9 @@ export class SubmitContactUseCase {
       return submitResult
     }
 
+    if (import.meta.env.DEV) {
+      console.log('[submitContact] submit result', { ok: true })
+    }
     this.contactBackend.markAvailable()
     this.leadTracking.registerLeadForThanksPage()
     this.eventBus.publish(new ContactSubmitted(contactResult.data.id))

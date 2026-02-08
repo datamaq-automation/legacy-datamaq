@@ -17,7 +17,7 @@ Landing corporativa construida con **Vue 3** y **Vite** para promocionar los ser
 
 ## ConfiguraciÃ³n de entorno
 1. CopiÃ¡ `.env.example` a `.env` y completÃ¡ los valores reales para cada entorno (desarrollo, staging, producciÃ³n).
-2. VerificÃ¡ que `VITE_CONTACT_API_URL` apunte a un endpoint **HTTPS** vÃ¡lido (Chatwoot `public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts`).
+2. VerificÃ¡ que `VITE_CONTACT_API_URL` apunte a un endpoint **HTTPS** vÃ¡lido. Para completar Company/Ciudad/Pais en Chatwoot, usar el backend en `backend/` y configurar `/v1/contact`.
 3. AjustÃ¡ los IDs de analÃ­tica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segÃºn la propiedad correspondiente.
 4. Para el flujo de contactos con Chatwoot, revisÃ¡ `docs/chatwoot-contact.md`.
 
