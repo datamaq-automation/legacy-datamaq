@@ -68,6 +68,20 @@ Path: src/ui/features/contact/ContactFormSection.vue
                   />
                 </div>
                 <div class="col-md-6">
+                  <label class="form-label" for="contacto-telefono">{{ contact.labels.phone }}</label>
+                  <input
+                    id="contacto-telefono"
+                    v-model="form.phoneNumber"
+                    type="tel"
+                    class="form-control"
+                    name="phoneNumber"
+                    autocomplete="tel"
+                    maxlength="30"
+                    inputmode="tel"
+                    :disabled="!isChannelEnabled"
+                  />
+                </div>
+                <div class="col-md-6">
                   <label class="form-label" for="contacto-empresa">{{ contact.labels.company }}</label>
                   <input
                     id="contacto-empresa"
@@ -80,17 +94,31 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     :disabled="!isChannelEnabled"
                   />
                 </div>
-                <div class="col-12">
-                  <label class="form-label" for="contacto-mensaje">{{ contact.labels.message }}</label>
-                  <textarea
-                    id="contacto-mensaje"
-                    v-model="form.message"
+                <div class="col-md-6">
+                  <label class="form-label" for="contacto-ciudad">{{ contact.labels.city }}</label>
+                  <input
+                    id="contacto-ciudad"
+                    v-model="form.city"
+                    type="text"
                     class="form-control"
-                    name="message"
-                    rows="4"
-                    maxlength="1200"
+                    name="city"
+                    autocomplete="address-level2"
+                    maxlength="120"
                     :disabled="!isChannelEnabled"
-                  ></textarea>
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="contacto-pais">{{ contact.labels.country }}</label>
+                  <input
+                    id="contacto-pais"
+                    v-model="form.country"
+                    type="text"
+                    class="form-control"
+                    name="country"
+                    autocomplete="country-name"
+                    maxlength="80"
+                    :disabled="!isChannelEnabled"
+                  />
                 </div>
                 <div class="col-12 mt-2">
                   <button

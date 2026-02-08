@@ -315,8 +315,10 @@ export const content: AppContent = {
       firstName: 'Nombre',
       lastName: 'Apellido',
       email: 'Correo electrónico',
+      phone: 'Tel?fono (opcional)',
+      city: 'Ciudad (opcional)',
+      country: 'Pa?s',
       company: 'Empresa (opcional)',
-      message: 'Mensaje (opcional)'
     },
     submitLabel: 'Enviar consulta por correo',
     checkingMessage: 'Verificando la disponibilidad del servicio de correo electrónico…',

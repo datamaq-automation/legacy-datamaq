@@ -17,8 +17,10 @@ export function useContactForm(props: ContactFormProps) {
     firstName: '',
     lastName: '',
     email: '',
-    company: '',
-    message: ''
+    phoneNumber: '',
+    city: '',
+    country: 'Argentina',
+    company: ''
   })
   const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus())
   const isBackendAvailable = computed(() => backendStatus.value === 'available')
@@ -59,12 +61,26 @@ export function useContactForm(props: ContactFormProps) {
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
-        company: form.company,
-        message: form.message
+        phoneNumber: form.phoneNumber || undefined,
+        city: form.city || undefined,
+        country: form.country || undefined,
+        company: form.company
       })
       if (!parsed.ok) {
         await announceFeedback(contact.errorMessage, false)
         return
+      }
+      if (import.meta.env.DEV) {
+        console.log('[contactForm] submit payload', {
+          firstName: parsed.data.firstName,
+          lastName: parsed.data.lastName,
+          email: parsed.data.email,
+          phoneNumber: parsed.data.phoneNumber ?? null,
+          city: parsed.data.city ?? null,
+          country: parsed.data.country ?? null,
+          company: parsed.data.company ?? null,
+          companyLength: parsed.data.company ? parsed.data.company.length : 0
+        })
       }
       const result = await props.onSubmit(parsed.data)
       if (result && result.ok) {

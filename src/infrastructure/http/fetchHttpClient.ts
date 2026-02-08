@@ -55,6 +55,56 @@ export class FetchHttpClient implements HttpClient {
     }
   }
 
+  async patchJson<T = unknown>(
+    url: string,
+    body: unknown,
+    headers: Record<string, string> = {}
+  ): Promise<HttpResponse<T>> {
+    try {
+      this.logger.debug('[http] PATCH JSON request', {
+        url,
+        headers: Object.keys(headers)
+      })
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers
+        },
+        body: JSON.stringify(body)
+      })
+
+      const rawText = await response.text().catch(() => undefined)
+      const data = parseJson<T>(rawText)
+      const text = normalizeErrorText(rawText)
+      this.logger.debug('[http] PATCH JSON response', {
+        url,
+        status: response.status,
+        ok: response.ok,
+        text
+      })
+      if (!response.ok) {
+        this.logger.warn('[http] PATCH JSON no OK:', {
+          url,
+          status: response.status,
+          text
+        })
+      }
+      return {
+        ok: response.ok,
+        status: response.status,
+        ...(text ? { text } : {}),
+        ...(typeof data !== 'undefined' ? { data } : {})
+      }
+    } catch (error) {
+      this.logger.error('[http] Error en PATCH JSON:', { url, headers, error })
+      return {
+        ok: false,
+        status: 0
+      }
+    }
+  }
+
   async options(url: string): Promise<HttpResponse> {
     try {
       this.logger.debug('[http] OPTIONS request', { url })

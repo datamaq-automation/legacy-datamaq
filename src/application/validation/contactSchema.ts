@@ -8,8 +8,15 @@ export const EmailContactSchema = z.object({
   firstName: z.string().min(2).max(80),
   lastName: z.string().min(2).max(80),
   email: z.string().email().max(160),
-  company: z.string().max(160).optional(),
-  message: z.string().max(1200).optional()
+  phoneNumber: z
+    .string()
+    .min(6)
+    .max(30)
+    .regex(/^[\d+().\s-]+$/, 'Formato de telefono invalido')
+    .optional(),
+  city: z.string().max(120).optional(),
+  country: z.string().max(80).optional(),
+  company: z.string().max(160).optional()
 })
 
 export type EmailContactInput = z.infer<typeof EmailContactSchema>

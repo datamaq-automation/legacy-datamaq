@@ -29,12 +29,23 @@ export class SubmitContactUseCase {
     payload: EmailContactPayload
   ): Promise<Result<void, ContactError>> {
     const fullName = `${payload.firstName} ${payload.lastName}`.trim()
+    if (import.meta.env.DEV) {
+      console.log('[submitContact] payload snapshot', {
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        email: payload.email,
+        phoneNumber: payload.phoneNumber ?? null,
+        city: payload.city ?? null,
+        country: payload.country ?? null,
+        company: payload.company ?? null,
+        fullName
+      })
+    }
     const contactResult = this.contactService.createContact({
       id: buildContactId(this.clock.now()),
       name: fullName,
       email: payload.email,
-      company: payload.company,
-      message: payload.message
+      company: payload.company
     })
 
     if (!contactResult.ok) {
@@ -54,7 +65,10 @@ export class SubmitContactUseCase {
         createdAt: new Date(this.clock.now()).toISOString()
       }, {
         firstName: payload.firstName,
-        lastName: payload.lastName
+        lastName: payload.lastName,
+        phoneNumber: payload.phoneNumber,
+        city: payload.city,
+        country: payload.country
       })
     )
 

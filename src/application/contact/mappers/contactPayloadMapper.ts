@@ -14,6 +14,9 @@ export function mapContactRequestToSubmitPayload(
   details?: {
     firstName?: string
     lastName?: string
+    phoneNumber?: string
+    city?: string
+    country?: string
   }
 ): ContactSubmitPayload {
   return {
@@ -24,8 +27,10 @@ export function mapContactRequestToSubmitPayload(
       details?.lastName ??
       contact.name.value.split(' ').slice(1).join(' ') ??
       '',
+    phoneNumber: details?.phoneNumber,
+    city: details?.city,
+    country: details?.country,
     company: contact.company ?? undefined,
-    message: contact.message ?? undefined,
     pageLocation: meta.pageLocation,
     trafficSource: meta.trafficSource,
     userAgent: meta.userAgent,

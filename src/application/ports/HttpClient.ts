@@ -11,5 +11,10 @@ export interface HttpClient {
     body: unknown,
     headers?: Record<string, string>
   ): Promise<HttpResponse<T>>
+  patchJson<T = unknown>(
+    url: string,
+    body: unknown,
+    headers?: Record<string, string>
+  ): Promise<HttpResponse<T>>
   options(url: string): Promise<HttpResponse>
 }

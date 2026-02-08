@@ -27,35 +27,71 @@ export class ContactApiGateway implements ContactGateway {
     const enrichedPayload = attachAttributionToPayload(payload, this.storage)
     const originVerify = this.config.originVerifySecret
     const headers = originVerify ? { 'X-Origin-Verify': originVerify } : undefined
-    const chatwootPayload = buildChatwootContactPayload({
+    const normalizedPhone = normalizePhoneNumber(payload.phoneNumber, payload.country)
+    const rawCustomAttributes = {
+      first_name: payload.firstName,
+      last_name: payload.lastName,
+      company: payload.company,
+      city: payload.city,
+      country: payload.country,
+      ...(payload.phoneNumber && !normalizedPhone
+        ? { phone_raw: payload.phoneNumber }
+        : {})
+    }
+    const sanitizedCustomAttributes = sanitizeCustomAttributes(rawCustomAttributes)
+    // Forzar envio de custom_attributes aunque esten vacios/compatibilidad con Chatwoot.
+    const chatwootPayload = {
       name: enrichedPayload.name,
       email: enrichedPayload.email,
-      customAttributes: {
-        first_name: payload.firstName,
-        last_name: payload.lastName,
-        company: enrichedPayload.company,
-        message: enrichedPayload.message,
-        page_location: payload.pageLocation,
-        traffic_source: payload.trafficSource,
-        user_agent: payload.userAgent,
-        created_at: payload.createdAt,
-        attribution: enrichedPayload.attribution
-      }
-    })
-    this.logger.debug('[contactApiGateway] submit start', {
-      apiUrl,
-      hasOriginVerify: Boolean(originVerify),
-      payloadKeys: Object.keys(chatwootPayload),
-      customAttributeKeys: chatwootPayload.custom_attributes
-        ? Object.keys(chatwootPayload.custom_attributes)
-        : []
-    })
+      phone_number: normalizedPhone,
+      custom_attributes: sanitizedCustomAttributes
+    }
+    if (import.meta.env.DEV) {
+      console.log('[contactApiGateway] custom attrs raw json', JSON.stringify(rawCustomAttributes))
+      console.log(
+        '[contactApiGateway] custom attrs sanitized json',
+        JSON.stringify(sanitizedCustomAttributes)
+      )
+      console.log('[contactApiGateway] submit start', {
+        apiUrl,
+        hasOriginVerify: Boolean(originVerify),
+        payloadKeys: Object.keys(chatwootPayload),
+        customAttributeKeys: chatwootPayload.custom_attributes
+          ? Object.keys(chatwootPayload.custom_attributes)
+          : [],
+        customAttributes: chatwootPayload.custom_attributes ?? null,
+        customAttributesEntries: chatwootPayload.custom_attributes
+          ? Object.entries(chatwootPayload.custom_attributes)
+          : [],
+        customAttributesTypes: chatwootPayload.custom_attributes
+          ? Object.fromEntries(
+              Object.entries(chatwootPayload.custom_attributes).map(([key, value]) => [
+                key,
+                value === null ? 'null' : typeof value
+              ])
+            )
+          : {},
+        rawCustomAttributes,
+        sanitizedCustomAttributes,
+        rawCustomAttributesJson: JSON.stringify(rawCustomAttributes),
+        customAttributesJson: JSON.stringify(chatwootPayload.custom_attributes ?? null),
+        phoneNumber: payload.phoneNumber ?? null,
+        normalizedPhone: normalizedPhone ?? null
+      })
+    }
+    if (import.meta.env.DEV) {
+      console.log('[contactApiGateway] submit request body', {
+        body: JSON.stringify(chatwootPayload)
+      })
+    }
     const response = await this.http.postJson(apiUrl, chatwootPayload, headers)
-    this.logger.debug('[contactApiGateway] submit response', {
-      status: response.status,
-      ok: response.ok,
-      text: response.text
-    })
+    if (import.meta.env.DEV) {
+      console.log('[contactApiGateway] submit response', {
+        status: response.status,
+        ok: response.ok,
+        text: response.text
+      })
+    }
 
     if (!response.ok) {
       this.logger.warn('[contactApiGateway] response no OK', {
@@ -70,6 +106,152 @@ export class ContactApiGateway implements ContactGateway {
       }
     }
 
+    const contactIdentifier = extractContactIdentifier(response.data, response.text)
+    if (contactIdentifier && hasCustomAttributes(sanitizedCustomAttributes)) {
+      const updateUrl = buildChatwootContactUpdateUrl(apiUrl, contactIdentifier)
+      if (import.meta.env.DEV) {
+        console.log('[contactApiGateway] update start', {
+          updateUrl,
+          contactIdentifier,
+          customAttributes: sanitizedCustomAttributes,
+          phoneNumber: payload.phoneNumber ?? null
+        })
+      }
+      const updateResponse = await this.http.patchJson(
+        updateUrl,
+        {
+          custom_attributes: sanitizedCustomAttributes,
+          phone_number: normalizedPhone
+        },
+        headers
+      )
+      if (import.meta.env.DEV) {
+        console.log('[contactApiGateway] update response', {
+          status: updateResponse.status,
+          ok: updateResponse.ok,
+          text: updateResponse.text
+        })
+      }
+    }
+
     return { ok: true, data: undefined }
   }
+}
+
+function sanitizeCustomAttributes(
+  attrs: Record<string, unknown>
+): Record<string, string> {
+  const entries = Object.entries(attrs)
+    .map(([key, value]) => {
+      if (value === undefined || value === null) {
+        return null
+      }
+      if (typeof value === 'string') {
+        const trimmed = value.trim()
+        return trimmed ? [key, trimmed] : null
+      }
+      return [key, String(value)]
+    })
+    .filter(Boolean) as Array<[string, string]>
+
+  return Object.fromEntries(entries)
+}
+
+function extractContactIdentifier(
+  data: unknown,
+  text?: string
+): string | null {
+  const identifierFromData = parseIdentifierRecord(data)
+  if (identifierFromData) {
+    return identifierFromData
+  }
+
+  if (text) {
+    try {
+      const parsed = JSON.parse(text) as { source_id?: string; id?: number | string }
+      return parseIdentifierRecord(parsed)
+    } catch {
+      return null
+    }
+  }
+
+  return null
+}
+
+function parseIdentifierRecord(
+  data: unknown
+): string | null {
+  if (!data || typeof data !== 'object') {
+    return null
+  }
+  const record = data as { source_id?: string; id?: number | string }
+  if (record.source_id) {
+    return record.source_id
+  }
+  if (record.id) {
+    return String(record.id)
+  }
+  return null
+}
+
+function buildChatwootContactUpdateUrl(apiUrl: string, identifier: string): string {
+  if (apiUrl.endsWith('/contacts')) {
+    return `${apiUrl}/${identifier}`
+  }
+  return `${apiUrl.replace(/\/contacts.*$/, '/contacts')}/${identifier}`
+}
+
+function hasCustomAttributes(
+  attrs: Record<string, string>
+): boolean {
+  return Object.keys(attrs).length > 0
+}
+
+function normalizePhoneNumber(
+  phoneNumber: string | undefined,
+  country: string | undefined
+): string | undefined {
+  if (!phoneNumber) {
+    return undefined
+  }
+
+  const trimmed = phoneNumber.trim()
+  if (!trimmed) {
+    return undefined
+  }
+
+  if (trimmed.startsWith('+')) {
+    const digits = trimmed.replace(/[^\d]/g, '')
+    if (digits.length < 8 || digits.length > 15) {
+      return undefined
+    }
+    return `+${digits}`
+  }
+
+  const digits = trimmed.replace(/[^\d]/g, '')
+  if (!digits) {
+    return undefined
+  }
+
+  const isArgentina =
+    !country ||
+    country.trim().toLowerCase() === 'argentina' ||
+    country.trim().toLowerCase() === 'ar'
+
+  if (isArgentina) {
+    let normalized = digits
+    if (normalized.startsWith('0')) {
+      normalized = normalized.slice(1)
+    }
+    if (normalized.startsWith('54')) {
+      normalized = normalized.slice(2)
+    }
+    if (normalized.length >= 8 && normalized.length <= 13) {
+      return `+54${normalized}`
+    }
+    return undefined
+  }
+
+  // Para otros paises, exigimos prefijo internacional.
+  return undefined
 }
