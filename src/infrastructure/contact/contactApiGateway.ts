@@ -31,6 +31,8 @@ export class ContactApiGateway implements ContactGateway {
       name: enrichedPayload.name,
       email: enrichedPayload.email,
       customAttributes: {
+        first_name: payload.firstName,
+        last_name: payload.lastName,
         company: enrichedPayload.company,
         message: enrichedPayload.message,
         page_location: payload.pageLocation,

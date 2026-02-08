@@ -312,7 +312,8 @@ export const content: AppContent = {
     subtitle:
       `Completá el formulario y te enviamos una propuesta según el servicio: Powermeter (${TARIFA_BASE}), ${CHATWOOT} (${TARIFA_CHATWOOT}) o ${RASA} (${TARIFA_RASA}). Si es urgente, el canal más rápido es WhatsApp.`,
     labels: {
-      name: 'Nombre y apellido',
+      firstName: 'Nombre',
+      lastName: 'Apellido',
       email: 'Correo electrónico',
       company: 'Empresa (opcional)',
       message: 'Mensaje (opcional)'

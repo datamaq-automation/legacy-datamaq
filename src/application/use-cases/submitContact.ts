@@ -28,9 +28,10 @@ export class SubmitContactUseCase {
     section: string,
     payload: EmailContactPayload
   ): Promise<Result<void, ContactError>> {
+    const fullName = `${payload.firstName} ${payload.lastName}`.trim()
     const contactResult = this.contactService.createContact({
       id: buildContactId(this.clock.now()),
-      name: payload.name,
+      name: fullName,
       email: payload.email,
       company: payload.company,
       message: payload.message
@@ -51,6 +52,9 @@ export class SubmitContactUseCase {
         trafficSource: getTrafficSource(this.location),
         userAgent: this.navigator.userAgent(),
         createdAt: new Date(this.clock.now()).toISOString()
+      }, {
+        firstName: payload.firstName,
+        lastName: payload.lastName
       })
     )
 

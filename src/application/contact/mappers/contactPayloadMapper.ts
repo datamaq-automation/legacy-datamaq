@@ -10,11 +10,20 @@ type ContactSubmitMeta = {
 
 export function mapContactRequestToSubmitPayload(
   contact: ContactRequest,
-  meta: ContactSubmitMeta
+  meta: ContactSubmitMeta,
+  details?: {
+    firstName?: string
+    lastName?: string
+  }
 ): ContactSubmitPayload {
   return {
     name: contact.name.value,
     email: contact.email.value,
+    firstName: details?.firstName ?? contact.name.value.split(' ')[0] ?? '',
+    lastName:
+      details?.lastName ??
+      contact.name.value.split(' ').slice(1).join(' ') ??
+      '',
     company: contact.company ?? undefined,
     message: contact.message ?? undefined,
     pageLocation: meta.pageLocation,

@@ -20,17 +20,35 @@ Path: src/ui/features/contact/ContactFormSection.vue
                 novalidate
                 @submit.prevent="handleSubmit"
               >
-                <div class="col-12">
-                  <label class="form-label" for="contacto-nombre">{{ contact.labels.name }}</label>
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="contacto-nombre">
+                    {{ contact.labels.firstName }}
+                  </label>
                   <input
                     id="contacto-nombre"
-                    v-model="form.name"
+                    v-model="form.firstName"
                     type="text"
                     class="form-control"
-                    name="name"
+                    name="firstName"
                     required
-                    autocomplete="name"
-                    maxlength="120"
+                    autocomplete="given-name"
+                    maxlength="80"
+                    :disabled="!isChannelEnabled"
+                  />
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="contacto-apellido">
+                    {{ contact.labels.lastName }}
+                  </label>
+                  <input
+                    id="contacto-apellido"
+                    v-model="form.lastName"
+                    type="text"
+                    class="form-control"
+                    name="lastName"
+                    required
+                    autocomplete="family-name"
+                    maxlength="80"
                     :disabled="!isChannelEnabled"
                   />
                 </div>

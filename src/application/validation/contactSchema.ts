@@ -5,7 +5,8 @@ import { ContactName } from '@/domain/contact/value-objects/ContactName'
 import { Email } from '@/domain/contact/value-objects/Email'
 
 export const EmailContactSchema = z.object({
-  name: z.string().min(2).max(120),
+  firstName: z.string().min(2).max(80),
+  lastName: z.string().min(2).max(80),
   email: z.string().email().max(160),
   company: z.string().max(160).optional(),
   message: z.string().max(1200).optional()
@@ -16,7 +17,8 @@ export type EmailContactInput = z.infer<typeof EmailContactSchema>
 export function validateContactDomainRules(
   payload: EmailContactInput
 ): Result<EmailContactInput, ContactDomainError> {
-  const nameResult = ContactName.create(payload.name)
+  const fullName = `${payload.firstName} ${payload.lastName}`.trim()
+  const nameResult = ContactName.create(fullName)
   if (!nameResult.ok) {
     return { ok: false, error: nameResult.error }
   }

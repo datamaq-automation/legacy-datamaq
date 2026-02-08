@@ -14,7 +14,8 @@ import { useRouter } from 'vue-router'
 export function useContactForm(props: ContactFormProps) {
   const formRef = ref<HTMLFormElement | null>(null)
   const form = reactive({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     company: '',
     message: ''
@@ -55,7 +56,8 @@ export function useContactForm(props: ContactFormProps) {
     isSubmitting.value = true
     try {
       const parsed = validate({
-        name: form.name,
+        firstName: form.firstName,
+        lastName: form.lastName,
         email: form.email,
         company: form.company,
         message: form.message

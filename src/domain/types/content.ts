@@ -78,7 +78,8 @@ export interface ContactContent {
   title: string
   subtitle: string
   labels: {
-    name: string
+    firstName: string
+    lastName: string
     email: string
     company: string
     message: string
