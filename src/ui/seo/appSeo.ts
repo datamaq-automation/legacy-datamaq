@@ -6,6 +6,7 @@ import {
   buildWebsiteJsonLd,
   SeoMeta
 } from '@/ui/seo/defaultSeo'
+import { getLandingPageByPath, type LandingPageContent, type LandingPageFaq } from '@/seo/landingPages'
 
 export function buildAppHead(
   seo: SeoMeta,
@@ -14,10 +15,13 @@ export function buildAppHead(
 ): HeadObject {
   const normalizedPath = currentPath.startsWith('/') ? currentPath : `/${currentPath}`
   const canonicalUrl = buildCanonicalUrl(seo.siteUrl, normalizedPath)
-  const pageTitle = isThanksPage ? `Gracias | ${seo.siteName}` : seo.title
+  const landingPage = getLandingPageByPath(normalizedPath)
+  const baseTitle = landingPage?.title ?? seo.title
+  const baseDescription = landingPage?.description ?? seo.description
+  const pageTitle = isThanksPage ? `Gracias | ${seo.siteName}` : baseTitle
   const pageDescription = isThanksPage
     ? 'Recibimos tu consulta. En breve te contactamos.'
-    : seo.description
+    : baseDescription
 
   const meta: HeadObject['meta'] = [
     { name: 'description', content: pageDescription },
@@ -66,6 +70,20 @@ export function buildAppHead(
     })
   }
 
+  if (landingPage && !isThanksPage) {
+    scripts.push({
+      type: 'application/ld+json',
+      children: JSON.stringify(buildServiceJsonLd(landingPage, seo))
+    })
+
+    if (landingPage.faqs.length) {
+      scripts.push({
+        type: 'application/ld+json',
+        children: JSON.stringify(buildFaqJsonLd(landingPage.faqs))
+      })
+    }
+  }
+
   return {
     title: pageTitle,
     meta,
@@ -84,4 +102,42 @@ function buildCanonicalUrl(base: string, path: string): string {
 
   const normalizedBase = base.replace(/\/$/, '')
   return `${normalizedBase}${path}`
+}
+
+function buildServiceJsonLd(
+  landing: LandingPageContent,
+  seo: SeoMeta
+): Record<string, unknown> {
+  const provider: Record<string, unknown> = {
+    '@type': 'Organization',
+    name: seo.business.name || seo.siteName
+  }
+  if (seo.siteUrl) {
+    provider['url'] = seo.siteUrl
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: landing.service.name,
+    serviceType: landing.service.serviceType,
+    description: landing.service.description,
+    areaServed: landing.service.areaServed,
+    provider
+  }
+}
+
+function buildFaqJsonLd(faqs: LandingPageFaq[]): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer
+      }
+    }))
+  }
 }

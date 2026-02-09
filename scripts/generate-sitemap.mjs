@@ -3,8 +3,9 @@ import path from 'node:path'
 
 const routeMetadataPath = path.resolve('src', 'seo', 'routes.json')
 const routeMetadata = JSON.parse(fs.readFileSync(routeMetadataPath, 'utf8'))
-const configuredUrl = (process.env.VITE_SITE_URL || '').replace(/\/$/, '')
-const baseUrl = configuredUrl || 'https://example.com'
+const configuredUrl = normalizeUrl(process.env.VITE_SITE_URL)
+const fallbackUrl = readPublicConfigSiteUrl()
+const baseUrl = configuredUrl || fallbackUrl || 'https://example.com'
 const timestamp = new Date().toISOString()
 
 const indexablePaths = Array.from(
@@ -26,6 +27,9 @@ fs.writeFileSync(path.join(publicDir, 'robots.txt'), robots, 'utf8')
 fs.writeFileSync(path.join(publicDir, '_redirects'), redirectRules.join('\n') + '\n', 'utf8')
 
 console.log('[sitemap] sitemap.xml, robots.txt y _redirects generados.')
+if (!configuredUrl && !fallbackUrl) {
+  console.warn('[sitemap] VITE_SITE_URL no esta definida; usando https://example.com.')
+}
 
 function buildSitemap(origin, routes, lastmod) {
   const entries = routes
@@ -62,4 +66,29 @@ function normalizeRoutePath(route) {
   }
   const trimmed = route.endsWith('/') ? route.slice(0, -1) : route
   return trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+}
+
+function normalizeUrl(value) {
+  if (!value) {
+    return ''
+  }
+  const trimmed = String(value).trim()
+  if (!trimmed) {
+    return ''
+  }
+  return trimmed.replace(/\/$/, '')
+}
+
+function readPublicConfigSiteUrl() {
+  const publicConfigPath = path.resolve('src', 'infrastructure', 'config', 'publicConfig.ts')
+  try {
+    const contents = fs.readFileSync(publicConfigPath, 'utf8')
+    const match = contents.match(/siteUrl:\s*['"]([^'"]+)['"]/)
+    if (match && match[1]) {
+      return normalizeUrl(match[1])
+    }
+  } catch {
+    return ''
+  }
+  return ''
 }

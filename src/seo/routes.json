@@ -8,5 +8,10 @@
     "name": "thanks",
     "path": "/gracias",
     "indexable": false
+  },
+  {
+    "name": "medicion-consumo-escobar",
+    "path": "/medicion-consumo-electrico-escobar",
+    "indexable": true
   }
 ]
