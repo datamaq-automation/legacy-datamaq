@@ -4,10 +4,10 @@ import { validateContactDomainRules } from '@/application/validation/contactSche
 describe('validateContactDomainRules', () => {
   it('accepts valid contact data', () => {
     const result = validateContactDomainRules({
-      name: 'Ada Lovelace',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
       email: 'ada@example.com',
-      company: 'Analytical',
-      message: 'Hola'
+      company: 'Analytical'
     })
 
     expect(result.ok).toBe(true)
@@ -15,7 +15,8 @@ describe('validateContactDomainRules', () => {
 
   it('rejects invalid email', () => {
     const result = validateContactDomainRules({
-      name: 'Ada Lovelace',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
       email: 'ada-at-example'
     })
 
@@ -27,7 +28,8 @@ describe('validateContactDomainRules', () => {
 
   it('rechaza nombre demasiado corto', () => {
     const result = validateContactDomainRules({
-      name: 'A',
+      firstName: 'A',
+      lastName: '',
       email: 'ada@example.com'
     })
 

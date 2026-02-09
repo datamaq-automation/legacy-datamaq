@@ -77,4 +77,21 @@ describe('LeadTracking', () => {
     expect(result).toBe(false)
     expect(tracking.trackEvent).not.toHaveBeenCalled()
   })
+
+  it('usa analytics habilitado por defecto cuando no esta definido', () => {
+    const storage = new MemoryStorage()
+    const tracking: TrackingPort = {
+      trackEvent: vi.fn(),
+      trackPageView: () => {}
+    }
+    const config: ConfigPort = { analyticsEnabled: undefined } as ConfigPort
+    const clock: Clock = { now: () => 1700000000000 }
+    const tracker = new LeadTracking(storage, tracking, config, clock)
+
+    tracker.registerLeadForThanksPage()
+    const result = tracker.trackGenerateLeadOnce({ origin: 'thanks' })
+
+    expect(result).toBe(true)
+    expect(tracking.trackEvent).toHaveBeenCalledTimes(1)
+  })
 })

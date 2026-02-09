@@ -111,4 +111,65 @@ describe('defaultSeo', () => {
     expect(seo.ogImage).toBe('')
     expect(seo.title).toBe('Datamaq')
   })
+
+  it('incluye datos de negocio, verificacion y locale cuando se configuran', () => {
+    const seo = getDefaultSeo(
+      contentPort,
+      buildConfig({
+        siteUrl: ' https://example.com/ ',
+        siteName: ' Example ',
+        siteDescription: ' Desc ',
+        siteOgImage: ' https://example.com/og.png ',
+        siteLocale: ' es_ES ',
+        gscVerification: ' token ',
+        businessName: ' Example Biz ',
+        businessTelephone: ' +54 11 1111 ',
+        businessEmail: ' test@example.com ',
+        businessStreet: ' Main 123 ',
+        businessLocality: ' Tigre ',
+        businessRegion: ' Buenos Aires ',
+        businessPostalCode: ' 1648 ',
+        businessCountry: ' AR ',
+        businessLat: ' -34.0 ',
+        businessLng: ' -58.5 ',
+        businessArea: 'Tigre, GBA Norte, , Argentina'
+      }),
+      location
+    )
+
+    expect(seo.siteUrl).toBe('https://example.com')
+    expect(seo.siteName).toBe('Example')
+    expect(seo.description).toBe('Desc')
+    expect(seo.ogImage).toBe('https://example.com/og.png')
+    expect(seo.locale).toBe('es_ES')
+    expect(seo.verificationToken).toBe('token')
+    expect(seo.business).toMatchObject({
+      name: 'Example Biz',
+      telephone: '+54 11 1111',
+      email: 'test@example.com',
+      street: 'Main 123',
+      locality: 'Tigre',
+      region: 'Buenos Aires',
+      postalCode: '1648',
+      country: 'AR',
+      lat: -34,
+      lng: -58.5,
+      areaServed: ['Tigre', 'GBA Norte', 'Argentina']
+    })
+  })
+
+  it('omite latitud invalida y conserva longitud valida', () => {
+    const seo = getDefaultSeo(
+      contentPort,
+      buildConfig({
+        siteUrl: 'https://example.com',
+        businessLat: 'nope',
+        businessLng: ' -58.5 '
+      }),
+      location
+    )
+
+    expect(seo.business.lat).toBeUndefined()
+    expect(seo.business.lng).toBe(-58.5)
+  })
 })

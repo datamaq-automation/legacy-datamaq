@@ -29,9 +29,9 @@ describe('EngagementTracker', () => {
 
     const tracker = new EngagementTracker(clock, location, tracking, logger)
 
-    tracker.trackWhatsapp('hero', 'direct')
+    tracker.trackChat('hero', 'direct')
     now = 1500
-    tracker.trackWhatsapp('hero', 'direct')
+    tracker.trackChat('hero', 'direct')
 
     expect(sent).toHaveLength(1)
     expect(sent[0]?.name).toBe(conversionEvents.contact)
