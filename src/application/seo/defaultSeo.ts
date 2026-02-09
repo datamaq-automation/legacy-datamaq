@@ -71,11 +71,6 @@ export function getDefaultSeo(
     businessInfo.lng = lng
   }
 
-  const whatsapp = normalize(config.whatsappNumber)
-  if (whatsapp) {
-    businessInfo.whatsapp = whatsapp
-  }
-
   const meta: SeoMeta = {
     title: siteName,
     description,

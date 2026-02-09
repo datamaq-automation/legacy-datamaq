@@ -335,9 +335,5 @@ export const content: AppContent = {
       'Aceptá para habilitar Google Analytics 4 y Microsoft Clarity. Podés revisar los detalles en la sección legal del sitio.',
     acceptLabel: 'Aceptar',
     rejectLabel: 'Rechazar'
-  },
-
-  whatsappFab: {
-    ariaLabel: 'Abrir chat en línea'
   }
 }

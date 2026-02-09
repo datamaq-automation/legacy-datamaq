@@ -15,7 +15,6 @@ export type BusinessInfo = {
   country?: string
   lat?: number
   lng?: number
-  whatsapp?: string
   areaServed?: string[]
 }
 

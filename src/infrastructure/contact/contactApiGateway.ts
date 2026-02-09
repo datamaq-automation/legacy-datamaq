@@ -68,66 +68,7 @@ export class ContactApiGateway implements ContactGateway {
     const outgoingPayload = looksLikeChatwootPublicEndpoint
       ? chatwootPayload
       : backendPayload
-    if (import.meta.env.DEV) {
-      console.log('[contactApiGateway] endpoint selection', {
-        apiUrl,
-        isChatwootPublicEndpoint: looksLikeChatwootPublicEndpoint
-      })
-      if (looksLikeChatwootPublicEndpoint) {
-        console.warn(
-          '[contactApiGateway] using public endpoint; additional_attributes not supported'
-        )
-      }
-      console.log('[contactApiGateway] outgoing payload snapshot', outgoingPayload)
-      if (!looksLikeChatwootPublicEndpoint) {
-        console.log('[contactApiGateway] backend payload snapshot', backendPayload)
-      }
-      console.log('[contactApiGateway] custom attrs raw json', JSON.stringify(rawCustomAttributes))
-      console.log(
-        '[contactApiGateway] custom attrs sanitized json',
-        JSON.stringify(sanitizedCustomAttributes)
-      )
-      console.log('[contactApiGateway] submit start', {
-        apiUrl,
-        isChatwootPublicEndpoint: looksLikeChatwootPublicEndpoint,
-        hasOriginVerify: Boolean(originVerify),
-        payloadKeys: Object.keys(outgoingPayload),
-        customAttributeKeys: sanitizedCustomAttributes
-          ? Object.keys(sanitizedCustomAttributes)
-          : [],
-        customAttributes: sanitizedCustomAttributes ?? null,
-        customAttributesEntries: sanitizedCustomAttributes
-          ? Object.entries(sanitizedCustomAttributes)
-          : [],
-        customAttributesTypes: sanitizedCustomAttributes
-          ? Object.fromEntries(
-              Object.entries(sanitizedCustomAttributes).map(([key, value]) => [
-                key,
-                value === null ? 'null' : typeof value
-              ])
-            )
-          : {},
-        rawCustomAttributes,
-        sanitizedCustomAttributes,
-        rawCustomAttributesJson: JSON.stringify(rawCustomAttributes),
-        customAttributesJson: JSON.stringify(sanitizedCustomAttributes ?? null),
-        phoneNumber: payload.phoneNumber ?? null,
-        normalizedPhone: normalizedPhone ?? null
-      })
-    }
-    if (import.meta.env.DEV) {
-      console.log('[contactApiGateway] submit request body', {
-        body: JSON.stringify(outgoingPayload)
-      })
-    }
     const response = await this.http.postJson(apiUrl, outgoingPayload, headers)
-    if (import.meta.env.DEV) {
-      console.log('[contactApiGateway] submit response', {
-        status: response.status,
-        ok: response.ok,
-        text: response.text
-      })
-    }
 
     if (!response.ok) {
       this.logger.warn('[contactApiGateway] response no OK', {
@@ -146,14 +87,6 @@ export class ContactApiGateway implements ContactGateway {
       const contactIdentifier = extractContactIdentifier(response.data, response.text)
       if (contactIdentifier && hasCustomAttributes(sanitizedCustomAttributes)) {
         const updateUrl = buildChatwootContactUpdateUrl(apiUrl, contactIdentifier)
-        if (import.meta.env.DEV) {
-          console.log('[contactApiGateway] update start', {
-            updateUrl,
-            contactIdentifier,
-            customAttributes: sanitizedCustomAttributes,
-            phoneNumber: payload.phoneNumber ?? null
-          })
-        }
         const updateResponse = await this.http.patchJson(
           updateUrl,
           {
@@ -162,13 +95,6 @@ export class ContactApiGateway implements ContactGateway {
           },
           headers
         )
-        if (import.meta.env.DEV) {
-          console.log('[contactApiGateway] update response', {
-            status: updateResponse.status,
-            ok: updateResponse.ok,
-            text: updateResponse.text
-          })
-        }
       }
     }
 

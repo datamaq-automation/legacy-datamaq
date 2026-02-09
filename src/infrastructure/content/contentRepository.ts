@@ -11,8 +11,7 @@ import type {
   HeroContentPort,
   LegalContentPort,
   NavbarContentPort,
-  ServicesContentPort,
-  WhatsappFabContentPort
+  ServicesContentPort
 } from '@/application/ports/Content'
 import type { AppContent } from '@/domain/types/content'
 import { AppContentSchema } from '@/domain/schemas/contentSchema'
@@ -28,7 +27,6 @@ export class ContentRepository
     AboutContentPort,
     LegalContentPort,
     ConsentContentPort,
-    WhatsappFabContentPort,
     ServicesContentPort
 {
   getContent(): AppContent {
@@ -61,10 +59,6 @@ export class ContentRepository
 
   getConsentContent() {
     return this.getParsedContent().consent
-  }
-
-  getWhatsappFabContent() {
-    return this.getParsedContent().whatsappFab
   }
 
   getServicesContent() {

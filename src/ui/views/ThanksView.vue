@@ -29,7 +29,7 @@ const { chatEnabled, handleChat, handleGoHome } = useThanksView()
                   <button
                     v-if="chatEnabled"
                     type="button"
-                    class="btn btn-success btn-lg"
+                    class="btn btn-primary btn-lg"
                     @click="handleChat"
                   >
                     Abrir chat en linea

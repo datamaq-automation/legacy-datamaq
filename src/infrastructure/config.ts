@@ -52,13 +52,9 @@ function ensureApiUrl(value: NullableString, envKey: string): NullableString {
   }
 }
 
-const WHATSAPP_PRESET_FALLBACK = 'Vengo de la página web, quiero más información.'
 const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
 
 
-const whatsappNumber = normalize(publicConfig.whatsappNumber)
-const whatsappPresetMessage =
-  normalize(publicConfig.whatsappPresetMessage) ?? WHATSAPP_PRESET_FALLBACK
 const clarityProjectId = normalize(publicConfig.clarityProjectId)
 const ga4Id = normalize(publicConfig.ga4Id)
 const contactEmail =
@@ -74,17 +70,11 @@ const contactApiUrl = ensureApiUrl(
 )
 
 export const config = {
-  WHATSAPP_NUMBER: whatsappNumber,
-  WHATSAPP_PRESET_MESSAGE: whatsappPresetMessage,
   CLARITY_PROJECT_ID: clarityProjectId,
   GA4_ID: ga4Id,
   CONTACT_EMAIL: contactEmail,
   CONTACT_API_URL: contactApiUrl
 } as const
-
-export function isWhatsappConfigured(): boolean {
-  return Boolean(whatsappNumber)
-}
 
 export function getAnalyticsIds(): {
   clarityProjectId: NullableString

@@ -48,22 +48,8 @@ export function useContactForm(props: ContactFormProps) {
     const formElement = formRef.value
     feedback.message = ''
     feedback.success = false
-    if (import.meta.env.DEV) {
-      console.log('[contactForm] submit start', {
-        backendStatus: backendStatus.value,
-        isBackendAvailable: isBackendAvailable.value,
-        isChannelEnabled: isChannelEnabled.value,
-        contactEmail: props.contactEmail ?? null
-      })
-    }
 
     if (!isChannelEnabled.value) {
-      if (import.meta.env.DEV) {
-        console.warn('[contactForm] channel disabled', {
-          backendStatus: backendStatus.value,
-          contactEmail: props.contactEmail ?? null
-        })
-      }
       return
     }
     if (formElement && !formElement.reportValidity()) {
@@ -81,23 +67,8 @@ export function useContactForm(props: ContactFormProps) {
         company: form.company
       })
       if (!parsed.ok) {
-        if (import.meta.env.DEV) {
-          console.warn('[contactForm] validation failed')
-        }
         await announceFeedback(contact.errorMessage, false)
         return
-      }
-      if (import.meta.env.DEV) {
-        console.log('[contactForm] submit payload', {
-          firstName: parsed.data.firstName,
-          lastName: parsed.data.lastName,
-          email: parsed.data.email,
-          phoneNumber: parsed.data.phoneNumber ?? null,
-          city: parsed.data.city ?? null,
-          country: parsed.data.country ?? null,
-          company: parsed.data.company ?? null,
-          companyLength: parsed.data.company ? parsed.data.company.length : 0
-        })
       }
       const result = await props.onSubmit(parsed.data)
       if (result && result.ok) {

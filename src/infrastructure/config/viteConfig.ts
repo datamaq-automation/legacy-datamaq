@@ -3,14 +3,11 @@ import { publicConfig } from '@/infrastructure/config/publicConfig'
 
 type NullableString = string | undefined
 
-const WHATSAPP_PRESET_FALLBACK = 'Vengo de la pagina web, quiero mas informacion.'
 const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
 
 export class ViteConfig implements ConfigPort {
   contactApiUrl: NullableString
   contactEmail: NullableString
-  whatsappNumber: NullableString
-  whatsappPresetMessage: NullableString
   originVerifySecret: NullableString
   analyticsEnabled: boolean | undefined
   siteUrl: NullableString
@@ -32,9 +29,6 @@ export class ViteConfig implements ConfigPort {
   businessArea: NullableString
 
   constructor() {
-    this.whatsappNumber = normalize(publicConfig.whatsappNumber)
-    this.whatsappPresetMessage =
-      normalize(publicConfig.whatsappPresetMessage) ?? WHATSAPP_PRESET_FALLBACK
     this.contactEmail =
       ensureEmail(
         normalize(import.meta.env.VITE_CONTACT_EMAIL) ??

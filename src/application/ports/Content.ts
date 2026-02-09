@@ -11,8 +11,7 @@ import type {
   HeroContent,
   LegalContent,
   NavbarContent,
-  ServicesContent,
-  WhatsappFabContent
+  ServicesContent
 } from '@/domain/types/content'
 
 export interface ContentPort {
@@ -45,10 +44,6 @@ export interface LegalContentPort {
 
 export interface ConsentContentPort {
   getConsentContent(): ConsentContent
-}
-
-export interface WhatsappFabContentPort {
-  getWhatsappFabContent(): WhatsappFabContent
 }
 
 export interface ServicesContentPort {

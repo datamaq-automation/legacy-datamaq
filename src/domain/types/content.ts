@@ -101,10 +101,6 @@ export interface ConsentContent {
   rejectLabel: string
 }
 
-export interface WhatsappFabContent {
-  ariaLabel: string
-}
-
 export interface AppContent {
   hero: HeroContent
   services: ServicesContent
@@ -114,7 +110,6 @@ export interface AppContent {
   legal: LegalContent
   contact: ContactContent
   consent: ConsentContent
-  whatsappFab: WhatsappFabContent
 }
 
 export interface CommercialConfig {

@@ -2,12 +2,11 @@ import type {
   Clock,
   LocationProvider,
   NavigatorProvider,
-  RuntimeFlags,
-  WindowOpener
+  RuntimeFlags
 } from '@/application/ports/Environment'
 
 export class BrowserEnvironment
-  implements Clock, LocationProvider, NavigatorProvider, WindowOpener, RuntimeFlags
+  implements Clock, LocationProvider, NavigatorProvider, RuntimeFlags
 {
   now(): number {
     return Date.now()
@@ -27,13 +26,6 @@ export class BrowserEnvironment
 
   userAgent(): string {
     return typeof navigator !== 'undefined' ? navigator.userAgent : ''
-  }
-
-  open(url: string): void {
-    if (typeof window === 'undefined') {
-      return
-    }
-    window.open(url, '_blank', 'noopener')
   }
 
   isBrowser(): boolean {

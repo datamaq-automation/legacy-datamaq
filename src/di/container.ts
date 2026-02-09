@@ -9,9 +9,7 @@ import { EngagementTracker } from '@/application/analytics/engagementTracker'
 import { LeadTracking } from '@/application/analytics/leadTracking'
 import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import { ContactSubmittedHandler } from '@/application/contact/handlers/contactSubmittedHandler'
-import { OpenWhatsappUseCase } from '@/application/use-cases/openWhatsapp'
 import { TrackingFacade } from '@/application/analytics/trackingFacade'
-import { BrowserAttribution } from '@/infrastructure/attribution/browserAttribution'
 import { BrowserAnalytics } from '@/infrastructure/analytics/browserAnalytics'
 import { BrowserAnalyticsAdapter } from '@/infrastructure/analytics/browserAnalyticsAdapter'
 import { BrowserConsentAdapter } from '@/infrastructure/consent/browserConsentAdapter'
@@ -42,7 +40,6 @@ const notifications = new NotificationFacade([new NoopNotificationProvider()], l
 const contactBackend = new ContactBackendMonitor(http, config, environment, logger)
 const engagementTracker = new EngagementTracker(environment, environment, tracking, logger)
 const storage = new BrowserStorage()
-const attribution = new BrowserAttribution(storage)
 const sessionStorage = new BrowserSessionStorage()
 const consentManager = createConsentManager(storage, logger)
 const leadTracking = new LeadTracking(sessionStorage, tracking, config, environment)
@@ -51,18 +48,6 @@ const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, storage, logger)
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
 const contentRepository = new ContentRepository()
-
-const openWhatsapp = new OpenWhatsappUseCase(
-  config,
-  environment,
-  environment,
-  environment,
-  http,
-  contactBackend,
-  engagementTracker,
-  attribution,
-  logger
-)
 
 const submitContact = new SubmitContactUseCase(
   contactService,
@@ -93,7 +78,6 @@ export const container = {
   leadTracking,
   storage,
   useCases: {
-    openWhatsapp,
     submitContact
   }
 } as const

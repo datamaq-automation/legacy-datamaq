@@ -101,10 +101,6 @@ const ConsentSchema = z.object({
   rejectLabel: z.string()
 })
 
-const WhatsappFabSchema = z.object({
-  ariaLabel: z.string()
-})
-
 export const AppContentSchema = z.object({
   hero: HeroSchema,
   services: ServicesSchema,
@@ -113,6 +109,5 @@ export const AppContentSchema = z.object({
   footer: FooterSchema,
   legal: LegalSchema,
   contact: ContactSchema,
-  consent: ConsentSchema,
-  whatsappFab: WhatsappFabSchema
+  consent: ConsentSchema
 })

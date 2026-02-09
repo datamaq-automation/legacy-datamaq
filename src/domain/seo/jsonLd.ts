@@ -53,16 +53,6 @@ export function buildLocalBusinessJsonLd(meta: SeoMeta): Record<string, unknown>
     entry['geo'] = geo
   }
 
-  if (business.whatsapp) {
-    entry['contactPoint'] = [
-      {
-        '@type': 'ContactPoint',
-        contactType: 'customer service',
-        telephone: business.whatsapp
-      }
-    ]
-  }
-
   if (business.areaServed?.length) {
     entry['areaServed'] = business.areaServed
   }

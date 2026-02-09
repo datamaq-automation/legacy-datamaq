@@ -12,7 +12,6 @@ Este documento describe el contenido estatico definido en `src/infrastructure/co
 - `legal`: texto legal y de cookies.
 - `contact`: labels y mensajes del formulario de contacto por email.
 - `consent`: textos del banner de cookies.
-- `whatsappFab`: etiqueta accesible heredada (el boton flotante fue removido).
 
 ## Imagenes
 

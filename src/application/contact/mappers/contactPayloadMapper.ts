@@ -36,12 +36,5 @@ export function mapContactRequestToSubmitPayload(
     userAgent: meta.userAgent,
     createdAt: meta.createdAt
   }
-  if (import.meta.env.DEV) {
-    console.log('[contactPayloadMapper] mapped submit payload', {
-      details: details ?? null,
-      meta,
-      result: submitPayload
-    })
-  }
   return submitPayload
 }

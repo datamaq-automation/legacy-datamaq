@@ -12,10 +12,6 @@ export interface NavigatorProvider {
   userAgent(): string
 }
 
-export interface WindowOpener {
-  open(url: string): void
-}
-
 export interface RuntimeFlags {
   isBrowser(): boolean
   isDev(): boolean

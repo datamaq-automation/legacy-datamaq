@@ -10,7 +10,7 @@ export interface ContactEngagementContext {
   navigationTimeMs: number
 }
 
-const WHATSAPP_EVENT_NAME = conversionEvents.contact
+const CHAT_EVENT_NAME = conversionEvents.contact
 const EMAIL_EVENT_NAME = conversionEvents.generateLead
 const DEDUPE_WINDOW_MS = 2000
 
@@ -27,16 +27,12 @@ export class EngagementTracker {
     this.pageEntryTimestamp = clock.now()
   }
 
-  trackWhatsapp(section: string, trafficSource: string): void {
+  trackChat(section: string, trafficSource: string): void {
     const context = this.buildContext(section, trafficSource)
-    if (this.shouldSkipEvent(WHATSAPP_EVENT_NAME, context)) {
+    if (this.shouldSkipEvent(CHAT_EVENT_NAME, context)) {
       return
     }
-    this.tracking.trackEvent(WHATSAPP_EVENT_NAME, context)
-  }
-
-  trackChat(section: string, trafficSource: string): void {
-    this.trackWhatsapp(section, trafficSource)
+    this.tracking.trackEvent(CHAT_EVENT_NAME, context)
   }
 
   trackEmail(section: string, trafficSource: string): void {
