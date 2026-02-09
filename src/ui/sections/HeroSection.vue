@@ -6,7 +6,7 @@ Path: src/ui/sections/HeroSection.vue
   <section class="section-mobile py-5 text-body c-hero" aria-labelledby="hero-title">
     <div class="container py-4">
       <div class="row align-items-center gy-5">
-        <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start">
+        <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start c-hero__content">
           <div
             class="d-inline-flex align-items-center gap-2 rounded-pill px-3 py-1 bg-success-subtle text-success-emphasis fw-semibold text-uppercase small"
           >
@@ -92,10 +92,11 @@ Path: src/ui/sections/HeroSection.vue
             </li>
           </ul>
         </div>
-        <div class="col-lg-6 order-1 order-lg-2 text-center">
+        <div class="col-lg-6 order-1 order-lg-2 text-center c-hero__media">
           <div class="position-relative mx-auto c-hero__illustration">
             <div
-              class="bg-primary rounded-circle position-absolute top-50 start-50 translate-middle opacity-25 c-hero__halo"
+              class="bg-primary rounded-circle position-absolute opacity-25 c-hero__halo"
+              aria-hidden="true"
             ></div>
             <picture class="d-inline-block position-relative">
               <img

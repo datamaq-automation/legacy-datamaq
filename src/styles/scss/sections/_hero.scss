@@ -1,5 +1,9 @@
 .c-hero {
   position: relative;
+  isolation: isolate;
+  --hero-halo-size: clamp(260px, 30vw, 320px);
+  --hero-halo-x: 56%;
+  --hero-halo-y: 50%;
   background: linear-gradient(
     135deg,
     var(--dm-bg-0) 0%,
@@ -13,6 +17,7 @@
     content: '';
     position: absolute;
     inset: 0;
+    z-index: 0;
     background-image:
       linear-gradient(var(--dm-line-blueprint) 1px, transparent 1px),
       linear-gradient(90deg, var(--dm-line-blueprint) 1px, transparent 1px);
@@ -26,13 +31,35 @@
     z-index: 1;
   }
 
+  &__content {
+    position: relative;
+    z-index: 2;
+  }
+
+  &__media {
+    position: relative;
+    z-index: 1;
+  }
+
   &__illustration {
+    position: relative;
     max-width: 420px;
   }
 
   &__halo {
-    width: 320px;
-    height: 320px;
+    width: var(--hero-halo-size);
+    height: var(--hero-halo-size);
+    top: var(--hero-halo-y);
+    left: var(--hero-halo-x);
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &__illustration picture,
+  &__illustration img {
+    position: relative;
+    z-index: 1;
   }
 
   &__primary-cta {
@@ -114,7 +141,36 @@
   }
 }
 
+@media (max-width: 767.98px) {
+  .c-hero {
+    --hero-halo-size: clamp(210px, 58vw, 280px);
+    --hero-halo-x: 62%;
+    --hero-halo-y: 42%;
+  }
+
+  .c-hero__benefit-card {
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .c-hero__benefit-title {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  .c-hero__benefit-text {
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+}
+
 @media (max-width: 575.98px) {
+  .c-hero {
+    --hero-halo-size: clamp(180px, 72vw, 240px);
+    --hero-halo-x: 72%;
+    --hero-halo-y: 32%;
+  }
+
   .c-hero__secondary-cta {
     font-size: 1rem;
     line-height: 1.5;
@@ -130,22 +186,5 @@
 
   .c-hero__benefits {
     row-gap: 1.5rem;
-  }
-}
-
-@media (max-width: 767.98px) {
-  .c-hero__benefit-card {
-    padding: 1.5rem;
-    backdrop-filter: blur(10px);
-  }
-
-  .c-hero__benefit-title {
-    font-size: 1.1rem;
-    line-height: 1.5;
-  }
-
-  .c-hero__benefit-text {
-    font-size: 1.02rem;
-    line-height: 1.65;
   }
 }
