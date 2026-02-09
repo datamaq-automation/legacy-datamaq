@@ -9,7 +9,6 @@ import installTools from '@/assets/install-tools.svg'
 import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
-
 export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garín (GBA Norte)', // base prioritaria
   tarifaBaseDesdeARS: 180000, // instalación típica 1 Powermeter (equipo provisto por el cliente)
@@ -58,10 +57,8 @@ export const content: AppContent = {
   hero: {
     badge: 'Tarifa base publicada · Respuesta en menos de 24 horas',
     title: 'Servicios industriales + automatización comercial, prolijos y documentados',
-    subtitle:
-      `Industrial: instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico. Comercial: implementamos ${CHATWOOT} + ${RASA} para ordenar atención, calificar consultas y derivar más rápido.`,
-    responseNote:
-      `En menos de 24 horas te respondemos con: tarifas base publicadas (Powermeter desde ${TARIFA_BASE}, ${CHATWOOT} desde ${TARIFA_CHATWOOT}, ${RASA} desde ${TARIFA_RASA}), traslado según distancia desde ${BASE}${TRASLADO_TEXT} (solo servicios presenciales) y próximos pasos para coordinar.`,
+    subtitle: `Industrial: instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico. Comercial: implementamos ${CHATWOOT} + ${RASA} para ordenar atención, calificar consultas y derivar más rápido.`,
+    responseNote: `En menos de 24 horas te respondemos con: tarifas base publicadas (Powermeter desde ${TARIFA_BASE}, ${CHATWOOT} desde ${TARIFA_CHATWOOT}, ${RASA} desde ${TARIFA_RASA}), traslado según distancia desde ${BASE}${TRASLADO_TEXT} (solo servicios presenciales) y próximos pasos para coordinar.`,
     chatUnavailableMessage:
       'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.',
     primaryCta: {
@@ -103,8 +100,7 @@ export const content: AppContent = {
       {
         id: 'instalacion',
         title: `Instalación industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
-        description:
-          `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medición funcionando con una verificación de referencia. Ideal para arrancar a medir consumo y variables eléctricas con criterios de seguridad y trazabilidad.`,
+        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medición funcionando con una verificación de referencia. Ideal para arrancar a medir consumo y variables eléctricas con criterios de seguridad y trazabilidad.`,
         subtitle: 'Incluye',
         media: {
           src: installTools,
@@ -158,8 +154,7 @@ export const content: AppContent = {
           alt: 'Ilustración de mediciones y checklist',
           width: 160,
           height: 140,
-          caption:
-            'Servicio orientado a industria (GBA Norte prioritario). Disponibilidad extendida según agenda.'
+          caption: 'Servicio orientado a industria (GBA Norte prioritario). Disponibilidad extendida según agenda.'
         },
         cta: {
           label: 'Reportar falla por chat',
@@ -201,8 +196,7 @@ export const content: AppContent = {
       {
         id: 'chatwoot',
         title: `Instalación y puesta en marcha de ${CHATWOOT} (automatización comercial)`,
-        description:
-          `Implementamos ${CHATWOOT} para centralizar WhatsApp/Telegram/webchat, ordenar la atención y dar trazabilidad (etiquetas, equipos, macros y reportes). Ideal para equipos de ventas y soporte que necesitan responder más rápido y con criterio.`,
+        description: `Implementamos ${CHATWOOT} para centralizar WhatsApp/Telegram/webchat, ordenar la atención y dar trazabilidad (etiquetas, equipos, macros y reportes). Ideal para equipos de ventas y soporte que necesitan responder más rápido y con criterio.`,
         subtitle: 'Incluye',
         media: {
           src: analyticsDashboard,
@@ -237,8 +231,7 @@ export const content: AppContent = {
       {
         id: 'rasa',
         title: `Implementación mínima de ${RASA} (intenciones iniciales + flujo base)`,
-        description:
-          `Implementamos ${RASA} para automatizar preguntas frecuentes, clasificar mensajes y calificar consultas. Dejamos un bot base funcionando con intenciones iniciales, respuestas y fallback, listo para iterar con datos reales.`,
+        description: `Implementamos ${RASA} para automatizar preguntas frecuentes, clasificar mensajes y calificar consultas. Dejamos un bot base funcionando con intenciones iniciales, respuestas y fallback, listo para iterar con datos reales.`,
         subtitle: 'Incluye',
         media: {
           src: analyticsDashboard,
@@ -272,11 +265,21 @@ export const content: AppContent = {
     ]
   },
 
+  profile: {
+    title: 'Perfil técnico',
+    bullets: [
+      'Servicios industriales y de automatización con foco en seguridad, trazabilidad y documentación.',
+      'Formación: Técnico Electrónico · Téc. Univ. en Mantenimiento Industrial · Estudiante de Lic. en IA y Robótica.',
+      'Enfoque de trabajo: checklist, verificación de funcionamiento, registro de cambios y handoff.'
+    ]
+  },
+
   about: {
     title: 'Sobre DataMaq',
     paragraphs: [
       'DataMaq brinda servicios técnicos con dos focos: (1) industria (medición/diagnóstico) y (2) automatización comercial (atención y calificación de consultas). El objetivo es que tomes decisiones con datos reales y que tu operación quede ordenada, medible y documentada.',
-      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA según disponibilidad. Servicios de software disponibles en modalidad self-hosted (servidor del cliente) o VPS administrado por DataMaq.`
+      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA según disponibilidad. Servicios de software disponibles en modalidad self-hosted (servidor del cliente) o VPS administrado por DataMaq.`,
+      'Perfil técnico: Técnico Electrónico · Téc. Univ. en Mantenimiento Industrial · Estudiante de Lic. en IA y Robótica.'
     ],
     image: {
       src: teamTraining,
@@ -293,6 +296,10 @@ export const content: AppContent = {
       {
         label: 'Servicios',
         href: '#servicios'
+      },
+      {
+        label: 'Perfil',
+        href: '#perfil'
       }
     ],
     contactLabel: 'Abrir chat'
@@ -303,14 +310,12 @@ export const content: AppContent = {
   },
 
   legal: {
-    text:
-      `La tarifa base publicada para Powermeter corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. Para servicios de software (Chatwoot/Rasa), el alcance, infraestructura (servidor/hosting), integraciones y nivel de implementación se definen y cotizan por separado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
+    text: `La tarifa base publicada para Powermeter corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. Para servicios de software (Chatwoot/Rasa), el alcance, infraestructura (servidor/hosting), integraciones y nivel de implementación se definen y cotizan por separado. En casos particulares que requieran intervención o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
   },
 
   contact: {
     title: '¿Querés recibir una propuesta por correo?',
-    subtitle:
-      `Completá el formulario y te enviamos una propuesta según el servicio: Powermeter (${TARIFA_BASE}), ${CHATWOOT} (${TARIFA_CHATWOOT}) o ${RASA} (${TARIFA_RASA}). Si es urgente, el canal más rápido es el chat en línea.`,
+    subtitle: `Completá el formulario y te enviamos una propuesta según el servicio: Powermeter (${TARIFA_BASE}), ${CHATWOOT} (${TARIFA_CHATWOOT}) o ${RASA} (${TARIFA_RASA}). Si es urgente, el canal más rápido es el chat en línea.`,
     labels: {
       firstName: 'Nombre',
       lastName: 'Apellido',
@@ -318,7 +323,7 @@ export const content: AppContent = {
       phone: 'Tel?fono (opcional)',
       city: 'Ciudad (opcional)',
       country: 'Pa?s',
-      company: 'Empresa (opcional)',
+      company: 'Empresa (opcional)'
     },
     submitLabel: 'Enviar consulta por correo',
     checkingMessage: 'Verificando la disponibilidad del servicio de correo electrónico…',

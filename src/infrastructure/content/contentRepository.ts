@@ -11,6 +11,7 @@ import type {
   HeroContentPort,
   LegalContentPort,
   NavbarContentPort,
+  ProfileContentPort,
   ServicesContentPort
 } from '@/application/ports/Content'
 import type { AppContent } from '@/domain/types/content'
@@ -25,6 +26,7 @@ export class ContentRepository
     ContactContentPort,
     HeroContentPort,
     AboutContentPort,
+    ProfileContentPort,
     LegalContentPort,
     ConsentContentPort,
     ServicesContentPort
@@ -51,6 +53,10 @@ export class ContentRepository
 
   getAboutContent() {
     return this.getParsedContent().about
+  }
+
+  getProfileContent() {
+    return this.getParsedContent().profile
   }
 
   getLegalContent() {

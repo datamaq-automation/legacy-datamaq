@@ -2,6 +2,7 @@
 import Navbar from '@/ui/layout/Navbar.vue'
 import HeroSection from '@/ui/sections/HeroSection.vue'
 import ServiciosSection from '@/ui/sections/ServiciosSection.vue'
+import PerfilSection from '@/ui/sections/PerfilSection.vue'
 import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
 import SobreProfeBustos from '@/ui/sections/SobreProfeBustos.vue'
 import Footer from '@/ui/layout/Footer.vue'
@@ -27,6 +28,7 @@ const {
         :chatEnabled="chatEnabled"
         @contact="handleChat($event)"
       />
+      <PerfilSection />
       <ContactFormSection
         v-bind="contactEmail ? { contactEmail } : {}"
         :on-submit="handleEmailSubmit"

@@ -11,6 +11,7 @@ import type {
   HeroContent,
   LegalContent,
   NavbarContent,
+  ProfileContent,
   ServicesContent
 } from '@/domain/types/content'
 
@@ -36,6 +37,10 @@ export interface HeroContentPort {
 
 export interface AboutContentPort {
   getAboutContent(): AboutContent
+}
+
+export interface ProfileContentPort {
+  getProfileContent(): ProfileContent
 }
 
 export interface LegalContentPort {

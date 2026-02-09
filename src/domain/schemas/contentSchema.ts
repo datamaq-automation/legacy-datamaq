@@ -59,6 +59,11 @@ const AboutSchema = z.object({
   image: ImageContentSchema
 })
 
+const ProfileSchema = z.object({
+  title: z.string(),
+  bullets: z.array(z.string())
+})
+
 const NavbarSchema = z.object({
   brand: z.string(),
   brandAriaLabel: z.string(),
@@ -105,6 +110,7 @@ export const AppContentSchema = z.object({
   hero: HeroSchema,
   services: ServicesSchema,
   about: AboutSchema,
+  profile: ProfileSchema,
   navbar: NavbarSchema,
   footer: FooterSchema,
   legal: LegalSchema,

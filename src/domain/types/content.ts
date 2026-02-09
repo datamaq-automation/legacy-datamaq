@@ -101,10 +101,20 @@ export interface ConsentContent {
   rejectLabel: string
 }
 
+/**
+ * Bloque de perfil para mostrar credenciales y enfoque sin ensuciar el hero.
+ */
+export interface ProfileContent {
+  title: string
+  bullets: string[]
+}
+
 export interface AppContent {
   hero: HeroContent
   services: ServicesContent
   about: AboutContent
+  profile: ProfileContent
+
   navbar: NavbarContent
   footer: FooterContent
   legal: LegalContent
