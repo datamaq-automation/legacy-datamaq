@@ -1,16 +1,16 @@
 import {
-  getChatEnabled,
+  getWhatsAppEnabled,
   getContactEmail,
-  openChat,
+  openWhatsApp,
   submitContact
 } from '@/ui/controllers/contactController'
 
 export function useMedicionConsumoEscobar() {
-  const chatEnabled = getChatEnabled()
+  const contactCtaEnabled = getWhatsAppEnabled()
   const contactEmail = getContactEmail()
 
-  function handleChat(section: string) {
-    openChat(section)
+  function handleChat(section: string, href?: string) {
+    openWhatsApp(section, href)
   }
 
   function handleEmailSubmit(payload: Parameters<typeof submitContact>[1]) {
@@ -18,7 +18,7 @@ export function useMedicionConsumoEscobar() {
   }
 
   return {
-    chatEnabled,
+    contactCtaEnabled,
     contactEmail,
     handleChat,
     handleEmailSubmit

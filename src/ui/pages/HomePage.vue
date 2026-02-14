@@ -11,7 +11,7 @@ import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import { useHomePage } from './HomePage'
 
 const {
-  chatEnabled,
+  contactCtaEnabled,
   contactEmail,
   handleChat,
   handleEmailSubmit
@@ -21,11 +21,11 @@ const {
 <template>
   <div class="app-shell bg-dark text-white min-vh-100">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
-    <Navbar :chatEnabled="chatEnabled" @contact="handleChat('navbar')" />
+    <Navbar :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('navbar')" />
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta">
-      <HeroSection :chatEnabled="chatEnabled" @primary-cta="handleChat('hero', $event)" />
+      <HeroSection :contactCtaEnabled="contactCtaEnabled" @primary-cta="handleChat('hero', $event)" />
       <ServiciosSection
-        :chatEnabled="chatEnabled"
+        :contactCtaEnabled="contactCtaEnabled"
         @contact="handleChat($event.section, $event.href)"
       />
       <PerfilSection />

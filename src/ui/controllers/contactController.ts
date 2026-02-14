@@ -2,7 +2,7 @@ import type { EmailContactPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 import { useContactFacade } from '@/ui/features/contact/useContactFacade'
 
-export function getChatEnabled(): boolean {
+export function getWhatsAppEnabled(): boolean {
   return Boolean(resolveWhatsAppUrl())
 }
 
@@ -11,7 +11,7 @@ export function getContactEmail(): string | undefined {
   return value?.trim() ? value : undefined
 }
 
-export function openChat(section: string = 'whatsapp', href?: string): void {
+export function openWhatsApp(section: string = 'whatsapp', href?: string): void {
   const whatsappUrl = normalizeHref(href) ?? resolveWhatsAppUrl()
   if (!whatsappUrl) {
     return

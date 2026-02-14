@@ -4,13 +4,13 @@ import Footer from '@/ui/layout/Footer.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import { useThanksView } from './ThanksView'
 
-const { chatEnabled, handleChat, handleGoHome } = useThanksView()
+const { contactCtaEnabled, handleChat, handleGoHome } = useThanksView()
 </script>
 
 <template>
   <div class="thanks-view app-shell bg-dark text-white min-vh-100">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
-    <Navbar :chatEnabled="chatEnabled" @contact="handleChat" />
+    <Navbar :contactCtaEnabled="contactCtaEnabled" @contact="handleChat" />
     <main
       id="contenido-principal"
       class="flex-grow-1 d-flex align-items-center py-5 thanks-hero"
@@ -27,7 +27,7 @@ const { chatEnabled, handleChat, handleGoHome } = useThanksView()
                 </p>
                 <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
                   <button
-                    v-if="chatEnabled"
+                    v-if="contactCtaEnabled"
                     type="button"
                     class="btn btn-primary btn-lg"
                     @click="handleChat"

@@ -1,16 +1,16 @@
 import { onMounted } from 'vue'
-import { getChatEnabled, openChat } from '@/ui/controllers/contactController'
+import { getWhatsAppEnabled, openWhatsApp } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
 import { useRouter } from 'vue-router'
 import './ThanksView.css'
 
 export function useThanksView() {
-  const chatEnabled = getChatEnabled()
+  const contactCtaEnabled = getWhatsAppEnabled()
   const { leadTracking } = useContainer()
   const router = useRouter()
 
   function handleChat() {
-    openChat('gracias')
+    openWhatsApp('gracias')
   }
 
   function handleGoHome() {
@@ -23,7 +23,7 @@ export function useThanksView() {
   })
 
   return {
-    chatEnabled,
+    contactCtaEnabled,
     handleChat,
     handleGoHome
   }

@@ -25,7 +25,5 @@ export const publicConfig = {
   businessLng: undefined,
   businessArea: undefined,
   contactEmail: 'contacto@datamaq.com.ar',
-  contactApiUrl: undefined,
-  chatwootBaseUrl: undefined,
-  chatwootWebsiteToken: undefined
+  contactApiUrl: undefined
 } as const

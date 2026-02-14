@@ -8,7 +8,7 @@ import { useMedicionConsumoEscobar } from './MedicionConsumoEscobar'
 
 const content = landingPages.medicionConsumoEscobar
 const {
-  chatEnabled,
+  contactCtaEnabled,
   contactEmail,
   handleChat,
   handleEmailSubmit
@@ -18,7 +18,7 @@ const {
 <template>
   <div class="app-shell bg-dark text-white min-vh-100">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
-    <Navbar :chatEnabled="chatEnabled" @contact="handleChat('landing-escobar-navbar')" />
+    <Navbar :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('landing-escobar-navbar')" />
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta">
       <section class="py-5" aria-labelledby="escobar-hero-title">
         <div class="container">
@@ -27,7 +27,7 @@ const {
           <p class="lead text-white-50 mb-4">{{ content.lead }}</p>
           <div class="d-flex flex-column flex-sm-row gap-3">
             <button
-              v-if="chatEnabled"
+              v-if="contactCtaEnabled"
               type="button"
               class="btn btn-primary btn-lg"
               @click="handleChat('landing-escobar-hero')"

@@ -1,5 +1,5 @@
 export interface NavbarProps {
-  chatEnabled: boolean
+  contactCtaEnabled: boolean
 }
 
 export interface NavbarEmits {

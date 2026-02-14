@@ -35,7 +35,7 @@ Path: src/ui/layout/Navbar.vue
             <li v-for="link in navbar.links" :key="link.href" class="nav-item">
               <a class="nav-link" :href="link.href" @click="handleNavLinkClick">{{ link.label }}</a>
             </li>
-            <li v-if="chatEnabled" class="nav-item ms-lg-3">
+            <li v-if="contactCtaEnabled" class="nav-item ms-lg-3">
               <button type="button" class="btn btn-primary" @click="handleContactClick">
                 {{ navbar.contactLabel }}
               </button>
@@ -59,7 +59,7 @@ const {
   isDesktop,
   navRef,
   toggleButtonRef,
-  chatEnabled,
+  contactCtaEnabled,
   navbar,
   toggleMenu,
   handleNavLinkClick,

@@ -1,57 +1,55 @@
 ﻿# datamaq-www
 
-Landing corporativa construida con **Vue 3** y **Vite** para promocionar los servicios industriales de datamaq.
+Landing corporativa construida con Vue 3 y Vite para promocionar servicios industriales de DataMaq.
 
-## CaracterÃ­sticas principales
-- SPA liviana optimizada para CTAs de chat y correo electrÃ³nico.
-- IntegraciÃ³n con API externa para registrar contactos del formulario.
-- InstrumentaciÃ³n analÃ­tica con **GA4** y **Microsoft Clarity**.
-- Componentes accesibles y reutilizables que siguen la guÃ­a de diseÃ±o definida en `docs/`.
-- Banner de consentimiento que bloquea GA4/Clarity hasta que la persona usuaria otorgue permiso.
-- Monitoreo de disponibilidad del backend de contacto que deshabilita el formulario y los eventos silenciosos cuando el servicio no responde.
+## Caracteristicas principales
+- SPA liviana optimizada para CTAs de WhatsApp y correo electronico.
+- Integracion con API externa para registrar contactos del formulario.
+- Instrumentacion analitica con GA4 y Microsoft Clarity.
+- Componentes accesibles y reutilizables segun la guia de `docs/`.
+- Banner de consentimiento que bloquea GA4/Clarity hasta aceptacion explicita.
+- Monitoreo de disponibilidad del backend de contacto para deshabilitar el formulario cuando el servicio no responde.
 
 ## Requisitos previos
-- **Node.js** `>= 20.19.0` (ver `.nvmrc` si corresponde).
-- **npm** `>= 8`.
-- Acceso a los endpoints HTTPS provistos por el backend de datamaq para recibir formularios/contactos.
+- Node.js >= 20.19.0
+- npm >= 8
+- Acceso al endpoint HTTPS del backend para recibir formularios.
 
-## ConfiguraciÃ³n de entorno
-1. CopiÃ¡ `.env.example` a `.env` y completÃ¡ los valores reales para cada entorno (desarrollo, staging, producciÃ³n).
-2. VerificÃ¡ que `VITE_CONTACT_API_URL` apunte a un endpoint **HTTPS** vÃ¡lido. Para completar Company/Ciudad/Pais en Chatwoot, usar el backend en `backend/` y configurar `/v1/contact`.
-3. AjustÃ¡ los IDs de analÃ­tica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segÃºn la propiedad correspondiente.
-4. Para el flujo de contactos con Chatwoot, revisÃ¡ `docs/chatwoot-contact.md`.
+## Configuracion de entorno
+1. Copia `.env.example` a `.env` y completa los valores reales para cada entorno.
+2. Verifica que `VITE_CONTACT_API_URL` apunte a un endpoint HTTPS valido.
+3. Ajusta los IDs de analitica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segun la propiedad correspondiente.
 
-## InstalaciÃ³n y scripts
+## Instalacion y scripts
 ```sh
-npm install       # instala dependencias
-npm run dev       # levanta el servidor de desarrollo (hot reload)
-npm run build     # compila los assets para producciÃ³n en ./dist
-npm run preview   # sirve el build localmente para validaciones finales
-npm run typecheck # valida TypeScript en modo estricto
-npm run test      # ejecuta tests unitarios
-npm run test:a11y # ejecuta la auditorÃ­a heurÃ­stica de accesibilidad y genera el build si no existe
-npm run check:css # valida presupuesto de CSS
+npm install         # instala dependencias
+npm run dev         # servidor de desarrollo
+npm run build       # compila assets para produccion en ./dist
+npm run preview     # sirve el build localmente
+npm run typecheck   # valida TypeScript estricto
+npm run test        # ejecuta tests unitarios
+npm run test:a11y   # auditoria heuristica de accesibilidad
+npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
 ```
 
-## AnalÃ­tica y eventos
-- Los eventos de compromiso se envÃ­an vÃ­a `gtag` y `clarity`. El contrato de datos se documenta en
-  `src/application/analytics/engagementTracker.ts`, `src/application/analytics/trackingFacade.ts` y en las declaraciones globales de `src/env.d.ts`.
-- Para evitar duplicidades, se deduplican los eventos en una ventana de 2 segundos antes de propagarlos a cada destino.
-- GA4 y Clarity solo se inicializan cuando el banner de consentimiento registra una aceptaciÃ³n explÃ­cita.
+## Analitica y eventos
+- Los eventos de compromiso se envian via `gtag` y `clarity`.
+- El contrato de datos esta en `src/application/analytics/engagementTracker.ts` y `src/application/analytics/trackingFacade.ts`.
+- Para evitar duplicados, se deduplican eventos en una ventana de 2 segundos.
+- GA4 y Clarity solo se inicializan cuando el banner de consentimiento registra aceptacion.
 
 ## Accesibilidad
-- EjecutÃ¡ `npm run test:a11y` para analizar los templates `.vue` y asegurar nombres accesibles en botones/enlaces, ademÃ¡s de
-  etiquetas `alt` en imÃ¡genes y encabezados en secciones clave.
-- CorregÃ­ cualquier hallazgo reportado antes de desplegar cambios visuales.
+- Ejecuta `npm run test:a11y` para analizar templates `.vue`.
+- Corrige hallazgos antes de desplegar cambios visuales.
 
 ## Despliegue sugerido
-1. Ejecutar `npm run build` y publicar el contenido de `dist/` en el hosting estÃ¡tico elegido (Cloudflare Pages, Netlify, etc.).
-2. Configurar las variables de entorno en el servicio de hosting replicando los valores de `.env`.
-3. Validar que las solicitudes al endpoint `VITE_CONTACT_API_URL` respondan con cÃ³digo `2xx` sobre HTTPS. El monitoreo automÃ¡tico mostrarÃ¡ mensajes de indisponibilidad si falla.
-4. Verificar en QA que los eventos de chat y correo se registran una sola vez en GA4 y Clarity.
+1. Ejecutar `npm run build` y publicar `dist/` en el hosting estatico.
+2. Configurar variables de entorno en el servicio de hosting.
+3. Validar respuestas `2xx` del endpoint `VITE_CONTACT_API_URL` sobre HTTPS.
+4. Verificar en QA que eventos de WhatsApp y correo se registran una sola vez en GA4 y Clarity.
 
 ## Recursos adicionales
-- Backlog tÃ©cnico priorizado: `docs/todo.md`.
+- Backlog tecnico priorizado: `docs/todo.md`.
 
-Â¿Dudas o sugerencias? Escribinos a [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).
+Consultas: [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).

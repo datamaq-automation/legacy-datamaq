@@ -1,5 +1,5 @@
 export interface HeroSectionProps {
-  chatEnabled: boolean
+  contactCtaEnabled: boolean
 }
 
 export interface HeroSectionEmits {
@@ -7,7 +7,7 @@ export interface HeroSectionEmits {
 }
 
 export interface ServiciosSectionProps {
-  chatEnabled: boolean
+  contactCtaEnabled: boolean
 }
 
 export interface ContactCtaPayload {

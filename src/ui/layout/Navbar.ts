@@ -9,7 +9,7 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
   const { matches: isDesktop } = useBreakpoint(992)
   const navRef = ref<HTMLElement | null>(null)
   const toggleButtonRef = ref<HTMLButtonElement | null>(null)
-  const chatEnabled = computed(() => props.chatEnabled)
+  const contactCtaEnabled = computed(() => props.contactCtaEnabled)
   const { content } = useContainer()
   const navbar = content.getNavbarContent()
 
@@ -69,7 +69,7 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     isDesktop,
     navRef,
     toggleButtonRef,
-    chatEnabled,
+    contactCtaEnabled,
     navbar,
     toggleMenu,
     handleNavLinkClick,

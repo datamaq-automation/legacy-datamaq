@@ -75,8 +75,7 @@ describe('buildAppHead', () => {
           subtitle: 'Subtitulo',
           media: { src: '/img.png', alt: 'alt' },
           items: ['item'],
-          cta: { label: 'Contactar', section: 'hero', action: 'chat' },
-          unavailableMessage: 'No disponible'
+          cta: { label: 'Contactar', section: 'hero', action: 'whatsapp' }
         }
       ]
     }

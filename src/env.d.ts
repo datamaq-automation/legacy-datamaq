@@ -3,8 +3,6 @@ interface ImportMetaEnv {
   readonly VITE_CONTACT_API_URL?: string
   readonly VITE_CONTACT_EMAIL?: string
   readonly VITE_ORIGIN_VERIFY_SECRET?: string
-  readonly VITE_CHATWOOT_BASE_URL?: string
-  readonly VITE_CHATWOOT_WEBSITE_TOKEN?: string
   readonly DEV: boolean
 }
 
@@ -27,14 +25,6 @@ type ClarityFunction = (
 interface Window {
   gtag?: GtagFunction
   clarity?: ClarityFunction
-  chatwootSDK?: {
-    run: (config: { websiteToken: string; baseUrl: string }) => void
-  }
-  $chatwoot?: {
-    toggle?: (state?: 'open' | 'close') => void
-    popoutChatWindow?: () => void
-    toggleBubbleVisibility?: (state: 'show' | 'hide') => void
-  }
 }
 
 declare module '*.svg' {

@@ -1,16 +1,16 @@
 import {
-  getChatEnabled,
+  getWhatsAppEnabled,
   getContactEmail,
-  openChat,
+  openWhatsApp,
   submitContact
 } from '@/ui/controllers/contactController'
 
 export function useHomePage() {
-  const chatEnabled = getChatEnabled()
+  const contactCtaEnabled = getWhatsAppEnabled()
   const contactEmail = getContactEmail()
 
   function handleChat(section: string, href?: string) {
-    openChat(section, href)
+    openWhatsApp(section, href)
   }
 
   function handleEmailSubmit(payload: Parameters<typeof submitContact>[1]) {
@@ -19,7 +19,7 @@ export function useHomePage() {
   }
 
   return {
-    chatEnabled,
+    contactCtaEnabled,
     contactEmail,
     handleChat,
     handleEmailSubmit
