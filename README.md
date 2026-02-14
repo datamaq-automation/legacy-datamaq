@@ -38,6 +38,7 @@ npm run test        # ejecuta tests unitarios
 npm run test:a11y   # auditoria heuristica de accesibilidad
 npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
+npm run lint:layers # valida limites de dependencias entre capas
 ```
 
 ## CI/CD recomendado (GitHub Actions + FTPS)
@@ -70,6 +71,8 @@ Configuracion recomendada en GitHub:
 - El contrato de datos esta en `src/application/analytics/engagementTracker.ts` y `src/application/analytics/trackingFacade.ts`.
 - Para evitar duplicados, se deduplican eventos en una ventana de 2 segundos.
 - GA4 y Clarity solo se inicializan cuando el banner de consentimiento registra aceptacion.
+- Politica de revocacion activa: `hard revoke` (al rechazar/revocar se bloquea tracking y se limpian cookies de analytics first-party).
+- Detalle de matriz y decision: `docs/dv-01-consent-matrix.md`.
 
 ## Accesibilidad
 - Ejecuta `npm run test:a11y` para analizar templates `.vue`.

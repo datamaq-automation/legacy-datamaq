@@ -1,8 +1,9 @@
 import type { AnalyticsPort } from '@/application/ports/Analytics'
 import { getAnalyticsConsent } from '../consent/consent'
-import { initClarity } from './clarity'
-import { initGa4, trackGa4Event, trackGa4PageView } from './ga4'
+import { initClarity, updateClarityConsent } from './clarity'
+import { clearGa4PendingEvents, initGa4, trackGa4Event, trackGa4PageView, updateGa4Consent } from './ga4'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
+import { clearAnalyticsCookies } from './cookies'
 
 type PageViewPayload = {
   path: string
@@ -22,7 +23,11 @@ export function syncAnalyticsConsent(status: AnalyticsConsentStatus): void {
 
   if (consentStatus === 'granted') {
     initAnalytics()
+    updateRuntimeConsent('granted')
+    return
   }
+
+  applyHardRevoke()
 }
 
 export function hasAnalyticsConsent(): boolean {
@@ -147,4 +152,15 @@ function parseBoolean(value: string | boolean | undefined, fallback: boolean): b
     return value
   }
   return value.toLowerCase() === 'true'
+}
+
+function updateRuntimeConsent(state: 'granted' | 'denied'): void {
+  updateGa4Consent(state)
+  updateClarityConsent(state)
+}
+
+function applyHardRevoke(): void {
+  updateRuntimeConsent('denied')
+  clearGa4PendingEvents()
+  clearAnalyticsCookies()
 }

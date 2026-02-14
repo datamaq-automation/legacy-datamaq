@@ -31,8 +31,11 @@ describe('BrowserAnalytics', () => {
     const analytics = new BrowserAnalytics(createLogger())
     analytics.track('contact_submitted', { origin: 'landing' })
 
-    expect(gtag).not.toHaveBeenCalled()
-    expect(clarity).not.toHaveBeenCalled()
+    const gtagEventCalls = gtag.mock.calls.filter((call) => call[0] === 'event')
+    const clarityEventCalls = clarity.mock.calls.filter((call) => call[0] === 'event')
+
+    expect(gtagEventCalls).toHaveLength(0)
+    expect(clarityEventCalls).toHaveLength(0)
   })
 
   it('sends analytics events when consent is granted', async () => {

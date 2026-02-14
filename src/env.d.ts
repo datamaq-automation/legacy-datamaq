@@ -9,17 +9,33 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
-type GtagFunction = (
-  command: 'event' | 'config' | 'js',
-  target: string | Date,
-  params?: Record<string, unknown>
-) => void
+type GtagFunction = {
+  (command: 'event' | 'config', target: string, params?: Record<string, unknown>): void
+  (command: 'js', target: Date): void
+  (
+    command: 'consent',
+    target: 'default' | 'update',
+    params: {
+      ad_storage?: 'granted' | 'denied'
+      ad_user_data?: 'granted' | 'denied'
+      ad_personalization?: 'granted' | 'denied'
+      analytics_storage?: 'granted' | 'denied'
+    }
+  ): void
+}
 
-type ClarityFunction = (
-  command: 'event',
-  eventName: string,
-  payload?: Record<string, unknown>
-) => void
+type ClarityFunction = {
+  (command: 'event', eventName: string, payload?: Record<string, unknown>): void
+  (
+    command: 'consentv2',
+    payload: {
+      ad_Storage: 'granted' | 'denied'
+      analytics_Storage: 'granted' | 'denied'
+    }
+  ): void
+  (command: 'consent', accepted: boolean): void
+  q?: unknown[]
+}
 
 interface Window {
   gtag?: GtagFunction

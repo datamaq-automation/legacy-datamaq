@@ -34,20 +34,21 @@ No incluye:
   - Dependencias: Ninguna
   - Riesgo: Alto
 
-- [>] (P0) Corregir flujo de consentimiento y activacion de analytics
+- [x] (P0) Corregir flujo de consentimiento y activacion de analytics
   - Contexto: se detectaron dos claves de consentimiento distintas (`datamaq-www-consent` y `consent.analytics`) y `initAnalytics()` solo se ejecuta al iniciar la app.
   - Accion: unificar fuente de verdad de consentimiento y conectar aceptacion/rechazo con inicializacion/bloqueo real de tracking.
   - DoD (criterio de aceptacion): existe una sola clave de consentimiento activa; al aceptar se habilita tracking segun especificacion validada; al rechazar no se envian eventos; tests unitarios cubren ambos caminos.
-  - Avance: implementada la sincronizacion `consentManager` <-> analytics y el bloqueo real de tracking por estado de consentimiento.
+  - Avance: implementada la sincronizacion `consentManager` <-> analytics con politica `hard revoke` (bloqueo real + revocacion/limpieza de cookies first-party de analytics).
   - Evidencia: `src/application/consent/consentStorage.ts`, `src/application/consent/consentManager.ts`, `src/infrastructure/consent/consent.ts`, `src/infrastructure/analytics/index.ts`, `src/infrastructure/analytics/browserAnalytics.ts`, `src/main.ts`.
-  - Evidencia: matriz propuesta DV-01 en `docs/dv-01-consent-matrix.md` (pendiente aprobacion Product/Legal).
-  - Evidencia: tests `tests/unit/application/consentManager.test.ts`, `tests/unit/infrastructure/consent.test.ts`, `tests/unit/infrastructure/analyticsConsentSync.test.ts`, `tests/unit/infrastructure/browserAnalytics.test.ts`; `npm run typecheck`, `npm run test` y `npm run build` en verde.
+  - Evidencia: `src/infrastructure/analytics/ga4.ts`, `src/infrastructure/analytics/clarity.ts`, `src/infrastructure/analytics/cookies.ts`.
+  - Evidencia: DV-01 cerrado en `docs/dv-01-consent-matrix.md` con decision `hard revoke`.
+  - Evidencia: tests `tests/unit/application/consentManager.test.ts`, `tests/unit/infrastructure/consent.test.ts`, `tests/unit/infrastructure/analyticsConsentSync.test.ts`, `tests/unit/infrastructure/analyticsCookies.test.ts`, `tests/unit/infrastructure/browserAnalytics.test.ts`; `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-01 (politica de consentimiento)
   - Riesgo: Alto
-  - Bloqueador residual: falta validacion funcional/legal final de la matriz de consentimiento (DV-01).
-  - Siguiente paso: cerrar DV-01 y ajustar la matriz tecnica si Product/Legal define cambios.
-  - Nota C (2026-02-14): pendiente de aprobacion externa Product/Legal; no se modifica codigo adicional hasta cerrar DV-01.
+  - Decision tomada (B): para `hard revoke` se adopto combinacion de propagacion de consentimiento a proveedores (GA4/Clarity) + limpieza best-effort de cookies first-party para minimizar persistencia residual.
+  - Bloqueador residual: alinear texto legal/politica de privacidad fuera de este repo.
+  - Siguiente paso: coordinar update legal de privacidad para reflejar `hard revoke`.
 
 - [>] (P0) Eliminar secreto de verificacion del frontend
   - Contexto: se detecto uso de `VITE_ORIGIN_VERIFY_SECRET` y envio de `X-Origin-Verify` desde navegador, lo que no es secreto en cliente.
@@ -200,21 +201,22 @@ No incluye:
 
 ### DV-01: Politica exacta de consentimiento y tracking
 Duda:
-- No esta confirmado por evidencia cual es el comportamiento legal/funcional esperado en todos los estados (first visit, accept, deny, revocar).
+- Decision funcional tomada: politica `hard revoke` para `denied` y revocacion.
 
 Tarea de verificacion:
-- [>] (P0) Validar matriz de consentimiento
+- [x] (P0) Validar matriz de consentimiento
   - Contexto: hay desacople entre `consentManager` y capa de analytics.
   - Accion: definir matriz de estados/eventos con Product/Legal y mapearla a implementacion tecnica.
   - DoD (criterio de aceptacion): documento corto aprobado con transiciones y eventos permitidos por estado.
-  - Avance: matriz tecnica/funcional propuesta y documentada.
+  - Avance: matriz cerrada con decision `hard revoke` y sincronizada con implementacion tecnica.
   - Evidencia: `docs/dv-01-consent-matrix.md`.
+  - Evidencia: `src/infrastructure/analytics/index.ts`, `src/infrastructure/analytics/ga4.ts`, `src/infrastructure/analytics/clarity.ts`, `src/infrastructure/analytics/cookies.ts`.
+  - Evidencia: `tests/unit/infrastructure/analyticsConsentSync.test.ts`, `tests/unit/infrastructure/analyticsCookies.test.ts`.
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Alto
-  - Bloqueador: requiere aprobacion final de Product/Legal (incluyendo criterio de revocacion).
-  - Siguiente paso: revisar la matriz propuesta, elegir politica de revocacion (soft/hard) y aprobar version final.
-  - Nota C (2026-02-14): falta decision funcional/legal externa para cerrar DV-01.
+  - Bloqueador residual: actualizar textos legales/politica de privacidad en canal correspondiente.
+  - Siguiente paso: registrar cambio legal/publico para reflejar `hard revoke`.
 
 ### DV-02: Contrato backend para envio de contactos sin secreto en cliente
 Duda:
@@ -273,12 +275,13 @@ Tarea de verificacion:
 
 ### Notas de ejecucion A/B/C (2026-02-14)
 - Clasificacion B aplicada en: P2 limites de capas (opcion elegida: script custom Node `lint:layers` + test de fixture por menor impacto de toolchain).
-- Clasificacion C (duda de alto nivel) mantenida en: P0 consentimiento (depende DV-01), P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), P2 smoke e2e (falta decision de stack/CI), DV-01, DV-03 y DV-04.
+- Clasificacion C (duda de alto nivel) mantenida en: P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), P2 smoke e2e (falta decision de stack/CI), DV-03 y DV-04.
 - DV-02 sale de C por definicion contractual documentada; queda pendiente ejecucion tecnica (backend Docker + prueba E2E) dentro del P0 de seguridad.
-- Informacion faltante para destrabar C: aprobacion Product/Legal (DV-01), evidencia de required checks/branch protection efectivos (DV-03), decision de stack e2e y su ejecucion en CI real, y URL objetivo para auditoria de headers (DV-04).
+- DV-01 sale de C por decision funcional `hard revoke` e implementacion tecnica sincronizada.
+- Informacion faltante para destrabar C: evidencia de required checks/branch protection efectivos (DV-03), decision de stack e2e y su ejecucion en CI real, y URL objetivo para auditoria de headers (DV-04).
 
 ## 7) Proximos pasos
-- Priorizar cierre de DV-01 y la implementacion backend/E2E de DV-02 por impacto funcional/legal y de seguridad.
+- Priorizar implementacion backend/E2E de DV-02 por impacto funcional y de seguridad.
 - Completar DV-03 (enforcement de merge) en paralelo, sin frenar ejecucion de otros P0.
 - Ejecutar P0 pendientes en orden: Seguridad de secreto (backend Chatwoot operativo) -> puerta de calidad/CI obligatoria.
 - Congelar cambios grandes de UI/UX hasta que todos los P0 esten en verde.
