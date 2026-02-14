@@ -7,7 +7,6 @@ import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { StoragePort } from '@/application/ports/Storage'
 import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
-import { buildChatwootContactPayload } from '@/application/contact/chatwootPayload'
 
 export class ContactApiGateway implements ContactGateway {
   constructor(
@@ -87,7 +86,7 @@ export class ContactApiGateway implements ContactGateway {
       const contactIdentifier = extractContactIdentifier(response.data, response.text)
       if (contactIdentifier && hasCustomAttributes(sanitizedCustomAttributes)) {
         const updateUrl = buildChatwootContactUpdateUrl(apiUrl, contactIdentifier)
-        const updateResponse = await this.http.patchJson(
+        await this.http.patchJson(
           updateUrl,
           {
             custom_attributes: sanitizedCustomAttributes,

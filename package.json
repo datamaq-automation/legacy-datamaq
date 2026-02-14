@@ -11,12 +11,14 @@
     "build": "npm run sitemap && vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "typecheck": "tsc --noEmit",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:a11y": "node scripts/run-a11y.mjs",
     "report:css": "npm run build && node scripts/report-css-size.mjs",
     "check:css": "npm run build && node scripts/check-css-size.mjs",
     "lint:colors": "node scripts/no-hex-check.mjs",
+    "quality:gate": "npm run typecheck && npm run test && npm run lint:colors && npm run test:a11y && npm run check:css",
     "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {

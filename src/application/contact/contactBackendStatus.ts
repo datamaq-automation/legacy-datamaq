@@ -43,7 +43,11 @@ export class ContactBackendMonitor {
       })
     }
 
-    return this.inFlightProbe
+    const currentProbe = this.inFlightProbe
+    if (!currentProbe) {
+      return this.status
+    }
+    return currentProbe
   }
 
   markAvailable(): void {

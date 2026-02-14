@@ -27,16 +27,18 @@ npm install       # instala dependencias
 npm run dev       # levanta el servidor de desarrollo (hot reload)
 npm run build     # compila los assets para producciÃ³n en ./dist
 npm run preview   # sirve el build localmente para validaciones finales
+npm run typecheck # valida TypeScript en modo estricto
+npm run test      # ejecuta tests unitarios
 npm run test:a11y # ejecuta la auditorÃ­a heurÃ­stica de accesibilidad y genera el build si no existe
+npm run check:css # valida presupuesto de CSS
+npm run lint:colors # valida regla anti-HEX fuera de tokens
 ```
 
 ## AnalÃ­tica y eventos
 - Los eventos de compromiso se envÃ­an vÃ­a `gtag` y `clarity`. El contrato de datos se documenta en
-  `src/application/services/analyticsTracker.ts` y en las declaraciones globales de `src/env.d.ts`.
+  `src/application/analytics/engagementTracker.ts`, `src/application/analytics/trackingFacade.ts` y en las declaraciones globales de `src/env.d.ts`.
 - Para evitar duplicidades, se deduplican los eventos en una ventana de 2 segundos antes de propagarlos a cada destino.
 - GA4 y Clarity solo se inicializan cuando el banner de consentimiento registra una aceptaciÃ³n explÃ­cita.
-- RevisÃ¡ `docs/srs-datamaq-www.md` y `docs/improvement-options-2025-02-18.md` para el detalle de mÃ©tricas,
-  supuestos y decisiones abiertas.
 
 ## Accesibilidad
 - EjecutÃ¡ `npm run test:a11y` para analizar los templates `.vue` y asegurar nombres accesibles en botones/enlaces, ademÃ¡s de
@@ -50,8 +52,6 @@ npm run test:a11y # ejecuta la auditorÃ­a heurÃ­stica de accesibilidad y gen
 4. Verificar en QA que los eventos de chat y correo se registran una sola vez en GA4 y Clarity.
 
 ## Recursos adicionales
-- DocumentaciÃ³n funcional y no funcional: `docs/srs-datamaq-www.md`.
-- AuditorÃ­a y alternativas de mejora: `docs/audit-2025-02-17.md` y `docs/improvement-options-2025-02-18.md`.
-- GuÃ­a rÃ¡pida de componentes: revisar `src/components/` y comentarios en lÃ­nea.
+- Backlog tÃ©cnico priorizado: `docs/todo.md`.
 
 Â¿Dudas o sugerencias? Escribinos a [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).

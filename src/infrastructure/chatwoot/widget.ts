@@ -70,7 +70,7 @@ export function initChatwootWidget(): void {
     | HTMLScriptElement
     | null
   if (existing) {
-    if ((existing as HTMLScriptElement).dataset.loaded === 'true') {
+    if (existing.dataset['loaded'] === 'true') {
       runWidget()
     } else {
       existing.addEventListener('load', runWidget, { once: true })
@@ -83,7 +83,7 @@ export function initChatwootWidget(): void {
   script.async = true
   script.setAttribute(SCRIPT_ATTR, 'true')
   script.addEventListener('load', () => {
-    script.dataset.loaded = 'true'
+    script.dataset['loaded'] = 'true'
     runWidget()
   })
   document.head?.appendChild(script)

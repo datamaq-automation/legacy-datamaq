@@ -7,6 +7,7 @@ import {
 } from '@/ui/controllers/contactBackendController'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
+import type { EmailContactPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 import { useContactValidation } from './useContactValidation'
 import { useRouter } from 'vue-router'
@@ -57,22 +58,30 @@ export function useContactForm(props: ContactFormProps) {
     }
     isSubmitting.value = true
     try {
-      const parsed = validate({
+      const payload: EmailContactPayload = {
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
-        phoneNumber: form.phoneNumber || undefined,
-        city: form.city || undefined,
-        country: form.country || undefined,
         company: form.company
-      })
+      }
+      if (form.phoneNumber) {
+        payload.phoneNumber = form.phoneNumber
+      }
+      if (form.city) {
+        payload.city = form.city
+      }
+      if (form.country) {
+        payload.country = form.country
+      }
+
+      const parsed = validate(payload)
       if (!parsed.ok) {
         await announceFeedback(contact.errorMessage, false)
         return
       }
       const result = await props.onSubmit(parsed.data)
       if (result && result.ok) {
-        void router.push('/gracias')
+        void router.push({ name: 'thanks' })
         return
       } else {
         await announceFeedback(

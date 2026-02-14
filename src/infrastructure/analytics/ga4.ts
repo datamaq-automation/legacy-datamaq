@@ -24,10 +24,11 @@ export function initGa4({ id, debug }: Ga4Config): void {
     script.async = true
     script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`
     script.addEventListener('load', () => {
-      ga4Ready = typeof window !== 'undefined' && typeof window.gtag === 'function'
-      if (ga4Ready && ga4Config) {
-        window.gtag('js', new Date())
-        window.gtag('config', ga4Config.id, {
+      const gtag = window.gtag
+      ga4Ready = typeof gtag === 'function'
+      if (ga4Ready && ga4Config && typeof gtag === 'function') {
+        gtag('js', new Date())
+        gtag('config', ga4Config.id, {
           send_page_view: false,
           debug_mode: ga4Config.debug
         })
@@ -65,6 +66,11 @@ function enqueueEvent(name: string, params?: Record<string, unknown>): void {
 
   if (ga4Ready && typeof window.gtag === 'function') {
     window.gtag('event', name, params)
+    return
+  }
+
+  if (typeof params === 'undefined') {
+    pendingEvents.push({ name })
     return
   }
 

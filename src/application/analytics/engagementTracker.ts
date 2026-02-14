@@ -3,7 +3,7 @@ import type { TrackingPort } from './trackingFacade'
 import type { LoggerPort } from '../ports/Logger'
 import { conversionEvents } from './conversionEvents'
 
-export interface ContactEngagementContext {
+export interface ContactEngagementContext extends Record<string, unknown> {
   section: string
   pageUrl: string
   trafficSource: string

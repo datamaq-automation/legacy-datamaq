@@ -20,10 +20,10 @@ const {
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
     <Navbar :chatEnabled="chatEnabled" @contact="handleChat('landing-escobar-navbar')" />
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta">
-      <section class="py-5">
+      <section class="py-5" aria-labelledby="escobar-hero-title">
         <div class="container">
           <p class="text-uppercase small text-muted mb-2">{{ content.eyebrow }}</p>
-          <h1 class="display-5 fw-bold mb-3">{{ content.headline }}</h1>
+          <h1 id="escobar-hero-title" class="display-5 fw-bold mb-3">{{ content.headline }}</h1>
           <p class="lead text-white-50 mb-4">{{ content.lead }}</p>
           <div class="d-flex flex-column flex-sm-row gap-3">
             <button
@@ -41,20 +41,20 @@ const {
         </div>
       </section>
 
-      <section class="py-4">
+      <section class="py-4" aria-labelledby="escobar-summary-title">
         <div class="container">
-          <h2 class="h3 fw-semibold mb-3">Respuesta rapida</h2>
+          <h2 id="escobar-summary-title" class="h3 fw-semibold mb-3">Respuesta rapida</h2>
           <ul class="text-white-50">
             <li v-for="item in content.summary" :key="item">{{ item }}</li>
           </ul>
         </div>
       </section>
 
-      <section class="py-4">
+      <section class="py-4" aria-labelledby="escobar-includes-title">
         <div class="container">
           <div class="row g-4">
             <div class="col-lg-6">
-              <h2 class="h4 fw-semibold mb-3">Que incluye</h2>
+              <h2 id="escobar-includes-title" class="h4 fw-semibold mb-3">Que incluye</h2>
               <ul class="text-white-50">
                 <li v-for="item in content.includes" :key="item">{{ item }}</li>
               </ul>
@@ -69,18 +69,18 @@ const {
         </div>
       </section>
 
-      <section class="py-4">
+      <section class="py-4" aria-labelledby="escobar-deliverables-title">
         <div class="container">
-          <h2 class="h4 fw-semibold mb-3">Entregables</h2>
+          <h2 id="escobar-deliverables-title" class="h4 fw-semibold mb-3">Entregables</h2>
           <ul class="text-white-50">
             <li v-for="item in content.deliverables" :key="item">{{ item }}</li>
           </ul>
         </div>
       </section>
 
-      <section class="py-4">
+      <section class="py-4" aria-labelledby="escobar-faq-title">
         <div class="container">
-          <h2 class="h4 fw-semibold mb-3">Preguntas frecuentes</h2>
+          <h2 id="escobar-faq-title" class="h4 fw-semibold mb-3">Preguntas frecuentes</h2>
           <div class="d-flex flex-column gap-3">
             <details
               v-for="faq in content.faqs"

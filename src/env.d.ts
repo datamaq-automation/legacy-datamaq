@@ -13,8 +13,8 @@ interface ImportMeta {
 }
 
 type GtagFunction = (
-  command: 'event',
-  eventName: string,
+  command: 'event' | 'config' | 'js',
+  target: string | Date,
   params?: Record<string, unknown>
 ) => void
 
@@ -40,4 +40,10 @@ interface Window {
 declare module '*.svg' {
   const src: string
   export default src
+}
+
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue'
+  const component: DefineComponent<Record<string, never>, Record<string, never>, unknown>
+  export default component
 }

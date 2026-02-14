@@ -1,7 +1,4 @@
 import { onMounted } from 'vue'
-import Navbar from '@/ui/layout/Navbar.vue'
-import Footer from '@/ui/layout/Footer.vue'
-import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import { getChatEnabled, openChat } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
 import { useRouter } from 'vue-router'
@@ -17,7 +14,7 @@ export function useThanksView() {
   }
 
   function handleGoHome() {
-    void router.push('/')
+    void router.push({ name: 'home' })
   }
 
   onMounted(() => {

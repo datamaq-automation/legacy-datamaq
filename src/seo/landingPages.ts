@@ -88,7 +88,7 @@ export const landingPages = {
   }
 } as const satisfies Record<string, LandingPageContent>
 
-const landingPagesList = Object.values(landingPages)
+const landingPagesList: LandingPageContent[] = Object.values(landingPages)
 
 export function getLandingPageByPath(path: string): LandingPageContent | undefined {
   return landingPagesList.find((page) => page.path === path)

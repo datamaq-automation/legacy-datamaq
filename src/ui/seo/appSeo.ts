@@ -89,7 +89,7 @@ export function buildAppHead(
     meta,
     link: [
       { rel: 'canonical', href: canonicalUrl },
-      { rel: 'alternate', hrefLang: seo.locale, href: canonicalUrl }
+      { rel: 'alternate', hreflang: seo.locale, href: canonicalUrl }
     ],
     script: scripts
   }

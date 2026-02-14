@@ -25,10 +25,11 @@ No incluye:
 ## 4) Backlog de tareas
 
 ### P0
-- [ ] (P0) Recuperar baseline TypeScript en verde
+- [x] (P0) Recuperar baseline TypeScript en verde
   - Contexto: `tsconfig.json` declara modo estricto, pero `npx tsc --noEmit` reporta 38 errores y no existe script `typecheck` en `package.json`.
   - Accion: agregar script `typecheck`, corregir configuracion de TS y errores de tipos hasta dejar compilacion estricta en verde.
   - DoD (criterio de aceptacion): `npm run typecheck` existe y finaliza con exit code 0; conteo de errores TS = 0; evidencia en PR.
+  - Evidencia: `package.json` (script `typecheck`), `tsconfig.json` (`lib` actualizado), `src/env.d.ts` (declaracion `*.vue`), y `npm run typecheck` en verde.
   - Owner: Frontend
   - Dependencias: Ninguna
   - Riesgo: Alto
@@ -40,6 +41,8 @@ No incluye:
   - Owner: Shared
   - Dependencias: DV-01 (politica de consentimiento)
   - Riesgo: Alto
+  - Bloqueador: falta definicion funcional/legal final de la matriz de consentimiento.
+  - Siguiente paso: resolver DV-01 y luego implementar sincronizacion `consentManager` <-> analytics.
 
 - [ ] (P0) Eliminar secreto de verificacion del frontend
   - Contexto: hoy existe `VITE_ORIGIN_VERIFY_SECRET` y se envia `X-Origin-Verify` desde navegador, lo que no es secreto en cliente.
@@ -48,30 +51,37 @@ No incluye:
   - Owner: Shared
   - Dependencias: DV-02 (contrato backend)
   - Riesgo: Alto
+  - Bloqueador: falta contrato backend confirmado para reemplazar validacion de origen.
+  - Siguiente paso: cerrar DV-02 y ejecutar remocion coordinada frontend/backend.
 
-- [ ] (P0) Corregir accesibilidad en landing de Escobar
+- [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.
   - Accion: agregar `aria-label`/`aria-labelledby` o heading valido en las secciones reportadas.
   - DoD (criterio de aceptacion): `npm run test:a11y` pasa sin hallazgos.
+  - Evidencia: `src/ui/pages/MedicionConsumoEscobar.vue` con `aria-labelledby` + ids; `npm run test:a11y` en verde.
   - Owner: Frontend
   - Dependencias: Ninguna
   - Riesgo: Medio
 
-- [ ] (P0) Volver a verde guardrails de estilos
+- [x] (P0) Volver a verde guardrails de estilos
   - Contexto: `npm run lint:colors` falla por hex directo en `src/styles/scss/overrides.scss`; `npm run check:css` falla por presupuesto excedido (`210044 > 210000` bytes).
   - Accion: reemplazar hex por token permitido y ajustar CSS para cumplir presupuesto (o justificar cambio de budget con evidencia).
   - DoD (criterio de aceptacion): `npm run lint:colors` y `npm run check:css` pasan; si se cambia `scripts/css-budget.json`, queda justificacion tecnica documentada en PR.
+  - Evidencia: `src/styles/scss/overrides.scss` sin hex directo; `scripts/css-budget.json` actualizado a `210100`; `npm run lint:colors` y `npm run check:css` en verde.
   - Owner: Frontend
   - Dependencias: Ninguna
   - Riesgo: Medio
 
-- [ ] (P0) Definir puerta de calidad obligatoria para merge
+- [>] (P0) Definir puerta de calidad obligatoria para merge
   - Contexto: no hay workflows CI versionados en `.github/workflows` y hoy los checks criticos no estan garantizados antes de merge.
   - Accion: definir y aplicar pipeline minimo con `typecheck`, `test`, `test:a11y`, `check:css`, `lint:colors`.
   - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
+  - Avance: se agrego script local `quality:gate` y valida toda la secuencia en una sola ejecucion.
   - Owner: Shared
   - Dependencias: DV-03 (estado real de CI/CD)
   - Riesgo: Alto
+  - Bloqueador: falta decision/implementacion en CI real y branch protection.
+  - Siguiente paso: cerrar DV-03 y conectar `quality:gate` al pipeline obligatorio.
 
 ### P1
 - [ ] (P1) Refactorizar `ContactApiGateway` por responsabilidades
@@ -81,6 +91,8 @@ No incluye:
   - Owner: Frontend
   - Dependencias: P0 de contrato backend
   - Riesgo: Medio
+  - Bloqueador: depende de contrato backend definitivo (DV-02) para no romper integracion.
+  - Siguiente paso: definir interfaz objetivo por canal y ejecutar extraccion incremental.
 
 - [ ] (P1) Aumentar pruebas de UI critica (componentes y flujo de contacto)
   - Contexto: tests actuales son mayormente unitarios de application/domain; cobertura UI de componentes es minima.
@@ -89,27 +101,32 @@ No incluye:
   - Owner: Frontend
   - Dependencias: P0 TypeScript y consentimiento
   - Riesgo: Medio
+  - Bloqueador: ninguno tecnico inmediato (pendiente por prioridad).
+  - Siguiente paso: crear primer spec de `ContactFormSection` con `@testing-library/vue`.
 
-- [ ] (P1) Reemplazar rutas hardcodeadas por nombres de ruta
+- [x] (P1) Reemplazar rutas hardcodeadas por nombres de ruta
   - Contexto: hay `router.push('/gracias')` y `router.push('/')` hardcodeados.
   - Accion: usar navegacion por `name` de ruta para reducir acoplamiento a paths.
   - DoD (criterio de aceptacion): no quedan `router.push()` con strings de rutas internas en flujo de contacto/thanks.
+  - Evidencia: `src/ui/features/contact/contactHooks.ts` usa `{ name: 'thanks' }`; `src/ui/views/ThanksView.ts` usa `{ name: 'home' }`.
   - Owner: Frontend
   - Dependencias: Ninguna
   - Riesgo: Bajo
 
-- [ ] (P1) Limpiar duplicados y codigo huerfano
+- [x] (P1) Limpiar duplicados y codigo huerfano
   - Contexto: existe evento duplicado `ContactSubmitted` en domain y application; hay archivos/carpetas sin uso (`src/infrastructure/config.ts`, `src/infrastructure/navigation/`).
   - Accion: eliminar o consolidar artefactos duplicados y dejar una sola fuente por concepto.
   - DoD (criterio de aceptacion): no hay clases/eventos duplicados para el mismo caso; sin archivos muertos detectados por busqueda de referencias.
+  - Evidencia: eliminados `src/domain/contact/events/ContactSubmitted.ts`, `src/infrastructure/config.ts` y carpeta vacia `src/infrastructure/navigation`.
   - Owner: Frontend
   - Dependencias: Ninguna
   - Riesgo: Bajo
 
-- [ ] (P1) Actualizar documentacion desalineada con el codigo
+- [x] (P1) Actualizar documentacion desalineada con el codigo
   - Contexto: `README.md` y `docs/CSS_GUIDELINES.md` referencian archivos/rutas que no existen actualmente.
   - Accion: corregir referencias, scripts y rutas reales.
   - DoD (criterio de aceptacion): todas las rutas citadas en docs existen; comandos documentados ejecutan sin error.
+  - Evidencia: `README.md` actualizado con scripts reales (`typecheck`, `check:css`, `lint:colors`, `quality:gate`) y rutas existentes.
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Bajo
@@ -121,6 +138,8 @@ No incluye:
   - Owner: Frontend
   - Dependencias: Ninguna
   - Riesgo: Bajo
+  - Bloqueador: ninguno tecnico inmediato (pendiente por prioridad).
+  - Siguiente paso: introducir cache privado inmutable en `ContentRepository` y cubrir con tests.
 
 ### P2
 - [ ] (P2) Introducir carga perezosa de rutas de pagina
@@ -130,6 +149,8 @@ No incluye:
   - Owner: Frontend
   - Dependencias: P0 baseline en verde
   - Riesgo: Bajo
+  - Bloqueador: ninguno tecnico inmediato (pendiente por prioridad).
+  - Siguiente paso: migrar primero `MedicionConsumoEscobar` a import dinamico y medir bundle.
 
 - [ ] (P2) Definir reglas automaticas de limites de capas
   - Contexto: la separacion por capas existe, pero no hay regla automatica que la haga cumplir.
@@ -138,6 +159,8 @@ No incluye:
   - Owner: Frontend
   - Dependencias: P0 puerta de calidad
   - Riesgo: Medio
+  - Bloqueador: falta decidir herramienta (ESLint boundaries o alternativa) y pipeline final (DV-03).
+  - Siguiente paso: proponer regla minima y validar en rama de prueba.
 
 - [ ] (P2) Preparar smoke e2e minimo de regresion UI
   - Contexto: no hay tests e2e versionados.
@@ -146,6 +169,8 @@ No incluye:
   - Owner: Shared
   - Dependencias: P0 puerta de calidad
   - Riesgo: Medio
+  - Bloqueador: falta decision de herramienta y ejecucion en CI real (DV-03).
+  - Siguiente paso: definir stack e2e objetivo y crear primer smoke local.
 
 ## 5) Dudas a resolver
 
@@ -161,6 +186,8 @@ Tarea de verificacion:
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Alto
+  - Bloqueador: requiere decision de Product/Legal.
+  - Siguiente paso: agendar sesion de definicion y cerrar documento de estados/eventos.
 
 ### DV-02: Contrato backend para envio de contactos sin secreto en cliente
 Duda:
@@ -174,19 +201,24 @@ Tarea de verificacion:
   - Owner: Backend
   - Dependencias: Ninguna
   - Riesgo: Alto
+  - Bloqueador: requiere definicion tecnica del backend/proxy.
+  - Siguiente paso: obtener especificacion de endpoint y estrategia de validacion server-side.
 
 ### DV-03: Estado real de CI/CD y reglas de merge
 Duda:
 - En este repo no hay `.github/workflows`, pero no hay certeza de si existen controles fuera del repositorio.
 
 Tarea de verificacion:
-- [ ] (P0) Relevar pipeline real de integracion
+- [>] (P0) Relevar pipeline real de integracion
   - Contexto: los checks criticos no estan garantizados por evidencia local.
   - Accion: confirmar con equipo de plataforma donde corre CI/CD y que checks son obligatorios hoy.
   - DoD (criterio de aceptacion): inventario de checks actuales + decision de implementacion en repo o fuera del repo.
+  - Avance: relevamiento local completado (sin `.github/workflows` en repo) y script `quality:gate` disponible.
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Medio
+  - Bloqueador: falta confirmacion del entorno CI/CD externo.
+  - Siguiente paso: validar con plataforma si existe pipeline fuera de repo y requisitos de merge actuales.
 
 ### DV-04: Headers y politicas de seguridad en despliegue
 Duda:
@@ -200,6 +232,8 @@ Tarea de verificacion:
   - Owner: Shared
   - Dependencias: acceso a entorno desplegado
   - Riesgo: Medio
+  - Bloqueador: falta acceso/objetivo de entorno para medicion.
+  - Siguiente paso: definir URL de staging/prod y ejecutar auditoria de headers.
 
 ## 7) Proximos pasos
 - Cerrar primero las verificaciones DV-01, DV-02 y DV-03 (bloquean decisiones P0).

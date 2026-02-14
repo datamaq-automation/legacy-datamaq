@@ -29,12 +29,21 @@ export class SubmitContactUseCase {
     payload: EmailContactPayload
   ): Promise<Result<void, ContactError>> {
     const fullName = `${payload.firstName} ${payload.lastName}`.trim()
-    const contactResult = this.contactService.createContact({
+    const contactInput: {
+      id: string
+      name: string
+      email: string
+      company?: string
+    } = {
       id: buildContactId(this.clock.now()),
       name: fullName,
-      email: payload.email,
-      company: payload.company
-    })
+      email: payload.email
+    }
+    if (typeof payload.company !== 'undefined') {
+      contactInput.company = payload.company
+    }
+
+    const contactResult = this.contactService.createContact(contactInput)
 
     if (!contactResult.ok) {
       return { ok: false, error: { type: 'ValidationError' } }
@@ -45,19 +54,40 @@ export class SubmitContactUseCase {
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
+    const extraDetails: {
+      firstName?: string
+      lastName?: string
+      phoneNumber?: string
+      city?: string
+      country?: string
+    } = {}
+    if (typeof payload.firstName !== 'undefined') {
+      extraDetails.firstName = payload.firstName
+    }
+    if (typeof payload.lastName !== 'undefined') {
+      extraDetails.lastName = payload.lastName
+    }
+    if (typeof payload.phoneNumber !== 'undefined') {
+      extraDetails.phoneNumber = payload.phoneNumber
+    }
+    if (typeof payload.city !== 'undefined') {
+      extraDetails.city = payload.city
+    }
+    if (typeof payload.country !== 'undefined') {
+      extraDetails.country = payload.country
+    }
+
     const submitResult = await this.contactGateway.submit(
-      mapContactRequestToSubmitPayload(contactResult.data, {
+      mapContactRequestToSubmitPayload(
+        contactResult.data,
+        {
         pageLocation: this.location.href(),
         trafficSource: getTrafficSource(this.location),
         userAgent: this.navigator.userAgent(),
         createdAt: new Date(this.clock.now()).toISOString()
-      }, {
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        phoneNumber: payload.phoneNumber,
-        city: payload.city,
-        country: payload.country
-      })
+        },
+        extraDetails
+      )
     )
 
     if (!submitResult.ok) {

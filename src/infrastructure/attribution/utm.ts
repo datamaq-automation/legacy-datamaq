@@ -26,23 +26,39 @@ export function readAttributionFromUrl(): Attribution | null {
   }
 
   const params = new URLSearchParams(window.location.search)
-  const attribution: Attribution = {
-    utmSource: params.get('utm_source') ?? undefined,
-    utmMedium: params.get('utm_medium') ?? undefined,
-    utmCampaign: params.get('utm_campaign') ?? undefined,
-    utmTerm: params.get('utm_term') ?? undefined,
-    utmContent: params.get('utm_content') ?? undefined,
-    gclid: params.get('gclid') ?? undefined
+  const attribution: Attribution = {}
+
+  const utmSource = params.get('utm_source')
+  if (utmSource) {
+    attribution.utmSource = utmSource
   }
 
-  if (
-    !attribution.utmSource &&
-    !attribution.utmMedium &&
-    !attribution.utmCampaign &&
-    !attribution.utmTerm &&
-    !attribution.utmContent &&
-    !attribution.gclid
-  ) {
+  const utmMedium = params.get('utm_medium')
+  if (utmMedium) {
+    attribution.utmMedium = utmMedium
+  }
+
+  const utmCampaign = params.get('utm_campaign')
+  if (utmCampaign) {
+    attribution.utmCampaign = utmCampaign
+  }
+
+  const utmTerm = params.get('utm_term')
+  if (utmTerm) {
+    attribution.utmTerm = utmTerm
+  }
+
+  const utmContent = params.get('utm_content')
+  if (utmContent) {
+    attribution.utmContent = utmContent
+  }
+
+  const gclid = params.get('gclid')
+  if (gclid) {
+    attribution.gclid = gclid
+  }
+
+  if (Object.keys(attribution).length === 0) {
     return null
   }
 

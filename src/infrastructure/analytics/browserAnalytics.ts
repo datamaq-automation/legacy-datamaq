@@ -1,13 +1,6 @@
 import type { AnalyticsProvider } from '@/application/ports/AnalyticsProvider'
 import type { LoggerPort } from '@/application/ports/Logger'
 
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void
-    clarity?: (...args: unknown[]) => void
-  }
-}
-
 export class BrowserAnalytics implements AnalyticsProvider {
   constructor(private logger: LoggerPort) {}
 
