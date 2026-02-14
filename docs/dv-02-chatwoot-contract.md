@@ -96,6 +96,40 @@ Headers requeridos:
 - [ ] Backend Docker implementado con adaptador a Chatwoot en VPS.
 - [ ] Prueba E2E de formulario real -> conversacion visible en Chatwoot.
 
+## 6.1) Checklist operativo de cierre (backend fuera de este repo)
+1. Implementar endpoint backend `POST /contact` con validacion del payload esperado por frontend.
+2. Configurar variables del contenedor:
+   - `CHATWOOT_BASE_URL`
+   - `CHATWOOT_ACCOUNT_ID`
+   - `CHATWOOT_INBOX_ID`
+   - `CHATWOOT_API_ACCESS_TOKEN`
+3. Restringir CORS a los dominios frontend productivos (`https://www.datamaq.com.ar` y alias operativos que correspondan).
+4. Definir `VITE_CONTACT_API_URL` en frontend apuntando al backend propio (no a Chatwoot).
+5. Validar smoke tecnico del endpoint backend (desde terminal):
+```bash
+curl -i -X POST "https://<backend-domain>/contact" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName":"Test",
+    "lastName":"Datamaq",
+    "name":"Test Datamaq",
+    "email":"test@datamaq.com.ar",
+    "country":"AR",
+    "meta":{"page_location":"https://www.datamaq.com.ar","created_at":"2026-02-14T00:00:00.000Z"},
+    "custom_attributes":{},
+    "attribution":{}
+  }'
+```
+6. Validar E2E funcional: envio desde formulario productivo y confirmacion de conversacion en Chatwoot.
+7. Registrar evidencia (fecha, endpoint validado y resultado) para cerrar P0 en `docs/todo.md`.
+
+## 6.2) Bloqueos de alto nivel vigentes (C)
+- Este repositorio no contiene el codigo backend Docker, por lo que no puede completarse aqui la implementacion del adaptador Chatwoot.
+- Informacion faltante para cierre operativo:
+  - acceso al repositorio/servicio backend,
+  - URL final del endpoint backend de contacto,
+  - evidencia de pruebas E2E sobre entorno real.
+
 ## 7) Fuentes consultadas
 - Chatwoot API Introduction:
   - https://developers.chatwoot.com/api-reference/introduction

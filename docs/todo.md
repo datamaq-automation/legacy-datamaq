@@ -57,13 +57,15 @@ No incluye:
   - Avance: removidas las referencias frontend al secreto y al header de verificacion; contrato backend definido con integracion server-to-server a Chatwoot.
   - Evidencia: `src/application/ports/Config.ts`, `src/infrastructure/config/viteConfig.ts`, `src/infrastructure/contact/contactApiGateway.ts`, `src/env.d.ts`, `.env.example`, `tests/unit/infrastructure/contactApiGateway.test.ts`.
   - Evidencia: `docs/dv-02-chatwoot-contract.md`.
+  - Evidencia: `README.md` actualizado con flujo CI/CD vigente (`Quality Gate` + `Smoke E2E`) y despliegue sobre `main`/`workflow_dispatch`.
+  - Evidencia: `docs/dv-02-chatwoot-contract.md` actualizado con checklist operativo de cierre y validacion E2E.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-02 (contrato backend)
   - Riesgo: Alto
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
-  - Siguiente paso: implementar endpoint backend con token de Chatwoot en servidor y ejecutar prueba formulario real -> conversacion en Chatwoot.
-  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot).
+  - Siguiente paso: ejecutar checklist de `docs/dv-02-chatwoot-contract.md` (seccion 6.1) sobre backend VPS y adjuntar evidencia de endpoint + conversacion en Chatwoot.
+  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot); falta acceso al servicio backend y evidencia E2E real.
 
 - [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.

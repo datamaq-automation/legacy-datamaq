@@ -44,9 +44,10 @@ npm run lint:layers # valida limites de dependencias entre capas
 ```
 
 ## CI/CD recomendado (GitHub Actions + FTPS)
-Este repositorio incluye el workflow `./.github/workflows/ci-cd-ftps.yml` con dos jobs:
+Este repositorio incluye el workflow `./.github/workflows/ci-cd-ftps.yml` con tres jobs:
 - `Quality Gate`: ejecuta `npm run quality:gate` en `pull_request` y `push`.
-- `Deploy Production (FTPS)`: publica `dist/` por FTPS al hacer `push` a `main`, solo si `Quality Gate` pasa.
+- `Smoke E2E`: ejecuta `npm run test:e2e:smoke` en `pull_request` y `push`.
+- `Deploy Production (FTPS)`: publica `dist/` por FTPS al hacer `push` a `main`, solo si `Quality Gate` y `Smoke E2E` pasan.
 
 Secrets requeridos en GitHub:
 - `FTPS_SERVER`
@@ -66,7 +67,8 @@ Valores operativos confirmados para este proyecto:
 Configuracion recomendada en GitHub:
 1. Crear environment `production` y asociar los secrets FTPS.
 2. Activar branch protection en `main`.
-3. Marcar `CI/CD FTPS / Quality Gate` como check obligatorio para merge.
+3. Marcar `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E` como checks obligatorios para merge.
+4. Si no aparecen en el selector de required checks, ejecutar una corrida manual (`workflow_dispatch`) del workflow sobre `main` y reintentar.
 
 ## Analitica y eventos
 - Los eventos de compromiso se envian via `gtag` y `clarity`.
@@ -81,10 +83,11 @@ Configuracion recomendada en GitHub:
 - Corrige hallazgos antes de desplegar cambios visuales.
 
 ## Despliegue (flujo objetivo)
-1. Abrir PR y esperar `Quality Gate` en verde.
-2. Merge a `main`.
-3. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
-4. Verificar en QA que el formulario crea/actualiza conversacion en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
+1. Verificar localmente `npm run quality:gate` y `npm run test:e2e:smoke`.
+2. Ejecutar workflow en GitHub (por `push` a `main` o `workflow_dispatch` sobre `main`).
+3. Confirmar en verde `Quality Gate` y `Smoke E2E`.
+4. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
+5. Verificar en QA que el formulario crea/actualiza conversacion en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
 
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.
