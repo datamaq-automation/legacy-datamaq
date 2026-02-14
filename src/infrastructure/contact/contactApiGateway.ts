@@ -7,10 +7,8 @@ import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { StoragePort } from '@/application/ports/Storage'
 import { submitBackendContact } from './backendContactChannel'
-import { resolveContactChannel } from './contactChannelResolver'
 import { buildContactPayloadBundle } from './contactPayloadBuilder'
 import { mapSubmitResponseError } from './contactSubmissionErrors'
-import { submitChatwootContact } from './chatwootContactChannel'
 
 export class ContactApiGateway implements ContactGateway {
   constructor(
@@ -29,11 +27,7 @@ export class ContactApiGateway implements ContactGateway {
 
     const headers = buildContactHeaders(this.config.originVerifySecret)
     const payloads = buildContactPayloadBundle(payload, this.storage)
-    const channel = resolveContactChannel(apiUrl)
-    const response =
-      channel === 'chatwootPublic'
-        ? await submitChatwootContact(this.http, apiUrl, payloads, headers)
-        : await submitBackendContact(this.http, apiUrl, payloads, headers)
+    const response = await submitBackendContact(this.http, apiUrl, payloads, headers)
 
     if (!response.ok) {
       this.logger.warn('[contactApiGateway] response no OK', {

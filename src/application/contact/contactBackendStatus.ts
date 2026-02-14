@@ -83,14 +83,6 @@ export class ContactBackendMonitor {
     }
 
     try {
-      const looksLikeChatwootPublicEndpoint =
-        apiUrl.includes('/public/api/v1/inboxes/') && apiUrl.endsWith('/contacts')
-      if (looksLikeChatwootPublicEndpoint) {
-        this.status = 'available'
-        this.notify()
-        return this.status
-      }
-
       this.logger.debug('[contactBackendStatus] Probe start', { apiUrl })
       const response = await this.http.options(apiUrl)
       if (

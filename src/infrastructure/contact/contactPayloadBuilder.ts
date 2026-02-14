@@ -3,14 +3,6 @@ import type { StoragePort } from '@/application/ports/Storage'
 import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
 
 export interface ContactPayloadBundle {
-  normalizedPhone: string | undefined
-  customAttributes: Record<string, string>
-  chatwootPayload: {
-    name: string
-    email: string
-    phone_number: string | undefined
-    custom_attributes: Record<string, string>
-  }
   backendPayload: {
     firstName: string
     lastName: string
@@ -48,14 +40,6 @@ export function buildContactPayloadBundle(
   const customAttributes = sanitizeCustomAttributes(rawCustomAttributes)
 
   return {
-    normalizedPhone,
-    customAttributes,
-    chatwootPayload: {
-      name: enrichedPayload.name,
-      email: enrichedPayload.email,
-      phone_number: normalizedPhone,
-      custom_attributes: customAttributes
-    },
     backendPayload: {
       firstName: payload.firstName,
       lastName: payload.lastName,
@@ -75,10 +59,6 @@ export function buildContactPayloadBundle(
       attribution: enrichedPayload.attribution
     }
   }
-}
-
-export function hasCustomAttributes(attrs: Record<string, string>): boolean {
-  return Object.keys(attrs).length > 0
 }
 
 function sanitizeCustomAttributes(attrs: Record<string, unknown>): Record<string, string> {
