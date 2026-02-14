@@ -1,10 +1,15 @@
 import type { AnalyticsProvider } from '@/application/ports/AnalyticsProvider'
 import type { LoggerPort } from '@/application/ports/Logger'
+import { isAnalyticsTrackingEnabled } from './index'
 
 export class BrowserAnalytics implements AnalyticsProvider {
   constructor(private logger: LoggerPort) {}
 
   track(event: string, payload: Record<string, unknown>): void {
+    if (!isAnalyticsTrackingEnabled()) {
+      return
+    }
+
     this.sendGaEvent(event, payload)
     this.sendClarityEvent(event, payload)
   }

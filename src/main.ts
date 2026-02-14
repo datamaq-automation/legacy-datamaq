@@ -4,9 +4,9 @@ import App from './ui/App.vue'
 import { routes } from './router/routes'
 import './styles/main.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { enableSpaPageTracking, initAnalytics } from './infrastructure/analytics'
+import { enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
 import { initAttribution } from './infrastructure/attribution/utm'
-import { consentManagerKey } from './application/consent/consentManager'
+import { consentManagerKey, type ConsentStatus } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
 import { initChatwootWidget } from './infrastructure/chatwoot/widget'
 
@@ -26,7 +26,12 @@ export const createApp = ViteSSG(
 
     if (isClient) {
       initAttribution(container.storage)
-      initAnalytics()
+      syncAnalyticsConsent(container.consentManager.getStatus())
+
+      container.consentManager.subscribe((status: ConsentStatus) => {
+        syncAnalyticsConsent(status)
+      })
+
       enableSpaPageTracking(container.analyticsPort)
       initChatwootWidget()
     }

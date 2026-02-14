@@ -1,26 +1,28 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import {
+  analyticsConsentLegacyStorageKey,
+  analyticsConsentStorageKey
+} from '@/application/consent/consentStorage'
 import { getAnalyticsConsent, setAnalyticsConsent } from '@/infrastructure/consent/consent'
-
-const STORAGE_KEY = 'consent.analytics'
 
 describe('consent', () => {
   beforeEach(() => {
     window.localStorage.clear()
   })
 
-  it('devuelve unset y no falla sin window', () => {
+  it('returns unset and does not fail without window', () => {
     const originalWindow = globalThis.window
-    // @ts-expect-error simulamos entorno sin window
+    // @ts-expect-error test without browser globals
     globalThis.window = undefined
 
     expect(getAnalyticsConsent()).toBe('unset')
     expect(() => setAnalyticsConsent('granted')).not.toThrow()
 
-    // @ts-expect-error restauramos window
+    // @ts-expect-error restore browser globals
     globalThis.window = originalWindow
   })
 
-  it('lee valores válidos guardados', () => {
+  it('reads persisted granted and denied values', () => {
     setAnalyticsConsent('granted')
     expect(getAnalyticsConsent()).toBe('granted')
 
@@ -28,9 +30,27 @@ describe('consent', () => {
     expect(getAnalyticsConsent()).toBe('denied')
   })
 
-  it('devuelve unset para valores desconocidos', () => {
-    window.localStorage.setItem(STORAGE_KEY, 'maybe')
+  it('migrates legacy key and keeps one active key', () => {
+    window.localStorage.setItem(analyticsConsentLegacyStorageKey, 'granted')
+
+    expect(getAnalyticsConsent()).toBe('granted')
+    expect(window.localStorage.getItem(analyticsConsentStorageKey)).toBe('granted')
+    expect(window.localStorage.getItem(analyticsConsentLegacyStorageKey)).toBeNull()
+  })
+
+  it('returns unset for unknown values', () => {
+    window.localStorage.setItem(analyticsConsentStorageKey, 'maybe')
 
     expect(getAnalyticsConsent()).toBe('unset')
+  })
+
+  it('clears active and legacy keys when consent is unset', () => {
+    window.localStorage.setItem(analyticsConsentStorageKey, 'granted')
+    window.localStorage.setItem(analyticsConsentLegacyStorageKey, 'granted')
+
+    setAnalyticsConsent('unset')
+
+    expect(window.localStorage.getItem(analyticsConsentStorageKey)).toBeNull()
+    expect(window.localStorage.getItem(analyticsConsentLegacyStorageKey)).toBeNull()
   })
 })

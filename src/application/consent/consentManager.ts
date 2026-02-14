@@ -1,12 +1,15 @@
 import type { InjectionKey } from 'vue'
 import type { LoggerPort } from '../ports/Logger'
 import type { StoragePort } from '../ports/Storage'
+import {
+  analyticsConsentLegacyStorageKey,
+  analyticsConsentStorageKey,
+  parseStoredConsentStatus
+} from './consentStorage'
 
 export type ConsentStatus = 'unknown' | 'granted' | 'denied'
 
 type Listener = (status: ConsentStatus) => void
-
-const STORAGE_KEY = 'datamaq-www-consent'
 
 export interface ConsentManager {
   getStatus(): ConsentStatus
@@ -57,9 +60,16 @@ export function createConsentManager(
 
 function loadFromStorage(storage: StoragePort, logger: LoggerPort): ConsentStatus {
   try {
-    const stored = storage.get(STORAGE_KEY)
-    if (stored === 'granted' || stored === 'denied') {
+    const stored = parseStoredConsentStatus(storage.get(analyticsConsentStorageKey))
+    if (stored) {
       return stored
+    }
+
+    const legacyStored = parseStoredConsentStatus(storage.get(analyticsConsentLegacyStorageKey))
+    if (legacyStored) {
+      storage.set(analyticsConsentStorageKey, legacyStored)
+      storage.remove(analyticsConsentLegacyStorageKey)
+      return legacyStored
     }
   } catch (error) {
     logger.warn('[consentManager] No fue posible leer el consentimiento almacenado:', error)
@@ -75,10 +85,12 @@ function persistStatus(
 ): void {
   try {
     if (status === 'unknown') {
-      storage.remove(STORAGE_KEY)
+      storage.remove(analyticsConsentStorageKey)
     } else {
-      storage.set(STORAGE_KEY, status)
+      storage.set(analyticsConsentStorageKey, status)
     }
+
+    storage.remove(analyticsConsentLegacyStorageKey)
   } catch (error) {
     logger.warn('[consentManager] No fue posible persistir el consentimiento:', error)
   }

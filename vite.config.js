@@ -3,6 +3,7 @@ Path: vite.config.js
 */
 
 import { fileURLToPath, URL } from 'node:url'
+import path from 'node:path'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -15,6 +16,8 @@ export default defineConfig(({ mode }) => {
     vue(),
     removeConsole({ exclude: ['info', 'error', 'warn'] })
   ]
+  const customOutDir = process.env.BUILD_OUT_DIR?.trim()
+  const outDir = customOutDir ? path.resolve(customOutDir) : 'dist'
 
   if (mode !== 'production') {
     plugins.push(vueDevTools())
@@ -26,6 +29,11 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
+    },
+    build: {
+      outDir,
+      // Keep CI/default behavior for dist; avoid deleting external directories.
+      emptyOutDir: !customOutDir
     },
     test: {
       environment: 'jsdom',

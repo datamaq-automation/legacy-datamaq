@@ -34,15 +34,18 @@ No incluye:
   - Dependencias: Ninguna
   - Riesgo: Alto
 
-- [ ] (P0) Corregir flujo de consentimiento y activacion de analytics
+- [>] (P0) Corregir flujo de consentimiento y activacion de analytics
   - Contexto: se detectaron dos claves de consentimiento distintas (`datamaq-www-consent` y `consent.analytics`) y `initAnalytics()` solo se ejecuta al iniciar la app.
   - Accion: unificar fuente de verdad de consentimiento y conectar aceptacion/rechazo con inicializacion/bloqueo real de tracking.
   - DoD (criterio de aceptacion): existe una sola clave de consentimiento activa; al aceptar se habilita tracking segun especificacion validada; al rechazar no se envian eventos; tests unitarios cubren ambos caminos.
+  - Avance: implementada la sincronizacion `consentManager` <-> analytics y el bloqueo real de tracking por estado de consentimiento.
+  - Evidencia: `src/application/consent/consentStorage.ts`, `src/application/consent/consentManager.ts`, `src/infrastructure/consent/consent.ts`, `src/infrastructure/analytics/index.ts`, `src/infrastructure/analytics/browserAnalytics.ts`, `src/main.ts`.
+  - Evidencia: tests `tests/unit/application/consentManager.test.ts`, `tests/unit/infrastructure/consent.test.ts`, `tests/unit/infrastructure/analyticsConsentSync.test.ts`, `tests/unit/infrastructure/browserAnalytics.test.ts`; `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-01 (politica de consentimiento)
   - Riesgo: Alto
-  - Bloqueador: falta definicion funcional/legal final de la matriz de consentimiento.
-  - Siguiente paso: resolver DV-01 y luego implementar sincronizacion `consentManager` <-> analytics.
+  - Bloqueador residual: falta validacion funcional/legal final de la matriz de consentimiento (DV-01).
+  - Siguiente paso: cerrar DV-01 y ajustar la matriz tecnica si Product/Legal define cambios.
 
 - [ ] (P0) Eliminar secreto de verificacion del frontend
   - Contexto: hoy existe `VITE_ORIGIN_VERIFY_SECRET` y se envia `X-Origin-Verify` desde navegador, lo que no es secreto en cliente.
@@ -237,7 +240,7 @@ Tarea de verificacion:
 
 ## 7) Proximos pasos
 - Cerrar primero las verificaciones DV-01, DV-02 y DV-03 (bloquean decisiones P0).
-- Ejecutar P0 en orden: TypeScript -> Consent/Analytics -> Seguridad de secreto -> Guardrails UI.
+- Ejecutar P0 pendientes en orden: Seguridad de secreto -> puerta de calidad/CI obligatoria.
 - Congelar cambios grandes de UI/UX hasta que todos los P0 esten en verde.
 - Replanificar alcance de rediseno UI/UX solo despues de completar P1 minimo.
 - Revisar este backlog semanalmente con evidencia de comandos y estado de DoD por tarea.

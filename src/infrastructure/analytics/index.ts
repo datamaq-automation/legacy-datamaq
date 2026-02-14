@@ -9,10 +9,29 @@ type PageViewPayload = {
   title?: string
 }
 
+export type AnalyticsConsentStatus = 'unknown' | 'granted' | 'denied'
+
 let analyticsReady = false
 let ga4Enabled = false
 let spaTrackingEnabled = false
 let spaCleanup: (() => void) | null = null
+let consentStatus: AnalyticsConsentStatus = resolveInitialConsentStatus()
+
+export function syncAnalyticsConsent(status: AnalyticsConsentStatus): void {
+  consentStatus = status
+
+  if (consentStatus === 'granted') {
+    initAnalytics()
+  }
+}
+
+export function hasAnalyticsConsent(): boolean {
+  return consentStatus === 'granted'
+}
+
+export function isAnalyticsTrackingEnabled(): boolean {
+  return analyticsReady && hasAnalyticsConsent()
+}
 
 export function initAnalytics(): void {
   if (analyticsReady) {
@@ -24,7 +43,7 @@ export function initAnalytics(): void {
     return
   }
 
-  if (getAnalyticsConsent() !== 'granted') {
+  if (!hasAnalyticsConsent()) {
     return
   }
 
@@ -44,11 +63,7 @@ export function initAnalytics(): void {
 }
 
 export function trackPageView({ path, title }: PageViewPayload): void {
-  if (!analyticsReady) {
-    return
-  }
-
-  if (getAnalyticsConsent() !== 'granted') {
+  if (!isAnalyticsTrackingEnabled()) {
     return
   }
 
@@ -58,11 +73,7 @@ export function trackPageView({ path, title }: PageViewPayload): void {
 }
 
 export function trackEvent(name: string, params: Record<string, unknown> = {}): void {
-  if (!analyticsReady) {
-    return
-  }
-
-  if (getAnalyticsConsent() !== 'granted') {
+  if (!isAnalyticsTrackingEnabled()) {
     return
   }
 
@@ -116,6 +127,16 @@ export function enableSpaPageTracking(analytics: AnalyticsPort): () => void {
 function normalize(value: string | undefined): string | undefined {
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
+}
+
+function resolveInitialConsentStatus(): AnalyticsConsentStatus {
+  const consent = getAnalyticsConsent()
+
+  if (consent === 'unset') {
+    return 'unknown'
+  }
+
+  return consent
 }
 
 function parseBoolean(value: string | boolean | undefined, fallback: boolean): boolean {
