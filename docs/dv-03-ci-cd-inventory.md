@@ -57,11 +57,20 @@ Pendiente fuera de repo:
 - Marcar `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E` como required checks.
 
 Nota operativa (GitHub sin rulesets):
-- Si no aparecen checks en "Require status checks to pass", primero ejecutar al menos 1 PR hacia `main` para que GitHub indexe los status checks.
+- Si no aparecen checks en "Require status checks to pass", primero ejecutar al menos 1 corrida del workflow sobre `main` (sin PR) para que GitHub indexe los status checks.
 - Usar branch protection clasica en `main` (no requiere rulesets) y seleccionar exactamente:
   - `CI/CD FTPS / Quality Gate`
   - `CI/CD FTPS / Smoke E2E`
 - En repos privados puede demorar unos minutos en aparecer el listado luego de la primera corrida.
+
+Decision de bajo nivel (B): indexar checks sin PR
+- Opcion 1: `workflow_dispatch` sobre `main` (elegida).
+  - Ventaja: no altera historial de commits y deja evidencia de ejecucion.
+  - Desventaja: requiere disparo manual desde la UI de Actions.
+- Opcion 2: push directo a `main`.
+  - Ventaja: dispara pipeline automaticamente.
+  - Desventaja: agrega commits operativos sin valor funcional.
+- Motivo de eleccion: menor ruido en historial y cumple objetivo de indexacion de checks.
 
 Parametros operativos confirmados:
 - `FTPS_REMOTE_DIR=/public_html`
@@ -71,6 +80,16 @@ Estado operativo actual:
 - Pipeline CI/CD funcional y deploy FTPS operativo.
 - Enforcement de merge pendiente de confirmacion final (required check visible y aplicado).
 - Este pendiente no bloquea ejecucion de otros P0 funcionales, pero mantiene riesgo de gobernanza de cambios.
+
+Procedimiento operativo sin PR:
+1. Ir a `Actions` -> workflow `CI/CD FTPS`.
+2. Ejecutar `Run workflow` sobre la rama `main`.
+3. Verificar run en verde con jobs `Quality Gate` y `Smoke E2E`.
+4. Ir a `Settings` -> `Branches` -> regla de `main`.
+5. Activar `Require status checks to pass before merging` y seleccionar:
+   - `CI/CD FTPS / Quality Gate`
+   - `CI/CD FTPS / Smoke E2E`
+6. Guardar y validar que ambos checks figuren como requeridos en la regla.
 
 ## 7) Minimo recomendado de checks obligatorios
 Checks requeridos para PR/merge:
@@ -90,7 +109,7 @@ Implementacion recomendada:
 - Inventario de CI/CD documentado en repo.
 - Decision de implementacion definida y aplicada (`GitHub Actions + FTPS`).
 - Branch protection configurada con checks obligatorios.
-- Evidencia de una corrida de PR con status bloqueante ante falla.
+- Evidencia de una corrida en `main` (`workflow_dispatch` o push) con status checks visibles.
 - Confirmacion visual en GitHub de los checks requeridos activos sobre `main`.
 
 ## 9) Mensaje sugerido para Plataforma

@@ -260,7 +260,8 @@ Tarea de verificacion:
   - Dependencias: Ninguna
   - Riesgo: Medio
   - Bloqueador residual: configurar branch protection y required checks en GitHub.
-  - Siguiente paso: aplicar branch protection en `main` y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
+  - Decision tomada (B): para indexar checks sin abrir PR se elige `workflow_dispatch` sobre `main` en lugar de push tecnico.
+  - Siguiente paso: ejecutar `workflow_dispatch` en `main`, luego aplicar branch protection y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota operativa: puede ejecutarse en paralelo sin bloquear la continuidad de otros P0 funcionales (DV-01 y el cierre operativo del P0 de secreto/frontend-backend).
   - Nota C (2026-02-14): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
 
@@ -287,6 +288,7 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: P2 limites de capas (opcion elegida: script custom Node `lint:layers` + test de fixture por menor impacto de toolchain).
 - Clasificacion B aplicada en: DV-04 auditoria de headers (URL objetivo elegida: `https://www.datamaq.com.ar`).
 - Clasificacion B aplicada en: P2 smoke e2e (opcion elegida: Playwright para smoke local con mock de backend).
+- Clasificacion B aplicada en: DV-03 indexacion de checks sin PR (opcion elegida: `workflow_dispatch` en `main` para evitar commits tecnicos).
 - Clasificacion C (duda de alto nivel) mantenida en: P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), DV-03.
 - DV-02 sale de C por definicion contractual documentada; queda pendiente ejecucion tecnica (backend Docker + prueba E2E) dentro del P0 de seguridad.
 - DV-01 sale de C por decision funcional `hard revoke` e implementacion tecnica sincronizada.
