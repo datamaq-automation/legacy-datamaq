@@ -31,6 +31,8 @@ export class ContentRepository
     ConsentContentPort,
     ServicesContentPort
 {
+  private parsedContentCache: AppContent | undefined
+
   getContent(): AppContent {
     return this.getParsedContent()
   }
@@ -72,10 +74,15 @@ export class ContentRepository
   }
 
   private getParsedContent(): AppContent {
+    if (this.parsedContentCache) {
+      return this.parsedContentCache
+    }
+
     const parsed = AppContentSchema.safeParse(content)
     if (!parsed.success) {
       throw new Error('Invalid content schema')
     }
-    return parsed.data as AppContent
+    this.parsedContentCache = parsed.data as AppContent
+    return this.parsedContentCache
   }
 }

@@ -3,7 +3,7 @@
 ## 1) Contexto y objetivo
 El diagnostico tecnico del frontend Vue/TypeScript muestra una base arquitectonica util (capas `ui/application/domain/infrastructure`) pero con bloqueadores concretos para cambios grandes de UI/UX.
 Se confirmo evidencia objetiva de baseline roto en calidad tecnica: `npx tsc --noEmit` falla con 38 errores, y hoy fallan `npm run check:css`, `npm run test:a11y` y `npm run lint:colors`.
-Tambien se confirmo un riesgo alto en consentimiento/analytics (flujo desacoplado) y en seguridad de configuracion (mitigado en frontend, pendiente cierre de contrato backend DV-02).
+Tambien se confirmo un riesgo alto en consentimiento/analytics (flujo desacoplado) y en seguridad de configuracion (mitigado en frontend, con contrato DV-02 definido para Chatwoot; pendiente implementacion backend y validacion E2E).
 Objetivo de este plan: dejar el proyecto en estado seguro y estable para ejecutar cambios grandes de UI/UX sin generar deuda critica.
 
 ## 2) Alcance
@@ -52,14 +52,15 @@ No incluye:
   - Contexto: se detecto uso de `VITE_ORIGIN_VERIFY_SECRET` y envio de `X-Origin-Verify` desde navegador, lo que no es secreto en cliente.
   - Accion: remover uso de secreto en frontend y migrar validacion de origen al backend/proxy.
   - DoD (criterio de aceptacion): no hay referencias a `VITE_ORIGIN_VERIFY_SECRET` ni a `X-Origin-Verify` en frontend; contrato backend validado y funcionando.
-  - Avance: removidas las referencias frontend al secreto y al header de verificacion.
+  - Avance: removidas las referencias frontend al secreto y al header de verificacion; contrato backend definido con integracion server-to-server a Chatwoot.
   - Evidencia: `src/application/ports/Config.ts`, `src/infrastructure/config/viteConfig.ts`, `src/infrastructure/contact/contactApiGateway.ts`, `src/env.d.ts`, `.env.example`, `tests/unit/infrastructure/contactApiGateway.test.ts`.
+  - Evidencia: `docs/dv-02-chatwoot-contract.md`.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-02 (contrato backend)
   - Riesgo: Alto
-  - Bloqueador residual: falta contrato backend confirmado de validacion server-side para cerrar DV-02.
-  - Siguiente paso: cerrar DV-02 y documentar el mecanismo definitivo de validacion de origen en backend/proxy.
+  - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
+  - Siguiente paso: implementar endpoint backend con token de Chatwoot en servidor y ejecutar prueba formulario real -> conversacion en Chatwoot.
 
 - [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.
@@ -100,12 +101,12 @@ No incluye:
   - Evidencia: `src/infrastructure/contact/contactApiGateway.ts`, `src/infrastructure/contact/contactPayloadBuilder.ts`, `src/infrastructure/contact/backendContactChannel.ts`, `src/infrastructure/contact/contactSubmissionErrors.ts`.
   - Evidencia: tests `tests/unit/infrastructure/contactApiGateway.test.ts`; `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Frontend
-  - Dependencias: P0 de contrato backend
+  - Dependencias: P0 de contrato backend (resuelta por DV-02).
   - Riesgo: Medio
-  - Bloqueador: depende de contrato backend definitivo (DV-02) para no romper integracion.
-  - Siguiente paso: al cerrar DV-02, ajustar contrato de canal backend si cambia payload/headers esperados.
+  - Bloqueador: sin bloqueador de contrato; pendiente validacion de integracion cuando el backend Chatwoot este desplegado.
+  - Siguiente paso: correr smoke de integracion contra backend Chatwoot al completar el deploy Docker en VPS.
 
-- [>] (P1) Aumentar pruebas de UI critica (componentes y flujo de contacto)
+- [x] (P1) Aumentar pruebas de UI critica (componentes y flujo de contacto)
   - Contexto: tests actuales son mayormente unitarios de application/domain; cobertura UI de componentes es minima.
   - Accion: agregar pruebas para `ContactFormSection`, `ConsentBanner`, y navegacion de submit/thanks.
   - DoD (criterio de aceptacion): al menos 1 spec por componente critico + 1 spec de flujo; pruebas fallan si se rompe interaccion principal.
@@ -115,8 +116,7 @@ No incluye:
   - Owner: Frontend
   - Dependencias: P0 TypeScript y consentimiento
   - Riesgo: Medio
-  - Bloqueador: ninguno tecnico inmediato (pendiente por prioridad).
-  - Siguiente paso: ampliar cobertura de UI para casos negativos (errores backend/validacion visual) y ruta thanks -> home.
+  - Siguiente paso: ampliar cobertura de UI para casos negativos (errores backend/validacion visual) y ruta thanks -> home como mejora incremental no bloqueante.
 
 - [x] (P1) Reemplazar rutas hardcodeadas por nombres de ruta
   - Contexto: hay `router.push('/gracias')` y `router.push('/')` hardcodeados.
@@ -145,26 +145,28 @@ No incluye:
   - Dependencias: Ninguna
   - Riesgo: Bajo
 
-- [ ] (P1) Optimizar parseo de contenido centralizado
+- [x] (P1) Optimizar parseo de contenido centralizado
   - Contexto: `ContentRepository` ejecuta `safeParse` en cada getter.
   - Accion: parsear una vez y cachear contenido validado durante ciclo de vida de app.
   - DoD (criterio de aceptacion): parseo unico implementado con tests que validan comportamiento y errores.
+  - Avance: implementado cache interno del contenido parseado en `ContentRepository`.
+  - Evidencia: `src/infrastructure/content/contentRepository.ts`, `tests/unit/infrastructure/contentRepository.test.ts`.
+  - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Frontend
   - Dependencias: Ninguna
   - Riesgo: Bajo
-  - Bloqueador: ninguno tecnico inmediato (pendiente por prioridad).
-  - Siguiente paso: introducir cache privado inmutable en `ContentRepository` y cubrir con tests.
 
 ### P2
-- [ ] (P2) Introducir carga perezosa de rutas de pagina
+- [x] (P2) Introducir carga perezosa de rutas de pagina
   - Contexto: `src/router/routes.ts` importa paginas en forma estatica.
   - Accion: migrar a imports dinamicos para reducir payload inicial.
   - DoD (criterio de aceptacion): rutas principales con lazy loading y build validado sin regresiones funcionales.
+  - Avance: rutas de pagina migradas a `import()` dinamico.
+  - Evidencia: `src/router/routes.ts`.
+  - Evidencia: `npm run build` en verde con chunks separados para paginas.
   - Owner: Frontend
   - Dependencias: P0 baseline en verde
   - Riesgo: Bajo
-  - Bloqueador: ninguno tecnico inmediato (pendiente por prioridad).
-  - Siguiente paso: migrar primero `MedicionConsumoEscobar` a import dinamico y medir bundle.
 
 - [ ] (P2) Definir reglas automaticas de limites de capas
   - Contexto: la separacion por capas existe, pero no hay regla automatica que la haga cumplir.
@@ -207,25 +209,27 @@ Tarea de verificacion:
 
 ### DV-02: Contrato backend para envio de contactos sin secreto en cliente
 Duda:
-- No esta confirmado el mecanismo server-side definitivo de validacion de origen tras remover `X-Origin-Verify` del frontend.
+- Contrato tecnico definido; pendiente ejecucion operativa (backend Docker en VPS + prueba E2E).
 
 Tarea de verificacion:
-- [ ] (P0) Confirmar contrato de autenticacion/origen con backend
-  - Contexto: frontend envia hoy header de verificacion.
-  - Accion: revisar contrato vigente del endpoint de contacto y acordar mecanismo seguro (server-side).
+- [x] (P0) Confirmar contrato de autenticacion/origen con backend
+  - Contexto: tras remover `X-Origin-Verify` del frontend era necesario acordar un mecanismo server-side seguro.
+  - Accion: definir contrato backend con Chatwoot (server-to-server), incluyendo payload, auth por token en backend y reglas de CORS.
   - DoD (criterio de aceptacion): contrato escrito con ejemplo de request valido sin secreto en cliente.
+  - Avance: contrato definido y documentado con decision de arquitectura `frontend(Ferozo) -> backend Docker en VPS -> Chatwoot`.
+  - Evidencia: `docs/dv-02-chatwoot-contract.md`.
   - Owner: Backend
   - Dependencias: Ninguna
   - Riesgo: Alto
-  - Bloqueador: requiere definicion tecnica del backend/proxy.
-  - Siguiente paso: obtener especificacion de endpoint y estrategia de validacion server-side.
+  - Bloqueador residual: falta implementacion del adaptador backend y prueba E2E contra Chatwoot.
+  - Siguiente paso: desplegar backend Docker con variables `CHATWOOT_*` y validar flujo real de punta a punta.
 
 ### DV-03: Estado real de CI/CD y reglas de merge
 Duda:
 - El pipeline principal ya se implemento en repo, pero falta confirmar enforcement final (required checks + branch protection).
 
 Tarea de verificacion:
-- [x] (P0) Relevar pipeline real de integracion
+- [>] (P0) Relevar pipeline real de integracion
   - Contexto: los checks criticos no estan garantizados por evidencia local.
   - Accion: inventariar estado real y decidir implementacion en repo o fuera del repo.
   - DoD (criterio de aceptacion): inventario de checks actuales + decision de implementacion en repo o fuera del repo.
@@ -239,6 +243,7 @@ Tarea de verificacion:
   - Riesgo: Medio
   - Bloqueador residual: configurar branch protection y required checks en GitHub.
   - Siguiente paso: aplicar branch protection en `main` y exigir `CI/CD FTPS / Quality Gate`.
+  - Nota operativa: puede ejecutarse en paralelo sin bloquear la continuidad de otros P0 funcionales (DV-01 y el cierre operativo del P0 de secreto/frontend-backend).
 
 ### DV-04: Headers y politicas de seguridad en despliegue
 Duda:
@@ -255,9 +260,15 @@ Tarea de verificacion:
   - Bloqueador: falta acceso/objetivo de entorno para medicion.
   - Siguiente paso: definir URL de staging/prod y ejecutar auditoria de headers.
 
+### Notas de ejecucion A/B/C (2026-02-14)
+- Clasificacion C (duda de alto nivel) mantenida en: P0 consentimiento (depende DV-01), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), P2 limites de capas (falta decision de herramienta), P2 smoke e2e (falta decision de stack/CI), DV-01, DV-03 y DV-04.
+- DV-02 sale de C por definicion contractual documentada; queda pendiente ejecucion tecnica (backend Docker + prueba E2E) dentro del P0 de seguridad.
+- Informacion faltante para destrabar C: aprobacion Product/Legal (DV-01), confirmacion de required checks/branch protection efectivos (DV-03), decision de herramienta para boundaries/e2e y acceso a entorno para auditoria de headers (DV-04).
+
 ## 7) Proximos pasos
-- Cerrar primero las verificaciones DV-01, DV-02 y DV-03 (bloquean decisiones P0).
-- Ejecutar P0 pendientes en orden: Seguridad de secreto -> puerta de calidad/CI obligatoria.
+- Priorizar cierre de DV-01 y la implementacion backend/E2E de DV-02 por impacto funcional/legal y de seguridad.
+- Completar DV-03 (enforcement de merge) en paralelo, sin frenar ejecucion de otros P0.
+- Ejecutar P0 pendientes en orden: Seguridad de secreto (backend Chatwoot operativo) -> puerta de calidad/CI obligatoria.
 - Congelar cambios grandes de UI/UX hasta que todos los P0 esten en verde.
 - Replanificar alcance de rediseno UI/UX solo despues de completar P1 minimo.
 - Revisar este backlog semanalmente con evidencia de comandos y estado de DoD por tarea.

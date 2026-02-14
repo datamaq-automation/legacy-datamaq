@@ -1,7 +1,4 @@
 import type { RouteRecordRaw } from 'vue-router'
-import HomePage from '@/ui/pages/HomePage.vue'
-import MedicionConsumoEscobar from '@/ui/pages/MedicionConsumoEscobar.vue'
-import ThanksView from '@/ui/views/ThanksView.vue'
 import routeMetadata from '@/seo/routes.json'
 
 const metadataByName = new Map(routeMetadata.map((route) => [route.name, route]))
@@ -14,7 +11,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: homeMeta?.path ?? '/',
     name: 'home',
-    component: HomePage,
+    component: () => import('@/ui/pages/HomePage.vue'),
     meta: {
       indexable: homeMeta?.indexable ?? true,
       name: homeMeta?.name
@@ -23,7 +20,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: thanksMeta?.path ?? '/gracias',
     name: 'thanks',
-    component: ThanksView,
+    component: () => import('@/ui/views/ThanksView.vue'),
     meta: {
       indexable: thanksMeta?.indexable ?? false,
       name: thanksMeta?.name
@@ -32,7 +29,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: medicionEscobarMeta?.path ?? '/medicion-consumo-electrico-escobar',
     name: 'medicion-consumo-escobar',
-    component: MedicionConsumoEscobar,
+    component: () => import('@/ui/pages/MedicionConsumoEscobar.vue'),
     meta: {
       indexable: medicionEscobarMeta?.indexable ?? true,
       name: medicionEscobarMeta?.name

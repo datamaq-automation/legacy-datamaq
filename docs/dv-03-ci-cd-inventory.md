@@ -12,8 +12,9 @@ Hallazgos:
 - Existe script local de puerta de calidad: `npm run quality:gate`.
 
 Configuracion de despliegue detectada:
-- `wrangler.jsonc` presente con assets de `dist/` (indicio de despliegue en Cloudflare Workers/Pages).
+- `wrangler.jsonc` presente con assets de `dist/` (artefacto legado; no corresponde al flujo productivo vigente).
 - Workflow de deploy por FTPS configurado para `main` con environment `production`.
+- Flujo productivo vigente confirmado: frontend en Ferozo y backend en Docker sobre VPS (DonWeb Cloud IaaS).
 
 Checks locales disponibles en `quality:gate`:
 - `npm run typecheck`
@@ -53,6 +54,11 @@ Pendiente fuera de repo:
 Parametros operativos confirmados:
 - `FTPS_REMOTE_DIR=/public_html`
 - `FTPS_PORT=21` (FTPS explicito)
+
+Estado operativo actual:
+- Pipeline CI/CD funcional y deploy FTPS operativo.
+- Enforcement de merge pendiente de confirmacion final (required check visible y aplicado).
+- Este pendiente no bloquea ejecucion de otros P0 funcionales, pero mantiene riesgo de gobernanza de cambios.
 
 ## 7) Minimo recomendado de checks obligatorios
 Checks requeridos para PR/merge:

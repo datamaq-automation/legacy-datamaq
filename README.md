@@ -4,7 +4,7 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 
 ## Caracteristicas principales
 - SPA liviana optimizada para CTAs de WhatsApp y correo electronico.
-- Integracion con API externa para registrar contactos del formulario.
+- Integracion con backend propio para registrar contactos y derivarlos a Chatwoot.
 - Instrumentacion analitica con GA4 y Microsoft Clarity.
 - Componentes accesibles y reutilizables segun la guia de `docs/`.
 - Banner de consentimiento que bloquea GA4/Clarity hasta aceptacion explicita.
@@ -13,12 +13,19 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 ## Requisitos previos
 - Node.js >= 20.19.0
 - npm >= 8
-- Acceso al endpoint HTTPS del backend para recibir formularios.
+- Acceso al endpoint HTTPS del backend propio para recibir formularios.
 
 ## Configuracion de entorno
 1. Copia `.env.example` a `.env` y completa los valores reales para cada entorno.
-2. Verifica que `VITE_CONTACT_API_URL` apunte a un endpoint HTTPS valido.
+2. Verifica que `VITE_CONTACT_API_URL` apunte al backend propio (no directo a Chatwoot).
 3. Ajusta los IDs de analitica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segun la propiedad correspondiente.
+
+## Arquitectura de contacto y despliegue
+- Frontend estatico en Ferozo (DonWeb), publicado en `public_html` via FTPS.
+- Backend propio en Docker, desplegado en VPS (DonWeb Cloud IaaS).
+- Flujo de contacto: `frontend -> backend -> Chatwoot`.
+- Los secretos de Chatwoot (`api_access_token` y relacionados) viven solo en backend.
+- Contrato tecnico DV-02: `docs/dv-02-chatwoot-contract.md`.
 
 ## Instalacion y scripts
 ```sh
@@ -72,7 +79,7 @@ Configuracion recomendada en GitHub:
 1. Abrir PR y esperar `Quality Gate` en verde.
 2. Merge a `main`.
 3. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
-4. Verificar en QA que eventos de WhatsApp y correo se registran una sola vez en GA4 y Clarity.
+4. Verificar en QA que el formulario crea/actualiza conversacion en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
 
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.
