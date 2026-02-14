@@ -47,6 +47,7 @@ No incluye:
   - Riesgo: Alto
   - Bloqueador residual: falta validacion funcional/legal final de la matriz de consentimiento (DV-01).
   - Siguiente paso: cerrar DV-01 y ajustar la matriz tecnica si Product/Legal define cambios.
+  - Nota C (2026-02-14): pendiente de aprobacion externa Product/Legal; no se modifica codigo adicional hasta cerrar DV-01.
 
 - [>] (P0) Eliminar secreto de verificacion del frontend
   - Contexto: se detecto uso de `VITE_ORIGIN_VERIFY_SECRET` y envio de `X-Origin-Verify` desde navegador, lo que no es secreto en cliente.
@@ -61,6 +62,7 @@ No incluye:
   - Riesgo: Alto
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
   - Siguiente paso: implementar endpoint backend con token de Chatwoot en servidor y ejecutar prueba formulario real -> conversacion en Chatwoot.
+  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot).
 
 - [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.
@@ -91,6 +93,7 @@ No incluye:
   - Riesgo: Alto
   - Bloqueador: falta activar required checks y branch protection en `main`.
   - Siguiente paso: configurar secrets FTPS + branch protection y exigir `CI/CD FTPS / Quality Gate`.
+  - Nota C (2026-02-14): bloqueo de configuracion en GitHub (entorno externo al repo).
 
 ### P1
 - [x] (P1) Refactorizar `ContactApiGateway` por responsabilidades
@@ -168,15 +171,19 @@ No incluye:
   - Dependencias: P0 baseline en verde
   - Riesgo: Bajo
 
-- [ ] (P2) Definir reglas automaticas de limites de capas
+- [x] (P2) Definir reglas automaticas de limites de capas
   - Contexto: la separacion por capas existe, pero no hay regla automatica que la haga cumplir.
   - Accion: agregar regla de lint/import boundaries para prevenir dependencias no permitidas.
   - DoD (criterio de aceptacion): regla activa y documentada; ejemplo de violacion detectada por tooling.
+  - Avance: implementado chequeo de capas (`lint:layers`) con reglas minimas para `domain`, `application`, `infrastructure` y `ui`.
+  - Evidencia: `scripts/layerBoundaries.mjs`, `scripts/check-layer-boundaries.mjs`, `package.json` (script `lint:layers`).
+  - Evidencia: ejemplo de violacion detectada por tooling en fixture `tests/fixtures/layer-boundaries/src/domain/badImport.ts` y test `tests/unit/scripts/layerBoundaries.test.ts`.
+  - Evidencia: `npm run lint:layers`, `npx vitest run tests/unit/scripts/layerBoundaries.test.ts`, `npm run typecheck` y `npm run test` en verde.
   - Owner: Frontend
   - Dependencias: P0 puerta de calidad
   - Riesgo: Medio
-  - Bloqueador: falta decidir herramienta (ESLint boundaries o alternativa) y pipeline final (DV-03).
-  - Siguiente paso: proponer regla minima y validar en rama de prueba.
+  - Decision tomada (B): se adopto script custom Node en lugar de plugin ESLint para minimizar impacto y evitar introducir nueva toolchain.
+  - Siguiente paso adicional (no bloqueante): al cerrar DV-03, incluir `lint:layers` en el pipeline bloqueante de merge.
 
 - [ ] (P2) Preparar smoke e2e minimo de regresion UI
   - Contexto: no hay tests e2e versionados.
@@ -187,6 +194,7 @@ No incluye:
   - Riesgo: Medio
   - Bloqueador: falta decision de herramienta y ejecucion en CI real (DV-03).
   - Siguiente paso: definir stack e2e objetivo y crear primer smoke local.
+  - Nota C (2026-02-14): decision de stack e2e/CI impacta arquitectura del pipeline; se mantiene en espera hasta cerrar DV-03.
 
 ## 5) Dudas a resolver
 
@@ -206,6 +214,7 @@ Tarea de verificacion:
   - Riesgo: Alto
   - Bloqueador: requiere aprobacion final de Product/Legal (incluyendo criterio de revocacion).
   - Siguiente paso: revisar la matriz propuesta, elegir politica de revocacion (soft/hard) y aprobar version final.
+  - Nota C (2026-02-14): falta decision funcional/legal externa para cerrar DV-01.
 
 ### DV-02: Contrato backend para envio de contactos sin secreto en cliente
 Duda:
@@ -244,6 +253,7 @@ Tarea de verificacion:
   - Bloqueador residual: configurar branch protection y required checks en GitHub.
   - Siguiente paso: aplicar branch protection en `main` y exigir `CI/CD FTPS / Quality Gate`.
   - Nota operativa: puede ejecutarse en paralelo sin bloquear la continuidad de otros P0 funcionales (DV-01 y el cierre operativo del P0 de secreto/frontend-backend).
+  - Nota C (2026-02-14): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
 
 ### DV-04: Headers y politicas de seguridad en despliegue
 Duda:
@@ -259,11 +269,13 @@ Tarea de verificacion:
   - Riesgo: Medio
   - Bloqueador: falta acceso/objetivo de entorno para medicion.
   - Siguiente paso: definir URL de staging/prod y ejecutar auditoria de headers.
+  - Nota C (2026-02-14): sin URL objetivo explicita en este repo no se puede ejecutar medicion confiable.
 
 ### Notas de ejecucion A/B/C (2026-02-14)
-- Clasificacion C (duda de alto nivel) mantenida en: P0 consentimiento (depende DV-01), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), P2 limites de capas (falta decision de herramienta), P2 smoke e2e (falta decision de stack/CI), DV-01, DV-03 y DV-04.
+- Clasificacion B aplicada en: P2 limites de capas (opcion elegida: script custom Node `lint:layers` + test de fixture por menor impacto de toolchain).
+- Clasificacion C (duda de alto nivel) mantenida en: P0 consentimiento (depende DV-01), P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), P2 smoke e2e (falta decision de stack/CI), DV-01, DV-03 y DV-04.
 - DV-02 sale de C por definicion contractual documentada; queda pendiente ejecucion tecnica (backend Docker + prueba E2E) dentro del P0 de seguridad.
-- Informacion faltante para destrabar C: aprobacion Product/Legal (DV-01), confirmacion de required checks/branch protection efectivos (DV-03), decision de herramienta para boundaries/e2e y acceso a entorno para auditoria de headers (DV-04).
+- Informacion faltante para destrabar C: aprobacion Product/Legal (DV-01), evidencia de required checks/branch protection efectivos (DV-03), decision de stack e2e y su ejecucion en CI real, y URL objetivo para auditoria de headers (DV-04).
 
 ## 7) Proximos pasos
 - Priorizar cierre de DV-01 y la implementacion backend/E2E de DV-02 por impacto funcional/legal y de seguridad.
