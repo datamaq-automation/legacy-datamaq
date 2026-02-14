@@ -41,6 +41,7 @@ npm run test:a11y   # auditoria heuristica de accesibilidad
 npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
 npm run lint:layers # valida limites de dependencias entre capas
+npm run quality:merge # puerta local recomendada antes de merge/deploy
 ```
 
 ## CI/CD recomendado (GitHub Actions + FTPS)
@@ -69,6 +70,7 @@ Configuracion recomendada en GitHub:
 2. Activar branch protection en `main`.
 3. Marcar `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E` como checks obligatorios para merge.
 4. Si no aparecen en el selector de required checks, ejecutar una corrida manual (`workflow_dispatch`) del workflow sobre `main` y reintentar.
+5. Mientras el enforcement externo no este confirmado, usar `npm run quality:merge` como control operativo manual.
 
 ## Analitica y eventos
 - Los eventos de compromiso se envian via `gtag` y `clarity`.

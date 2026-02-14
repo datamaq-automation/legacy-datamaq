@@ -37,6 +37,8 @@ Decision tomada:
 ## 3) Contrato frontend -> backend (estable)
 Endpoint:
 - `POST {CONTACT_API_URL}` (configurado via `VITE_CONTACT_API_URL`).
+- Referencia operativa estimativa (2026-02-14): base `https://chatwoot.datamaq.com.ar/` con endpoint tentativo `/contact` (`https://chatwoot.datamaq.com.ar/contact`).
+- Estado: estimativo y sujeto a cambio hasta cerrar infraestructura en VPS.
 
 Payload esperado (actual frontend):
 ```json
@@ -105,6 +107,8 @@ Headers requeridos:
    - `CHATWOOT_API_ACCESS_TOKEN`
 3. Restringir CORS a los dominios frontend productivos (`https://www.datamaq.com.ar` y alias operativos que correspondan).
 4. Definir `VITE_CONTACT_API_URL` en frontend apuntando al backend propio (no a Chatwoot).
+   - Valor estimativo actual: `https://chatwoot.datamaq.com.ar/contact`.
+   - Mantenerlo parametrizado porque puede variar.
 5. Validar smoke tecnico del endpoint backend (desde terminal):
 ```bash
 curl -i -X POST "https://<backend-domain>/contact" \
@@ -127,7 +131,7 @@ curl -i -X POST "https://<backend-domain>/contact" \
 - Este repositorio no contiene el codigo backend Docker, por lo que no puede completarse aqui la implementacion del adaptador Chatwoot.
 - Informacion faltante para cierre operativo:
   - acceso al repositorio/servicio backend,
-  - URL final del endpoint backend de contacto,
+  - URL final del endpoint backend de contacto (hoy estimada como `https://chatwoot.datamaq.com.ar/contact`),
   - evidencia de pruebas E2E sobre entorno real.
 
 ## 7) Fuentes consultadas

@@ -59,13 +59,14 @@ No incluye:
   - Evidencia: `docs/dv-02-chatwoot-contract.md`.
   - Evidencia: `README.md` actualizado con flujo CI/CD vigente (`Quality Gate` + `Smoke E2E`) y despliegue sobre `main`/`workflow_dispatch`.
   - Evidencia: `docs/dv-02-chatwoot-contract.md` actualizado con checklist operativo de cierre y validacion E2E.
+  - Evidencia: referencia operativa estimativa de endpoint backend `https://chatwoot.datamaq.com.ar/contact` (puede variar) en `docs/dv-02-chatwoot-contract.md` y `.env.example`.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-02 (contrato backend)
   - Riesgo: Alto
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
   - Siguiente paso: ejecutar checklist de `docs/dv-02-chatwoot-contract.md` (seccion 6.1) sobre backend VPS y adjuntar evidencia de endpoint + conversacion en Chatwoot.
-  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot); falta acceso al servicio backend y evidencia E2E real.
+  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot); hay dominio estimativo (`https://chatwoot.datamaq.com.ar/`) pero falta confirmar URL final y evidencia E2E real.
 
 - [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.
@@ -89,14 +90,15 @@ No incluye:
   - Contexto: el workflow CI/CD ya esta versionado en repo, pero los checks criticos todavia no estan garantizados como bloqueantes hasta configurar branch protection.
   - Accion: definir y aplicar pipeline minimo con `typecheck`, `test`, `test:a11y`, `check:css`, `lint:colors`.
   - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
-  - Avance: implementado workflow `GitHub Actions + FTPS` con `Quality Gate` y deploy condicionado a `main`; `quality:gate` actualizado para incluir `lint:layers`.
-  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate` + `lint:layers`), `docs/dv-03-ci-cd-inventory.md`.
+  - Avance: implementado workflow `GitHub Actions + FTPS` con `Quality Gate` y `Smoke E2E`; `quality:gate` incluye `lint:layers` y se agrego `quality:merge` para control operativo local (`quality:gate` + smoke e2e).
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`, `quality:merge`, `lint:layers`), `docs/dv-03-ci-cd-inventory.md`.
   - Evidencia: `npm run quality:gate` en verde (2026-02-14) con `typecheck`, `test`, `lint:colors`, `lint:layers`, `test:a11y` y `check:css`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-14) como mitigacion mientras branch protection sigue pendiente.
   - Owner: Shared
   - Dependencias: DV-03 (estado real de CI/CD)
   - Riesgo: Alto
   - Bloqueador: falta activar required checks y branch protection en `main`.
-  - Siguiente paso: configurar secrets FTPS + branch protection y exigir `CI/CD FTPS / Quality Gate`.
+  - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota C (2026-02-14): bloqueo de configuracion en GitHub (entorno externo al repo).
 
 ### P1
@@ -291,6 +293,8 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: DV-04 auditoria de headers (URL objetivo elegida: `https://www.datamaq.com.ar`).
 - Clasificacion B aplicada en: P2 smoke e2e (opcion elegida: Playwright para smoke local con mock de backend).
 - Clasificacion B aplicada en: DV-03 indexacion de checks sin PR (opcion elegida: `workflow_dispatch` en `main` para evitar commits tecnicos).
+- Clasificacion B aplicada en: DV-02 endpoint backend estimativo (opcion elegida: documentar base `https://chatwoot.datamaq.com.ar/` + path tentativo `/contact` manteniendo `VITE_CONTACT_API_URL` parametrizada).
+- Clasificacion B aplicada en: P0 puerta de calidad (opcion elegida: mitigacion local `npm run quality:merge` mientras el enforcement externo de branch protection sigue pendiente).
 - Clasificacion C (duda de alto nivel) mantenida en: P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), DV-03.
 - DV-02 sale de C por definicion contractual documentada; queda pendiente ejecucion tecnica (backend Docker + prueba E2E) dentro del P0 de seguridad.
 - DV-01 sale de C por decision funcional `hard revoke` e implementacion tecnica sincronizada.

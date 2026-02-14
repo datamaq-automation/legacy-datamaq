@@ -25,6 +25,9 @@ Checks locales disponibles en `quality:gate`:
 - `npm run test:a11y`
 - `npm run check:css`
 
+Control operativo local complementario:
+- `npm run quality:merge` (`quality:gate` + `test:e2e:smoke`).
+
 Checks e2e versionados:
 - `npm run test:e2e:smoke` (Playwright, Chromium).
 
@@ -80,6 +83,7 @@ Estado operativo actual:
 - Pipeline CI/CD funcional y deploy FTPS operativo.
 - Enforcement de merge pendiente de confirmacion final (required check visible y aplicado).
 - Este pendiente no bloquea ejecucion de otros P0 funcionales, pero mantiene riesgo de gobernanza de cambios.
+- Mitigacion transitoria en repo: ejecutar `npm run quality:merge` antes de cualquier merge/deploy manual.
 
 Procedimiento operativo sin PR:
 1. Ir a `Actions` -> workflow `CI/CD FTPS`.
