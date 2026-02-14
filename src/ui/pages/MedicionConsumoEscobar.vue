@@ -32,7 +32,7 @@ const {
               class="btn btn-primary btn-lg"
               @click="handleChat('landing-escobar-hero')"
             >
-              Abrir chat ahora
+              Escribir por WhatsApp
             </button>
             <a class="btn btn-outline-primary btn-lg" href="#contacto">
               Solicitar medicion

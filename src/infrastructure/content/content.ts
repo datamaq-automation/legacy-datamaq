@@ -1,4 +1,4 @@
-/*
+﻿/*
 Path: src/infrastructure/content/content.ts
 */
 
@@ -10,13 +10,10 @@ import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
 export const commercialConfig: CommercialConfig = {
-  baseOperativa: 'Garín (GBA Norte)', // base prioritaria
-  tarifaBaseDesdeARS: 180000, // instalación típica 1 Powermeter (equipo provisto por el cliente)
-  trasladoMinimoARS: 0, // si querés publicar mínimo, setear valor (ej. 25000)
-  // Tarifa base publicada para automatización comercial (setup / implementación mínima).
-  // Ajustá estos valores según tu estrategia comercial.
-  tarifaChatwootDesdeARS: 260000,
-  tarifaRasaDesdeARS: 320000,
+  baseOperativa: 'Garin (GBA Norte)',
+  tarifaBaseDesdeARS: 180000,
+  trasladoMinimoARS: 0,
+  whatsappUrl: 'https://wa.me/5491100000000',
   descuentos: {
     cooperativasPct: 0,
     pymeGraficaPct: 0
@@ -24,10 +21,6 @@ export const commercialConfig: CommercialConfig = {
   equipos: {
     medidorNombre: 'Powermeter',
     automateNombre: 'Automate'
-  },
-  software: {
-    chatwootNombre: 'Chatwoot',
-    rasaNombre: 'Rasa'
   }
 }
 
@@ -39,31 +32,29 @@ const formatARS = (value: number) =>
   }).format(value)
 
 const TARIFA_BASE = formatARS(commercialConfig.tarifaBaseDesdeARS)
-const TARIFA_CHATWOOT = formatARS(commercialConfig.tarifaChatwootDesdeARS)
-const TARIFA_RASA = formatARS(commercialConfig.tarifaRasaDesdeARS)
-
 const BASE = commercialConfig.baseOperativa
 const POWERMETER = commercialConfig.equipos.medidorNombre
 const AUTOMATE = commercialConfig.equipos.automateNombre
-
-const CHATWOOT = commercialConfig.software.chatwootNombre
-const RASA = commercialConfig.software.rasaNombre
+const WHATSAPP_URL = commercialConfig.whatsappUrl
 
 const HAS_TRASLADO_MIN = commercialConfig.trasladoMinimoARS > 0
 const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARS(commercialConfig.trasladoMinimoARS) : ''
-const TRASLADO_TEXT = HAS_TRASLADO_MIN ? ` (mínimo ${TRASLADO_MIN})` : ''
+const TRASLADO_TEXT = HAS_TRASLADO_MIN ? ` (minimo ${TRASLADO_MIN})` : ''
+
+function buildWhatsAppHref(message: string): string {
+  return `${WHATSAPP_URL}?text=${encodeURIComponent(message)}`
+}
 
 export const content: AppContent = {
   hero: {
-    badge: 'Tarifa base publicada · Respuesta en menos de 24 horas',
-    title: 'Servicios industriales + automatización comercial, prolijos y documentados',
-    subtitle: `Industrial: instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico. Comercial: implementamos ${CHATWOOT} + ${RASA} para ordenar atención, calificar consultas y derivar más rápido.`,
-    responseNote: `En menos de 24 horas te respondemos con: tarifas base publicadas (Powermeter desde ${TARIFA_BASE}, ${CHATWOOT} desde ${TARIFA_CHATWOOT}, ${RASA} desde ${TARIFA_RASA}), traslado según distancia desde ${BASE}${TRASLADO_TEXT} (solo servicios presenciales) y próximos pasos para coordinar.`,
-    chatUnavailableMessage:
-      'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos, gracias por tu paciencia.',
+    badge: 'Tarifa base publicada - Respuesta en menos de 24 horas',
+    title: 'Servicios industriales prolijos, seguros y documentados',
+    subtitle: `Instalacion de ${POWERMETER}/${AUTOMATE} y diagnostico electrico para industria. Trabajo con checklist, verificacion final y documentacion de cada intervencion.`,
+    responseNote: `En menos de 24 horas te respondemos por WhatsApp con tarifa base (desde ${TARIFA_BASE}), traslado segun distancia desde ${BASE}${TRASLADO_TEXT} y propuesta de siguiente paso para coordinar.`,
     primaryCta: {
-      label: 'Abrir chat',
-      action: 'chat'
+      label: 'WhatsApp',
+      action: 'whatsapp',
+      href: buildWhatsAppHref('Hola, quiero cotizar un servicio industrial de DataMaq.')
     },
     secondaryCta: {
       label: 'Ver servicios',
@@ -71,24 +62,24 @@ export const content: AppContent = {
     },
     benefits: [
       {
-        title: 'Tarifas base claras',
-        text: `Industrial: instalación de 1 ${POWERMETER} desde ${TARIFA_BASE}. Comercial: ${CHATWOOT} desde ${TARIFA_CHATWOOT} y ${RASA} desde ${TARIFA_RASA}.`,
+        title: 'Tarifa base clara',
+        text: `Instalacion industrial de 1 ${POWERMETER} desde ${TARIFA_BASE}, con alcance y condiciones explicitadas antes de intervenir.`,
         variant: 'success'
       },
       {
-        title: 'Implementación documentada',
-        text: 'Checklist, configuración verificable, pruebas de funcionamiento y entrega de documentación para operación y mejora.',
+        title: 'Implementacion documentada',
+        text: 'Checklist de trabajo, registro de cambios, verificacion de lectura de referencia y cierre tecnico con observaciones.',
         variant: 'primary'
       },
       {
-        title: 'Enfoque por objetivos',
-        text: 'Industrial: medición/diagnóstico confiable. Comercial: ordenar atención, reducir carga manual y acelerar respuestas.',
+        title: 'Diagnostico orientado a operacion',
+        text: 'Metodo de medicion y descarte para identificar causa probable, priorizar seguridad y reducir reincidencia de fallas.',
         variant: 'warning'
       }
     ],
     image: {
       src: heroIllustration,
-      alt: 'Ilustración de medición industrial y automatización',
+      alt: 'Ilustracion de medicion industrial y diagnostico electrico',
       width: 420,
       height: 320
     }
@@ -99,191 +90,116 @@ export const content: AppContent = {
     cards: [
       {
         id: 'instalacion',
-        title: `Instalación industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
-        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medición funcionando con una verificación de referencia. Ideal para arrancar a medir consumo y variables eléctricas con criterios de seguridad y trazabilidad.`,
+        title: `Instalacion industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
+        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medicion funcionando con una verificacion de referencia.`,
         subtitle: 'Incluye',
         media: {
           src: installTools,
-          alt: 'Ilustración de herramientas e instalación técnica',
+          alt: 'Ilustracion de herramientas e instalacion tecnica',
           width: 140,
           height: 120
         },
         items: [
-          'Relevamiento del tablero: accesibilidad, punto de instalación, protecciones y condiciones de seguridad.',
-          `Instalación del ${POWERMETER} + verificación de lectura de referencia (validación básica del punto de medición).`,
-          'Registro y documentación: fotos del tablero/punto de medición, checklist y observaciones relevantes.',
-          'Tiempo típico: media jornada (aprox. 4 horas), según condiciones del tablero.'
+          'Relevamiento del tablero: accesibilidad, punto de instalacion, protecciones y condiciones de seguridad.',
+          `Instalacion del ${POWERMETER} y verificacion de lectura de referencia.`,
+          'Registro y documentacion: fotos del tablero y checklist tecnico.',
+          'Tiempo tipico: media jornada (aprox. 4 horas), segun condiciones del tablero.'
         ],
         figure: {
           src: powermeter,
-          alt: `Ilustración de medidor ${POWERMETER}`,
+          alt: `Ilustracion de medidor ${POWERMETER}`,
           width: 220,
           height: 140,
-          caption: `Tarifa base desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}. No vendemos el equipo: instalamos el ${POWERMETER} provisto por el cliente.`
+          caption: `Tarifa base desde ${TARIFA_BASE}. Traslado segun distancia desde ${BASE}${TRASLADO_TEXT}.`
         },
         cta: {
-          label: 'Cotizar / Agendar por chat',
-          action: 'chat',
+          label: 'Cotizar / Agendar por WhatsApp',
+          action: 'whatsapp',
+          href: buildWhatsAppHref('Hola, quiero cotizar la instalacion industrial de Powermeter.'),
           section: 'servicios-instalacion'
-        },
-        unavailableMessage:
-          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+        }
       },
-
       {
         id: 'diagnostico',
-        title: 'Diagnóstico y reparación de fallas eléctricas/electrónicas (industria)',
+        title: 'Diagnostico y reparacion de fallas electricas/electronicas (industria)',
         description:
-          'Diagnóstico en planta para fallas intermitentes o críticas: medición, prueba, aislamiento del problema y propuesta de reparación. Ideal cuando “la línea no puede parar” y necesitás un criterio técnico confiable.',
+          'Diagnostico en planta para fallas intermitentes o criticas: medicion, prueba, aislamiento del problema y propuesta de correccion.',
         subtitle: 'Resultado',
         media: {
           src: analyticsDashboard,
-          alt: 'Ilustración de diagnóstico técnico y mediciones',
+          alt: 'Ilustracion de diagnostico tecnico y mediciones',
           width: 160,
           height: 140
         },
         items: [
-          'Diagnóstico en campo con instrumental y método (medición, hipótesis, pruebas, descarte).',
-          'Identificación de causa probable y plan de reparación / corrección (inmediata o programada).',
-          'Recomendaciones para prevenir recurrencia (ajustes, protecciones, orden/seguridad del tablero, etc.).'
+          'Diagnostico en campo con instrumental y metodo de descarte.',
+          'Identificacion de causa probable y plan de reparacion inmediato o programado.',
+          'Recomendaciones para prevenir recurrencia y mejorar seguridad del tablero.'
         ],
         note:
-          'Priorizamos condiciones seguras de trabajo. Si el tablero/instalación no permite intervenir con seguridad, se propone adecuación mínima y se reprograma la reparación.',
+          'Si el tablero no permite intervenir con seguridad, se propone adecuacion minima y se reprograma la reparacion.',
         figure: {
           src: analyticsDashboard,
-          alt: 'Ilustración de mediciones y checklist',
+          alt: 'Ilustracion de mediciones y checklist',
           width: 160,
           height: 140,
-          caption: 'Servicio orientado a industria (GBA Norte prioritario). Disponibilidad extendida según agenda.'
+          caption: 'Servicio orientado a industria (GBA Norte prioritario).'
         },
         cta: {
-          label: 'Reportar falla por chat',
-          action: 'chat',
+          label: 'Reportar falla por WhatsApp',
+          action: 'whatsapp',
+          href: buildWhatsAppHref('Hola, necesito diagnostico de una falla electrica en planta.'),
           section: 'servicios-diagnostico'
-        },
-        unavailableMessage:
-          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+        }
       },
-
       {
         id: 'urgencias',
         title: 'Urgencias industriales fuera de horario',
         description:
-          'Atendemos casos urgentes en planta cuando hay criticidad operativa. Incluye disponibilidad extendida (sábados, domingos y feriados) según agenda.',
+          'Atendemos casos urgentes en planta cuando hay criticidad operativa. Incluye disponibilidad extendida segun agenda.',
         subtitle: 'Incluye',
         media: {
           src: analyticsDashboard,
-          alt: 'Ilustración de atención de urgencias y diagnóstico en planta',
+          alt: 'Ilustracion de atencion de urgencias y diagnostico en planta',
           width: 160,
           height: 140
         },
         items: [
-          'Priorización según criticidad, seguridad y disponibilidad operativa.',
-          'Intervenciones fuera de horario y fines de semana con coordinación previa.',
-          'Relevamiento y plan de acción inmediato o programado según el caso.'
+          'Priorizacion segun criticidad, seguridad y disponibilidad operativa.',
+          'Intervenciones fuera de horario y fines de semana con coordinacion previa.',
+          'Relevamiento y plan de accion inmediato o programado segun el caso.'
         ],
         note:
           'Condiciones: no se interviene si el entorno no es seguro, se agenda por prioridad y puede aplicar recargo por urgencia.',
         cta: {
-          label: 'Solicitar urgencia por chat',
-          action: 'chat',
+          label: 'Solicitar urgencia por WhatsApp',
+          action: 'whatsapp',
+          href: buildWhatsAppHref('Hola, necesito atencion urgente para una falla industrial.'),
           section: 'servicios-urgencias'
-        },
-        unavailableMessage:
-          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
-      },
-
-      {
-        id: 'chatwoot',
-        title: `Instalación y puesta en marcha de ${CHATWOOT} (automatización comercial)`,
-        description: `Implementamos ${CHATWOOT} para centralizar WhatsApp/Telegram/webchat, ordenar la atención y dar trazabilidad (etiquetas, equipos, macros y reportes). Ideal para equipos de ventas y soporte que necesitan responder más rápido y con criterio.`,
-        subtitle: 'Incluye',
-        media: {
-          src: analyticsDashboard,
-          alt: 'Ilustración de CRM de mensajería y flujo de atención',
-          width: 160,
-          height: 140
-        },
-        items: [
-          `Instalación de ${CHATWOOT} (self-hosted en servidor del cliente o VPS administrado por nosotros) + healthcheck.`,
-          'Configuración inicial: cuentas, inboxes, equipos/roles, etiquetas y macros básicas.',
-          'Buenas prácticas operativas: asignación, estado de conversación y métricas mínimas.',
-          'Documentación de handoff: accesos, backups básicos y checklist de operación.'
-        ],
-        note:
-          'No incluye costo de servidor/hosting, ni integraciones avanzadas (se cotizan según alcance).',
-        figure: {
-          src: installTools,
-          alt: 'Ilustración de instalación y configuración de herramientas',
-          width: 220,
-          height: 140,
-          caption: `Tarifa base desde ${TARIFA_CHATWOOT}. Alcance y complejidad (canales, integraciones, infraestructura) ajustan el presupuesto final.`
-        },
-        cta: {
-          label: `Cotizar ${CHATWOOT} por chat`,
-          action: 'chat',
-          section: 'servicios-chatwoot'
-        },
-        unavailableMessage:
-          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
-      },
-
-      {
-        id: 'rasa',
-        title: `Implementación mínima de ${RASA} (intenciones iniciales + flujo base)`,
-        description: `Implementamos ${RASA} para automatizar preguntas frecuentes, clasificar mensajes y calificar consultas. Dejamos un bot base funcionando con intenciones iniciales, respuestas y fallback, listo para iterar con datos reales.`,
-        subtitle: 'Incluye',
-        media: {
-          src: analyticsDashboard,
-          alt: 'Ilustración de automatización conversacional y clasificación de mensajes',
-          width: 160,
-          height: 140
-        },
-        items: [
-          `Instalación y configuración de entorno de ${RASA} (self-hosted en servidor del cliente o VPS administrado por nosotros) + healthcheck.`,
-          'Base conversacional mínima: intents, ejemplos, respuestas y reglas esenciales (happy path + fallback).',
-          'Entrenamiento inicial y pruebas de flujo con casos típicos.',
-          'Documentación para mejora continua: cómo agregar intents, ejemplos y ajustar respuestas.'
-        ],
-        note:
-          'Integración con Chatwoot y entrenamiento avanzado se cotizan según complejidad y material disponible (FAQs, conversaciones, categorías).',
-        figure: {
-          src: analyticsDashboard,
-          alt: 'Ilustración de flujo conversacional y métricas',
-          width: 160,
-          height: 140,
-          caption: `Tarifa base desde ${TARIFA_RASA}. El alcance final depende de cantidad de intenciones, canales e integración requerida.`
-        },
-        cta: {
-          label: `Cotizar ${RASA} por chat`,
-          action: 'chat',
-          section: 'servicios-rasa'
-        },
-        unavailableMessage:
-          'El chat en línea se encuentra temporalmente fuera de línea. Volvé a intentar en unos minutos.'
+        }
       }
     ]
   },
 
   profile: {
-    title: 'Perfil técnico',
+    title: 'Perfil tecnico',
     bullets: [
-      'Servicios industriales y de automatización con foco en seguridad, trazabilidad y documentación.',
-      'Formación: Técnico Electrónico · Téc. Univ. en Mantenimiento Industrial · Estudiante de Lic. en IA y Robótica.',
-      'Enfoque de trabajo: checklist, verificación de funcionamiento, registro de cambios y handoff.'
+      'Servicios industriales con foco en seguridad, trazabilidad y documentacion.',
+      'Formacion: Tecnico Electronico - Tec. Univ. en Mantenimiento Industrial - Estudiante de Lic. en IA y Robotica.',
+      'Enfoque de trabajo: checklist, verificacion de funcionamiento, registro de cambios y handoff.'
     ]
   },
 
   about: {
     title: 'Sobre DataMaq',
     paragraphs: [
-      'DataMaq brinda servicios técnicos con dos focos: (1) industria (medición/diagnóstico) y (2) automatización comercial (atención y calificación de consultas). El objetivo es que tomes decisiones con datos reales y que tu operación quede ordenada, medible y documentada.',
-      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA según disponibilidad. Servicios de software disponibles en modalidad self-hosted (servidor del cliente) o VPS administrado por DataMaq.`,
-      'Perfil técnico: Técnico Electrónico · Téc. Univ. en Mantenimiento Industrial · Estudiante de Lic. en IA y Robótica.'
+      'DataMaq brinda servicios tecnicos para industria: instalacion de medicion, diagnostico electrico y asistencia en campo con criterio operativo.',
+      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA segun disponibilidad.`,
+      'Objetivo: decisiones tecnicas con datos reales, intervenciones seguras y trabajo documentado.'
     ],
     image: {
       src: teamTraining,
-      alt: 'Ilustración de formación técnica y equipo de trabajo',
+      alt: 'Ilustracion de formacion tecnica y equipo de trabajo',
       width: 240,
       height: 180
     }
@@ -302,42 +218,42 @@ export const content: AppContent = {
         href: '#perfil'
       }
     ],
-    contactLabel: 'Abrir chat'
+    contactLabel: 'Escribinos por WhatsApp'
   },
 
   footer: {
-    note: `Base: ${BASE} · Industria + Automatización comercial · Implementación por objetivos · Documentación y handoff`
+    note: `Base: ${BASE} - Industria - Diagnostico electrico - Instalacion documentada`
   },
 
   legal: {
-    text: `La tarifa base publicada para Powermeter corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. Para servicios de software (Chatwoot/Rasa), el alcance, infraestructura (servidor/hosting), integraciones y nivel de implementación se definen y cotizan por separado. En casos particulares que requieran intervención o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
+    text: `La tarifa base publicada para Powermeter corresponde a la instalacion de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificacion de lectura de referencia al finalizar. El traslado se cotiza segun distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalacion requiere adecuaciones minimas de seguridad, se informa y presupuesta antes de intervenir. En casos particulares que requieran intervencion o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analitica (GA4 y Clarity) se habilitan unicamente tras tu consentimiento explicito.`
   },
 
   contact: {
-    title: '¿Querés recibir una propuesta por correo?',
-    subtitle: `Completá el formulario y te enviamos una propuesta según el servicio: Powermeter (${TARIFA_BASE}), ${CHATWOOT} (${TARIFA_CHATWOOT}) o ${RASA} (${TARIFA_RASA}). Si es urgente, el canal más rápido es el chat en línea.`,
+    title: 'Queres recibir una propuesta por correo?',
+    subtitle: `Completa el formulario y te enviamos una propuesta para servicios industriales (instalacion ${POWERMETER}/${AUTOMATE} y diagnostico electrico). Si es urgente, escribinos por WhatsApp.`,
     labels: {
       firstName: 'Nombre',
       lastName: 'Apellido',
-      email: 'Correo electrónico',
-      phone: 'Tel?fono (opcional)',
+      email: 'Correo electronico',
+      phone: 'Telefono (opcional)',
       city: 'Ciudad (opcional)',
-      country: 'Pa?s',
+      country: 'Pais',
       company: 'Empresa (opcional)'
     },
     submitLabel: 'Enviar consulta por correo',
-    checkingMessage: 'Verificando la disponibilidad del servicio de correo electrónico…',
+    checkingMessage: 'Verificando la disponibilidad del servicio de correo electronico...',
     unavailableMessage:
-      'El canal de correo electrónico está en mantenimiento. Nuestro canal principal es el chat en línea: escribinos por ahí y retomá este formulario más tarde si necesitás documentación.',
-    successMessage: '¡Consulta enviada correctamente! Te responderemos a la brevedad.',
-    errorMessage: 'No se pudo enviar la consulta. Intentá nuevamente más tarde.',
-    unexpectedErrorMessage: 'Ocurrió un error inesperado. Intentá nuevamente más tarde.'
+      'El canal de correo electronico esta en mantenimiento. Escribinos por WhatsApp para coordinar una respuesta rapida.',
+    successMessage: 'Consulta enviada correctamente. Te responderemos a la brevedad.',
+    errorMessage: 'No se pudo enviar la consulta. Intenta nuevamente mas tarde.',
+    unexpectedErrorMessage: 'Ocurrio un error inesperado. Intenta nuevamente mas tarde.'
   },
 
   consent: {
-    title: 'Usamos cookies para analítica',
+    title: 'Usamos cookies para analitica',
     description:
-      'Aceptá para habilitar Google Analytics 4 y Microsoft Clarity. Podés revisar los detalles en la sección legal del sitio.',
+      'Acepta para habilitar Google Analytics 4 y Microsoft Clarity. Podes revisar los detalles en la seccion legal del sitio.',
     acceptLabel: 'Aceptar',
     rejectLabel: 'Rechazar'
   }

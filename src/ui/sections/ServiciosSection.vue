@@ -12,7 +12,7 @@ Path: src/ui/sections/ServiciosSection.vue
           :key="card.id"
           :class="cardColumnClass"
         >
-          <ServiceCard :card="card" :chat-enabled="chatEnabled" @contact="emit('contact', $event)" />
+          <ServiceCard :card="card" @contact="emit('contact', $event)" />
         </div>
       </div>
     </div>
@@ -26,12 +26,11 @@ import { useContainer } from '@/di/container'
 import { useServiciosSection } from '@/application/sections/useServiciosSection'
 import ServiceCard from './ServiceCard.vue'
 
-const props = defineProps<ServiciosSectionProps>()
+defineProps<ServiciosSectionProps>()
 const emit = defineEmits<ServiciosSectionEmits>()
 
 const { content } = useContainer()
-const chatEnabled = computed(() => props.chatEnabled)
-const { services, cards } = useServiciosSection(content, chatEnabled)
+const { services, cards } = useServiciosSection(content)
 const cardColumnClass = computed(() =>
   cards.length > 2 ? 'col-12 col-lg-4' : 'col-12 col-lg-6'
 )

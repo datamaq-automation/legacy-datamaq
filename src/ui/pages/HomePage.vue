@@ -23,10 +23,10 @@ const {
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
     <Navbar :chatEnabled="chatEnabled" @contact="handleChat('navbar')" />
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta">
-      <HeroSection :chatEnabled="chatEnabled" @primary-cta="handleChat('hero')" />
+      <HeroSection :chatEnabled="chatEnabled" @primary-cta="handleChat('hero', $event)" />
       <ServiciosSection
         :chatEnabled="chatEnabled"
-        @contact="handleChat($event)"
+        @contact="handleChat($event.section, $event.href)"
       />
       <PerfilSection />
       <ContactFormSection

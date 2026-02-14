@@ -1,8 +1,8 @@
-/*
+﻿/*
 Path: src/domain/types/content.ts
 */
 
-export type CTAAction = 'chat' | 'contact' | 'services'
+export type CTAAction = 'whatsapp' | 'contact' | 'services'
 
 export interface CTAContent {
   label: string
@@ -28,7 +28,6 @@ export interface HeroContent {
   title: string
   subtitle: string
   responseNote: string
-  chatUnavailableMessage: string
   primaryCta: CTAContent
   secondaryCta: CTAContent
   benefits: HeroBenefit[]
@@ -45,7 +44,6 @@ export interface ServiceCardContent {
   figure?: ImageContent & { caption?: string }
   note?: string
   cta: CTAContent & { section: string }
-  unavailableMessage: string
 }
 
 export interface ServicesContent {
@@ -102,7 +100,7 @@ export interface ConsentContent {
 }
 
 /**
- * Bloque de perfil para mostrar credenciales y enfoque sin ensuciar el hero.
+ * Perfil tecnico y enfoque de trabajo.
  */
 export interface ProfileContent {
   title: string
@@ -126,10 +124,7 @@ export interface CommercialConfig {
   baseOperativa: string
   tarifaBaseDesdeARS: number
   trasladoMinimoARS: number
-
-  // Automatización comercial (tarifas base publicadas)
-  tarifaChatwootDesdeARS: number
-  tarifaRasaDesdeARS: number
+  whatsappUrl: string
 
   descuentos: {
     cooperativasPct: number
@@ -139,10 +134,5 @@ export interface CommercialConfig {
   equipos: {
     medidorNombre: string // "Powermeter"
     automateNombre: string // "Automate"
-  }
-
-  software: {
-    chatwootNombre: string // "Chatwoot"
-    rasaNombre: string // "Rasa"
   }
 }

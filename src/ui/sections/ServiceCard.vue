@@ -59,23 +59,17 @@ Path: src/ui/sections/ServiceCard.vue
       </p>
       <div class="c-cta-stack c-services__cta">
         <div class="c-cta-stack__item">
-          <button
-            type="button"
+          <a
             class="btn btn-outline-primary w-100 c-services__cta-button"
-            :disabled="!chatEnabled"
-            :aria-disabled="!chatEnabled"
-            @click="emit('contact', card.cta.section)"
+            :href="card.cta.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click.prevent="emit('contact', { section: card.cta.section, href: card.cta.href })"
           >
-            {{ chatEnabled ? card.cta.label : card.unavailableMessage }}
-          </button>
+            {{ card.cta.label }}
+          </a>
         </div>
       </div>
-      <p
-        v-if="!chatEnabled"
-        class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small mt-3 c-services__alert"
-      >
-        {{ card.unavailableMessage }}
-      </p>
     </div>
   </div>
 </template>
@@ -86,11 +80,10 @@ import type { ServiceCardContent } from '@/domain/types/content'
 
 const props = defineProps<{
   card: ServiceCardContent
-  chatEnabled: boolean
 }>()
 
 const emit = defineEmits<{
-  (event: 'contact', section: string): void
+  (event: 'contact', payload: { section: string; href?: string }): void
 }>()
 
 const installationChips = [

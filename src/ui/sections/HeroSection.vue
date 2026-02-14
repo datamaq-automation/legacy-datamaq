@@ -32,16 +32,15 @@ Path: src/ui/sections/HeroSection.vue
             class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 c-hero__actions c-cta-stack"
           >
             <div class="c-cta-stack__item">
-              <button
-                type="button"
+              <a
                 class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm c-hero__primary-cta w-100"
-                :disabled="!chatEnabled"
-                :aria-disabled="!chatEnabled"
-                :aria-describedby="!chatEnabled ? 'hero-chat-disabled' : undefined"
-                @click="emit('primary-cta')"
+                :href="hero.primaryCta.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click.prevent="emit('primary-cta', hero.primaryCta.href)"
               >
-                {{ chatEnabled ? hero.primaryCta.label : hero.chatUnavailableMessage }}
-              </button>
+                {{ hero.primaryCta.label }}
+              </a>
             </div>
             <div class="c-cta-stack__item">
               <a
@@ -54,13 +53,6 @@ Path: src/ui/sections/HeroSection.vue
           </div>
           <p class="text-secondary small mb-2">
             {{ hero.responseNote }}
-          </p>
-          <p
-            v-if="!chatEnabled"
-            id="hero-chat-disabled"
-            class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small"
-          >
-            {{ hero.chatUnavailableMessage }}
           </p>
           <ul class="row list-unstyled gy-3 text-start c-hero__benefits" aria-label="Beneficios">
             <li class="col-12 col-sm-6">
@@ -123,7 +115,7 @@ import { useHeroSection } from './HeroSection'
 const props = defineProps<HeroSectionProps>()
 const emit = defineEmits<HeroSectionEmits>()
 
-const { chatEnabled, hero, benefit1, benefit2, benefit3, heroChips } = useHeroSection(props)
+const { hero, benefit1, benefit2, benefit3, heroChips } = useHeroSection(props)
 
 defineOptions({
   name: 'HeroSection'

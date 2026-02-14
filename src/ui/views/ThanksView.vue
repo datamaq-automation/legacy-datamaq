@@ -32,7 +32,7 @@ const { chatEnabled, handleChat, handleGoHome } = useThanksView()
                     class="btn btn-primary btn-lg"
                     @click="handleChat"
                   >
-                    Abrir chat en linea
+                    Escribir por WhatsApp
                   </button>
                   <button
                     type="button"

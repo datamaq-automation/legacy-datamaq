@@ -9,8 +9,8 @@ export function useHomePage() {
   const chatEnabled = getChatEnabled()
   const contactEmail = getContactEmail()
 
-  function handleChat(section: string) {
-    openChat(section)
+  function handleChat(section: string, href?: string) {
+    openChat(section, href)
   }
 
   function handleEmailSubmit(payload: Parameters<typeof submitContact>[1]) {

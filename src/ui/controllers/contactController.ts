@@ -1,10 +1,9 @@
 import type { EmailContactPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 import { useContactFacade } from '@/ui/features/contact/useContactFacade'
-import { isChatwootConfigured, openChatwootWidget } from '@/infrastructure/chatwoot/widget'
 
 export function getChatEnabled(): boolean {
-  return isChatwootConfigured()
+  return Boolean(resolveWhatsAppUrl())
 }
 
 export function getContactEmail(): string | undefined {
@@ -12,12 +11,18 @@ export function getContactEmail(): string | undefined {
   return value?.trim() ? value : undefined
 }
 
-export function openChat(section: string = 'chat'): void {
-  if (!isChatwootConfigured()) {
+export function openChat(section: string = 'whatsapp', href?: string): void {
+  const whatsappUrl = normalizeHref(href) ?? resolveWhatsAppUrl()
+  if (!whatsappUrl) {
     return
   }
 
-  openChatwootWidget()
+  if (typeof window !== 'undefined') {
+    const openedWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+    if (!openedWindow) {
+      window.location.href = whatsappUrl
+    }
+  }
 
   const { engagementTracker, environment } = useContainer()
   const trafficSource = getTrafficSource(environment)
@@ -35,4 +40,17 @@ function getTrafficSource(location: { search(): string; referrer(): string }): s
     return utmSource
   }
   return location.referrer() || 'direct'
+}
+
+function resolveWhatsAppUrl(): string | undefined {
+  const href = useContainer().content.getHeroContent().primaryCta.href
+  return normalizeHref(href)
+}
+
+function normalizeHref(href: string | undefined): string | undefined {
+  if (!href) {
+    return undefined
+  }
+  const trimmedHref = href.trim()
+  return trimmedHref ? trimmedHref : undefined
 }

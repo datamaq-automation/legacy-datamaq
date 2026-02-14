@@ -1,9 +1,9 @@
-import { z } from 'zod'
+﻿import { z } from 'zod'
 
 const CTAContentSchema = z.object({
   label: z.string(),
   href: z.string().optional(),
-  action: z.enum(['chat', 'contact', 'services']).optional()
+  action: z.enum(['whatsapp', 'contact', 'services']).optional()
 })
 
 const ImageContentSchema = z.object({
@@ -24,7 +24,6 @@ const HeroSchema = z.object({
   title: z.string(),
   subtitle: z.string(),
   responseNote: z.string(),
-  chatUnavailableMessage: z.string(),
   primaryCta: CTAContentSchema,
   secondaryCta: CTAContentSchema,
   benefits: z.array(HeroBenefitSchema),
@@ -44,8 +43,7 @@ const ServiceCardSchema = z.object({
   note: z.string().optional(),
   cta: CTAContentSchema.extend({
     section: z.string()
-  }),
-  unavailableMessage: z.string()
+  })
 })
 
 const ServicesSchema = z.object({

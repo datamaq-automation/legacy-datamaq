@@ -9,7 +9,7 @@ export const publicConfig = {
   siteUrl: 'https://www.datamaq.com.ar',
   siteName: 'DataMaq',
   siteDescription:
-    'Servicios industriales (medicion/diagnostico) y automatizacion comercial (Chatwoot + Rasa) para PYMEs y equipos de ventas.',
+    'Servicios industriales de medicion, instalacion y diagnostico electrico para PYMEs.',
   siteOgImage: 'https://www.datamaq.com.ar/og-default.png',
   siteLocale: 'es_AR',
   gscVerification: undefined,
