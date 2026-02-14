@@ -100,15 +100,18 @@ No incluye:
   - Bloqueador: depende de contrato backend definitivo (DV-02) para no romper integracion.
   - Siguiente paso: al cerrar DV-02, ajustar contrato de canal backend si cambia payload/headers esperados.
 
-- [ ] (P1) Aumentar pruebas de UI critica (componentes y flujo de contacto)
+- [>] (P1) Aumentar pruebas de UI critica (componentes y flujo de contacto)
   - Contexto: tests actuales son mayormente unitarios de application/domain; cobertura UI de componentes es minima.
   - Accion: agregar pruebas para `ContactFormSection`, `ConsentBanner`, y navegacion de submit/thanks.
   - DoD (criterio de aceptacion): al menos 1 spec por componente critico + 1 spec de flujo; pruebas fallan si se rompe interaccion principal.
+  - Avance: agregados specs UI para `ContactFormSection`, `ConsentBanner` y flujo submit -> thanks con `@testing-library/vue`.
+  - Evidencia: `tests/unit/ui/contactFormSection.test.ts`, `tests/unit/ui/consentBanner.test.ts`, `tests/unit/ui/contactSubmitThanksFlow.test.ts`.
+  - Evidencia: `npm run typecheck` y `npm run test` en verde.
   - Owner: Frontend
   - Dependencias: P0 TypeScript y consentimiento
   - Riesgo: Medio
   - Bloqueador: ninguno tecnico inmediato (pendiente por prioridad).
-  - Siguiente paso: crear primer spec de `ContactFormSection` con `@testing-library/vue`.
+  - Siguiente paso: ampliar cobertura de UI para casos negativos (errores backend/validacion visual) y ruta thanks -> home.
 
 - [x] (P1) Reemplazar rutas hardcodeadas por nombres de ruta
   - Contexto: hay `router.push('/gracias')` y `router.push('/')` hardcodeados.
