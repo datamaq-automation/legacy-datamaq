@@ -3,7 +3,7 @@
 ## 1) Contexto y objetivo
 El diagnostico tecnico del frontend Vue/TypeScript muestra una base arquitectonica util (capas `ui/application/domain/infrastructure`) pero con bloqueadores concretos para cambios grandes de UI/UX.
 Se confirmo evidencia objetiva de baseline roto en calidad tecnica: `npx tsc --noEmit` falla con 38 errores, y hoy fallan `npm run check:css`, `npm run test:a11y` y `npm run lint:colors`.
-Tambien se confirmo un riesgo alto en consentimiento/analytics (flujo desacoplado) y en seguridad de configuracion (uso de secreto en frontend con `VITE_ORIGIN_VERIFY_SECRET`).
+Tambien se confirmo un riesgo alto en consentimiento/analytics (flujo desacoplado) y en seguridad de configuracion (mitigado en frontend, pendiente cierre de contrato backend DV-02).
 Objetivo de este plan: dejar el proyecto en estado seguro y estable para ejecutar cambios grandes de UI/UX sin generar deuda critica.
 
 ## 2) Alcance
@@ -40,6 +40,7 @@ No incluye:
   - DoD (criterio de aceptacion): existe una sola clave de consentimiento activa; al aceptar se habilita tracking segun especificacion validada; al rechazar no se envian eventos; tests unitarios cubren ambos caminos.
   - Avance: implementada la sincronizacion `consentManager` <-> analytics y el bloqueo real de tracking por estado de consentimiento.
   - Evidencia: `src/application/consent/consentStorage.ts`, `src/application/consent/consentManager.ts`, `src/infrastructure/consent/consent.ts`, `src/infrastructure/analytics/index.ts`, `src/infrastructure/analytics/browserAnalytics.ts`, `src/main.ts`.
+  - Evidencia: matriz propuesta DV-01 en `docs/dv-01-consent-matrix.md` (pendiente aprobacion Product/Legal).
   - Evidencia: tests `tests/unit/application/consentManager.test.ts`, `tests/unit/infrastructure/consent.test.ts`, `tests/unit/infrastructure/analyticsConsentSync.test.ts`, `tests/unit/infrastructure/browserAnalytics.test.ts`; `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-01 (politica de consentimiento)
@@ -79,15 +80,16 @@ No incluye:
   - Riesgo: Medio
 
 - [>] (P0) Definir puerta de calidad obligatoria para merge
-  - Contexto: no hay workflows CI versionados en `.github/workflows` y hoy los checks criticos no estan garantizados antes de merge.
+  - Contexto: el workflow CI/CD ya esta versionado en repo, pero los checks criticos todavia no estan garantizados como bloqueantes hasta configurar branch protection.
   - Accion: definir y aplicar pipeline minimo con `typecheck`, `test`, `test:a11y`, `check:css`, `lint:colors`.
   - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
-  - Avance: se agrego script local `quality:gate` y valida toda la secuencia en una sola ejecucion.
+  - Avance: implementado workflow `GitHub Actions + FTPS` con `Quality Gate` y deploy condicionado a `main`.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`), `docs/dv-03-ci-cd-inventory.md`.
   - Owner: Shared
   - Dependencias: DV-03 (estado real de CI/CD)
   - Riesgo: Alto
-  - Bloqueador: falta decision/implementacion en CI real y branch protection.
-  - Siguiente paso: cerrar DV-03 y conectar `quality:gate` al pipeline obligatorio.
+  - Bloqueador: falta activar required checks y branch protection en `main`.
+  - Siguiente paso: configurar secrets FTPS + branch protection y exigir `CI/CD FTPS / Quality Gate`.
 
 ### P1
 - [x] (P1) Refactorizar `ContactApiGateway` por responsabilidades
@@ -191,15 +193,17 @@ Duda:
 - No esta confirmado por evidencia cual es el comportamiento legal/funcional esperado en todos los estados (first visit, accept, deny, revocar).
 
 Tarea de verificacion:
-- [ ] (P0) Validar matriz de consentimiento
+- [>] (P0) Validar matriz de consentimiento
   - Contexto: hay desacople entre `consentManager` y capa de analytics.
   - Accion: definir matriz de estados/eventos con Product/Legal y mapearla a implementacion tecnica.
   - DoD (criterio de aceptacion): documento corto aprobado con transiciones y eventos permitidos por estado.
+  - Avance: matriz tecnica/funcional propuesta y documentada.
+  - Evidencia: `docs/dv-01-consent-matrix.md`.
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Alto
-  - Bloqueador: requiere decision de Product/Legal.
-  - Siguiente paso: agendar sesion de definicion y cerrar documento de estados/eventos.
+  - Bloqueador: requiere aprobacion final de Product/Legal (incluyendo criterio de revocacion).
+  - Siguiente paso: revisar la matriz propuesta, elegir politica de revocacion (soft/hard) y aprobar version final.
 
 ### DV-02: Contrato backend para envio de contactos sin secreto en cliente
 Duda:
@@ -218,19 +222,23 @@ Tarea de verificacion:
 
 ### DV-03: Estado real de CI/CD y reglas de merge
 Duda:
-- En este repo no hay `.github/workflows`, pero no hay certeza de si existen controles fuera del repositorio.
+- El pipeline principal ya se implemento en repo, pero falta confirmar enforcement final (required checks + branch protection).
 
 Tarea de verificacion:
-- [>] (P0) Relevar pipeline real de integracion
+- [x] (P0) Relevar pipeline real de integracion
   - Contexto: los checks criticos no estan garantizados por evidencia local.
-  - Accion: confirmar con equipo de plataforma donde corre CI/CD y que checks son obligatorios hoy.
+  - Accion: inventariar estado real y decidir implementacion en repo o fuera del repo.
   - DoD (criterio de aceptacion): inventario de checks actuales + decision de implementacion en repo o fuera del repo.
-  - Avance: relevamiento local completado (sin `.github/workflows` en repo) y script `quality:gate` disponible.
+  - Avance: inventario completado y decision ejecutada: `GitHub Actions + FTPS` en repo.
+  - Evidencia: `docs/dv-03-ci-cd-inventory.md`.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`.
+  - Evidencia: parametros FTPS confirmados (`FTPS_REMOTE_DIR=/public_html`, `FTPS_PORT=21`).
+  - Evidencia: `npm run quality:gate` en verde (2026-02-14).
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Medio
-  - Bloqueador: falta confirmacion del entorno CI/CD externo.
-  - Siguiente paso: validar con plataforma si existe pipeline fuera de repo y requisitos de merge actuales.
+  - Bloqueador residual: configurar branch protection y required checks en GitHub.
+  - Siguiente paso: aplicar branch protection en `main` y exigir `CI/CD FTPS / Quality Gate`.
 
 ### DV-04: Headers y politicas de seguridad en despliegue
 Duda:

@@ -1,0 +1,117 @@
+name: CI/CD FTPS
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run quality gate
+        run: npm run quality:gate
+
+  deploy-production:
+    name: Deploy Production (FTPS)
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install lftp client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Validate required secrets
+        env:
+          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
+          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
+          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
+          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${FTPS_SERVER}" ]; then
+            echo "::error::Missing secret FTPS_SERVER"
+            exit 1
+          fi
+          if [ -z "${FTPS_USERNAME}" ]; then
+            echo "::error::Missing secret FTPS_USERNAME"
+            exit 1
+          fi
+          if [ -z "${FTPS_PASSWORD}" ]; then
+            echo "::error::Missing secret FTPS_PASSWORD"
+            exit 1
+          fi
+          if [ -z "${FTPS_REMOTE_DIR}" ]; then
+            echo "::error::Missing secret FTPS_REMOTE_DIR"
+            exit 1
+          fi
+
+      - name: Deploy dist via FTPS
+        env:
+          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
+          FTPS_PORT: ${{ secrets.FTPS_PORT }}
+          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
+          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
+          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
+        run: |
+          set -euo pipefail
+
+          PORT="${FTPS_PORT:-21}"
+
+          lftp <<EOF
+          set cmd:fail-exit true
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ftp:passive-mode true
+          set ssl:verify-certificate true
+          set ssl:check-hostname true
+          open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${FTPS_SERVER}"
+          mkdir -p "${FTPS_REMOTE_DIR}"
+          mirror -R --delete --verbose dist "${FTPS_REMOTE_DIR}"
+          bye
+          EOF

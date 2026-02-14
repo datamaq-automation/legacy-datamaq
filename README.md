@@ -33,6 +33,27 @@ npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
 ```
 
+## CI/CD recomendado (GitHub Actions + FTPS)
+Este repositorio incluye el workflow `./.github/workflows/ci-cd-ftps.yml` con dos jobs:
+- `Quality Gate`: ejecuta `npm run quality:gate` en `pull_request` y `push`.
+- `Deploy Production (FTPS)`: publica `dist/` por FTPS al hacer `push` a `main`, solo si `Quality Gate` pasa.
+
+Secrets requeridos en GitHub:
+- `FTPS_SERVER`
+- `FTPS_USERNAME`
+- `FTPS_PASSWORD`
+- `FTPS_REMOTE_DIR` (ejemplo: `/public_html`)
+- `FTPS_PORT` (opcional, default `21`)
+
+Valores operativos confirmados para este proyecto:
+- `FTPS_REMOTE_DIR=/public_html`
+- `FTPS_PORT=21` (FTPS explicito)
+
+Configuracion recomendada en GitHub:
+1. Crear environment `production` y asociar los secrets FTPS.
+2. Activar branch protection en `main`.
+3. Marcar `CI/CD FTPS / Quality Gate` como check obligatorio para merge.
+
 ## Analitica y eventos
 - Los eventos de compromiso se envian via `gtag` y `clarity`.
 - El contrato de datos esta en `src/application/analytics/engagementTracker.ts` y `src/application/analytics/trackingFacade.ts`.
@@ -43,10 +64,10 @@ npm run lint:colors # valida regla anti-HEX fuera de tokens
 - Ejecuta `npm run test:a11y` para analizar templates `.vue`.
 - Corrige hallazgos antes de desplegar cambios visuales.
 
-## Despliegue sugerido
-1. Ejecutar `npm run build` y publicar `dist/` en el hosting estatico.
-2. Configurar variables de entorno en el servicio de hosting.
-3. Validar respuestas `2xx` del endpoint `VITE_CONTACT_API_URL` sobre HTTPS.
+## Despliegue (flujo objetivo)
+1. Abrir PR y esperar `Quality Gate` en verde.
+2. Merge a `main`.
+3. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
 4. Verificar en QA que eventos de WhatsApp y correo se registran una sola vez en GA4 y Clarity.
 
 ## Recursos adicionales
