@@ -46,3 +46,6 @@ Cuando cambie una decision de politica:
 - Cambios minimos y trazables.
 - No revertir cambios del usuario sin instruccion explicita.
 - Si aparece bloqueo externo (GitHub settings, backend VPS, legal), documentar como C.
+- Persistencia obligatoria: continuar ejecutando trabajo en el repo sin detenerse por confirmaciones intermedias.
+- Solo detener la ejecucion para preguntar cuando exista una duda C (alto nivel) que bloquee decisiones de alcance/negocio/arquitectura.
+- Si hay bloqueos externos, agotar primero todas las mitigaciones y avances internos posibles antes de pedir input.
