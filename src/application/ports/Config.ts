@@ -3,7 +3,6 @@ type NullableString = string | undefined
 export interface ConfigPort {
   contactApiUrl: NullableString
   contactEmail: NullableString
-  originVerifySecret: NullableString
   analyticsEnabled: boolean | undefined
   siteUrl: NullableString
   siteName: NullableString

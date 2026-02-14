@@ -47,15 +47,18 @@ No incluye:
   - Bloqueador residual: falta validacion funcional/legal final de la matriz de consentimiento (DV-01).
   - Siguiente paso: cerrar DV-01 y ajustar la matriz tecnica si Product/Legal define cambios.
 
-- [ ] (P0) Eliminar secreto de verificacion del frontend
-  - Contexto: hoy existe `VITE_ORIGIN_VERIFY_SECRET` y se envia `X-Origin-Verify` desde navegador, lo que no es secreto en cliente.
+- [>] (P0) Eliminar secreto de verificacion del frontend
+  - Contexto: se detecto uso de `VITE_ORIGIN_VERIFY_SECRET` y envio de `X-Origin-Verify` desde navegador, lo que no es secreto en cliente.
   - Accion: remover uso de secreto en frontend y migrar validacion de origen al backend/proxy.
   - DoD (criterio de aceptacion): no hay referencias a `VITE_ORIGIN_VERIFY_SECRET` ni a `X-Origin-Verify` en frontend; contrato backend validado y funcionando.
+  - Avance: removidas las referencias frontend al secreto y al header de verificacion.
+  - Evidencia: `src/application/ports/Config.ts`, `src/infrastructure/config/viteConfig.ts`, `src/infrastructure/contact/contactApiGateway.ts`, `src/env.d.ts`, `.env.example`, `tests/unit/infrastructure/contactApiGateway.test.ts`.
+  - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-02 (contrato backend)
   - Riesgo: Alto
-  - Bloqueador: falta contrato backend confirmado para reemplazar validacion de origen.
-  - Siguiente paso: cerrar DV-02 y ejecutar remocion coordinada frontend/backend.
+  - Bloqueador residual: falta contrato backend confirmado de validacion server-side para cerrar DV-02.
+  - Siguiente paso: cerrar DV-02 y documentar el mecanismo definitivo de validacion de origen en backend/proxy.
 
 - [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.
@@ -200,7 +203,7 @@ Tarea de verificacion:
 
 ### DV-02: Contrato backend para envio de contactos sin secreto en cliente
 Duda:
-- No esta confirmado si el backend actual exige `X-Origin-Verify` desde frontend ni cual es el reemplazo aceptado.
+- No esta confirmado el mecanismo server-side definitivo de validacion de origen tras remover `X-Origin-Verify` del frontend.
 
 Tarea de verificacion:
 - [ ] (P0) Confirmar contrato de autenticacion/origen con backend

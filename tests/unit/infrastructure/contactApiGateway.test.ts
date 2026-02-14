@@ -24,10 +24,9 @@ function createPayload(overrides: Partial<ContactSubmitPayload> = {}): ContactSu
   }
 }
 
-function createConfig(contactApiUrl: string | undefined, originVerifySecret?: string): ConfigPort {
+function createConfig(contactApiUrl: string | undefined): ConfigPort {
   return {
-    contactApiUrl,
-    originVerifySecret
+    contactApiUrl
   } as ConfigPort
 }
 
@@ -79,12 +78,12 @@ describe('ContactApiGateway', () => {
     expect(http.postJson).not.toHaveBeenCalled()
   })
 
-  it('routes backend endpoint with backend payload and origin header', async () => {
+  it('routes backend endpoint with backend payload', async () => {
     const http = createHttpClient()
     const logger = createLogger()
     const gateway = new ContactApiGateway(
       http,
-      createConfig('https://api.example.com/contact', 'secret-token'),
+      createConfig('https://api.example.com/contact'),
       createStorage(),
       logger
     )
@@ -109,7 +108,7 @@ describe('ContactApiGateway', () => {
           page_location: 'https://www.datamaq.com.ar/contacto'
         })
       }),
-      { 'X-Origin-Verify': 'secret-token' }
+      undefined
     )
     expect(http.patchJson).not.toHaveBeenCalled()
   })

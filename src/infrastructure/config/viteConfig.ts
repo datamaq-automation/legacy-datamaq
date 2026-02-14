@@ -8,7 +8,6 @@ const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
 export class ViteConfig implements ConfigPort {
   contactApiUrl: NullableString
   contactEmail: NullableString
-  originVerifySecret: NullableString
   analyticsEnabled: boolean | undefined
   siteUrl: NullableString
   siteName: NullableString
@@ -40,7 +39,6 @@ export class ViteConfig implements ConfigPort {
         normalize(publicConfig.contactApiUrl),
       'contactApiUrl'
     )
-    this.originVerifySecret = normalize(import.meta.env.VITE_ORIGIN_VERIFY_SECRET)
     this.analyticsEnabled = publicConfig.analyticsEnabled
     this.siteUrl = normalize(publicConfig.siteUrl)
     this.siteName = normalize(publicConfig.siteName)

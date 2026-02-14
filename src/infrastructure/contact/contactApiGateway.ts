@@ -25,9 +25,8 @@ export class ContactApiGateway implements ContactGateway {
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
-    const headers = buildContactHeaders(this.config.originVerifySecret)
     const payloads = buildContactPayloadBundle(payload, this.storage)
-    const response = await submitBackendContact(this.http, apiUrl, payloads, headers)
+    const response = await submitBackendContact(this.http, apiUrl, payloads)
 
     if (!response.ok) {
       this.logger.warn('[contactApiGateway] response no OK', {
@@ -41,14 +40,4 @@ export class ContactApiGateway implements ContactGateway {
 
     return { ok: true, data: undefined }
   }
-}
-
-function buildContactHeaders(
-  originVerifySecret: string | undefined
-): Record<string, string> | undefined {
-  if (!originVerifySecret) {
-    return undefined
-  }
-
-  return { 'X-Origin-Verify': originVerifySecret }
 }

@@ -27,9 +27,6 @@ function buildConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
   return {
     contactApiUrl: undefined,
     contactEmail: undefined,
-    whatsappNumber: undefined,
-    whatsappPresetMessage: undefined,
-    originVerifySecret: undefined,
     analyticsEnabled: true,
     siteUrl: undefined,
     siteName: undefined,
