@@ -101,7 +101,20 @@ jobs:
         run: |
           set -euo pipefail
 
+          SERVER="${FTPS_SERVER#ftp://}"
+          SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER%/}"
           PORT="${FTPS_PORT:-21}"
+
+          if [ -z "${SERVER}" ]; then
+            echo "::error::FTPS_SERVER is empty after normalization."
+            exit 1
+          fi
+
+          if ! getent hosts "${SERVER}" >/dev/null; then
+            echo "::error::FTPS_SERVER is not resolvable by DNS. Check secret FTPS_SERVER."
+            exit 1
+          fi
 
           lftp <<EOF
           set cmd:fail-exit true
@@ -110,7 +123,7 @@ jobs:
           set ftp:passive-mode true
           set ssl:verify-certificate true
           set ssl:check-hostname true
-          open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${FTPS_SERVER}"
+          open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${SERVER}"
           mkdir -p "${FTPS_REMOTE_DIR}"
           mirror -R --delete --verbose dist "${FTPS_REMOTE_DIR}"
           bye
