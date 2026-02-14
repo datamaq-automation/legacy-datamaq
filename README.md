@@ -45,6 +45,10 @@ Secrets requeridos en GitHub:
 - `FTPS_REMOTE_DIR` (ejemplo: `/public_html`)
 - `FTPS_PORT` (opcional, default `21`)
 
+Formato recomendado para `FTPS_SERVER`:
+- Solo host (sin `ftp://`, sin path), por ejemplo: `ftp.tudominio.com`.
+- El workflow tambien normaliza formato URL (`ftp://host:21/ruta`) si quedara configurado asi por error.
+
 Valores operativos confirmados para este proyecto:
 - `FTPS_REMOTE_DIR=/public_html`
 - `FTPS_PORT=21` (FTPS explicito)

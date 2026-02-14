@@ -101,17 +101,30 @@ jobs:
         run: |
           set -euo pipefail
 
-          SERVER="${FTPS_SERVER#ftp://}"
+          RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
+          SERVER="${RAW_SERVER#ftp://}"
           SERVER="${SERVER#ftps://}"
-          SERVER="${SERVER%/}"
-          PORT="${FTPS_PORT:-21}"
+          SERVER="${SERVER%%/*}"
 
-          if [ -z "${SERVER}" ]; then
+          SERVER_HOST="${SERVER%%:*}"
+          SERVER_PORT_FROM_HOST=""
+          if [ "${SERVER_HOST}" != "${SERVER}" ]; then
+            SERVER_PORT_FROM_HOST="${SERVER##*:}"
+          fi
+
+          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+
+          if [ -z "${SERVER_HOST}" ]; then
             echo "::error::FTPS_SERVER is empty after normalization."
             exit 1
           fi
 
-          if ! getent hosts "${SERVER}" >/dev/null; then
+          if ! printf '%s' "${PORT}" | grep -Eq '^[0-9]+$'; then
+            echo "::error::FTPS port is invalid. Check FTPS_PORT or FTPS_SERVER format."
+            exit 1
+          fi
+
+          if ! getent hosts "${SERVER_HOST}" >/dev/null; then
             echo "::error::FTPS_SERVER is not resolvable by DNS. Check secret FTPS_SERVER."
             exit 1
           fi
@@ -123,7 +136,7 @@ jobs:
           set ftp:passive-mode true
           set ssl:verify-certificate true
           set ssl:check-hostname true
-          open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${SERVER}"
+          open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${SERVER_HOST}"
           mkdir -p "${FTPS_REMOTE_DIR}"
           mirror -R --delete --verbose dist "${FTPS_REMOTE_DIR}"
           bye
