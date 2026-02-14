@@ -87,15 +87,18 @@ No incluye:
   - Siguiente paso: cerrar DV-03 y conectar `quality:gate` al pipeline obligatorio.
 
 ### P1
-- [ ] (P1) Refactorizar `ContactApiGateway` por responsabilidades
+- [>] (P1) Refactorizar `ContactApiGateway` por responsabilidades
   - Contexto: `src/infrastructure/contact/contactApiGateway.ts` concentra envio, normalizacion, heuristicas de endpoint y actualizacion posterior.
   - Accion: separar estrategias/adapters por canal (backend propio vs Chatwoot) y extraer funciones puras testeables.
   - DoD (criterio de aceptacion): gateway dividido en modulos con responsabilidades claras; tests unitarios cubren rutas de envio y errores.
+  - Avance: gateway refactorizado a orquestador + modulos por responsabilidad (resolver de canal, builder de payloads, estrategia backend, estrategia Chatwoot y mapeo de errores).
+  - Evidencia: `src/infrastructure/contact/contactApiGateway.ts`, `src/infrastructure/contact/contactChannelResolver.ts`, `src/infrastructure/contact/contactPayloadBuilder.ts`, `src/infrastructure/contact/backendContactChannel.ts`, `src/infrastructure/contact/chatwootContactChannel.ts`, `src/infrastructure/contact/contactSubmissionErrors.ts`.
+  - Evidencia: tests `tests/unit/infrastructure/contactApiGateway.test.ts`; `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Frontend
   - Dependencias: P0 de contrato backend
   - Riesgo: Medio
   - Bloqueador: depende de contrato backend definitivo (DV-02) para no romper integracion.
-  - Siguiente paso: definir interfaz objetivo por canal y ejecutar extraccion incremental.
+  - Siguiente paso: al cerrar DV-02, ajustar contrato de canal backend si cambia payload/headers esperados.
 
 - [ ] (P1) Aumentar pruebas de UI critica (componentes y flujo de contacto)
   - Contexto: tests actuales son mayormente unitarios de application/domain; cobertura UI de componentes es minima.
