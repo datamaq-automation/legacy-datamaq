@@ -11,6 +11,8 @@
     "build": "npm run sitemap && vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts --project=chromium",
     "typecheck": "tsc --noEmit",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -19,7 +21,7 @@
     "check:css": "npm run build && node scripts/check-css-size.mjs",
     "lint:colors": "node scripts/no-hex-check.mjs",
     "lint:layers": "node scripts/check-layer-boundaries.mjs",
-    "quality:gate": "npm run typecheck && npm run test && npm run lint:colors && npm run test:a11y && npm run check:css",
+    "quality:gate": "npm run typecheck && npm run test && npm run lint:colors && npm run lint:layers && npm run test:a11y && npm run check:css",
     "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {
@@ -34,6 +36,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/vue": "^8.1.0",
     "@vitejs/plugin-vue": "^6.0.1",

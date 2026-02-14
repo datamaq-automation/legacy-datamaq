@@ -87,8 +87,9 @@ No incluye:
   - Contexto: el workflow CI/CD ya esta versionado en repo, pero los checks criticos todavia no estan garantizados como bloqueantes hasta configurar branch protection.
   - Accion: definir y aplicar pipeline minimo con `typecheck`, `test`, `test:a11y`, `check:css`, `lint:colors`.
   - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
-  - Avance: implementado workflow `GitHub Actions + FTPS` con `Quality Gate` y deploy condicionado a `main`.
-  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`), `docs/dv-03-ci-cd-inventory.md`.
+  - Avance: implementado workflow `GitHub Actions + FTPS` con `Quality Gate` y deploy condicionado a `main`; `quality:gate` actualizado para incluir `lint:layers`.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate` + `lint:layers`), `docs/dv-03-ci-cd-inventory.md`.
+  - Evidencia: `npm run quality:gate` en verde (2026-02-14) con `typecheck`, `test`, `lint:colors`, `lint:layers`, `test:a11y` y `check:css`.
   - Owner: Shared
   - Dependencias: DV-03 (estado real de CI/CD)
   - Riesgo: Alto
@@ -186,16 +187,21 @@ No incluye:
   - Decision tomada (B): se adopto script custom Node en lugar de plugin ESLint para minimizar impacto y evitar introducir nueva toolchain.
   - Siguiente paso adicional (no bloqueante): al cerrar DV-03, incluir `lint:layers` en el pipeline bloqueante de merge.
 
-- [ ] (P2) Preparar smoke e2e minimo de regresion UI
+- [x] (P2) Preparar smoke e2e minimo de regresion UI
   - Contexto: no hay tests e2e versionados.
   - Accion: crear smoke e2e para home, envio de contacto (mock) y pagina de gracias.
   - DoD (criterio de aceptacion): suite e2e minima ejecutable en pipeline acordado.
+  - Avance: suite smoke e2e implementada con Playwright para `home`, submit de contacto (mock) y `thanks`.
+  - Evidencia: `playwright.config.ts`, `.env.e2e`, `tests/e2e/smoke.spec.ts`, `vite.config.js` (exclude de `tests/e2e/**` en Vitest), `.gitignore`.
+  - Evidencia: `package.json` (`test:e2e`, `test:e2e:smoke`) y dependencia `@playwright/test`.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml` con job `Smoke E2E`.
+  - Evidencia: `npx playwright install chromium`, `npm run test:e2e:smoke`, `npm run typecheck`, `npm run test` y `npm run quality:gate` en verde.
   - Owner: Shared
   - Dependencias: P0 puerta de calidad
   - Riesgo: Medio
-  - Bloqueador: falta decision de herramienta y ejecucion en CI real (DV-03).
-  - Siguiente paso: definir stack e2e objetivo y crear primer smoke local.
-  - Nota C (2026-02-14): decision de stack e2e/CI impacta arquitectura del pipeline; se mantiene en espera hasta cerrar DV-03.
+  - Decision tomada (B): se evaluo Cypress/Playwright/seguir solo con pruebas de componentes y se adopto Playwright por portabilidad en CI y menor friccion para mocks de red.
+  - Bloqueador residual: sin bloqueador tecnico en repo; el enforcement de required checks queda trazado en DV-03 (externo a este arbol).
+  - Siguiente paso: mantener `Smoke E2E` como check requerido al cerrar DV-03.
 
 ## 5) Dudas a resolver
 
@@ -244,41 +250,48 @@ Tarea de verificacion:
   - Contexto: los checks criticos no estan garantizados por evidencia local.
   - Accion: inventariar estado real y decidir implementacion en repo o fuera del repo.
   - DoD (criterio de aceptacion): inventario de checks actuales + decision de implementacion en repo o fuera del repo.
-  - Avance: inventario completado y decision ejecutada: `GitHub Actions + FTPS` en repo.
+  - Avance: inventario completado y decision ejecutada: `GitHub Actions + FTPS` en repo, con jobs de `Quality Gate` y `Smoke E2E`.
   - Evidencia: `docs/dv-03-ci-cd-inventory.md`.
   - Evidencia: `./.github/workflows/ci-cd-ftps.yml`.
+  - Evidencia: `npm run test:e2e:smoke` en verde (local).
   - Evidencia: parametros FTPS confirmados (`FTPS_REMOTE_DIR=/public_html`, `FTPS_PORT=21`).
   - Evidencia: `npm run quality:gate` en verde (2026-02-14).
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Medio
   - Bloqueador residual: configurar branch protection y required checks en GitHub.
-  - Siguiente paso: aplicar branch protection en `main` y exigir `CI/CD FTPS / Quality Gate`.
+  - Siguiente paso: aplicar branch protection en `main` y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota operativa: puede ejecutarse en paralelo sin bloquear la continuidad de otros P0 funcionales (DV-01 y el cierre operativo del P0 de secreto/frontend-backend).
   - Nota C (2026-02-14): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
 
 ### DV-04: Headers y politicas de seguridad en despliegue
 Duda:
-- No hay evidencia en este repo sobre CSP/HSTS/CORS efectivos del entorno productivo.
+- Relevamiento tecnico de headers frontend completado; pendiente aplicacion en infraestructura.
 
 Tarea de verificacion:
-- [ ] (P1) Auditar headers de seguridad en entorno deployado
+- [x] (P1) Auditar headers de seguridad en entorno deployado
   - Contexto: se requiere visibilidad para cerrar riesgo frontend de XSS/carga de scripts terceros.
   - Accion: medir headers reales en entorno de staging/prod y contrastar contra baseline minimo.
   - DoD (criterio de aceptacion): reporte con headers actuales y brechas priorizadas (critico/alto/medio).
+  - Avance: auditoria ejecutada sobre frontend productivo con inventario de headers y brechas priorizadas.
+  - Evidencia: `docs/dv-04-security-headers-audit.md`.
+  - Evidencia: medicion por `curl` de `https://www.datamaq.com.ar`, `http://www.datamaq.com.ar` y asset JS principal.
   - Owner: Shared
   - Dependencias: acceso a entorno desplegado
   - Riesgo: Medio
-  - Bloqueador: falta acceso/objetivo de entorno para medicion.
-  - Siguiente paso: definir URL de staging/prod y ejecutar auditoria de headers.
-  - Nota C (2026-02-14): sin URL objetivo explicita en este repo no se puede ejecutar medicion confiable.
+  - Decision tomada (B): se eligio URL objetivo `https://www.datamaq.com.ar` por ser frontend publico operativo del proyecto.
+  - Bloqueador residual: aplicar headers/politicas en servidor o reverse proxy (fuera de repo) y re-auditar.
+  - Siguiente paso: implementar redireccion HTTP->HTTPS + HSTS + CSP y repetir auditoria.
 
 ### Notas de ejecucion A/B/C (2026-02-14)
 - Clasificacion B aplicada en: P2 limites de capas (opcion elegida: script custom Node `lint:layers` + test de fixture por menor impacto de toolchain).
-- Clasificacion C (duda de alto nivel) mantenida en: P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), P2 smoke e2e (falta decision de stack/CI), DV-03 y DV-04.
+- Clasificacion B aplicada en: DV-04 auditoria de headers (URL objetivo elegida: `https://www.datamaq.com.ar`).
+- Clasificacion B aplicada en: P2 smoke e2e (opcion elegida: Playwright para smoke local con mock de backend).
+- Clasificacion C (duda de alto nivel) mantenida en: P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), DV-03.
 - DV-02 sale de C por definicion contractual documentada; queda pendiente ejecucion tecnica (backend Docker + prueba E2E) dentro del P0 de seguridad.
 - DV-01 sale de C por decision funcional `hard revoke` e implementacion tecnica sincronizada.
-- Informacion faltante para destrabar C: evidencia de required checks/branch protection efectivos (DV-03), decision de stack e2e y su ejecucion en CI real, y URL objetivo para auditoria de headers (DV-04).
+- DV-04 sale de C por reporte tecnico versionado; queda pendiente remediacion de infraestructura fuera de repo.
+- Informacion faltante para destrabar C: evidencia de required checks/branch protection efectivos (DV-03) y habilitacion de e2e como check bloqueante en ese pipeline.
 
 ## 7) Proximos pasos
 - Priorizar implementacion backend/E2E de DV-02 por impacto funcional y de seguridad.

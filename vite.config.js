@@ -40,6 +40,7 @@ export default defineConfig(({ mode }) => {
       globals: true,
       setupFiles: './tests/setup.ts',
       include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
+      exclude: ['tests/e2e/**'],
       css: true
     },
     css: {

@@ -8,6 +8,7 @@ Confirmar el estado real del pipeline de integracion y las reglas de merge que a
 ## 2) Evidencia local (repo)
 Hallazgos:
 - Existe workflow versionado en `./.github/workflows/ci-cd-ftps.yml`.
+- El workflow incluye jobs `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)`.
 - No se encontraron pipelines alternativos versionados (`.gitlab-ci.yml`, `azure-pipelines.yml`, `netlify.toml`, `vercel.json`, `railway.json`).
 - Existe script local de puerta de calidad: `npm run quality:gate`.
 
@@ -20,8 +21,12 @@ Checks locales disponibles en `quality:gate`:
 - `npm run typecheck`
 - `npm run test`
 - `npm run lint:colors`
+- `npm run lint:layers`
 - `npm run test:a11y`
 - `npm run check:css`
+
+Checks e2e versionados:
+- `npm run test:e2e:smoke` (Playwright, Chromium).
 
 ## 3) Evidencia de ejecucion
 Ejecucion local verificada el 2026-02-14:
@@ -49,7 +54,14 @@ Opcion B: GitHub Actions + FTPS (elegida)
 Pendiente fuera de repo:
 - Configurar secrets de FTPS en GitHub (`FTPS_SERVER`, `FTPS_USERNAME`, `FTPS_PASSWORD`, `FTPS_REMOTE_DIR`, opcional `FTPS_PORT`).
 - Activar branch protection en `main`.
-- Marcar `CI/CD FTPS / Quality Gate` como required check.
+- Marcar `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E` como required checks.
+
+Nota operativa (GitHub sin rulesets):
+- Si no aparecen checks en "Require status checks to pass", primero ejecutar al menos 1 PR hacia `main` para que GitHub indexe los status checks.
+- Usar branch protection clasica en `main` (no requiere rulesets) y seleccionar exactamente:
+  - `CI/CD FTPS / Quality Gate`
+  - `CI/CD FTPS / Smoke E2E`
+- En repos privados puede demorar unos minutos en aparecer el listado luego de la primera corrida.
 
 Parametros operativos confirmados:
 - `FTPS_REMOTE_DIR=/public_html`
@@ -65,18 +77,21 @@ Checks requeridos para PR/merge:
 - `typecheck`
 - `test`
 - `lint:colors`
+- `lint:layers`
 - `test:a11y`
 - `check:css`
+- `smoke e2e` (`test:e2e:smoke`)
 
 Implementacion recomendada:
 - Reutilizar `npm run quality:gate` como comando unificado en CI.
-- Exponer cada check como status separado o al menos un status obligatorio de `quality:gate`.
+- Exponer `Quality Gate` y `Smoke E2E` como status obligatorios.
 
 ## 8) DoD propuesto para cerrar DV-03
 - Inventario de CI/CD documentado en repo.
 - Decision de implementacion definida y aplicada (`GitHub Actions + FTPS`).
 - Branch protection configurada con checks obligatorios.
 - Evidencia de una corrida de PR con status bloqueante ante falla.
+- Confirmacion visual en GitHub de los checks requeridos activos sobre `main`.
 
 ## 9) Mensaje sugerido para Plataforma
-"Implementamos CI/CD en repo con `GitHub Actions + FTPS` (`./.github/workflows/ci-cd-ftps.yml`). Necesitamos completar configuracion de GitHub: secrets FTPS, branch protection en `main` y required check `CI/CD FTPS / Quality Gate`."
+"Implementamos CI/CD en repo con `GitHub Actions + FTPS` (`./.github/workflows/ci-cd-ftps.yml`). Necesitamos completar configuracion de GitHub: secrets FTPS, branch protection en `main` y required checks `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E`."

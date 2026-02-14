@@ -35,6 +35,8 @@ npm run build       # compila assets para produccion en ./dist
 npm run preview     # sirve el build localmente
 npm run typecheck   # valida TypeScript estricto
 npm run test        # ejecuta tests unitarios
+npm run test:e2e    # ejecuta suite e2e con Playwright
+npm run test:e2e:smoke # ejecuta smoke e2e (home/contacto/gracias)
 npm run test:a11y   # auditoria heuristica de accesibilidad
 npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
