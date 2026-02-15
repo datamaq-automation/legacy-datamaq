@@ -1,4 +1,4 @@
-﻿# Tareas Completadas (2026-02)
+# Tareas Completadas (2026-02)
 
 Extraccion automatica desde `docs/todo.md` el 2026-02-15.
 
@@ -206,3 +206,65 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Decision tomada (B): se eligio URL objetivo `https://www.datamaq.com.ar` por ser frontend publico operativo del proyecto.
   - Bloqueador residual: aplicar headers/politicas en servidor o reverse proxy (fuera de repo) y re-auditar.
   - Siguiente paso: implementar redireccion HTTP->HTTPS + HSTS + CSP y repetir auditoria.
+
+## Movido desde docs/todo.md el 2026-02-15 (limpieza operativa)
+
+### Tareas completadas movidas desde backlog activo (P0)
+
+- [x] (P0) UX-01 Consolidar header/nav y jerarquia "above the fold" (desktop + mobile)
+  - Contexto: evidencia visual mostraba header/nav no consolidado y exceso de espacio muerto; en mobile el hero empujaba valor/CTA por debajo del fold.
+  - Accion:
+    - Desktop: header fijo/consistente con logo + nav + CTA primario.
+    - Mobile: menu hamburguesa accesible; H1 + propuesta de valor + CTA primario visibles sin scroll (360x740).
+    - Reordenamiento del hero para priorizar copy + CTA por encima de la ilustracion en mobile.
+  - DoD:
+    - En 360x740: H1 + texto de apoyo + CTA primario visibles sin scroll.
+    - En desktop >= 1280px: header alineado, nav visible, CTA primario destacado.
+    - Sin CLS perceptible.
+    - `npm run test:a11y` en verde.
+  - Avance: hero mobile reordenado; navbar consolidado en desktop y menu superpuesto en mobile.
+  - Evidencia: `src/ui/sections/HeroSection.vue`, `src/styles/scss/sections/_hero.scss`, `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
+  - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile hero keeps headline, support copy and primary CTA above fold`.
+  - Evidencia: `docs/evidence/ux-01-after-desktop-1280x720.png`, `docs/evidence/ux-01-after-mobile-360x740.png`, `docs/evidence/ux-01-before-after.md`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15 12:37 -03:00).
+  - Bloqueador residual: ninguno dentro del repositorio.
+
+- [x] (P0) UX-02 Accesibilidad interactiva critica (focus, teclado, menu, CTAs)
+  - Contexto: era necesario asegurar foco visible consistente, navegacion por teclado y roles/aria correctos en menu/header.
+  - Accion:
+    - Menu mobile con `aria-expanded`, `aria-controls`, cierre con `Esc`, lock de scroll de fondo.
+    - Restauracion de foco al toggle y foco inicial en primer link al abrir.
+    - Validacion de teclado/contraste con checklist.
+  - DoD:
+    - Navegacion completa por teclado (Tab/Shift+Tab/Enter/Esc) sin bloqueos.
+    - Contraste AA en controles relevantes.
+    - `npm run test:a11y` en verde.
+  - Avance: implementado comportamiento completo de foco/teclado/menu en mobile y estilos de foco consistentes.
+  - Evidencia: `src/ui/layout/Navbar.ts`, `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
+  - Evidencia: `tests/unit/ui/navbar.test.ts` (aria-expanded, lock/unlock scroll, foco con `Esc`, foco inicial en primer link).
+  - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile menu closes with Escape and restores focus`.
+  - Evidencia: `docs/evidence/ux-02-keyboard-contrast-checklist.md`.
+  - Evidencia: `npm run test:a11y` y `npm run quality:merge` en verde (2026-02-15 12:37 -03:00).
+  - Bloqueador residual: ninguno dentro del repositorio.
+
+### Historial operativo archivado (ruido removido de tareas abiertas)
+
+#### P0 Eliminar secreto de verificacion del frontend
+- Reintentos de smoke backend archivados en secuencia: 2026-02-15 (sin hora), 11:43 -03:00, 12:19 -03:00, 12:33 -03:00, 13:09 -03:00.
+- Resultado repetido en todos los intentos: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` -> `fetch failed`.
+- Guardrail de no regresion validado de forma repetida en verde: `npm run lint:origin-verify`.
+- Validaciones de compliance asociadas: `npm run lint:todo-sync` en verde en reintentos.
+
+#### P0 Definir puerta de calidad obligatoria para merge
+- Historial detallado de endurecimiento de gobernanza/CI (AGENTS, todo-sync, CI Todo Sync, fail-fast local, cierre obligatorio C1/C2) movido desde `docs/todo.md`.
+- Revalidaciones operativas archivadas: `npm run ci:remote:status` confirma run `22026695643` en success; `npm run ci:branch-protection:check` falla por falta de token.
+- El estado vigente se mantiene en `docs/todo.md` con trazabilidad minima y acciones ejecutables.
+
+#### DV-03 Relevar pipeline real de integracion
+- Historial de evidencia remota redundante movido desde `docs/todo.md` para reducir ruido operativo.
+- Se conserva en `docs/todo.md` solo estado actual, decisiones vigentes y siguiente accion interna.
+
+### Notas A/B/C archivadas
+- Se movio el detalle historico completo de clasificaciones A/B/C repetitivas fuera del tablero activo.
+- `docs/todo.md` conserva un resumen activo y referencia a este archivo para auditoria historica.
+
