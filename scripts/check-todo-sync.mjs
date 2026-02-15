@@ -11,6 +11,9 @@ const REQUIRE_OPEN_P0 =
 const REQUIRE_NO_DONE_TASKS =
   process.argv.includes('--require-no-done-tasks') ||
   process.env.TODO_SYNC_REQUIRE_NO_DONE_TASKS === '1'
+const REQUIRE_MERGE_EVIDENCE =
+  process.argv.includes('--require-merge-evidence') ||
+  process.env.TODO_SYNC_REQUIRE_MERGE_EVIDENCE === '1'
 const envRange = process.env.TODO_COMPLIANCE_DIFF?.trim()
 const EVIDENCE_PATTERNS = [
   /\bEvidencia:/i,
@@ -124,6 +127,17 @@ function getTodoAddedLines(ciRange) {
 
 function containsEvidenceLine(lines) {
   return lines.some((line) => EVIDENCE_PATTERNS.some((pattern) => pattern.test(line)))
+}
+
+function containsMergeEvidence(lines) {
+  const hasQualityMerge = lines.some((line) => /\bnpm run quality:merge\b/i.test(line))
+  if (hasQualityMerge) {
+    return true
+  }
+
+  const hasQualityGate = lines.some((line) => /\bnpm run quality:gate\b/i.test(line))
+  const hasSmoke = lines.some((line) => /\bnpm run test:e2e:smoke\b/i.test(line))
+  return hasQualityGate && hasSmoke
 }
 
 function readTodoContent() {
@@ -333,6 +347,16 @@ function main() {
         '[todo-sync] ERROR: docs/todo.md cambio, pero no se detecta trazabilidad minima (Evidencia/Avance/Decision/Bloqueador/Siguiente paso/Clasificacion).'
       )
       console.error('[todo-sync] Agrega al menos una linea explicita de trazabilidad en docs/todo.md.')
+      process.exit(1)
+    }
+
+    if (REQUIRE_MERGE_EVIDENCE && !containsMergeEvidence(todoAddedLines)) {
+      console.error(
+        '[todo-sync] ERROR: faltan evidencias de merge-readiness local en docs/todo.md (npm run quality:merge o quality:gate + test:e2e:smoke).'
+      )
+      console.error(
+        '[todo-sync] Agrega evidencia explicita de esas corridas para evitar desalineaciones entre loop local y CI.'
+      )
       process.exit(1)
     }
 

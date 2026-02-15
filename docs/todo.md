@@ -57,6 +57,13 @@ No incluye:
   - Evidencia: `docs/todo.done.2026-02.md`, `docs/dv-ux-01-conversion-kpi.md`, `docs/dv-ux-02-trust-inventory.md`.
   - Avance: reintento interno de smoke ejecutado en este turno; el bloqueo externo C2 se mantiene sin endpoint backend operativo.
   - Evidencia: historial detallado de reintentos archivado en `docs/todo.done.2026-02.md`.
+  - Decision tomada (B): para reducir desalineaciones local/CI al validar merge, se evaluo mantener `quality:merge` fail-fast (`&&`) vs ejecutar `quality:gate` y `test:e2e:smoke` siempre; se elige runner no fail-fast para exponer ambos resultados en una sola corrida local.
+  - Avance: hardening operativo aplicado en este turno para detectar antes en loop local los fallos que antes aparecian recien en GitHub Actions.
+  - Evidencia: `scripts/run-quality-merge.mjs`, `package.json` (`quality:merge`), `scripts/check-todo-sync.mjs` (`--require-merge-evidence`), `AGENTS.md`.
+  - Evidencia: `npm run quality:merge` local (2026-02-15 17:24 -03:00) detecta incompatibilidad Windows (`spawnSync npm.cmd EINVAL`) y se corrige en `scripts/run-quality-merge.mjs` con ejecucion `shell`.
+  - Evidencia: `npm run quality:merge` local en verde (2026-02-15 17:26 -03:00) ejecuta `quality:gate` y `test:e2e:smoke` en la misma corrida.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` local en verde (2026-02-15 17:30 -03:00) con regla activa `--require-merge-evidence`.
+  - Evidencia: `npm run quality:merge` local en verde (2026-02-15 17:30 -03:00) con `quality:gate` + `test:e2e:smoke` y `lint:todo-sync` base sin bloqueo circular.
   - Dependencias: DV-02 (contrato backend).
   - Riesgo: Alto.
   - Decision tomada (C): no se implementara backend minimo en este repositorio; el cierre se ejecutara sobre backend de produccion cuando corresponda.

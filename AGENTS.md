@@ -18,8 +18,9 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 12. `docs/todo.md` se mantiene como tablero activo: no debe acumular tareas `[x]` ni historial repetitivo de seguimiento.
 13. Si hay tareas `[x]` en `docs/todo.md`, se deben archivar en `docs/todo.done.YYYY-MM.md` con `npm run todo:archive` en el mismo turno.
 14. `quality:gate` es solo validacion; no debe ejecutar comandos que muten `docs/todo.md` (por ejemplo `todo:archive` o `todo:compact:noise`).
-15. No cerrar turno mientras exista algun `P0` abierto con `Siguiente accion interna ejecutable ahora:` que sea realizable en este entorno.
-16. La ultima seccion del mensaje final es obligatoria y exclusiva:
+15. Si hubo cambios en `src/` o `tests/`, antes de cerrar turno se debe correr `npm run quality:merge` (runner no fail-fast), luego `npm run lint:todo-sync:merge-ready`, y registrar evidencia en `docs/todo.md`.
+16. No cerrar turno mientras exista algun `P0` abierto con `Siguiente accion interna ejecutable ahora:` que sea realizable en este entorno.
+17. La ultima seccion del mensaje final es obligatoria y exclusiva:
    - Si existe `C1`: `Pregunta de alto nivel` con exactamente 1 pregunta cerrada.
    - Si no existe `C1`: `Tareas externas` con bloqueadores `C2` y acciones recomendadas fuera del repo.
    - Si no hay tareas externas activas: indicar `Sin tareas externas activas`.
@@ -30,16 +31,18 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 3. Clasificar la accion como `A`, `B` o `C` (`C1`/`C2` si aplica).
 4. Ejecutar cambios minimos y trazables.
 5. Validar con comandos acordes al cambio.
-6. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
-7. Si quedaron tareas `[x]` en `docs/todo.md`, ejecutar `npm run todo:archive` y volver a validar.
-8. Si hay ruido operativo repetitivo (entradas de `Avance/Evidencia/Mitigacion` sin valor incremental), compactar con `npm run todo:compact:noise` y volver a validar.
-9. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
-10. Cerrar con la seccion final obligatoria segun regla 16.
+6. Si hubo cambios en `src/` o `tests/`, ejecutar `npm run quality:merge` para exponer en una sola corrida los fallos de `quality:gate` y `test:e2e:smoke`, y cerrar con `npm run lint:todo-sync:merge-ready`.
+7. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
+8. Si quedaron tareas `[x]` en `docs/todo.md`, ejecutar `npm run todo:archive` y volver a validar.
+9. Si hay ruido operativo repetitivo (entradas de `Avance/Evidencia/Mitigacion` sin valor incremental), compactar con `npm run todo:compact:noise` y volver a validar.
+10. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
+11. Cerrar con la seccion final obligatoria segun regla 17.
 
 ## Marco A/B/C
 ### A) Certeza total
 - Implementar directo.
-- Validar al menos con `npm run typecheck`, `npm run test` y `npm run build` (o `npm run quality:merge`).
+- Validar al menos con `npm run typecheck`, `npm run test` y `npm run build`.
+- Si hubo cambios en `src/` o `tests/`, sumar `npm run quality:merge`.
 - Registrar evidencia.
 
 ### B) Duda de bajo nivel (infra/implementacion)
@@ -72,12 +75,14 @@ Plantilla obligatoria para `C`:
 
 ## Compliance automatizado
 - Comando obligatorio: `npm run lint:todo-sync`.
+- Comando obligatorio de cierre cuando cambian `src/` o `tests/`: `npm run lint:todo-sync:merge-ready`.
 - Regla base: falla si hay cambios en `src/` o `tests/` sin cambios en `docs/todo.md`.
 - Regla estricta: si hay cambios en `src/` o `tests/`, `docs/todo.md` debe incluir trazabilidad explicita (`Evidencia`, `Avance`, `Decision`, `Bloqueador`, `Siguiente paso` o `Clasificacion`).
 - Regla `P0` abierta (`--require-open-p0`): exige `Siguiente accion interna ejecutable ahora`; si hay `Decision tomada (C)` exige `Tipo C`; y para `Tipo C: C1` exige pregunta cerrada pendiente.
 - Regla de limpieza (`--require-no-done-tasks`): falla si `docs/todo.md` contiene tareas `[x]`; se deben mover con `npm run todo:archive`.
 - Compactacion de ruido: `npm run todo:compact:noise` es manual (no bloqueante) para mover historial repetitivo a `docs/todo.done.YYYY-MM.md`.
 - Regla de no mutacion en gate: `quality:gate` valida; no debe ejecutar scripts que editen `docs/todo.md`.
+- Regla de merge-ready local (`--require-merge-evidence`): si cambian `src/` o `tests/`, `docs/todo.md` debe incluir evidencia de `npm run quality:merge` (o `quality:gate` + `test:e2e:smoke`).
 - Integracion obligatoria local y CI: usar los mismos flags de compliance para evitar desalineaciones.
 
 ## Archivos asociados
@@ -87,5 +92,6 @@ Plantilla obligatoria para `C`:
 - `scripts/check-todo-sync.mjs`: enforcement local/CI.
 - `scripts/archive-todo-completed.mjs`: automatiza archivo de tareas `[x]` desde `docs/todo.md` a `docs/todo.done.YYYY-MM.md`.
 - `scripts/compact-todo-noise.mjs`: compacta ruido operativo repetitivo desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md`.
-- `package.json`: integra `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise`.
+- `scripts/run-quality-merge.mjs`: ejecuta `quality:gate` y `test:e2e:smoke` sin fail-fast para detectar desalineaciones locales antes de push.
+- `package.json`: integra `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.
 - `./.github/workflows/ci-cd-ftps.yml`: gate remoto.
