@@ -9,6 +9,7 @@ export interface ContactPayloadBundle {
     name: string
     email: string
     phoneNumber: string | undefined
+    normalizedPhoneNumber: string | undefined
     city: string | undefined
     country: string | undefined
     company: string | undefined
@@ -46,6 +47,7 @@ export function buildContactPayloadBundle(
       name: enrichedPayload.name,
       email: enrichedPayload.email,
       phoneNumber: payload.phoneNumber,
+      normalizedPhoneNumber: normalizedPhone,
       city: payload.city,
       country: payload.country,
       company: payload.company,

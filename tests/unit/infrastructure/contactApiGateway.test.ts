@@ -113,6 +113,53 @@ describe('ContactApiGateway', () => {
     expect(http.patchJson).not.toHaveBeenCalled()
   })
 
+  it('routes Chatwoot public endpoint with contact, conversation and message flow', async () => {
+    const http = createHttpClient()
+    vi.mocked(http.postJson)
+      .mockResolvedValueOnce({ ok: true, status: 200, data: { source_id: 'contact_123' } })
+      .mockResolvedValueOnce({ ok: true, status: 200, data: { id: 77 } })
+      .mockResolvedValueOnce({ ok: true, status: 200, data: {} })
+    const logger = createLogger()
+    const gateway = new ContactApiGateway(
+      http,
+      createConfig('https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts'),
+      createStorage(),
+      logger
+    )
+
+    const result = await gateway.submit(createPayload())
+
+    expect(result).toEqual({ ok: true, data: undefined })
+    expect(http.postJson).toHaveBeenCalledTimes(3)
+    expect(http.postJson).toHaveBeenNthCalledWith(
+      1,
+      'https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts',
+      expect.objectContaining({
+        identifier: 'juan@example.com',
+        name: 'Juan Perez',
+        email: 'juan@example.com',
+        phone_number: '+541123456789'
+      })
+    )
+    expect(http.postJson).toHaveBeenNthCalledWith(
+      2,
+      'https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts/contact_123/conversations',
+      expect.objectContaining({
+        custom_attributes: expect.objectContaining({
+          source: 'landing_form'
+        })
+      })
+    )
+    expect(http.postJson).toHaveBeenNthCalledWith(
+      3,
+      'https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts/contact_123/conversations/77/messages',
+      expect.objectContaining({
+        content: expect.stringContaining('Nueva consulta desde landing DataMaq.')
+      })
+    )
+    expect(http.patchJson).not.toHaveBeenCalled()
+  })
+
   it('maps status 0 to network error', async () => {
     const http = createHttpClient()
     vi.mocked(http.postJson).mockResolvedValueOnce({ ok: false, status: 0 })
@@ -128,6 +175,23 @@ describe('ContactApiGateway', () => {
 
     expect(result).toEqual({ ok: false, error: { type: 'NetworkError' } })
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 0 })
+  })
+
+  it('maps Chatwoot responses without source_id to backend error', async () => {
+    const http = createHttpClient()
+    vi.mocked(http.postJson).mockResolvedValueOnce({ ok: true, status: 200, data: {} })
+    const logger = createLogger()
+    const gateway = new ContactApiGateway(
+      http,
+      createConfig('https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts'),
+      createStorage(),
+      logger
+    )
+
+    const result = await gateway.submit(createPayload())
+
+    expect(result).toEqual({ ok: false, error: { type: 'BackendError', status: 502 } })
+    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 502 })
   })
 
   it('maps non-zero status to backend error', async () => {

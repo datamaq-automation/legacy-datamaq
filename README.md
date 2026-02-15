@@ -4,28 +4,28 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 
 ## Caracteristicas principales
 - SPA liviana optimizada para CTAs de WhatsApp y correo electronico.
-- Integracion con backend propio para registrar contactos y derivarlos a Chatwoot.
+- Integracion directa con Chatwoot Public API para registrar contactos desde formulario.
 - Instrumentacion analitica con GA4 y Microsoft Clarity.
 - Componentes accesibles y reutilizables segun la guia de `docs/`.
 - Banner de consentimiento que bloquea GA4/Clarity hasta aceptacion explicita.
-- Monitoreo de disponibilidad del backend de contacto para deshabilitar el formulario cuando el servicio no responde.
+- Monitoreo de disponibilidad del endpoint de contacto para deshabilitar el formulario cuando el servicio no responde.
 
 ## Requisitos previos
 - Node.js >= 20.19.0
 - npm >= 8
-- Acceso al endpoint HTTPS del backend propio para recibir formularios.
+- Acceso HTTPS a Chatwoot y `inbox_identifier` publico.
 
 ## Configuracion de entorno
 1. Copia `.env.example` a `.env` y completa los valores reales para cada entorno.
-2. Verifica que `VITE_CONTACT_API_URL` apunte al backend propio (no directo a Chatwoot).
-3. Ajusta los IDs de analitica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segun la propiedad correspondiente.
+2. Configura `VITE_CONTACT_API_URL` con formato `https://<chatwoot-host>/public/api/v1/inboxes/<inbox_identifier>/contacts`.
+3. Si usas secure mode (`identifier_hash`/HMAC), necesitas firmar desde backend; no expongas secretos en frontend.
+4. Ajusta los IDs de analitica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segun la propiedad correspondiente.
 
 ## Arquitectura de contacto y despliegue
 - Frontend estatico en Ferozo (DonWeb), publicado en `public_html` via FTPS.
-- Backend propio en Docker, desplegado en VPS (DonWeb Cloud IaaS).
-- Flujo de contacto: `frontend -> backend -> Chatwoot`.
-- Los secretos de Chatwoot (`api_access_token` y relacionados) viven solo en backend.
-- Este repositorio no incluye scaffold de backend: la implementacion se hara directamente en el backend de produccion cuando corresponda.
+- Flujo de contacto: `frontend -> Chatwoot Public API`.
+- `VITE_CONTACT_API_URL` define el endpoint de create-contact por inbox.
+- Si se exige secure mode con `identifier_hash`, se incorpora un firmador backend fuera de este repo.
 - Contrato tecnico DV-02: `docs/dv-02-chatwoot-contract.md`.
 
 ## Instalacion y scripts
@@ -38,7 +38,7 @@ npm run typecheck   # valida TypeScript estricto
 npm run test        # ejecuta tests unitarios
 npm run test:e2e    # ejecuta suite e2e con Playwright
 npm run test:e2e:smoke # ejecuta smoke e2e (home/contacto/gracias)
-npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact # smoke backend (estimativo, puede variar)
+npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts # smoke contacto
 npm run test:a11y   # auditoria heuristica de accesibilidad
 npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
@@ -94,13 +94,13 @@ Configuracion recomendada en GitHub:
 2. Ejecutar workflow en GitHub (por `push` a `main` o `workflow_dispatch` sobre `main`).
 3. Confirmar en verde `Quality Gate` y `Smoke E2E`.
 4. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
-5. Verificar en QA que el formulario crea/actualiza conversacion en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
+5. Verificar en QA que el formulario crea contacto + conversacion + mensaje en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
 
 ## Smoke de backend de contacto
 - Script: `npm run smoke:contact:backend -- <CONTACT_API_URL>`.
-- Referencia estimativa actual: `https://chatwoot.datamaq.com.ar/contact`.
-- La URL puede variar hasta cerrar infraestructura backend en VPS.
-- El script falla (exit code `1`) cuando el backend no responde `2xx`.
+- Referencia recomendada: `https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts`.
+- Si el endpoint corresponde a Chatwoot Public API, el script ejecuta flujo completo: contacto -> conversacion -> mensaje.
+- El script falla (exit code `1`) cuando cualquier paso no responde `2xx`.
 
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.
