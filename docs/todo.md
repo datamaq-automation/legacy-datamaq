@@ -100,6 +100,19 @@ No incluye:
   - Evidencia: `npm run lint:security` en verde (2026-02-15 18:38 -03:00).
   - Evidencia: `npm run quality:gate` en verde (2026-02-15 18:40 -03:00), incluyendo `lint:security` + `typecheck` + `test` (30 archivos / 82 tests) + `lint:colors` + `lint:layers` + `test:a11y` + `check:css`.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 18:41 -03:00) tras actualizar trazabilidad del turno.
+  - Decision tomada (B-Seguridad): para auditoria de ciberseguridad del turno se evaluo alcance solo repo vs repo + superficie publica; se elige repo + superficie publica para detectar desalineaciones de deploy/cabeceras no visibles en lint local.
+  - Avance: auditoria de ciberseguridad ejecutada (guardrails cliente + dependencias + configuracion publica + headers HTTP/HTTPS de dominios productivos).
+  - Evidencia: `npm run lint:security` en verde (2026-02-15 18:42 -03:00).
+  - Evidencia: `npm audit --audit-level=moderate --json` (2026-02-15 18:43 -03:00) sin vulnerabilidades (`total=0`, `high=0`, `critical=0`).
+  - Evidencia: `curl -I http://datamaq.com.ar` y `curl -I http://www.datamaq.com.ar` (2026-02-15 18:43 -03:00) devuelven `301` a HTTPS (mitigacion parcial de downgrade).
+  - Evidencia: `curl -I https://datamaq.com.ar` y assets `index-Dl6_lMn0.js`/`index-CoFTkntd.css` (2026-02-15 18:43 -03:00) responden `200`, pero sin `Strict-Transport-Security`, `Content-Security-Policy`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` ni `X-Frame-Options`.
+  - Evidencia: `curl https://www.datamaq.com.ar` (2026-02-15 18:43 -03:00) sirve pagina default de `nginx` (no landing), mientras `https://datamaq.com.ar` sirve la app.
+  - Evidencia: `src/infrastructure/config/publicConfig.ts` mantiene `siteUrl` y `siteOgImage` apuntando a `https://www.datamaq.com.ar`, desalineado con el host que actualmente sirve la app (`https://datamaq.com.ar`).
+  - Avance: se detecta C2 adicional de ciberseguridad/operacion en infraestructura externa (alineacion de host canonico y hardening de headers server-side), fuera del alcance del repo.
+  - Decision tomada (B-Seguridad): ante la consulta de incorporar Cloudflare sobre DonWeb Cloud IaaS se evaluo mantener solo DonWeb vs Cloudflare Free gradual vs Cloudflare Pro directo; se elige recomendacion gradual con Free + `Full (strict)` + hardening incremental para reducir riesgo sin ruptura operativa.
+  - Avance: informacion de recomendacion Cloudflare incorporada en documentacion de CI/CD y seguridad para dejar criterio operativo versionado.
+  - Evidencia: `docs/dv-03-ci-cd-inventory.md` (seccion `Evaluacion Cloudflare delante de DonWeb Cloud IaaS (2026-02-15)` con opciones, ventajas/desventajas, fases y fuentes).
+  - Evidencia: `docs/dv-04-security-headers-audit.md` (seccion `Addendum 2026-02-15: ruta de mitigacion con Cloudflare` con controles tecnicos y riesgos a evitar).
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.

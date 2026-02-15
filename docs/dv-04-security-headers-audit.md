@@ -73,3 +73,37 @@ Minimo sugerido en frontend publico:
 ## 7) Estado DV-04
 - DoD de reporte cumplido para frontend publico en produccion: inventario de headers + brechas priorizadas.
 - Pendiente complementario fuera de este repo: aplicar politicas en servidor/reverse proxy y re-auditar.
+
+## 8) Addendum 2026-02-15: ruta de mitigacion con Cloudflare
+Contexto actualizado:
+- Se evalua incorporar Cloudflare delante del servidor DonWeb Cloud IaaS para hardening de borde.
+- Objetivo: reducir exposicion en edge sin bloquear el flujo actual de deploy FTPS.
+
+Recomendacion:
+1. Incorporar Cloudflare en modo gradual (iniciar en plan Free).
+2. Configurar TLS en `Full (strict)` con certificado valido en origen.
+3. Activar controles de borde minimos:
+   - WAF Managed Rules del plan.
+   - Bot Fight Mode.
+   - Rate limiting para endpoints sensibles (por ejemplo contacto).
+4. Definir host canonico (`www` o apex) y aplicar redireccion 301 consistente.
+
+Controles tecnicos a cerrar en borde (con o sin Cloudflare):
+- `Strict-Transport-Security`
+- `Content-Security-Policy`
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy`
+- `Permissions-Policy`
+- `X-Frame-Options` o `frame-ancestors` en CSP
+
+Riesgos a evitar:
+- No usar `Flexible SSL` en produccion.
+- No confiar en validaciones solo frontend para mitigacion anti-bot.
+- Si se implementa Turnstile, validar token en backend (`siteverify`).
+
+Fuentes operativas:
+- Full (strict): https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/full-strict/
+- Origin CA: https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/
+- WAF managed rules: https://developers.cloudflare.com/waf/managed-rules/
+- Bot Fight Mode: https://developers.cloudflare.com/bots/plans/free/
+- Turnstile backend validation: https://developers.cloudflare.com/turnstile/get-started/server-side-validation/

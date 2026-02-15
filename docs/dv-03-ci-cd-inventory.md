@@ -215,3 +215,51 @@ Implementacion recomendada:
 
 ## 9) Mensaje sugerido para Plataforma
 "Implementamos CI/CD en repo con `GitHub Actions + FTPS` (`./.github/workflows/ci-cd-ftps.yml`) y cerramos branch protection en `main` con required checks `Todo Sync`, `Quality Gate` y `Smoke E2E`. Mantener verificacion periodica con `npm run ci:branch-protection:check`."
+
+## 10) Evaluacion Cloudflare delante de DonWeb Cloud IaaS (2026-02-15)
+Contexto:
+- Hosting actual: Cloud IaaS DonWeb + deploy FTPS desde GitHub Actions.
+- Riesgo vigente: hardening de borde HTTP pendiente (headers de seguridad, WAF y gobernanza de host canonico).
+
+Decision de bajo nivel (B): estrategia de adopcion
+- Opcion 1: mantener solo DonWeb sin CDN/WAF dedicado.
+  - Ventaja: menor complejidad operativa inicial.
+  - Desventaja: menor capacidad de mitigacion de abuso/bots y menor control de politicas de borde.
+- Opcion 2: incorporar Cloudflare Free en esquema gradual (elegida).
+  - Ventaja: reduce riesgo rapido con proxy/CDN/SSL universal + controles base de edge.
+  - Desventaja: agrega capa operativa (DNS/proxy) y requiere configuracion cuidadosa de TLS.
+- Opcion 3: incorporar Cloudflare Pro desde el inicio.
+  - Ventaja: reglas administradas mas robustas desde dia 1.
+  - Desventaja: costo recurrente y tuning inicial mayor.
+
+Recomendacion operativa:
+1. Fase 1 (baseline):
+   - Migrar DNS a Cloudflare y proxear solo hostnames web.
+   - Configurar SSL/TLS en `Full (strict)`.
+   - Instalar certificado valido en origen (ideal: Origin CA de Cloudflare).
+2. Fase 2 (hardening):
+   - Activar WAF Managed Rules disponible para el plan.
+   - Activar Bot Fight Mode.
+   - Definir rate limits para rutas de contacto.
+3. Fase 3 (opcional):
+   - Evaluar upgrade a Pro si se requiere mayor profundidad de WAF/controles.
+
+Guardrails de implementacion:
+- No usar `Flexible SSL` en produccion.
+- Si se usa Turnstile, validar token siempre en backend (`siteverify`).
+- Revisar compatibilidad de puertos/protocolos antes de proxear servicios no HTTP.
+- Definir host canonico final (`datamaq.com.ar` vs `www.datamaq.com.ar`) antes de forzar redirects globales.
+
+Nota de costos:
+- Referencia consultada 2026-02-15: Cloudflare Pro listado en USD 25/mes o USD 240/anio (valor sujeto a cambios).
+
+Fuentes operativas:
+- SSL mode Full (strict): https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/full-strict/
+- Origin CA: https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/
+- DNS full setup: https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/
+- Proxy status y limitaciones: https://developers.cloudflare.com/dns/proxy-status/
+- Puertos soportados: https://developers.cloudflare.com/fundamentals/reference/network-ports/
+- WAF managed rules: https://developers.cloudflare.com/waf/managed-rules/
+- Bot Fight Mode (Free): https://developers.cloudflare.com/bots/plans/free/
+- Turnstile server-side validation: https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
+- Plan Pro: https://www.cloudflare.com/es-es/plans/pro/
