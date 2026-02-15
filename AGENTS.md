@@ -24,6 +24,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
    - Si existe `C1`: `Pregunta de alto nivel` con exactamente 1 pregunta cerrada.
    - Si no existe `C1`: `Tareas externas` con bloqueadores `C2` y acciones recomendadas fuera del repo.
    - Si no hay tareas externas activas: indicar `Sin tareas externas activas`.
+18. Si se modifican `src/`, `tests/`, `scripts/`, `AGENTS.md` o `package.json`, ejecutar `npm run lint:security` y registrar evidencia en `docs/todo.md`.
 
 ## Protocolo operativo por turno
 1. Leer `docs/todo.md`.
@@ -31,12 +32,13 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 3. Clasificar la accion como `A`, `B` o `C` (`C1`/`C2` si aplica).
 4. Ejecutar cambios minimos y trazables.
 5. Validar con comandos acordes al cambio.
-6. Si hubo cambios en `src/` o `tests/`, ejecutar `npm run quality:merge` para exponer en una sola corrida los fallos de `quality:gate` y `test:e2e:smoke`, y cerrar con `npm run lint:todo-sync:merge-ready`.
-7. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
-8. Si quedaron tareas `[x]` en `docs/todo.md`, ejecutar `npm run todo:archive` y volver a validar.
-9. Si hay ruido operativo repetitivo (entradas de `Avance/Evidencia/Mitigacion` sin valor incremental), compactar con `npm run todo:compact:noise` y volver a validar.
-10. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
-11. Cerrar con la seccion final obligatoria segun regla 17.
+6. Si hubo cambios en `src/`, `tests/`, `scripts/`, `AGENTS.md` o `package.json`, ejecutar `npm run lint:security`.
+7. Si hubo cambios en `src/` o `tests/`, ejecutar `npm run quality:merge` para exponer en una sola corrida los fallos de `quality:gate` y `test:e2e:smoke`, y cerrar con `npm run lint:todo-sync:merge-ready`.
+8. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
+9. Si quedaron tareas `[x]` en `docs/todo.md`, ejecutar `npm run todo:archive` y volver a validar.
+10. Si hay ruido operativo repetitivo (entradas de `Avance/Evidencia/Mitigacion` sin valor incremental), compactar con `npm run todo:compact:noise` y volver a validar.
+11. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
+12. Cerrar con la seccion final obligatoria segun regla 17.
 
 ## Marco A/B/C
 ### A) Certeza total
@@ -50,12 +52,15 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 - Elegir 1 con motivo tecnico corto.
 - Implementar sin preguntar al usuario.
 - Registrar `Decision tomada (B): ...` y evidencia.
+- Circuito SB (duda de ciberseguridad de bajo nivel): comparar opciones por superficie de ataque/blast radius y elegir la de menor exposicion operativa.
+- Registrar `Decision tomada (B-Seguridad): ...` cuando aplique.
 
 ### C) Duda de alto nivel
 - Ejecutar mitigaciones internas primero.
 - Clasificar como `C1` o `C2`.
 - No modificar codigo dentro del alcance bloqueado.
 - Mantener la tarea en `[ ]` o `[>]`.
+- Circuito SC (duda de ciberseguridad de alto nivel): usar `C1/C2` para modelo de confianza, politicas legales, retencion de datos o credenciales maestras.
 
 Plantilla obligatoria para `C`:
 - `Decision tomada (C): ...`
@@ -73,7 +78,20 @@ Plantilla obligatoria para `C`:
 - Al pasar a `denied`: bloquear tracking futuro, propagar denegacion a proveedores y limpiar cookies first-party de analytics en modalidad best-effort.
 - Referencia: `docs/dv-01-consent-matrix.md`.
 
+## Dimension de ciberseguridad (obligatoria)
+- Principio: `least privilege` en frontend y en CI.
+- En `src/`, `tests/` y `.env.example` quedan prohibidos:
+  - Variables `VITE_*` con credenciales/sensibles (`SECRET`, `TOKEN`, `PASSWORD`, `API_KEY`, `CLIENT_SECRET`, `PRIVATE_KEY`, `ACCESS_KEY`).
+  - Headers de autenticacion sensible en navegador (`Authorization`, `X-API-Key`, `X-Api-Key`, `X-Auth-Token`).
+- Si una integracion requiere auth sensible desde cliente, clasificar primero como `C1` (decision de arquitectura) antes de implementar.
+- Brechas de infraestructura externa (por ejemplo HTTPS redirect, HSTS, CSP, headers de servidor) se clasifican como `C2` con plan fuera del repo.
+- Guardrails obligatorios:
+  - `npm run lint:origin-verify`
+  - `npm run lint:client-secrets`
+  - `npm run lint:security`
+
 ## Compliance automatizado
+- Comando obligatorio: `npm run lint:security`.
 - Comando obligatorio: `npm run lint:todo-sync`.
 - Comando obligatorio de cierre cuando cambian `src/` o `tests/`: `npm run lint:todo-sync:merge-ready`.
 - Regla base: falla si hay cambios en `src/` o `tests/` sin cambios en `docs/todo.md`.
@@ -84,14 +102,17 @@ Plantilla obligatoria para `C`:
 - Regla de no mutacion en gate: `quality:gate` valida; no debe ejecutar scripts que editen `docs/todo.md`.
 - Regla de merge-ready local (`--require-merge-evidence`): si cambian `src/` o `tests/`, `docs/todo.md` debe incluir evidencia de `npm run quality:merge` (o `quality:gate` + `test:e2e:smoke`).
 - Integracion obligatoria local y CI: usar los mismos flags de compliance para evitar desalineaciones.
+- Regla de seguridad cliente: `lint:client-secrets` falla si detecta secretos `VITE_*` o headers sensibles en frontend.
 
 ## Archivos asociados
 - `AGENTS.md`: contrato operativo.
 - `docs/todo.md`: estado y evidencia.
 - `docs/todo.done.YYYY-MM.md`: archivo mensual de tareas cerradas e historial movido desde `docs/todo.md`.
 - `scripts/check-todo-sync.mjs`: enforcement local/CI.
+- `scripts/check-origin-verify-leaks.mjs`: guardrail de no regresion para secreto/header legado en frontend.
+- `scripts/check-client-secrets.mjs`: enforcement local/CI para evitar exposicion de secretos y headers sensibles en cliente.
 - `scripts/archive-todo-completed.mjs`: automatiza archivo de tareas `[x]` desde `docs/todo.md` a `docs/todo.done.YYYY-MM.md`.
 - `scripts/compact-todo-noise.mjs`: compacta ruido operativo repetitivo desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md`.
 - `scripts/run-quality-merge.mjs`: ejecuta `quality:gate` y `test:e2e:smoke` sin fail-fast para detectar desalineaciones locales antes de push.
-- `package.json`: integra `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.
+- `package.json`: integra `lint:security` + `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.
 - `./.github/workflows/ci-cd-ftps.yml`: gate remoto.

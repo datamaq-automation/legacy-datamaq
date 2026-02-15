@@ -92,6 +92,14 @@ No incluye:
   - Evidencia: `./.github/workflows/ci-cd-ftps.yml` (`Deploy dist via FTPS`), con `::notice` de destino y `::error` especifico para fallo de preflight.
   - Evidencia: workflow remoto ejecutado en verde tras hardening FTPS (2026-02-15 18:11 -03:00), sin reproduccion del fallo `mkdir: Fatal error: max-retries exceeded`.
   - Avance: mitigacion de deploy FTPS validada; el bloqueo activo remanente del P0 sigue concentrado en configuracion de Chatwoot (`inbox_identifier` y politica secure mode).
+  - Decision tomada (B-Seguridad): para reforzar la dimension de ciberseguridad se evaluo extender solo `lint:origin-verify` vs crear guardrail general para secretos cliente; se elige agregar `lint:client-secrets` y consolidar `lint:security` en `quality:gate` para cubrir secretos `VITE_*` y headers sensibles.
+  - Avance: `AGENTS.md` actualizado con dimension de ciberseguridad obligatoria y circuito de dudas diferenciado (`SB` bajo nivel, `SC` alto nivel/C1-C2).
+  - Evidencia: `AGENTS.md` (politica de continuidad regla 18, protocolo operativo paso 6, marco A/B/C con circuitos SB/SC, seccion `Dimension de ciberseguridad`, compliance y archivos asociados).
+  - Avance: guardrail tecnico agregado para prevenir exposicion de secretos/headers sensibles en frontend.
+  - Evidencia: `scripts/check-client-secrets.mjs`, `package.json` (`lint:client-secrets`, `lint:security`, `quality:gate`), `README.md` (scripts de seguridad cliente).
+  - Evidencia: `npm run lint:security` en verde (2026-02-15 18:38 -03:00).
+  - Evidencia: `npm run quality:gate` en verde (2026-02-15 18:40 -03:00), incluyendo `lint:security` + `typecheck` + `test` (30 archivos / 82 tests) + `lint:colors` + `lint:layers` + `test:a11y` + `check:css`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 18:41 -03:00) tras actualizar trazabilidad del turno.
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.
