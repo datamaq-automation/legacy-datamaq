@@ -26,6 +26,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
    - Si no hay tareas externas activas: indicar `Sin tareas externas activas`.
 18. Si se modifican `src/`, `tests/`, `scripts/`, `AGENTS.md` o `package.json`, ejecutar `npm run lint:security` y registrar evidencia en `docs/todo.md`.
 19. Si se modifican `src/` o `tests/`, registrar evidencia explicita de `npm run lint:test-coverage` (umbral de cobertura).
+20. La politica permanente de automatizacion de tests se define en `AGENTS.md`; la ejecucion priorizada y evidencia del turno se define en `docs/todo.md`.
 
 ## Protocolo operativo por turno
 1. Leer `docs/todo.md`.
@@ -96,6 +97,9 @@ Plantilla obligatoria para `C`:
 
 ## Dimension de testing (obligatoria)
 - Principio: cada cambio relevante debe tener deteccion automatica de regresion proporcional al riesgo.
+- Automatizacion operativa: ante fallo de `test`, `lint:test-coverage`, `test:e2e:smoke` o `lint:testing`, ejecutar ciclo detectar -> corregir -> revalidar sin pedir confirmacion intermedia.
+- Alcance por defecto para autocorreccion: primero ajustar `tests/`; si no alcanza para resolver el fallo, aplicar ajuste minimo en `src/` y mantener cobertura asociada.
+- Escalar por circuito `TC` solo cuando el bloqueo dependa de criterio de aceptacion de negocio o de entorno externo no disponible en este turno.
 - Cobertura minima global bloqueante (sobre `coverage/coverage-summary.json`):
   - `lines >= 75%`
   - `statements >= 75%`

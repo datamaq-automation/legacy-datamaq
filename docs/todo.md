@@ -124,6 +124,21 @@ No incluye:
   - Evidencia: `npm run quality:gate` en verde (2026-02-15 19:06 -03:00) incluyendo `lint:test-coverage`.
   - Evidencia: `npm run lint:testing` en verde (2026-02-15 19:06 -03:00), ejecutando `lint:test-coverage` + `test:e2e:smoke` (5/5 tests).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 19:07 -03:00) tras actualizar trazabilidad de este turno.
+  - Decision tomada (B-Testing): para avanzar en tareas de test sobre el P0 activo se evaluo ampliar smoke e2e vs cubrir modulo subtesteado; se elige cubrir `src/infrastructure/attribution/utm.ts` por ser brecha de cobertura alta con impacto bajo en fragilidad.
+  - Avance: agregada suite unitaria de atribucion UTM (parse URL, persistencia TTL, expiracion, payload attach) como mitigacion interna ejecutable en este entorno.
+  - Evidencia: `tests/unit/infrastructure/utm.test.ts` (9 casos nuevos).
+  - Evidencia: `npm run test -- tests/unit/infrastructure/utm.test.ts` en verde (2026-02-15 19:11 -03:00), 9/9 tests.
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-15 19:11 -03:00); cobertura global sube a `lines=82.14`, `statements=81.48`, `functions=84.18`, `branches=70.32`.
+  - Evidencia: cobertura de `src/infrastructure/attribution/utm.ts` sube de ~`16.32%` a ~`97.95%` en la corrida de cobertura (2026-02-15 19:11 -03:00).
+  - Evidencia: `npm run quality:merge` (2026-02-15 19:12 -03:00) detecta fallo esperado de trazabilidad (`lint:todo-sync`), mitigado en este turno al actualizar `docs/todo.md` antes del reintento.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15 19:14 -03:00) tras registrar trazabilidad del cambio en `tests/`; incluye `quality:gate` + `test:e2e:smoke` en la misma corrida.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 19:14 -03:00) con evidencia de merge local requerida.
+  - Decision tomada (B-Testing): ante la duda de automatizacion de tests se evaluo modificar solo `AGENTS.md` vs solo `docs/todo.md` vs ambos; se elige ambos para separar contrato permanente de ejecucion por turno.
+  - Avance: reforzada en `AGENTS.md` la regla explicita de automatizacion de testing (`detectar -> corregir -> revalidar`) y el alcance por defecto de autocorreccion (`tests/` primero, `src/` minimo si aplica).
+  - Evidencia: `AGENTS.md` (politica de continuidad regla 20 y seccion `Dimension de testing` con automatizacion operativa).
+  - Evidencia: `npm run lint:security` en verde (2026-02-15 19:29 -03:00) tras actualizar `AGENTS.md` y trazabilidad en `docs/todo.md`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15 19:29 -03:00) con `quality:gate` + `test:e2e:smoke` en la misma corrida.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 19:29 -03:00) con regla `--require-merge-evidence` activa.
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.
