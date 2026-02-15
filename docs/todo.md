@@ -61,9 +61,16 @@ No incluye:
   - Evidencia: `docs/todo.md` compactado y `docs/todo.done.2026-02.md` actualizado con seccion `Movido desde docs/todo.md el 2026-02-15 (limpieza operativa)`.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:17 -03:00) tras la limpieza documental.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:18 -03:00) tras verificacion final de cumplimiento.
+  - Avance: automatizada la higiene de backlog para archivar tareas cerradas desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md` y evitar reintroduccion de ruido operativo.
+  - Evidencia: `scripts/archive-todo-completed.mjs`, `scripts/check-todo-sync.mjs`, `package.json`, `AGENTS.md`.
+  - Evidencia: `npm run todo:archive:dry-run` en verde (2026-02-15 13:24 -03:00) sin tareas `[x]` pendientes de archivo.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:24 -03:00) con `--require-no-done-tasks`.
+  - Evidencia: `node scripts/archive-todo-completed.mjs --check` en verde (2026-02-15 13:25 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:25 -03:00) tras registrar trazabilidad de automatizacion.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
   - Decision tomada (B): para reducir ruido operativo, se mueve a `docs/todo.done.2026-02.md` el historial de tareas completadas y seguimiento repetitivo, manteniendo `docs/todo.md` como tablero activo.
+  - Decision tomada (B): se automatiza el archivo de tareas cerradas con `todo:archive` y se enforcea limpieza en `lint:todo-sync` para sostener `docs/todo.md` como tablero activo.
   - Decision tomada (C): se mantiene bloqueo externo hasta disponer de token GitHub con permisos para leer/aplicar branch protection en `main`.
   - Tipo C: C2.
   - Informacion faltante: `GITHUB_TOKEN` o `GH_TOKEN` con alcance suficiente para consultar y, fuera del repo, configurar required checks.
@@ -198,6 +205,7 @@ Tarea de verificacion:
 ## 6) Notas de ejecucion A/B/C (resumen activo 2026-02-15)
 - Clasificacion A aplicada en: UX-01 y UX-02 (completadas y archivadas en `docs/todo.done.2026-02.md`).
 - Clasificacion B aplicada en: decisiones de gobernanza (`workflow_dispatch`, required checks del flujo FTPS vigente, y limpieza operativa de `todo.md`).
+- Clasificacion B aplicada en: automatizacion de limpieza documental (`todo:archive` + `lint:todo-sync --require-no-done-tasks`) para mantener `docs/todo.md` sin tareas `[x]`.
 - Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend) y P0 branch protection (bloqueo externo por token/permisos GitHub).
 - Historial detallado de clasificaciones y reintentos: `docs/todo.done.2026-02.md`.
 

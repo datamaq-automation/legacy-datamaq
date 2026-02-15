@@ -8,6 +8,9 @@ const REQUIRE_EVIDENCE =
   process.argv.includes('--require-evidence') || process.env.TODO_SYNC_REQUIRE_EVIDENCE === '1'
 const REQUIRE_OPEN_P0 =
   process.argv.includes('--require-open-p0') || process.env.TODO_SYNC_REQUIRE_OPEN_P0 === '1'
+const REQUIRE_NO_DONE_TASKS =
+  process.argv.includes('--require-no-done-tasks') ||
+  process.env.TODO_SYNC_REQUIRE_NO_DONE_TASKS === '1'
 const envRange = process.env.TODO_COMPLIANCE_DIFF?.trim()
 const EVIDENCE_PATTERNS = [
   /\bEvidencia:/i,
@@ -19,6 +22,7 @@ const EVIDENCE_PATTERNS = [
 ]
 const OPEN_P0_TASK_PATTERN = /^- \[(?: |>)\] \(P0\) (.+)$/
 const TASK_HEADER_PATTERN = /^- \[(?: |>)\] \(P[0-2]\) /
+const DONE_TASK_PATTERN = /^- \[x\] \(P[0-2]\) (.+)$/
 
 function runGit(args) {
   try {
@@ -266,8 +270,46 @@ function ensureOpenP0Compliance() {
   process.exit(1)
 }
 
+function validateNoDoneTasks(todoContent) {
+  const lines = todoContent.split(/\r?\n/)
+  const issues = []
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const match = lines[index].match(DONE_TASK_PATTERN)
+    if (!match) {
+      continue
+    }
+
+    issues.push(`${TODO_PATH}:${index + 1} "${match[1].trim()}" sigue marcada como [x] en tablero activo.`)
+  }
+
+  return issues
+}
+
+function ensureNoDoneTasksCompliance() {
+  if (!REQUIRE_NO_DONE_TASKS) {
+    return
+  }
+
+  const todoContent = readTodoContent()
+  const issues = validateNoDoneTasks(todoContent)
+
+  if (issues.length === 0) {
+    console.log('[todo-sync] OK: docs/todo.md sin tareas cerradas pendientes de archivo.')
+    return
+  }
+
+  console.error('[todo-sync] ERROR: docs/todo.md contiene tareas [x] que deben archivarse.')
+  console.error('[todo-sync] Ejecuta `npm run todo:archive` y vuelve a validar.')
+  for (const issue of issues) {
+    console.error(`- ${issue}`)
+  }
+  process.exit(1)
+}
+
 function main() {
   ensureOpenP0Compliance()
+  ensureNoDoneTasksCompliance()
 
   const ciRange = resolveCiRange()
   const files = ciRange ? listChangedFilesByRange(ciRange) : listLocalChangedFiles()

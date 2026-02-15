@@ -15,8 +15,10 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 9. Todo avance, decision, bloqueo y evidencia se registra en `docs/todo.md` en el mismo turno.
 10. No revertir cambios del usuario sin instruccion explicita.
 11. Si se modifica `src/` o `tests/`, es obligatorio actualizar `docs/todo.md` y pasar `npm run lint:todo-sync`.
-12. No cerrar turno mientras exista algun `P0` abierto con `Siguiente accion interna ejecutable ahora:` que sea realizable en este entorno.
-13. La ultima seccion del mensaje final es obligatoria y exclusiva:
+12. `docs/todo.md` se mantiene como tablero activo: no debe acumular tareas `[x]` ni historial repetitivo de seguimiento.
+13. Si hay tareas `[x]` en `docs/todo.md`, se deben archivar en `docs/todo.done.YYYY-MM.md` con `npm run todo:archive` en el mismo turno.
+14. No cerrar turno mientras exista algun `P0` abierto con `Siguiente accion interna ejecutable ahora:` que sea realizable en este entorno.
+15. La ultima seccion del mensaje final es obligatoria y exclusiva:
    - Si existe `C1`: `Pregunta de alto nivel` con exactamente 1 pregunta cerrada.
    - Si no existe `C1`: `Tareas externas` con bloqueadores `C2` y acciones recomendadas fuera del repo.
    - Si no hay tareas externas activas: indicar `Sin tareas externas activas`.
@@ -28,8 +30,9 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 4. Ejecutar cambios minimos y trazables.
 5. Validar con comandos acordes al cambio.
 6. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
-7. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
-8. Cerrar con la seccion final obligatoria segun regla 13.
+7. Si quedaron tareas `[x]` en `docs/todo.md`, ejecutar `npm run todo:archive` y volver a validar.
+8. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
+9. Cerrar con la seccion final obligatoria segun regla 15.
 
 ## Marco A/B/C
 ### A) Certeza total
@@ -70,11 +73,14 @@ Plantilla obligatoria para `C`:
 - Regla base: falla si hay cambios en `src/` o `tests/` sin cambios en `docs/todo.md`.
 - Regla estricta: si hay cambios en `src/` o `tests/`, `docs/todo.md` debe incluir trazabilidad explicita (`Evidencia`, `Avance`, `Decision`, `Bloqueador`, `Siguiente paso` o `Clasificacion`).
 - Regla `P0` abierta (`--require-open-p0`): exige `Siguiente accion interna ejecutable ahora`; si hay `Decision tomada (C)` exige `Tipo C`; y para `Tipo C: C1` exige pregunta cerrada pendiente.
+- Regla de limpieza (`--require-no-done-tasks`): falla si `docs/todo.md` contiene tareas `[x]`; se deben mover con `npm run todo:archive`.
 - Integracion obligatoria local y CI: usar los mismos flags de compliance para evitar desalineaciones.
 
 ## Archivos asociados
 - `AGENTS.md`: contrato operativo.
 - `docs/todo.md`: estado y evidencia.
+- `docs/todo.done.YYYY-MM.md`: archivo mensual de tareas cerradas e historial movido desde `docs/todo.md`.
 - `scripts/check-todo-sync.mjs`: enforcement local/CI.
-- `package.json`: integra `lint:todo-sync` dentro de `quality:gate`.
+- `scripts/archive-todo-completed.mjs`: automatiza archivo de tareas `[x]` desde `docs/todo.md` a `docs/todo.done.YYYY-MM.md`.
+- `package.json`: integra `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`.
 - `./.github/workflows/ci-cd-ftps.yml`: gate remoto.
