@@ -35,4 +35,19 @@ describe('ContentRepository', () => {
 
     expect(() => repository.getContent()).toThrowError('Invalid content schema')
   })
+
+  it('exposes navbar anchors for the landing decision flow sections', () => {
+    const repository = new ContentRepository()
+
+    const links = repository.getNavbarContent().links.map((link) => link.href)
+
+    expect(links).toEqual([
+      '#servicios',
+      '#proceso',
+      '#tarifas',
+      '#cobertura',
+      '#faq',
+      '#contacto'
+    ])
+  })
 })

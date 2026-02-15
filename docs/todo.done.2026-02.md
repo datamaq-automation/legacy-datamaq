@@ -430,3 +430,55 @@ Tarea de verificacion:
   - Evidencia: `npm run check:css` en verde (2026-02-15 15:12 -03:00), `CSS budget ok: 210073 bytes <= 210100 bytes`.
   - Avance: DoD de UX-03 cumplido y listo para archivo.
   - Riesgo: Medio (cambios transversales).
+
+## Movido desde docs/todo.md el 2026-02-15 16:17 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P1) UX-04 IA y estructura de landing orientada a decision (secciones + anclas)
+  - Contexto: hoy el usuario ve hero pero no queda claro el flujo completo (que incluye, como se trabaja, pasos, FAQs).
+  - Accion: definir y maquetar secciones (sin rediseño total) con navegacion por anclas:
+    - Servicios (cards)
+    - Proceso / "Como trabajamos" (pasos, checklist, cierre tecnico)
+    - Tarifas base y que incluye/no incluye
+    - Cobertura (GBA Norte/zonas) + tiempos
+    - FAQ
+    - Contacto (WhatsApp + formulario si aplica)
+  - DoD:
+    - Navegacion por anclas funciona en desktop/mobile.
+    - Se puede llegar a Contacto en <= 2 interacciones desde el hero.
+    - Headings semanticos correctos (H2 por seccion).
+  - Decision tomada (B): para minimizar impacto en componentes existentes, se implementa un bloque unico de decision (`DecisionFlowSection`) con secciones ancladas y estilos dedicados en vez de refactorizar todas las secciones legacy en el mismo turno.
+  - Avance: maquetadas secciones `Proceso`, `Tarifas`, `Cobertura` y `FAQ`, con enlace directo a `#contacto` y CTA WhatsApp contextual.
+  - Avance: actualizada navegacion por anclas para desktop/mobile en navbar (`#servicios`, `#proceso`, `#tarifas`, `#cobertura`, `#faq`, `#contacto`).
+  - Evidencia: `src/ui/sections/DecisionFlowSection.vue`, `src/ui/pages/HomePage.vue`, `src/infrastructure/content/content.ts`.
+  - Evidencia: `src/styles/scss/sections/_decision-flow.scss`, `src/styles/main.scss`.
+  - Evidencia: `tests/unit/ui/decisionFlowSection.test.ts`, `tests/unit/infrastructure/contentRepository.test.ts`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 16:14 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 16:15 -03:00), 28 archivos y 76 tests pasando.
+  - Evidencia: `npm run build` en verde (2026-02-15 16:14 -03:00).
+  - Avance: DoD de UX-04 cumplido y listo para archivo.
+
+## Movido desde docs/todo.md el 2026-02-15 16:20 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P1) UX-05 Copy y microcopy de confianza (ortografia + claridad de alcance)
+  - Contexto: errores de acentuacion y frases largas restan credibilidad; tambien falta claridad en alcance/condiciones.
+  - Accion:
+    - Corregir ortografia/acentos (Instalacion, diagnostico, electrico, verificacion, documentacion).
+    - Simplificar parrafo de apoyo (frases mas cortas, 1 idea por linea).
+    - Aclarar tarifa base: desde cuanto, que incluye, que varia (traslado/distancia/equipo provisto).
+  - DoD:
+    - Sin errores ortograficos evidentes en hero/servicios.
+    - Copy del hero <= 2-3 lineas en desktop y <= 4 lineas en mobile (sin pared de texto).
+    - Mensaje de CTA coherente (WhatsApp: "Pedi coordinacion" / "Cotizar por WhatsApp").
+  - Decision tomada (B): para evitar regresiones por encoding en archivos historicamente ASCII, se normaliza el copy con ortografia consistente en ASCII y foco en claridad semantica.
+  - Avance: simplificado copy del hero para reducir longitud y reforzar propuesta de valor (alcance + verificacion + documentacion).
+  - Avance: aclarada la tarifa base en mensaje de respuesta con variables explicitas (distancia/urgencia/base operativa).
+  - Avance: CTA WhatsApp unificada en copy de conversion (`Pedi coordinacion` y `Cotizar por WhatsApp`) entre hero, navbar y servicios.
+  - Evidencia: `src/infrastructure/content/content.ts` (hero, servicios, navbar).
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 16:19 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 16:19 -03:00), 28 archivos y 76 tests pasando.
+  - Evidencia: `npm run build` en verde (2026-02-15 16:19 -03:00).
+  - Avance: DoD de UX-05 cumplido y listo para archivo.

@@ -1,0 +1,25 @@
+.c-decision-flow {
+  &__title {
+    letter-spacing: var(--ui-letter-spacing-sm);
+  }
+
+  &__summary {
+    max-width: 64ch;
+  }
+
+  &__eyebrow {
+    color: rgba(var(--dm-data-cyan-rgb), 0.95);
+    letter-spacing: 0.06em;
+  }
+
+  &__card-title {
+    letter-spacing: 0.04em;
+  }
+
+  &__list {
+    display: grid;
+    gap: 0.5rem;
+    color: var(--mobile-card-text);
+    line-height: 1.5;
+  }
+}

@@ -13,7 +13,7 @@ export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garin (GBA Norte)',
   tarifaBaseDesdeARS: 180000,
   trasladoMinimoARS: 0,
-  whatsappUrl: 'https://wa.me/5491100000000',
+  whatsappUrl: 'https://wa.me/5491135162685',
   descuentos: {
     cooperativasPct: 0,
     pymeGraficaPct: 0
@@ -49,10 +49,10 @@ export const content: AppContent = {
   hero: {
     badge: 'Tarifa base publicada - Respuesta en menos de 24 horas',
     title: 'Servicios industriales prolijos, seguros y documentados',
-    subtitle: `Instalacion de ${POWERMETER}/${AUTOMATE} y diagnostico electrico para industria. Trabajo con checklist, verificacion final y documentacion de cada intervencion.`,
-    responseNote: `En menos de 24 horas te respondemos por WhatsApp con tarifa base (desde ${TARIFA_BASE}), traslado segun distancia desde ${BASE}${TRASLADO_TEXT} y propuesta de siguiente paso para coordinar.`,
+    subtitle: `Instalacion de ${POWERMETER}/${AUTOMATE} y diagnostico electrico industrial. Checklist previo, verificacion final y cierre documentado en cada visita.`,
+    responseNote: `Te respondemos por WhatsApp en menos de 24 horas con tarifa base desde ${TARIFA_BASE}, alcance incluido y variaciones por distancia/urgencia desde ${BASE}${TRASLADO_TEXT}.`,
     primaryCta: {
-      label: 'WhatsApp',
+      label: 'Pedi coordinacion',
       action: 'whatsapp',
       href: buildWhatsAppHref('Hola, quiero cotizar un servicio industrial de DataMaq.')
     },
@@ -91,7 +91,7 @@ export const content: AppContent = {
       {
         id: 'instalacion',
         title: `Instalacion industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
-        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medicion funcionando con una verificacion de referencia.`,
+        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medicion funcionando con verificacion final.`,
         subtitle: 'Incluye',
         media: {
           src: installTools,
@@ -113,7 +113,7 @@ export const content: AppContent = {
           caption: `Tarifa base desde ${TARIFA_BASE}. Traslado segun distancia desde ${BASE}${TRASLADO_TEXT}.`
         },
         cta: {
-          label: 'Cotizar / Agendar por WhatsApp',
+          label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
           href: buildWhatsAppHref('Hola, quiero cotizar la instalacion industrial de Powermeter.'),
           section: 'servicios-instalacion'
@@ -123,7 +123,7 @@ export const content: AppContent = {
         id: 'diagnostico',
         title: 'Diagnostico y reparacion de fallas electricas/electronicas (industria)',
         description:
-          'Diagnostico en planta para fallas intermitentes o criticas: medicion, prueba, aislamiento del problema y propuesta de correccion.',
+          'Diagnostico en planta para fallas intermitentes o criticas con medicion, prueba, aislamiento y propuesta de correccion.',
         subtitle: 'Resultado',
         media: {
           src: analyticsDashboard,
@@ -146,7 +146,7 @@ export const content: AppContent = {
           caption: 'Servicio orientado a industria (GBA Norte prioritario).'
         },
         cta: {
-          label: 'Reportar falla por WhatsApp',
+          label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
           href: buildWhatsAppHref('Hola, necesito diagnostico de una falla electrica en planta.'),
           section: 'servicios-diagnostico'
@@ -172,7 +172,7 @@ export const content: AppContent = {
         note:
           'Condiciones: no se interviene si el entorno no es seguro, se agenda por prioridad y puede aplicar recargo por urgencia.',
         cta: {
-          label: 'Solicitar urgencia por WhatsApp',
+          label: 'Pedi coordinacion urgente',
           action: 'whatsapp',
           href: buildWhatsAppHref('Hola, necesito atencion urgente para una falla industrial.'),
           section: 'servicios-urgencias'
@@ -214,11 +214,27 @@ export const content: AppContent = {
         href: '#servicios'
       },
       {
-        label: 'Perfil',
-        href: '#perfil'
+        label: 'Proceso',
+        href: '#proceso'
+      },
+      {
+        label: 'Tarifas',
+        href: '#tarifas'
+      },
+      {
+        label: 'Cobertura',
+        href: '#cobertura'
+      },
+      {
+        label: 'FAQ',
+        href: '#faq'
+      },
+      {
+        label: 'Contacto',
+        href: '#contacto'
       }
     ],
-    contactLabel: 'Escribinos por WhatsApp'
+    contactLabel: 'Pedi coordinacion'
   },
 
   footer: {

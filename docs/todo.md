@@ -37,6 +37,7 @@ No incluye:
   - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15 13:09 -03:00).
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 13:09 -03:00) falla con `fetch failed`.
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 13:43 -03:00) mantiene `Smoke FAIL: fetch failed`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 16:09 -03:00) mantiene `Smoke FAIL: fetch failed`.
   - Avance: reintento interno de smoke ejecutado en este turno; el bloqueo externo C2 se mantiene sin endpoint backend operativo.
   - Evidencia: historial detallado de reintentos archivado en `docs/todo.done.2026-02.md`.
   - Dependencias: DV-02 (contrato backend).
@@ -51,33 +52,6 @@ No incluye:
   - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- <URL_FINAL>` inmediatamente despues de recibir confirmacion de despliegue backend con endpoint publico operativo.
 
 ### P1
-- [>] (P1) UX-04 IA y estructura de landing orientada a decision (secciones + anclas)
-  - Contexto: hoy el usuario ve hero pero no queda claro el flujo completo (que incluye, como se trabaja, pasos, FAQs).
-  - Accion: definir y maquetar secciones (sin rediseño total) con navegacion por anclas:
-    - Servicios (cards)
-    - Proceso / "Como trabajamos" (pasos, checklist, cierre tecnico)
-    - Tarifas base y que incluye/no incluye
-    - Cobertura (GBA Norte/zonas) + tiempos
-    - FAQ
-    - Contacto (WhatsApp + formulario si aplica)
-  - DoD:
-    - Navegacion por anclas funciona en desktop/mobile.
-    - Se puede llegar a Contacto en <= 2 interacciones desde el hero.
-    - Headings semanticos correctos (H2 por seccion).
-  - Evidencia: URL local + capturas en PR.
-
-- [>] (P1) UX-05 Copy y microcopy de confianza (ortografia + claridad de alcance)
-  - Contexto: errores de acentuacion y frases largas restan credibilidad; tambien falta claridad en alcance/condiciones.
-  - Accion:
-    - Corregir ortografia/acentos (Instalacion, diagnostico, electrico, verificacion, documentacion).
-    - Simplificar parrafo de apoyo (frases mas cortas, 1 idea por linea).
-    - Aclarar tarifa base: desde cuanto, que incluye, que varia (traslado/distancia/equipo provisto).
-  - DoD:
-    - Sin errores ortograficos evidentes en hero/servicios.
-    - Copy del hero <= 2-3 lineas en desktop y <= 4 lineas en mobile (sin pared de texto).
-    - Mensaje de CTA coherente (WhatsApp: "Pedi coordinacion" / "Cotizar por WhatsApp").
-  - Evidencia: checklist de copy en PR.
-
 - [>] (P1) UX-06 CTA y conversion tracking (sin romper consentimiento)
   - Contexto: hay CTA WhatsApp y "Ver servicios"; falta jerarquia consistente y medicion.
   - Accion:
@@ -142,9 +116,11 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: dudas de bajo nivel resueltas para higiene documental (enfoque hibrido con `todo:compact:noise` manual y `quality:gate` sin mutaciones).
 - Clasificacion B aplicada en: alineacion del guardrail `ci:branch-protection:check` para exigir `Todo Sync` ademas de `Quality Gate` y `Smoke E2E`.
 - Avance: UX-03 archivada en `docs/todo.done.2026-02.md` y tablero activo reordenado con seccion `### P1` tras `todo:archive`.
+- Clasificacion B aplicada en: UX-04, implementando secciones ancladas en bloque dedicado para reducir impacto en componentes existentes.
+- Clasificacion B aplicada en: UX-05, normalizando copy y CTA con convenio ASCII para evitar ruido de encoding sin perder claridad comercial.
 - Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend).
 - Historial detallado de clasificaciones y reintentos: `docs/todo.done.2026-02.md`.
 
 ## 7) Proximos pasos
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
-- Ejecutar UX-04 como siguiente frente interno de mejora UX una vez cerrado bloqueo P0 externo.
+- Ejecutar UX-06 como siguiente frente interno para jerarquia de CTA y tracking de conversion respetando consentimiento.
