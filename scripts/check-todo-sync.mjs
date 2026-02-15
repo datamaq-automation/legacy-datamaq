@@ -176,6 +176,9 @@ function validateOpenP0Tasks(todoContent) {
     const hasDecisionC = /\bDecision tomada \(C\):/i.test(task.block)
     const typeMatch = task.block.match(/\bTipo C:\s*(C1|C2)\b/i)
     const hasQuestionC1 = /\bPregunta cerrada pendiente \(solo C1\):/i.test(task.block)
+    const hasExternalTasksC2 = /\bTareas externas \(solo C2 y acciones fuera del repo\):/i.test(
+      task.block
+    )
 
     if (typeMatch && !hasDecisionC) {
       issues.push(
@@ -225,6 +228,12 @@ function validateOpenP0Tasks(todoContent) {
 
     if (typeMatch && typeMatch[1].toUpperCase() === 'C1' && hasQuestionC1) {
       c1PendingTasks.push(`${task.title} (linea ${task.line})`)
+    }
+
+    if (typeMatch && typeMatch[1].toUpperCase() === 'C2' && !hasExternalTasksC2) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" marca "Tipo C: C2" sin "Tareas externas (solo C2 y acciones fuera del repo): ...".`
+      )
     }
   }
 

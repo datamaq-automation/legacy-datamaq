@@ -72,6 +72,7 @@ No incluye:
   - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 11:43 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para mantener monitoreo activo del bloqueo externo.
   - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 12:19 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para seguimiento continuo del bloqueo externo.
   - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 12:33 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para validar persistencia del bloqueo externo sin regresiones en frontend.
+  - Tareas externas (solo C2 y acciones fuera del repo): desplegar en backend Docker (VPS) el adaptador Chatwoot, exponer endpoint publico definitivo y confirmar conversacion real desde formulario productivo.
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
   - Siguiente paso: coordinar despliegue externo del adaptador Chatwoot en backend Docker (VPS) y, con URL final disponible, validar formulario real -> conversacion en Chatwoot.
   - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- <URL_FINAL>` inmediatamente despues de recibir confirmacion de despliegue backend con endpoint publico operativo.
@@ -127,6 +128,11 @@ No incluye:
   - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 12:35 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-15 12:37 -03:00) como mitigacion operativa local mientras sigue pendiente enforcement externo.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:44 -03:00) tras actualizar trazabilidad de este turno.
+  - Avance: nueva gobernanza de cierre de respuesta final definida en `AGENTS.md` (ultima seccion obligatoria: `Pregunta de alto nivel` o `Tareas externas`).
+  - Evidencia: `AGENTS.md` agrega regla de cierre final y plantilla `C` con `Tareas externas (solo C2 y acciones fuera del repo): ...`.
+  - Evidencia: `docs/codex-usage.md` actualiza prompt recomendado + checklist para exigir la seccion final obligatoria.
+  - Evidencia: `scripts/check-todo-sync.mjs` valida que tareas `P0` abiertas con `Tipo C: C2` incluyan `Tareas externas (solo C2 y acciones fuera del repo): ...`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:06 -03:00) tras incorporar la regla de `Tareas externas` para `Tipo C: C2`.
   - Siguiente paso: mantener monitoreo de consistencia y, en paralelo, cerrar el bloqueo externo de branch protection en GitHub con token/permisos.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
@@ -134,6 +140,7 @@ No incluye:
   - Tipo C: C2.
   - Informacion faltante: `GITHUB_TOKEN` o `GH_TOKEN` con alcance suficiente para consultar y, fuera del repo, configurar required checks.
   - Mitigacion interna ejecutada: verificacion remota publica con `ci:remote:status` y reejecucion del check local de branch protection para confirmar estado.
+  - Tareas externas (solo C2 y acciones fuera del repo): provisionar `GITHUB_TOKEN`/`GH_TOKEN` con permisos de branch protection y configurar en GitHub `main` con required checks `CI/CD FTPS / Todo Sync`, `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E`.
   - Bloqueador residual: falta activar required checks y branch protection en `main`.
   - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Todo Sync` + `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota C (2026-02-15): bloqueo de configuracion en GitHub (entorno externo al repo).
@@ -322,6 +329,7 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: P0 puerta de calidad (refactor de gobernanza `C1/C2` + enforcement automatizado de `P0` abierta en `lint:todo-sync`).
 - Clasificacion B aplicada en: P0 puerta de calidad (relevamiento de redundancias en `AGENTS.md` y desalineaciones de enforcement entre CI y `lint:todo-sync` para plan de simplificacion).
 - Clasificacion B aplicada en: P0 puerta de calidad (decision de infraestructura: `AGENTS.md` compacto con reglas nucleares + enforcement reforzado en `check-todo-sync` y CI).
+- Clasificacion B aplicada en: P0 puerta de calidad (regla de cierre final obligatorio: `Pregunta de alto nivel` cerrada para `C1` o `Tareas externas` para `C2`, con enforcement en `check-todo-sync` para P0 abiertas `Tipo C: C2`).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (reintento de smoke backend + guardrail `lint:origin-verify` como mitigacion interna).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (sin backend minimo en este repo; implementacion directa en backend de produccion).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (revalidacion en turno actual de `smoke:contact:backend` con resultado `fetch failed` + `lint:origin-verify` en verde).

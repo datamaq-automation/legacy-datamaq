@@ -16,6 +16,7 @@ Aplica AGENTS.md para este repo. Usa docs/todo.md como unica fuente de verdad.
 Ejecuta la tarea abierta mas prioritaria (P0 > P1 > P2) con marco A/B/C.
 Trabaja en bucle de forma ininterrumpida y no pidas confirmaciones intermedias salvo duda C1.
 Actualiza docs/todo.md en el mismo turno con avance, evidencia (archivos/comandos/fecha), bloqueadores y siguiente paso.
+La ultima seccion del mensaje final debe ser: "Pregunta de alto nivel" (exactamente 1 pregunta cerrada) si hay C1; si no hay C1, "Tareas externas" con C2 y acciones fuera del repo (o "Sin tareas externas activas").
 ```
 
 ## Variante para auditoria/revision
@@ -34,6 +35,7 @@ No propongas cambios fuera de alcance sin clasificacion A/B/C.
 4. Se actualizo `docs/todo.md` con evidencia concreta.
 5. Si hubo bloqueo externo, quedo documentado como C.
 6. Si hubo pregunta al usuario, quedo clasificada como C1 y fue exactamente una pregunta cerrada.
+7. La ultima seccion del mensaje final cumple la regla de `Pregunta de alto nivel` o `Tareas externas`.
 
 ## Notas
 - `AGENTS.md` define reglas operativas; `README.md` solo referencia esta guia.

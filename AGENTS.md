@@ -16,6 +16,10 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 10. No revertir cambios del usuario sin instruccion explicita.
 11. Si se modifica `src/` o `tests/`, es obligatorio actualizar `docs/todo.md` y pasar `npm run lint:todo-sync`.
 12. No cerrar turno mientras exista algun `P0` abierto con `Siguiente accion interna ejecutable ahora:` que sea realizable en este entorno.
+13. La ultima seccion del mensaje final es obligatoria y exclusiva:
+   - Si existe `C1`: `Pregunta de alto nivel` con exactamente 1 pregunta cerrada.
+   - Si no existe `C1`: `Tareas externas` con bloqueadores `C2` y acciones recomendadas fuera del repo.
+   - Si no hay tareas externas activas: indicar `Sin tareas externas activas`.
 
 ## Protocolo operativo por turno
 1. Leer `docs/todo.md`.
@@ -25,6 +29,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 5. Validar con comandos acordes al cambio.
 6. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
 7. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
+8. Cerrar con la seccion final obligatoria segun regla 13.
 
 ## Marco A/B/C
 ### A) Certeza total
@@ -51,6 +56,7 @@ Plantilla obligatoria para `C`:
 - `Informacion faltante: ...`
 - `Mitigacion interna ejecutada: ...`
 - `Pregunta cerrada pendiente (solo C1): ...`
+- `Tareas externas (solo C2 y acciones fuera del repo): ...`
 - `Siguiente paso: ...`
 - `Siguiente accion interna ejecutable ahora: ...`
 
