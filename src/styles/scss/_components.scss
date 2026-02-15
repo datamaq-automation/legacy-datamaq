@@ -1,0 +1,86 @@
+.c-ui-card {
+  background-color: var(--ui-color-surface);
+  color: var(--ui-color-text);
+  border: 1px solid var(--ui-color-border);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.c-ui-card--elevated {
+  background-color: var(--ui-color-surface-elevated);
+  box-shadow: var(--ui-shadow-md);
+}
+
+.c-ui-card--interactive {
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.c-ui-card--interactive:hover {
+  border-color: rgba(var(--dm-data-cyan-rgb), 0.35);
+  box-shadow: var(--ui-shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn.c-ui-btn {
+  font-weight: 600;
+  letter-spacing: var(--ui-letter-spacing-sm);
+  border-radius: var(--ui-radius-md);
+  padding: 0.7rem 1.1rem;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  @include focus-ring(var(--ui-color-primary), 3px);
+}
+
+.btn.c-ui-btn:hover:not(:disabled):not([aria-disabled='true']) {
+  transform: translateY(-1px);
+}
+
+.btn.c-ui-btn:disabled,
+.btn.c-ui-btn[aria-disabled='true'] {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn.c-ui-btn--primary {
+  --bs-btn-color: var(--ui-color-bg);
+  --bs-btn-bg: var(--ui-color-primary);
+  --bs-btn-border-color: var(--ui-color-primary);
+  --bs-btn-hover-color: var(--ui-color-bg);
+  --bs-btn-hover-bg: rgba(var(--dm-data-cyan-rgb), 0.82);
+  --bs-btn-hover-border-color: rgba(var(--dm-data-cyan-rgb), 0.9);
+  --bs-btn-focus-shadow-rgb: var(--dm-data-cyan-rgb);
+}
+
+.btn.c-ui-btn--outline {
+  --bs-btn-color: var(--ui-color-text);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: rgba(var(--dm-text-0-rgb), 0.6);
+  --bs-btn-hover-color: var(--ui-color-text);
+  --bs-btn-hover-bg: var(--ui-color-primary-soft);
+  --bs-btn-hover-border-color: rgba(var(--dm-data-cyan-rgb), 0.85);
+  --bs-btn-focus-shadow-rgb: var(--dm-data-cyan-rgb);
+}
+
+.c-ui-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.32rem 0.8rem;
+  font-size: var(--ui-font-size-label);
+  line-height: var(--ui-line-height-label);
+  font-weight: 600;
+  letter-spacing: var(--ui-letter-spacing-sm);
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.18);
+  color: var(--ui-color-text);
+  background-color: rgba(var(--dm-bg-0-rgb), 0.68);
+}
+
+.c-ui-chip--success {
+  border-color: rgba(var(--bs-success-rgb), 0.5);
+  background-color: rgba(var(--bs-success-rgb), 0.18);
+}

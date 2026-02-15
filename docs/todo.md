@@ -50,17 +50,7 @@ No incluye:
   - Siguiente paso: coordinar despliegue externo del adaptador Chatwoot en backend Docker (VPS) y, con URL final disponible, validar formulario real -> conversacion en Chatwoot.
   - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- <URL_FINAL>` inmediatamente despues de recibir confirmacion de despliegue backend con endpoint publico operativo.
 
-- [>] (P1) UX-03 Normalizar tipografia, espaciado y componentes base (design tokens minimo)
-  - Contexto: mejoras UX sustentables requieren consistencia (botones, badges, cards, spacing, tipo).
-  - Accion:
-    - Definir tokens minimos (CSS variables) para: font-size/line-height, spacing, radius, sombras, colores semanticos (bg/surface/text/primary).
-    - Unificar componentes base: `Button`, `Badge/Chip`, `Card` (estados hover/focus/disabled).
-  - DoD:
-    - No hay estilos ad-hoc repetidos para CTA/badges/cards (refactor visible).
-    - Tokens documentados en `docs/` (breve) y consumidos por componentes.
-    - `check:css` y `lint:colors` siguen en verde.
-  - Riesgo: Medio (cambios transversales).
-
+### P1
 - [>] (P1) UX-04 IA y estructura de landing orientada a decision (secciones + anclas)
   - Contexto: hoy el usuario ve hero pero no queda claro el flujo completo (que incluye, como se trabaja, pasos, FAQs).
   - Accion: definir y maquetar secciones (sin rediseño total) con navegacion por anclas:
@@ -151,9 +141,10 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: automatizacion de limpieza documental (`todo:archive` + `lint:todo-sync --require-no-done-tasks`) para mantener `docs/todo.md` sin tareas `[x]`.
 - Clasificacion B aplicada en: dudas de bajo nivel resueltas para higiene documental (enfoque hibrido con `todo:compact:noise` manual y `quality:gate` sin mutaciones).
 - Clasificacion B aplicada en: alineacion del guardrail `ci:branch-protection:check` para exigir `Todo Sync` ademas de `Quality Gate` y `Smoke E2E`.
+- Avance: UX-03 archivada en `docs/todo.done.2026-02.md` y tablero activo reordenado con seccion `### P1` tras `todo:archive`.
 - Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend).
 - Historial detallado de clasificaciones y reintentos: `docs/todo.done.2026-02.md`.
 
 ## 7) Proximos pasos
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
-- Ejecutar UX-03 como siguiente frente interno de mejora UX una vez cerrado bloqueo P0 externo.
+- Ejecutar UX-04 como siguiente frente interno de mejora UX una vez cerrado bloqueo P0 externo.

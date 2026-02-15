@@ -20,7 +20,7 @@ Path: src/ui/features/contact/ConsentBanner.vue
         <div class="col-12 col-lg-auto d-flex gap-2 justify-content-lg-end c-consent-banner__actions">
           <button
             type="button"
-            class="btn btn-outline-secondary c-consent-banner__button"
+            class="btn c-ui-btn c-ui-btn--outline c-consent-banner__button"
             @click="reject"
             data-testid="consent-reject"
           >
@@ -28,7 +28,7 @@ Path: src/ui/features/contact/ConsentBanner.vue
           </button>
           <button
             type="button"
-            class="btn btn-primary c-consent-banner__button"
+            class="btn c-ui-btn c-ui-btn--primary c-consent-banner__button"
             @click="accept"
             data-testid="consent-accept"
           >

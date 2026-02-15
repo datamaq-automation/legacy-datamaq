@@ -84,14 +84,7 @@
   }
 
   &__secondary-cta {
-    letter-spacing: var(--ui-letter-spacing-sm);
     border-width: 2px;
-    --bs-btn-color: var(--dm-text-0);
-    --bs-btn-border-color: rgba(var(--dm-text-0-rgb), 0.6);
-    --bs-btn-hover-color: var(--dm-text-0);
-    --bs-btn-hover-bg: rgba(var(--dm-data-cyan-rgb), 0.2);
-    --bs-btn-hover-border-color: rgba(var(--dm-data-cyan-rgb), 0.85);
-    --bs-btn-disabled-opacity: 0.55;
   }
 
   &__secondary-cta:disabled,
@@ -103,7 +96,7 @@
     row-gap: 1.1rem;
   }
 
-  &__chips .badge {
+  &__chips .c-ui-chip {
     font-weight: 600;
     letter-spacing: 0.01em;
   }

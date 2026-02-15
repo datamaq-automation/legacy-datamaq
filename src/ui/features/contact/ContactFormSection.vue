@@ -6,7 +6,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8">
-          <div class="card border-0 shadow-lg bg-body text-body c-contact__card">
+          <div class="card c-ui-card c-ui-card--elevated border-0 shadow-lg bg-body text-body c-contact__card">
             <div class="card-body p-4 p-md-5">
               <h2 id="contacto-title" class="h3 c-contact__title mb-3">
                 {{ contact.title }}
@@ -123,8 +123,8 @@ Path: src/ui/features/contact/ContactFormSection.vue
                 <div class="col-12 mt-2">
                   <button
                     type="submit"
-                    class="btn w-100 c-contact__submit"
-                    :class="isChannelEnabled ? 'btn-primary' : 'btn-outline-secondary disabled-channel'"
+                    class="btn c-ui-btn w-100 c-contact__submit"
+                    :class="isChannelEnabled ? 'c-ui-btn--primary' : 'c-ui-btn--outline disabled-channel'"
                     :disabled="!isChannelEnabled || isSubmitting"
                     :aria-disabled="!isChannelEnabled || isSubmitting"
                   >

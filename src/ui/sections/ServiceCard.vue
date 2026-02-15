@@ -3,7 +3,7 @@ Path: src/ui/sections/ServiceCard.vue
 -->
 
 <template>
-  <div class="card h-100 border-0 shadow-sm c-services__card">
+  <div class="card c-ui-card c-ui-card--interactive h-100 border-0 shadow-sm c-services__card">
     <div class="card-body p-4 d-flex flex-column gap-4 c-services__body">
       <div class="d-flex flex-column flex-sm-row gap-3 c-services__header">
         <img
@@ -26,7 +26,7 @@ Path: src/ui/sections/ServiceCard.vue
             aria-label="Condiciones operativas"
           >
             <li v-for="chip in installationChips" :key="chip">
-              <span class="badge rounded-pill bg-body text-body border border-secondary-subtle">
+              <span class="c-ui-chip">
                 {{ chip }}
               </span>
             </li>
@@ -36,7 +36,7 @@ Path: src/ui/sections/ServiceCard.vue
       <h4 class="h6 text-uppercase text-secondary fw-semibold mb-1 c-services__subtitle">{{ card.subtitle }}</h4>
       <ul class="list-unstyled mb-0 c-services__list">
         <li v-for="(item, index) in card.items" :key="`${card.id}-item-${index}`" class="d-flex gap-2 mb-2 c-services__list-item">
-          <span class="text-success fw-bold c-services__list-bullet">•</span>
+          <span class="text-success fw-bold c-services__list-bullet" aria-hidden="true">&bull;</span>
           <span class="text-body-secondary c-services__list-text">{{ item }}</span>
         </li>
       </ul>
@@ -60,7 +60,7 @@ Path: src/ui/sections/ServiceCard.vue
       <div class="c-cta-stack c-services__cta">
         <div class="c-cta-stack__item">
           <a
-            class="btn btn-outline-primary w-100 c-services__cta-button"
+            class="btn c-ui-btn c-ui-btn--outline w-100 c-services__cta-button"
             :href="card.cta.href"
             target="_blank"
             rel="noopener noreferrer"
@@ -94,3 +94,4 @@ const installationChips = [
 ]
 const showChips = computed(() => props.card.id === 'instalacion')
 </script>
+

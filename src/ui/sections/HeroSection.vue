@@ -8,7 +8,7 @@ Path: src/ui/sections/HeroSection.vue
       <div class="row align-items-center gy-4 gy-lg-5">
         <div class="col-lg-6 order-1 order-lg-1 text-center text-lg-start c-hero__content">
           <div
-            class="d-inline-flex align-items-center gap-2 rounded-pill px-3 py-1 bg-success-subtle text-success-emphasis fw-semibold text-uppercase small"
+            class="c-ui-chip c-ui-chip--success text-uppercase"
           >
             {{ hero.badge }}
           </div>
@@ -23,7 +23,7 @@ Path: src/ui/sections/HeroSection.vue
           >
             <div class="c-cta-stack__item">
               <a
-                class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm c-hero__primary-cta w-100"
+                class="btn c-ui-btn c-ui-btn--primary btn-lg px-4 c-hero__primary-cta w-100"
                 :href="hero.primaryCta.href"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -34,7 +34,7 @@ Path: src/ui/sections/HeroSection.vue
             </div>
             <div class="c-cta-stack__item">
               <a
-                class="btn btn-outline-secondary btn-lg px-4 c-hero__secondary-cta w-100"
+                class="btn c-ui-btn c-ui-btn--outline btn-lg px-4 c-hero__secondary-cta w-100"
                 :href="hero.secondaryCta.href"
               >
                 {{ hero.secondaryCta.label }}
@@ -46,7 +46,7 @@ Path: src/ui/sections/HeroSection.vue
             aria-label="Condiciones operativas"
           >
             <li v-for="chip in heroChips" :key="chip">
-              <span class="badge rounded-pill bg-body text-body border border-secondary-subtle">
+              <span class="c-ui-chip">
                 {{ chip }}
               </span>
             </li>

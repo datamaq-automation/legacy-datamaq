@@ -11,8 +11,6 @@
   }
 
   &__submit {
-    font-weight: 600;
-    letter-spacing: var(--ui-letter-spacing-sm);
     @include focus-ring();
   }
 

@@ -403,3 +403,30 @@ Duda:
 - Cual es el objetivo primario medible de la landing (click a WhatsApp, envio de formulario, scroll a tarifas, etc.) y que evento define "lead valido".
 
 Tarea de verificacion:
+
+## Movido desde docs/todo.md el 2026-02-15 15:12 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P1) UX-03 Normalizar tipografia, espaciado y componentes base (design tokens minimo)
+  - Contexto: mejoras UX sustentables requieren consistencia (botones, badges, cards, spacing, tipo).
+  - Accion:
+    - Definir tokens minimos (CSS variables) para: font-size/line-height, spacing, radius, sombras, colores semanticos (bg/surface/text/primary).
+    - Unificar componentes base: `Button`, `Badge/Chip`, `Card` (estados hover/focus/disabled).
+  - DoD:
+    - No hay estilos ad-hoc repetidos para CTA/badges/cards (refactor visible).
+    - Tokens documentados en `docs/` (breve) y consumidos por componentes.
+    - `check:css` y `lint:colors` siguen en verde.
+  - Avance: definidos tokens UI minimos (tipografia, spacing, radius, sombras y colores semanticos) y creado parcial de componentes base para `Button`, `Chip` y `Card`.
+  - Avance: refactor de componentes clave para consumir clases base (`c-ui-btn`, `c-ui-chip`, `c-ui-card`) y reducir estilos repetidos en CTA/chips/cards.
+  - Evidencia: `src/styles/scss/_tokens.scss`, `src/styles/scss/_components.scss`, `src/styles/main.scss`.
+  - Evidencia: `src/ui/sections/HeroSection.vue`, `src/ui/sections/ServiceCard.vue`, `src/ui/layout/Navbar.vue`, `src/ui/features/contact/ContactFormSection.vue`, `src/ui/features/contact/ConsentBanner.vue`, `src/ui/views/ThanksView.vue`, `src/ui/pages/MedicionConsumoEscobar.vue`.
+  - Evidencia: `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_services.scss`, `src/styles/scss/sections/_contact.scss`.
+  - Evidencia: `docs/dv-ux-03-design-tokens.md`.
+  - Decision tomada (B): para unificar componentes sin introducir wrappers Vue nuevos, se evaluo crear componentes dedicados vs clases base CSS; se elige clases base por menor impacto en markup y rollout incremental.
+  - Evidencia: `npm run lint:colors` en verde (2026-02-15 15:12 -03:00).
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 15:12 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 15:12 -03:00), 27 archivos y 73 tests pasando.
+  - Evidencia: `npm run check:css` en verde (2026-02-15 15:12 -03:00), `CSS budget ok: 210073 bytes <= 210100 bytes`.
+  - Avance: DoD de UX-03 cumplido y listo para archivo.
+  - Riesgo: Medio (cambios transversales).

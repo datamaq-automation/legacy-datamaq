@@ -18,7 +18,7 @@ const { contactCtaEnabled, handleChat, handleGoHome } = useThanksView()
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-8">
-            <div class="card border-0 shadow-lg bg-body text-body">
+            <div class="card c-ui-card c-ui-card--elevated border-0 shadow-lg bg-body text-body">
               <div class="card-body p-4 p-md-5 text-center">
                 <p class="text-uppercase small text-muted mb-2">Formulario enviado</p>
                 <h1 class="display-6 fw-bold mb-3">Gracias!</h1>
@@ -29,14 +29,14 @@ const { contactCtaEnabled, handleChat, handleGoHome } = useThanksView()
                   <button
                     v-if="contactCtaEnabled"
                     type="button"
-                    class="btn btn-primary btn-lg"
+                    class="btn c-ui-btn c-ui-btn--primary btn-lg"
                     @click="handleChat"
                   >
                     Escribir por WhatsApp
                   </button>
                   <button
                     type="button"
-                    class="btn btn-outline-primary btn-lg"
+                    class="btn c-ui-btn c-ui-btn--outline btn-lg"
                     @click="handleGoHome"
                   >
                     Volver al inicio

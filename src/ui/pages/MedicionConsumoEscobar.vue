@@ -29,12 +29,12 @@ const {
             <button
               v-if="contactCtaEnabled"
               type="button"
-              class="btn btn-primary btn-lg"
+              class="btn c-ui-btn c-ui-btn--primary btn-lg"
               @click="handleChat('landing-escobar-hero')"
             >
               Escribir por WhatsApp
             </button>
-            <a class="btn btn-outline-primary btn-lg" href="#contacto">
+            <a class="btn c-ui-btn c-ui-btn--outline btn-lg" href="#contacto">
               Solicitar medicion
             </a>
           </div>

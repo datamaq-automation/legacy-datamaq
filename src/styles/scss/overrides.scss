@@ -1,20 +1,3 @@
-.btn-primary {
-  --bs-btn-color: var(--dm-bg-0);
-  --bs-btn-bg: var(--dm-data-cyan);
-  --bs-btn-border-color: var(--dm-data-cyan);
-  --bs-btn-hover-bg: rgba(var(--dm-data-cyan-rgb), 0.82);
-  --bs-btn-hover-border-color: rgba(var(--dm-data-cyan-rgb), 0.9);
-  --bs-btn-hover-color: var(--dm-bg-0);
-  --bs-btn-focus-shadow-rgb: var(--dm-data-cyan-rgb);
-}
-
-.btn-outline-secondary {
-  --bs-btn-color: var(--dm-text-0);
-  --bs-btn-border-color: rgba(var(--dm-text-0-rgb), 0.6);
-  --bs-btn-hover-bg: rgba(var(--dm-data-cyan-rgb), 0.12);
-  --bs-btn-hover-color: var(--dm-text-0);
-}
-
 .card {
   background-color: rgba(var(--dm-bg-0-rgb), 0.86);
   color: var(--dm-text-0);

@@ -36,7 +36,7 @@ Path: src/ui/layout/Navbar.vue
               <a class="nav-link" :href="link.href" @click="handleNavLinkClick">{{ link.label }}</a>
             </li>
             <li v-if="contactCtaEnabled" class="nav-item ms-lg-3">
-              <button type="button" class="btn btn-primary" @click="handleContactClick">
+              <button type="button" class="btn c-ui-btn c-ui-btn--primary" @click="handleContactClick">
                 {{ navbar.contactLabel }}
               </button>
             </li>
