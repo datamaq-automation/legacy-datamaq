@@ -39,11 +39,28 @@
   &__media {
     position: relative;
     z-index: 1;
+    display: flex;
+    justify-content: center;
   }
 
   &__illustration {
     position: relative;
-    max-width: 420px;
+    width: min(100%, 420px);
+    aspect-ratio: 21 / 16;
+  }
+
+  &__illustration img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  &__subtitle {
+    max-width: 42ch;
+  }
+
+  &__response-note {
+    max-width: 54ch;
   }
 
   &__halo {
@@ -146,6 +163,39 @@
     --hero-halo-size: clamp(210px, 58vw, 280px);
     --hero-halo-x: 62%;
     --hero-halo-y: 42%;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .c-hero .container {
+    padding-top: 0 !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .c-hero__subtitle {
+    margin-bottom: 1rem !important;
+    font-size: 1rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .c-hero__actions {
+    margin-bottom: 1rem !important;
+  }
+
+  .c-hero__chips {
+    margin-bottom: 0.85rem !important;
+  }
+
+  .c-hero__illustration {
+    width: min(100%, 280px);
+  }
+
+  .c-hero__response-note {
+    margin-bottom: 1rem !important;
   }
 
   .c-hero__benefit-card {
@@ -171,6 +221,10 @@
     --hero-halo-y: 32%;
   }
 
+  .c-hero__illustration {
+    width: min(100%, 230px);
+  }
+
   .c-hero__secondary-cta {
     font-size: 1rem;
     line-height: 1.5;
@@ -186,5 +240,9 @@
 
   .c-hero__benefits {
     row-gap: 1.5rem;
+  }
+
+  .c-hero__response-note {
+    display: none;
   }
 }

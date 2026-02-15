@@ -4,13 +4,13 @@ Path: src/ui/layout/Navbar.vue
 
 <template>
   <header class="navbar navbar-dark sticky-top border-bottom c-navbar" role="banner">
-    <div class="container-fluid px-3">
+    <div ref="navRef" class="container-fluid px-3 c-navbar__inner">
       <!-- Botón hamburguesa a la izquierda, visible solo en mobile -->
       <button
         ref="toggleButtonRef"
-        class="navbar-toggler me-2"
+        class="navbar-toggler me-2 c-navbar__toggle"
         type="button"
-        aria-label="Abrir menú"
+        :aria-label="menuOpen ? 'Cerrar menu' : 'Abrir menu'"
         @click="toggleMenu"
         :aria-expanded="menuOpen"
         aria-controls="main-navbar"
@@ -29,7 +29,7 @@ Path: src/ui/layout/Navbar.vue
             'd-none d-lg-flex': !menuOpen && !isDesktop,
             'p-3 rounded shadow': !isDesktop
           }"
-          ref="navRef"
+          ref="menuPanelRef"
         >
           <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-2">
             <li v-for="link in navbar.links" :key="link.href" class="nav-item">
@@ -58,6 +58,7 @@ const {
   menuOpen,
   isDesktop,
   navRef,
+  menuPanelRef,
   toggleButtonRef,
   contactCtaEnabled,
   navbar,

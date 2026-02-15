@@ -5,8 +5,8 @@ Path: src/ui/sections/HeroSection.vue
 <template>
   <section class="section-mobile py-5 text-body c-hero" aria-labelledby="hero-title">
     <div class="container py-4">
-      <div class="row align-items-center gy-5">
-        <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start c-hero__content">
+      <div class="row align-items-center gy-4 gy-lg-5">
+        <div class="col-lg-6 order-1 order-lg-1 text-center text-lg-start c-hero__content">
           <div
             class="d-inline-flex align-items-center gap-2 rounded-pill px-3 py-1 bg-success-subtle text-success-emphasis fw-semibold text-uppercase small"
           >
@@ -15,19 +15,9 @@ Path: src/ui/sections/HeroSection.vue
           <h1 id="hero-title" class="display-5 fw-bold text-body-emphasis mt-3 mb-3">
             {{ hero.title }}
           </h1>
-          <p class="fs-5 text-secondary mb-4">
+          <p class="fs-5 text-secondary mb-4 c-hero__subtitle">
             {{ hero.subtitle }}
           </p>
-          <ul
-            class="list-unstyled d-flex flex-wrap gap-2 mb-4 c-hero__chips"
-            aria-label="Condiciones operativas"
-          >
-            <li v-for="chip in heroChips" :key="chip">
-              <span class="badge rounded-pill bg-body text-body border border-secondary-subtle">
-                {{ chip }}
-              </span>
-            </li>
-          </ul>
           <div
             class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-4 c-hero__actions c-cta-stack"
           >
@@ -51,7 +41,17 @@ Path: src/ui/sections/HeroSection.vue
               </a>
             </div>
           </div>
-          <p class="text-secondary small mb-2">
+          <ul
+            class="list-unstyled d-flex flex-wrap gap-2 mb-4 c-hero__chips"
+            aria-label="Condiciones operativas"
+          >
+            <li v-for="chip in heroChips" :key="chip">
+              <span class="badge rounded-pill bg-body text-body border border-secondary-subtle">
+                {{ chip }}
+              </span>
+            </li>
+          </ul>
+          <p class="text-secondary small mb-2 c-hero__response-note">
             {{ hero.responseNote }}
           </p>
           <ul class="row list-unstyled gy-3 text-start c-hero__benefits" aria-label="Beneficios">
@@ -84,7 +84,7 @@ Path: src/ui/sections/HeroSection.vue
             </li>
           </ul>
         </div>
-        <div class="col-lg-6 order-1 order-lg-2 text-center c-hero__media">
+        <div class="col-lg-6 order-2 order-lg-2 text-center c-hero__media">
           <div class="position-relative mx-auto c-hero__illustration">
             <div
               class="bg-primary rounded-circle position-absolute opacity-25 c-hero__halo"

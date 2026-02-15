@@ -78,6 +78,11 @@ No incluye:
     - Sin CLS perceptible al cargar (no “salta” el hero).
     - `npm run test:a11y` sigue en verde.
   - Evidencia: capturas actuales (desktop/mobile) 2026-02-15; comparativa post-fix en PR/issue.
+  - Avance: hero mobile reordenado para priorizar H1 + soporte + CTA antes de la ilustracion; navbar consolidado con layout estable en desktop y menu superpuesto en mobile.
+  - Evidencia: `src/ui/sections/HeroSection.vue`, `src/styles/scss/sections/_hero.scss`, `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
+  - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile hero keeps headline, support copy and primary CTA above fold`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15).
+  - Bloqueador residual: falta adjuntar comparativa visual (antes/despues) en PR/issue.
 
 - [>] (P0) UX-02 Accesibilidad interactiva critica (focus, teclado, menu, CTAs)
   - Contexto: ya existen guardrails a11y; falta asegurar experiencia real: foco visible, navegacion por teclado y roles/aria correctos en header/menu/botones.
@@ -90,6 +95,12 @@ No incluye:
     - Contraste minimo AA en texto/botones relevantes (especialmente badges/chips).
     - `npm run test:a11y` en verde + checklist manual (teclado) registrado en PR.
   - Evidencia: registro breve en PR (pasos + resultado) + screenshots.
+  - Avance: menu mobile con cierre por `Esc`, restauracion de foco al toggle, foco inicial al primer link al abrir, lock de scroll del body y labels accesibles abrir/cerrar.
+  - Evidencia: `src/ui/layout/Navbar.ts`, `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
+  - Evidencia: `tests/unit/ui/navbar.test.ts` (aria-expanded, lock/unlock scroll, foco con `Esc`, foco inicial en primer link).
+  - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile menu closes with Escape and restores focus`.
+  - Evidencia: `npm run test:a11y` y `npm run quality:merge` en verde (2026-02-15).
+  - Bloqueador residual: falta checklist manual de teclado/contraste documentado en PR.
 
 ### P1
 - [>] (P1) UX-03 Normalizar tipografia, espaciado y componentes base (design tokens minimo)
@@ -213,6 +224,8 @@ Tarea de verificacion:
   - DoD: inventario en `docs/` + decision registrada.
 
 ## 6) Notas de ejecucion A/B/C (actualizado 2026-02-15)
+- Clasificacion A aplicada en: UX-01 (reordenamiento hero mobile + consolidacion header/nav + validacion automatizada viewport 360x740).
+- Clasificacion A aplicada en: UX-02 (teclado/focus/menu mobile con `Esc` + lock scroll + pruebas unit/e2e).
 - Clasificacion B aplicada en: DV-03 indexacion de checks sin PR (`workflow_dispatch` en `main`).
 - Clasificacion B aplicada en: DV-03 seleccion de required checks (solo `Quality Gate` + `Smoke E2E`).
 - Clasificacion B aplicada en: DV-03 automatizacion de verificacion de branch protection (`ci:branch-protection:check` con token).
@@ -225,5 +238,5 @@ Tarea de verificacion:
 ## 7) Proximos pasos
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
 - Completar DV-03 en GitHub (branch protection + required checks) usando los checks del flujo FTPS vigente.
-- Ejecutar P0 UX (header/nav + above-the-fold + accesibilidad interactiva) para destrabar iteraciones de UI/UX.
+- Cerrar residual P0 UX en PR/issue (comparativa visual antes/despues + checklist manual teclado/contraste).
 - Mantener `npm run quality:merge` como control operativo manual hasta cerrar enforcement externo.

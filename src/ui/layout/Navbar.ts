@@ -1,4 +1,4 @@
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useBreakpoint } from '@/ui/composables/useBreakpoint'
 import { useClickOutside } from '@/ui/composables/useClickOutside'
 import { useContainer } from '@/di/container'
@@ -8,6 +8,7 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
   const menuOpen = ref(false)
   const { matches: isDesktop } = useBreakpoint(992)
   const navRef = ref<HTMLElement | null>(null)
+  const menuPanelRef = ref<HTMLElement | null>(null)
   const toggleButtonRef = ref<HTMLButtonElement | null>(null)
   const contactCtaEnabled = computed(() => props.contactCtaEnabled)
   const { content } = useContainer()
@@ -22,6 +23,20 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     if (returnFocus) {
       toggleButtonRef.value?.focus()
     }
+  }
+
+  function setBodyScrollLock(isLocked: boolean) {
+    if (typeof document === 'undefined') {
+      return
+    }
+    document.body.classList.toggle('has-open-menu', isLocked)
+  }
+
+  function focusFirstMenuItem() {
+    const firstFocusable = menuPanelRef.value?.querySelector<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+    firstFocusable?.focus()
   }
 
   function onCloseOutside() {
@@ -51,6 +66,25 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     }
   }
 
+  watch(menuOpen, async (isOpen) => {
+    const shouldLockScroll = isOpen && !isDesktop.value
+    setBodyScrollLock(shouldLockScroll)
+
+    if (shouldLockScroll) {
+      await nextTick()
+      focusFirstMenuItem()
+    }
+  })
+
+  watch(isDesktop, (desktop) => {
+    if (desktop && menuOpen.value) {
+      closeMenu()
+    }
+    if (desktop) {
+      setBodyScrollLock(false)
+    }
+  })
+
   useClickOutside(navRef, onCloseOutside, menuOpen)
 
   onMounted(() => {
@@ -62,12 +96,14 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
 
   onUnmounted(() => {
     document.removeEventListener('keydown', handleKeydown)
+    setBodyScrollLock(false)
   })
 
   return {
     menuOpen,
     isDesktop,
     navRef,
+    menuPanelRef,
     toggleButtonRef,
     contactCtaEnabled,
     navbar,
