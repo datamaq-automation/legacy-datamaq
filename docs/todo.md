@@ -68,6 +68,8 @@ No incluye:
   - Avance: validacion de trazabilidad separada en CI con job dedicado `Todo Sync`; `Quality Gate` y `Smoke E2E` ahora dependen de ese job para cortar antes.
   - Evidencia: `./.github/workflows/ci-cd-ftps.yml` (`jobs.todo-sync`, `needs: [todo-sync]` en `quality-gate` y `smoke-e2e`).
   - Evidencia: `npm run quality:gate` en verde (2026-02-15) tras integrar `Todo Sync` y mantener `lint:todo-sync` como fail-fast local.
+  - Avance: documentada guia operativa para iniciar sesiones con Codex y forzar alineacion con `AGENTS.md` + `docs/todo.md`.
+  - Evidencia: `docs/codex-usage.md`, `README.md` (link a guia).
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
   - Bloqueador residual: falta activar required checks y branch protection en `main`.

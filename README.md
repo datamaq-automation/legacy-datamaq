@@ -105,5 +105,6 @@ Configuracion recomendada en GitHub:
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.
 - Contrato operativo del agente: `AGENTS.md`.
+- Guia de uso con Codex: `docs/codex-usage.md`.
 
 Consultas: [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).
