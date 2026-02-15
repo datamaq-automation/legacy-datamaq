@@ -40,6 +40,18 @@ Payload resumido:
 Headers:
 - `Content-Type: application/json`
 
+## 2.1) Certezas verificadas (docs oficiales, 2026-02-15)
+- En Client/Public APIs, `inbox_identifier` es obligatorio en la ruta.
+  - El endpoint oficial de create-contact usa:
+    - `POST /public/api/v1/inboxes/{inbox_identifier}/contacts`
+  - La propia referencia define `inbox_identifier` como valor obtenido del API inbox channel.
+- Si el API inbox tiene HMAC habilitado (secure mode), create-contact debe incluir `identifier_hash`.
+- La alternativa sin `inbox_identifier` en URL es usar Application APIs (`/api/v1/accounts/...`), que requieren `api_access_token` y se recomiendan server-to-server (no frontend directo).
+
+Inferencia operativa desde fuentes:
+- Si el formulario no crea conversacion y la URL no incluye `inbox_identifier` valido, la causa probable es configuracion incompleta del inbox/endpoint.
+- Si el inbox tiene HMAC habilitado y no se envia `identifier_hash`, la creacion de contacto puede ser rechazada.
+
 ## 3) Seguridad y limites
 - El frontend no usa `VITE_ORIGIN_VERIFY_SECRET` ni `X-Origin-Verify`.
 - No se expone `api_access_token` de Chatwoot en cliente.
@@ -72,6 +84,7 @@ npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/i
 ## 7) Bloqueos C2 vigentes
 - Confirmar `inbox_identifier` final publicado para produccion.
 - Si se exige `identifier_hash` (secure mode), implementar firmador backend fuera de este repo.
+- Confirmar si el inbox productivo activo es de tipo API inbox para este flujo.
 
 ## 8) Fuentes oficiales
 - Chatwoot API Introduction:
@@ -82,3 +95,11 @@ npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/i
   - https://developers.chatwoot.com/api-reference/conversations-api/create-a-conversation
 - Chatwoot Client API - Create message:
   - https://developers.chatwoot.com/api-reference/messages-api/create-a-message
+- Chatwoot Client API - Create contact (secure mode / `identifier_hash`):
+  - https://developers.chatwoot.com/api-reference/contacts-api/create-a-contact
+- Chatwoot Guide - Configuration of API inboxes:
+  - https://www.chatwoot.com/hc/user-guide/articles/1677839703-how-to-create-an-api-channel-inbox
+- Chatwoot Application API - Create Contact Inbox (`inbox_id`, `api_access_token`):
+  - https://developers.chatwoot.com/api-reference/contacts/create-contact-inbox
+- Chatwoot Application API - Create New Conversation (`inbox_id` en payload + token):
+  - https://developers.chatwoot.com/api-reference/conversations/create-new-conversation

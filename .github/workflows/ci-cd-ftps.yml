@@ -152,6 +152,7 @@ jobs:
           set -euo pipefail
 
           RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
+          RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
           SERVER="${RAW_SERVER#ftp://}"
           SERVER="${SERVER#ftps://}"
           SERVER="${SERVER%%/*}"
@@ -163,9 +164,15 @@ jobs:
           fi
 
           PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+          REMOTE_DIR="${RAW_REMOTE_DIR}"
 
           if [ -z "${SERVER_HOST}" ]; then
             echo "::error::FTPS_SERVER is empty after normalization."
+            exit 1
+          fi
+
+          if [ -z "${REMOTE_DIR}" ]; then
+            echo "::error::FTPS_REMOTE_DIR is empty after normalization."
             exit 1
           fi
 
@@ -176,6 +183,39 @@ jobs:
 
           if ! getent hosts "${SERVER_HOST}" >/dev/null; then
             echo "::error::FTPS_SERVER is not resolvable by DNS. Check secret FTPS_SERVER."
+            exit 1
+          fi
+
+          if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
+            REMOTE_DIR="/${REMOTE_DIR}"
+          fi
+
+          if printf '%s' "${REMOTE_DIR}" | grep -q '\\'; then
+            echo "::error::FTPS_REMOTE_DIR must use Unix-style slashes. Current value is invalid."
+            exit 1
+          fi
+
+          echo "::notice::FTPS deploy target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
+
+          if ! timeout 180 lftp <<EOF
+          set cmd:fail-exit true
+          set net:timeout 20
+          set net:max-retries 2
+          set net:reconnect-interval-base 5
+          set net:reconnect-interval-max 20
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ftp:passive-mode true
+          set ssl:verify-certificate true
+          set ssl:check-hostname true
+          open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${SERVER_HOST}"
+          mkdir -p "${REMOTE_DIR}"
+          cd "${REMOTE_DIR}"
+          pwd
+          bye
+          EOF
+          then
+            echo "::error::FTPS preflight failed while creating/accessing remote dir (${REMOTE_DIR}). Check permissions and FTPS_REMOTE_DIR."
             exit 1
           fi
 
@@ -191,7 +231,6 @@ jobs:
           set ssl:verify-certificate true
           set ssl:check-hostname true
           open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${SERVER_HOST}"
-          mkdir -p "${FTPS_REMOTE_DIR}"
-          mirror -R --delete --verbose dist "${FTPS_REMOTE_DIR}"
+          mirror -R --delete --verbose dist "${REMOTE_DIR}"
           bye
           EOF

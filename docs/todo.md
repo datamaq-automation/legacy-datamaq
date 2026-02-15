@@ -42,6 +42,9 @@ No incluye:
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 17:40 -03:00) responde `Smoke FAIL: 404 Not Found` (TLS activo, ruta backend no publicada).
   - Evidencia: `Invoke-WebRequest -Method Options` sobre rutas candidatas `https://chatwoot.datamaq.com.ar/contact|/api/contact|/api/v1/contact|/backend/contact|/v1/contact` (2026-02-15 17:40 -03:00) devuelve `404` en todos los casos.
   - Evidencia: documentacion oficial Chatwoot (consultada 2026-02-15 17:40 -03:00) confirma que la ruta publica nativa para crear contacto es `POST /public/api/v1/inboxes/{inbox_identifier}/contacts` y para crear conversacion es `POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations`.
+  - Evidencia: documentacion oficial Chatwoot (consultada 2026-02-15 18:00 -03:00) explicita que `inbox_identifier` se obtiene del API inbox channel; no es opcional en Client/Public APIs.
+  - Evidencia: documentacion oficial Chatwoot (consultada 2026-02-15 18:00 -03:00) indica que, si el inbox tiene HMAC habilitado (secure mode), `identifier_hash` es obligatorio en create-contact.
+  - Evidencia: documentacion oficial Chatwoot (consultada 2026-02-15 18:00 -03:00) muestra que la alternativa sin `inbox_identifier` en URL es Application API con `api_access_token` + `inbox_id` (flujo server-to-server).
   - Avance: mitigacion interna adicional completada: se confirma que `/contact` no es ruta publica nativa de Chatwoot, sino endpoint custom del adaptador backend definido en DV-02.
   - Avance: mitigacion interna ejecutada para validar conectividad HTTP/HTTPS y detectar rutas candidatas del adaptador sin efectos colaterales; persiste bloqueo externo por falta de endpoint de contacto operativo.
   - Evidencia: `npm run quality:gate` en CI (2026-02-15 19:53, GitHub runner) ejecuta en verde `lint:todo-sync`, `lint:origin-verify`, `typecheck`, `test` (30 archivos / 80 tests), `lint:colors`, `lint:layers` y `test:a11y`.
@@ -72,20 +75,26 @@ No incluye:
   - Evidencia: `npm run quality:merge` local en verde (2026-02-15 17:30 -03:00) con `quality:gate` + `test:e2e:smoke` y `lint:todo-sync` base sin bloqueo circular.
   - Decision tomada (A): confirmada opcion de arquitectura `frontend -> Chatwoot Public API` para contacto, descartando `POST /contact` custom como ruta primaria.
   - Decision tomada (B): para migrar sin romper despliegues intermedios se evalua corte total vs estrategia hibrida; se elige selector por URL (Chatwoot Public API cuando la URL termina en `/public/api/v1/inboxes/{inbox_identifier}/contacts`, fallback endpoint unico en cualquier otro caso).
+  - Decision tomada (B): cerrada duda sobre `inbox_identifier`; se mantiene como requisito obligatorio para Client/Public APIs de Chatwoot. Sin `inbox_identifier` solo aplica Application API, que requiere token y backend.
   - Avance: implementado flujo directo Chatwoot Public API en frontend (crear contacto -> conversacion -> mensaje) y smoke tecnico adaptado a flujo publico.
   - Evidencia: `src/infrastructure/contact/chatwootPublicContactChannel.ts`, `src/infrastructure/contact/contactApiGateway.ts`, `src/infrastructure/contact/contactPayloadBuilder.ts`, `scripts/smoke-contact-backend.mjs`.
   - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` cubre estrategia Chatwoot y error estructural (`source_id` faltante -> `502`).
   - Evidencia: `docs/dv-02-chatwoot-contract.md`, `README.md`, `.env.example` actualizados al contrato `frontend -> Chatwoot Public API`.
+  - Evidencia: `docs/dv-02-chatwoot-contract.md` actualizado con certezas/dudas verificadas en fuentes oficiales sobre `inbox_identifier`, secure mode y alternativa Application API (2026-02-15 18:00 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 18:00 -03:00) tras actualizar trazabilidad documental.
   - Evidencia: `npm run typecheck` en verde (2026-02-15 17:50 -03:00).
   - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts` en verde (2026-02-15 17:50 -03:00), 6/6 tests.
   - Evidencia: `npm run quality:merge` en verde (2026-02-15 17:53 -03:00), con `quality:gate` + `test:e2e:smoke` completados en la misma corrida.
   - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 17:53 -03:00).
   - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 17:54 -03:00) tras cierre documental de esta migracion.
+  - Decision tomada (B): para el fallo `mkdir: Fatal error: max-retries exceeded` en deploy FTPS se evaluo mantener un unico bloque `lftp` vs separar preflight y mirror; se elige separar para aislar causa (conexion/permisos/ruta) con diagnostico explicito.
+  - Avance: hardening del workflow FTPS aplicado en este turno: normalizacion de `FTPS_REMOTE_DIR`, validacion de formato de ruta, preflight (`mkdir/cd/pwd`) y mensaje de error dedicado antes del `mirror`.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml` (`Deploy dist via FTPS`), con `::notice` de destino y `::error` especifico para fallo de preflight.
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.
   - Tipo C: C2.
-  - Informacion faltante: `inbox_identifier` productivo definitivo para construir `VITE_CONTACT_API_URL` final, y confirmacion de si Chatwoot exige `identifier_hash` (secure mode) en ese inbox.
+  - Informacion faltante: `inbox_identifier` productivo definitivo (API inbox) para construir `VITE_CONTACT_API_URL` final, y confirmacion de si ese inbox exige `identifier_hash` (secure mode) para create-contact.
   - Mitigacion interna ejecutada: implementacion y cobertura del flujo directo Chatwoot en frontend + smoke tecnico compatible con `/public/api/v1/...` + guardrails de compliance.
   - Tareas externas (solo C2 y acciones fuera del repo): definir/publicar `inbox_identifier` de produccion y, si secure mode esta activo, resolver firmador backend para `identifier_hash` o desactivarlo para este canal.
   - Bloqueador residual: falta configuracion externa final del inbox de produccion para validar `2xx` real y verificar conversacion/mensaje en Chatwoot.
