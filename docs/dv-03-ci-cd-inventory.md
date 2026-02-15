@@ -31,10 +31,31 @@ Control operativo local complementario:
 Checks e2e versionados:
 - `npm run test:e2e:smoke` (Playwright, Chromium).
 
+Script de soporte operativo:
+- `npm run ci:remote:status` (consulta runs/jobs del workflow FTPS por GitHub API publica).
+- `npm run ci:branch-protection:check` (valida required checks en branch protection; requiere `GITHUB_TOKEN`/`GH_TOKEN`).
+
 ## 3) Evidencia de ejecucion
-Ejecucion local verificada el 2026-02-14:
+Ejecucion local verificada el 2026-02-15:
 - `npm run quality:gate` -> OK
+- `npm run quality:merge` -> OK
+- `npm run ci:remote:status` -> OK
+- `npm run ci:branch-protection:check` -> FAIL esperado sin token (`Falta token: define GITHUB_TOKEN o GH_TOKEN`).
 - Resultado: todas las validaciones anteriores en verde.
+
+Evidencia remota (GitHub API publica) verificada el 2026-02-15:
+- Workflow run `22026083056` (`workflow_dispatch`) en `main`: `conclusion=success`.
+  - Jobs observados: `Quality Gate` y `Deploy Production (FTPS)` en `success`.
+- Workflow run `22026104230` (`push`) en `main`: jobs `Quality Gate=success` y `Smoke E2E=success` (deploy en curso al momento de la consulta).
+- Check-runs observados en `main`:
+  - `Quality Gate` (`success`)
+  - `Smoke E2E` (`success`)
+  - `Deploy Production (FTPS)` (`in_progress` al momento de la consulta)
+  - `Cloudflare Pages` (`success`, legacy/externo al flujo FTPS vigente)
+- Endpoint consultado:
+  - `GET /repos/AgustinMadygraf/profebustos-www/actions/workflows/ci-cd-ftps.yml/runs`
+  - `GET /repos/AgustinMadygraf/profebustos-www/actions/runs/{run_id}/jobs`
+  - `GET /repos/AgustinMadygraf/profebustos-www/commits/main/check-runs`
 
 ## 4) Decision tomada
 Decision adoptada: `GitHub Actions + FTPS`.
@@ -75,6 +96,15 @@ Decision de bajo nivel (B): indexar checks sin PR
   - Desventaja: agrega commits operativos sin valor funcional.
 - Motivo de eleccion: menor ruido en historial y cumple objetivo de indexacion de checks.
 
+Decision de bajo nivel (B): checks a exigir en branch protection
+- Opcion 1: exigir solo checks del flujo vigente FTPS (`Quality Gate`, `Smoke E2E`) (elegida).
+  - Ventaja: alinea enforcement con pipeline actual versionado en repo.
+  - Desventaja: no fuerza checks legacy externos.
+- Opcion 2: exigir tambien `Cloudflare Pages`.
+  - Ventaja: mayor cobertura si ese flujo aun fuera relevante.
+  - Desventaja: acopla merges a un flujo no vigente para deploy productivo actual.
+- Motivo de eleccion: evitar dependencias heredadas y sostener como obligatorios los checks del flujo FTPS oficial.
+
 Parametros operativos confirmados:
 - `FTPS_REMOTE_DIR=/public_html`
 - `FTPS_PORT=21` (FTPS explicito)
@@ -84,6 +114,8 @@ Estado operativo actual:
 - Enforcement de merge pendiente de confirmacion final (required check visible y aplicado).
 - Este pendiente no bloquea ejecucion de otros P0 funcionales, pero mantiene riesgo de gobernanza de cambios.
 - Mitigacion transitoria en repo: ejecutar `npm run quality:merge` antes de cualquier merge/deploy manual.
+- Verificacion de branch protection via API requiere autenticacion (respuesta actual: `401 Requires authentication`).
+- Script disponible para cierre cuando haya token: `npm run ci:branch-protection:check`.
 
 Procedimiento operativo sin PR:
 1. Ir a `Actions` -> workflow `CI/CD FTPS`.

@@ -34,6 +34,10 @@ Objetivo de seguridad:
 Decision tomada:
 - Se adopta Opcion B para cerrar DV-02 y sostener el criterio de no secretos en frontend.
 
+Decision de alcance (2026-02-15):
+- No se implementara un backend minimo/scaffold en este repositorio.
+- La implementacion se realizara directamente en el backend de produccion cuando corresponda.
+
 ## 3) Contrato frontend -> backend (estable)
 Endpoint:
 - `POST {CONTACT_API_URL}` (configurado via `VITE_CONTACT_API_URL`).
@@ -132,7 +136,7 @@ Nota: la URL actual es estimativa y puede variar.
 6. Validar E2E funcional: envio desde formulario productivo y confirmacion de conversacion en Chatwoot.
 7. Registrar evidencia (fecha, endpoint validado y resultado) para cerrar P0 en `docs/todo.md`.
 
-Estado de ejecucion observado (2026-02-14):
+Estado de ejecucion observado (2026-02-15):
 - `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` -> `Smoke FAIL: fetch failed`.
 - Interpretacion: backend no disponible aun en esa URL estimativa o infraestructura aun no finalizada.
 

@@ -61,14 +61,15 @@ No incluye:
   - Evidencia: `docs/dv-02-chatwoot-contract.md` actualizado con checklist operativo de cierre y validacion E2E.
   - Evidencia: referencia operativa estimativa de endpoint backend `https://chatwoot.datamaq.com.ar/contact` (puede variar) en `docs/dv-02-chatwoot-contract.md` y `.env.example`.
   - Evidencia: script de smoke backend `scripts/smoke-contact-backend.mjs` + script npm `smoke:contact:backend` para validar `CONTACT_API_URL`.
-  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-14) falla con `fetch failed` en estado previo a despliegue backend.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15) falla con `fetch failed` en estado previo a despliegue backend.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-02 (contrato backend)
   - Riesgo: Alto
+  - Decision tomada (C): no se implementara backend minimo en este repositorio; el cierre se ejecutara sobre backend de produccion cuando corresponda.
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
   - Siguiente paso: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (o URL final) y luego validar formulario real -> conversacion en Chatwoot.
-  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot); hay dominio estimativo (`https://chatwoot.datamaq.com.ar/`) pero el smoke actual falla (`fetch failed`) y falta confirmar URL final + evidencia E2E real.
+  - Nota C (2026-02-15): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot); hay dominio estimativo (`https://chatwoot.datamaq.com.ar/`) pero el smoke actual falla (`fetch failed`) y falta confirmar URL final + evidencia E2E real.
 
 - [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.
@@ -94,14 +95,17 @@ No incluye:
   - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
   - Avance: implementado workflow `GitHub Actions + FTPS` con `Quality Gate` y `Smoke E2E`; `quality:gate` incluye `lint:layers` y se agrego `quality:merge` para control operativo local (`quality:gate` + smoke e2e).
   - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`, `quality:merge`, `lint:layers`), `docs/dv-03-ci-cd-inventory.md`.
-  - Evidencia: `npm run quality:gate` en verde (2026-02-14) con `typecheck`, `test`, `lint:colors`, `lint:layers`, `test:a11y` y `check:css`.
-  - Evidencia: `npm run quality:merge` en verde (2026-02-14) como mitigacion mientras branch protection sigue pendiente.
+  - Evidencia: `npm run quality:gate` en verde (2026-02-15) con `typecheck`, `test`, `lint:colors`, `lint:layers`, `test:a11y` y `check:css`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15) como mitigacion mientras branch protection sigue pendiente.
+  - Evidencia: script `npm run ci:remote:status` para relevar estado remoto de runs/jobs FTPS por GitHub API publica.
+  - Evidencia: script `npm run ci:branch-protection:check` agregado para validar required checks con token (`GITHUB_TOKEN`/`GH_TOKEN`).
+  - Evidencia: runs remotos por API publica (`22026083056`, `22026104230`) con `Quality Gate` y `Smoke E2E` en verde; check-runs de `main` confirmados por API (`Quality Gate`, `Smoke E2E`, `Deploy Production (FTPS)` y `Cloudflare Pages` legacy); detalle en `docs/dv-03-ci-cd-inventory.md`.
   - Owner: Shared
   - Dependencias: DV-03 (estado real de CI/CD)
   - Riesgo: Alto
   - Bloqueador: falta activar required checks y branch protection en `main`.
   - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
-  - Nota C (2026-02-14): bloqueo de configuracion en GitHub (entorno externo al repo).
+  - Nota C (2026-02-15): bloqueo de configuracion en GitHub (entorno externo al repo).
 
 ### P1
 - [x] (P1) Refactorizar `ContactApiGateway` por responsabilidades
@@ -261,15 +265,19 @@ Tarea de verificacion:
   - Evidencia: `./.github/workflows/ci-cd-ftps.yml`.
   - Evidencia: `npm run test:e2e:smoke` en verde (local).
   - Evidencia: parametros FTPS confirmados (`FTPS_REMOTE_DIR=/public_html`, `FTPS_PORT=21`).
-  - Evidencia: `npm run quality:gate` en verde (2026-02-14).
+  - Evidencia: `npm run quality:gate` y `npm run quality:merge` en verde (2026-02-15).
+  - Evidencia: `npm run ci:remote:status` en verde (2026-02-15) con detalle de runs/jobs remotos.
+  - Evidencia: `npm run ci:branch-protection:check` falla sin token (2026-02-15), confirmando bloqueo de autenticacion para validar enforcement.
+  - Evidencia: GitHub API publica confirma runs `22026083056` (`workflow_dispatch`) y `22026104230` (`push`) con jobs `Quality Gate` y `Smoke E2E` exitosos, y check-runs reales de `main`.
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Medio
   - Bloqueador residual: configurar branch protection y required checks en GitHub.
   - Decision tomada (B): para indexar checks sin abrir PR se elige `workflow_dispatch` sobre `main` en lugar de push tecnico.
+  - Decision tomada (B): exigir solo checks del flujo FTPS vigente (`Quality Gate` + `Smoke E2E`) y no checks legacy (`Cloudflare Pages`) para evitar acoplamiento a pipeline no vigente.
   - Siguiente paso: ejecutar `workflow_dispatch` en `main`, luego aplicar branch protection y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota operativa: puede ejecutarse en paralelo sin bloquear la continuidad de otros P0 funcionales (DV-01 y el cierre operativo del P0 de secreto/frontend-backend).
-  - Nota C (2026-02-14): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
+  - Nota C (2026-02-15): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
 
 ### DV-04: Headers y politicas de seguridad en despliegue
 Duda:
@@ -290,13 +298,16 @@ Tarea de verificacion:
   - Bloqueador residual: aplicar headers/politicas en servidor o reverse proxy (fuera de repo) y re-auditar.
   - Siguiente paso: implementar redireccion HTTP->HTTPS + HSTS + CSP y repetir auditoria.
 
-### Notas de ejecucion A/B/C (2026-02-14)
+### Notas de ejecucion A/B/C (actualizado 2026-02-15)
 - Clasificacion B aplicada en: P2 limites de capas (opcion elegida: script custom Node `lint:layers` + test de fixture por menor impacto de toolchain).
 - Clasificacion B aplicada en: DV-04 auditoria de headers (URL objetivo elegida: `https://www.datamaq.com.ar`).
 - Clasificacion B aplicada en: P2 smoke e2e (opcion elegida: Playwright para smoke local con mock de backend).
 - Clasificacion B aplicada en: DV-03 indexacion de checks sin PR (opcion elegida: `workflow_dispatch` en `main` para evitar commits tecnicos).
+- Clasificacion B aplicada en: DV-03 seleccion de required checks (opcion elegida: exigir `Quality Gate` + `Smoke E2E` del flujo FTPS vigente y excluir `Cloudflare Pages` legacy).
+- Clasificacion B aplicada en: DV-03 automatizacion de verificacion de branch protection (opcion elegida: script `ci:branch-protection:check` con token en lugar de validacion manual permanente).
 - Clasificacion B aplicada en: DV-02 endpoint backend estimativo (opcion elegida: documentar base `https://chatwoot.datamaq.com.ar/` + path tentativo `/contact` manteniendo `VITE_CONTACT_API_URL` parametrizada).
 - Clasificacion B aplicada en: P0 puerta de calidad (opcion elegida: mitigacion local `npm run quality:merge` mientras el enforcement externo de branch protection sigue pendiente).
+- Clasificacion C aplicada en: P0 secreto/frontend-backend (decision de alcance: sin backend minimo en este repo; implementacion directa en backend de produccion).
 - Clasificacion C (duda de alto nivel) mantenida en: P0 seguridad/frontend-backend (cierre operativo fuera del repo), P0 puerta de calidad obligatoria para merge (enforcement externo en GitHub), DV-03.
 - DV-02 sale de C por definicion contractual documentada; queda pendiente ejecucion tecnica (backend Docker + prueba E2E) dentro del P0 de seguridad.
 - DV-01 sale de C por decision funcional `hard revoke` e implementacion tecnica sincronizada.

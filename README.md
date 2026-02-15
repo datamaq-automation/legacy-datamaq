@@ -25,6 +25,7 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 - Backend propio en Docker, desplegado en VPS (DonWeb Cloud IaaS).
 - Flujo de contacto: `frontend -> backend -> Chatwoot`.
 - Los secretos de Chatwoot (`api_access_token` y relacionados) viven solo en backend.
+- Este repositorio no incluye scaffold de backend: la implementacion se hara directamente en el backend de produccion cuando corresponda.
 - Contrato tecnico DV-02: `docs/dv-02-chatwoot-contract.md`.
 
 ## Instalacion y scripts
@@ -43,6 +44,8 @@ npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
 npm run lint:layers # valida limites de dependencias entre capas
 npm run quality:merge # puerta local recomendada antes de merge/deploy
+npm run ci:remote:status # estado remoto del workflow FTPS via GitHub API publica
+npm run ci:branch-protection:check # valida required checks en main (requiere GITHUB_TOKEN/GH_TOKEN)
 ```
 
 ## CI/CD recomendado (GitHub Actions + FTPS)
