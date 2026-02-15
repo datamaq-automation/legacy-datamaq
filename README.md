@@ -43,6 +43,7 @@ npm run test:a11y   # auditoria heuristica de accesibilidad
 npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
 npm run lint:layers # valida limites de dependencias entre capas
+npm run lint:todo-sync # valida trazabilidad obligatoria src/tests -> docs/todo.md
 npm run quality:merge # puerta local recomendada antes de merge/deploy
 npm run ci:remote:status # estado remoto del workflow FTPS via GitHub API publica
 npm run ci:branch-protection:check # valida required checks en main (requiere GITHUB_TOKEN/GH_TOKEN)
@@ -103,5 +104,6 @@ Configuracion recomendada en GitHub:
 
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.
+- Contrato operativo del agente: `AGENTS.md`.
 
 Consultas: [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).

@@ -60,10 +60,18 @@ No incluye:
   - Evidencia: `npm run ci:remote:status` en verde (2026-02-15) con detalle de runs/jobs remotos.
   - Evidencia: `npm run ci:branch-protection:check` falla sin token (2026-02-15), confirmando bloqueo de autenticacion para validar enforcement.
   - Evidencia: timeout de deploy FTPS aplicado en workflow (`timeout-minutes: 20` y `timeout 900 lftp`) para evitar ejecuciones colgadas >35m.
+  - Avance: endurecida gobernanza del agente con `AGENTS.md` y compliance automatizado para trazabilidad `src/tests -> docs/todo.md`.
+  - Evidencia: `scripts/check-todo-sync.mjs`, `package.json` (`lint:todo-sync` dentro de `quality:gate`), `./.github/workflows/ci-cd-ftps.yml` (`fetch-depth: 0` en `quality-gate`).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15) sobre cambios locales con sincronizacion en `docs/todo.md`.
+  - Avance: compliance reforzado en modo estricto (exige trazabilidad semantica en `docs/todo.md`) y orden fail-fast de `quality:gate` (ejecuta `lint:todo-sync` primero).
+  - Evidencia: `scripts/check-todo-sync.mjs` (diff-filter incluye borrados + `--require-evidence`), `package.json` (`quality:gate` reordenado), `README.md` (documenta `lint:todo-sync` y `AGENTS.md`).
+  - Avance: validacion de trazabilidad separada en CI con job dedicado `Todo Sync`; `Quality Gate` y `Smoke E2E` ahora dependen de ese job para cortar antes.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml` (`jobs.todo-sync`, `needs: [todo-sync]` en `quality-gate` y `smoke-e2e`).
+  - Evidencia: `npm run quality:gate` en verde (2026-02-15) tras integrar `Todo Sync` y mantener `lint:todo-sync` como fail-fast local.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
   - Bloqueador residual: falta activar required checks y branch protection en `main`.
-  - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
+  - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Todo Sync` + `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota C (2026-02-15): bloqueo de configuracion en GitHub (entorno externo al repo).
 
 - [>] (P0) UX-01 Consolidar header/nav y jerarquia “above the fold” (desktop + mobile)
@@ -226,8 +234,11 @@ Tarea de verificacion:
 ## 6) Notas de ejecucion A/B/C (actualizado 2026-02-15)
 - Clasificacion A aplicada en: UX-01 (reordenamiento hero mobile + consolidacion header/nav + validacion automatizada viewport 360x740).
 - Clasificacion A aplicada en: UX-02 (teclado/focus/menu mobile con `Esc` + lock scroll + pruebas unit/e2e).
+- Clasificacion A aplicada en: P0 puerta de calidad (compliance local `lint:todo-sync` + endurecimiento de `AGENTS.md` + integracion en `quality:gate`).
+- Clasificacion A aplicada en: P0 puerta de calidad (modo estricto de trazabilidad en `lint:todo-sync` + fail-fast en `quality:gate`).
+- Clasificacion A aplicada en: P0 puerta de calidad (job CI dedicado `Todo Sync` como prerequisito de `Quality Gate` y `Smoke E2E`).
 - Clasificacion B aplicada en: DV-03 indexacion de checks sin PR (`workflow_dispatch` en `main`).
-- Clasificacion B aplicada en: DV-03 seleccion de required checks (solo `Quality Gate` + `Smoke E2E`).
+- Clasificacion B aplicada en: DV-03 seleccion de required checks (`Todo Sync` + `Quality Gate` + `Smoke E2E` en flujo FTPS vigente).
 - Clasificacion B aplicada en: DV-03 automatizacion de verificacion de branch protection (`ci:branch-protection:check` con token).
 - Clasificacion B aplicada en: DV-03 timeout de deploy FTPS (timeout de job + timeout de comando `lftp`).
 - Clasificacion B aplicada en: DV-02 endpoint backend estimativo (`https://chatwoot.datamaq.com.ar/contact`) manteniendo `VITE_CONTACT_API_URL` parametrizada.
