@@ -55,6 +55,13 @@
     object-fit: contain;
   }
 
+  &__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 21 / 16;
+  }
+
   &__subtitle {
     max-width: 42ch;
   }

@@ -7,6 +7,14 @@
     flex-shrink: 0;
   }
 
+  &__media-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 7 / 6;
+    object-fit: contain;
+  }
+
   &__list {
     display: grid;
     gap: 0.65rem;
@@ -67,6 +75,13 @@
 
   &__figure {
     margin-bottom: 1.5rem;
+  }
+
+  &__figure-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 
   &__caption {

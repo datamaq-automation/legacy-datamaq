@@ -535,3 +535,102 @@ Tarea de verificacion:
   - Avance: DoD de UX-07 cumplido y listo para archivo.
 
 ### P2
+
+## Movido desde docs/todo.md el 2026-02-15 16:37 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P1) Definir KPI y evento canonico de conversion
+  - Accion: acordar 1 KPI primario + 1 secundario y mapear eventos (respetando consentimiento).
+  - DoD: definicion escrita en `docs/` + eventos implementados/validados (si aplica).
+  - Evidencia: `docs/dv-ux-01-kpi-proposal.md`.
+  - Decision tomada (A): confirmada opcion `A` como KPI canonico (WhatsApp primario, formulario secundario).
+  - Avance: definido KPI primario `contact` y KPI secundario `generate_lead`, manteniendo `scroll_to_section` como metrica complementaria no canonica.
+  - Evidencia: `docs/dv-ux-01-conversion-kpi.md`.
+  - Evidencia: decision de usuario `A` registrada en este turno (2026-02-15 16:37 -03:00).
+  - Avance: no se requieren cambios funcionales adicionales porque el mapeo de eventos ya estaba implementado.
+  - Avance: DoD de DV-UX-01 cumplido y listo para archivo.
+
+### DV-UX-02: Inventario de contenido real disponible para trust
+Duda:
+- Existen testimonios, casos, certificaciones, fotos reales, marcas atendidas, matricula/habilitaciones, etc.
+
+Tarea de verificacion:
+
+## Movido desde docs/todo.md el 2026-02-15 16:45 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P1) Relevar assets de confianza disponibles
+  - Accion: listado de assets y decision de que entra en landing sin saturar.
+  - DoD: inventario en `docs/` + decision registrada.
+  - Evidencia: `Get-ChildItem src/assets` (2026-02-15 16:37 -03:00) lista solo ilustraciones SVG (`analytics-dashboard.svg`, `hero-energy.svg`, `install-tools.svg`, `powermeter.svg`, `team-training.svg`) y sin fotos reales/logos/testimonios.
+  - Evidencia: `rg -n "testimonio|caso|certif|matric|habilit|cliente|logo|marca|foto real|portfolio" src docs README.md` (2026-02-15 16:37 -03:00) no detecta inventario verificable de casos/testimonios/logos de clientes.
+  - Decision tomada (A): confirmada disponibilidad de assets reales/verificables/publicables (respuesta de usuario: `Si`).
+  - Avance: inventario y criterio de publicacion documentados en `docs/`.
+  - Evidencia: `docs/dv-ux-02-trust-inventory.md`.
+  - Avance: DoD de DV-UX-02 cumplido y listo para archivo.
+
+## 6) Notas de ejecucion A/B/C (resumen activo 2026-02-15)
+- Clasificacion A aplicada en: UX-01 y UX-02 (completadas y archivadas en `docs/todo.done.2026-02.md`).
+- Clasificacion B aplicada en: decisiones de gobernanza (`workflow_dispatch`, required checks del flujo FTPS vigente, y limpieza operativa de `todo.md`).
+- Clasificacion B aplicada en: automatizacion de limpieza documental (`todo:archive` + `lint:todo-sync --require-no-done-tasks`) para mantener `docs/todo.md` sin tareas `[x]`.
+- Clasificacion B aplicada en: dudas de bajo nivel resueltas para higiene documental (enfoque hibrido con `todo:compact:noise` manual y `quality:gate` sin mutaciones).
+- Clasificacion B aplicada en: alineacion del guardrail `ci:branch-protection:check` para exigir `Todo Sync` ademas de `Quality Gate` y `Smoke E2E`.
+- Avance: UX-03 archivada en `docs/todo.done.2026-02.md` y tablero activo reordenado con seccion `### P1` tras `todo:archive`.
+- Clasificacion B aplicada en: UX-04, implementando secciones ancladas en bloque dedicado para reducir impacto en componentes existentes.
+- Clasificacion B aplicada en: UX-05, normalizando copy y CTA con convenio ASCII para evitar ruido de encoding sin perder claridad comercial.
+- Clasificacion B aplicada en: UX-06, tracking de scroll por `hashchange` para reducir acople y mantener consentimiento centralizado en `TrackingFacade`.
+- Clasificacion B aplicada en: UX-07, reforzando trust en hero mediante chips existentes para no competir con CTA.
+- Clasificacion B aplicada en: UX-08 (avance), reforzando carga/render de imagenes para reducir riesgo de CLS y mejorar performance percibida.
+- Clasificacion A aplicada en: DV-UX-01, definiendo KPI canonico de conversion con decision de negocio confirmada (`A`).
+- Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend).
+- Clasificacion A aplicada en: DV-UX-02, inventario trust cerrado con disponibilidad confirmada y decision de integracion documentada.
+- Historial detallado de clasificaciones y reintentos: `docs/todo.done.2026-02.md`.
+
+## 7) Proximos pasos
+- Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
+- Ejecutar medicion Lighthouse mobile para cerrar UX-08 (LCP/CLS) con evidencia cuantitativa.
+
+## Movido desde docs/todo.md el 2026-02-15 16:50 -03:00
+
+### Tareas movidas (2)
+
+- [x] (P2) UX-08 Performance percibida (LCP/imagenes/CLS)
+  - Contexto: ilustracion hero grande en mobile puede penalizar LCP; cambios de layout pueden generar CLS.
+  - Accion:
+    - Optimizar assets del hero (SVG si posible, lazy-load donde aplique).
+    - Reservar espacio para evitar CLS (width/height, aspect-ratio).
+    - Revisar fonts (preload o swap segun corresponda).
+  - DoD:
+    - Sin CLS perceptible en hero.
+    - Mejora observable en Lighthouse (al menos LCP/CLS) en mobile.
+  - Decision tomada (B): para mitigar LCP/CLS sin tooling adicional de auditoria, se prioriza hardening de carga/render de imagenes criticas y reserva explicita de espacio en hero/servicios.
+  - Avance: hero image marcada como recurso prioritario (`loading="eager"` + `fetchpriority="high"`) y con ratio explicitado para reducir riesgo de shift visual.
+  - Avance: imagenes de servicios reforzadas con clases de reserva/render (`display:block`, `aspect-ratio`, `object-fit`) para estabilizar layout durante carga diferida.
+  - Evidencia: `src/ui/sections/HeroSection.vue`, `src/styles/scss/sections/_hero.scss`, `src/ui/sections/ServiceCard.vue`, `src/styles/scss/sections/_services.scss`.
+  - Evidencia: `tests/unit/ui/heroSection.test.ts`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 16:45 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 16:45 -03:00), 30 archivos y 80 tests pasando.
+  - Evidencia: `npm run build` en verde (2026-02-15 16:45 -03:00).
+  - Evidencia: Lighthouse mobile local en `test-results/lighthouse-mobile.json` (2026-02-15 16:49 -03:00): `performance=97`, `LCP=2.1s`, `CLS=0`.
+  - Avance: DoD de UX-08 cumplido y listo para archivo.
+
+- [x] (P2) UX-09 Microinteracciones discretas (solo si no afecta performance)
+  - Accion: hover/focus refinados, transiciones suaves en botones/cards, animacion de apertura de menu sin mareo.
+  - DoD: respeta `prefers-reduced-motion`.
+  - Decision tomada (B): para evitar sobreanimacion, se aplica refinamiento puntual de menu mobile y componentes base, con fallback explicito de movimiento reducido.
+  - Avance: menu mobile con apertura/cierre mas suave (opacidad + desplazamiento corto) sin mareo.
+  - Avance: `prefers-reduced-motion` reforzado en `c-ui-btn` y `c-ui-card--interactive` para desactivar transiciones.
+  - Evidencia: `src/styles/scss/sections/_navbar.scss`, `src/styles/scss/_components.scss`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 16:49 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 16:49 -03:00), 30 archivos y 80 tests pasando.
+  - Evidencia: `npm run build` en verde (2026-02-15 16:49 -03:00).
+  - Avance: DoD de UX-09 cumplido y listo para archivo.
+
+## 5) Dudas activas
+- Sin dudas C1 activas en este turno.
+
+## 6) Proximos pasos
+- Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
+- Integrar en landing los assets reales de confianza una vez cargados al repositorio y curados para publicacion.

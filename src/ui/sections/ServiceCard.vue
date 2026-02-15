@@ -9,7 +9,7 @@ Path: src/ui/sections/ServiceCard.vue
         <img
           :src="card.media.src"
           :alt="card.media.alt"
-          class="rounded-3 shadow-sm align-self-start c-services__media"
+          class="rounded-3 shadow-sm align-self-start c-services__media c-services__media-image"
           :width="card.media.width"
           :height="card.media.height"
           loading="lazy"
@@ -44,7 +44,7 @@ Path: src/ui/sections/ServiceCard.vue
         <img
           :src="card.figure.src"
           :alt="card.figure.alt"
-          class="img-fluid rounded-3 shadow-sm mx-auto"
+          class="img-fluid rounded-3 shadow-sm mx-auto c-services__figure-image"
           :width="card.figure.width"
           :height="card.figure.height"
           loading="lazy"

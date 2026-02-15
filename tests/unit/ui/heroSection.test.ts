@@ -48,5 +48,9 @@ describe('HeroSection', () => {
     expect(screen.getByText('Cobertura GBA Norte / AMBA')).toBeInTheDocument()
     expect(container.querySelectorAll('.c-hero__chips li')).toHaveLength(4)
     expect(screen.getByRole('link', { name: 'Pedi coordinacion' })).toBeInTheDocument()
+
+    const heroImage = screen.getByRole('img', { name: 'Hero' })
+    expect(heroImage).toHaveAttribute('loading', 'eager')
+    expect(heroImage).toHaveAttribute('fetchpriority', 'high')
   })
 })

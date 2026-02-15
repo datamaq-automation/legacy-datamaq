@@ -94,10 +94,11 @@ Path: src/ui/sections/HeroSection.vue
               <img
                 :src="hero.image.src"
                 :alt="hero.image.alt"
-                class="img-fluid rounded-4 shadow-lg"
+                class="img-fluid rounded-4 shadow-lg c-hero__image"
                 :width="hero.image.width"
                 :height="hero.image.height"
                 fetchpriority="high"
+                loading="eager"
                 decoding="async"
               />
             </picture>
