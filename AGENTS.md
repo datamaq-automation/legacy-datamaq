@@ -28,6 +28,8 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 19. Si se modifican `src/` o `tests/`, registrar evidencia explicita de `npm run lint:test-coverage` (umbral de cobertura).
 20. La politica permanente de automatizacion de tests se define en `AGENTS.md`; la ejecucion priorizada y evidencia del turno se define en `docs/todo.md`.
 21. Si existe bloqueo `C2` de deploy/operacion, `docs/todo.md` debe mantener el ultimo intento de validacion tecnica y una `Siguiente accion interna ejecutable ahora` condicionada al dato externo faltante.
+22. Si un cambio cruza capas (`ui`, `application`, `domain`, `infrastructure`), validar limites arquitectonicos con `npm run lint:layers` y registrar decision tecnica en `docs/todo.md`.
+23. Si se modifica `src/ui/` o archivos `.vue`, ejecutar `npm run test:a11y` y `npm run check:css`, y registrar evidencia en `docs/todo.md`.
 
 ## Protocolo operativo por turno
 1. Leer `docs/todo.md`.
@@ -61,6 +63,10 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 - Registrar `Decision tomada (B-Testing): ...` cuando aplique.
 - Circuito DB (duda de deploy/operacion de bajo nivel): comparar opciones por facilidad de rollback y menor riesgo de corte en produccion.
 - Registrar `Decision tomada (B-Deploy): ...` cuando aplique.
+- Circuito AB (duda de arquitectura de bajo nivel): comparar opciones por acoplamiento/costo de cambio y elegir la de menor dependencia transversal.
+- Registrar `Decision tomada (B-Arquitectura): ...` cuando aplique.
+- Circuito VB (duda de Vue de bajo nivel): comparar opciones por legibilidad de componente, reuso en composables y menor riesgo de regresion visual.
+- Registrar `Decision tomada (B-Vue): ...` cuando aplique.
 
 ### C) Duda de alto nivel
 - Ejecutar mitigaciones internas primero.
@@ -70,6 +76,8 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 - Circuito SC (duda de ciberseguridad de alto nivel): usar `C1/C2` para modelo de confianza, politicas legales, retencion de datos o credenciales maestras.
 - Circuito TC (duda de testing de alto nivel): usar `C1/C2` para criterios de aceptacion de negocio, alcance de regresion requerido por producto o entornos externos no disponibles.
 - Circuito DC (duda de deploy/operacion de alto nivel): usar `C1/C2` para host canonico, estrategia CDN/WAF, politicas TLS/headers o decisiones de proveedor externo.
+- Circuito AC (duda de arquitectura de alto nivel): usar `C1/C2` para redefinir limites de dominio, ownership entre capas o contratos base de puertos/adaptadores.
+- Circuito VC (duda de Vue de alto nivel): usar `C1/C2` para decisiones de framework/estilo global (design system, estrategia de render/SSR, librerias base de UI) o dependencias externas no disponibles.
 
 Plantilla obligatoria para `C`:
 - `Decision tomada (C): ...`
@@ -116,6 +124,34 @@ Plantilla obligatoria para `C`:
 - Si la cobertura baja de umbral, no se cierra turno hasta recuperar baseline o clasificar `C` con mitigaciones internas.
 - Casos criticos (contacto, consentimiento, navegacion principal) deben mantener al menos 1 prueba automatizada estable por flujo.
 
+## Dimension de arquitectura limpia (obligatoria)
+- Principio: dependencias dirigidas hacia adentro y separacion explicita de responsabilidades por capa.
+- Reglas minimas:
+  - `domain` no depende de `application`, `infrastructure` ni `ui`.
+  - `application` depende de `domain` y puertos; no consume detalles de framework/UI.
+  - `infrastructure` implementa puertos y adapta IO externo sin mover reglas de negocio fuera de `domain`/`application`.
+  - `ui` orquesta casos de uso/controladores; no incorpora logica de negocio critica en componentes.
+- Guardrails obligatorios:
+  - `npm run lint:layers`
+  - `npm run typecheck`
+  - `npm run test`
+- Si un cambio requiere romper un limite de capa, clasificar `C` y documentar mitigacion antes de implementar.
+
+## Dimension de buenas practicas Vue (obligatoria)
+- Principio: componentes predecibles, tipados y con responsabilidad acotada.
+- Reglas minimas:
+  - Componentes `.vue` orientados a presentacion/orquestacion; la logica reutilizable vive en composables/controladores (`*.ts`).
+  - `props` y `emits` deben mantenerse tipados y explicitos para evitar contratos implicitos.
+  - Evitar efectos colaterales en template; manejar efectos en `setup`/composables con limpieza explicita.
+  - Priorizar selectores estables de componente en pruebas E2E sobre textos fragiles.
+  - Mantener semantica y accesibilidad base (roles, etiquetas, foco, navegacion por teclado).
+- Guardrails obligatorios:
+  - `npm run typecheck`
+  - `npm run test`
+  - `npm run test:a11y`
+  - `npm run check:css`
+- Si una mejora Vue requiere redefinir framework de UI o convenciones globales de producto, clasificar `C` por circuito `VC` antes de implementar.
+
 ## Dimension de deploy/operacion (obligatoria)
 - Principio: cada release debe ser verificable, trazable y con riesgo de rollback controlado.
 - Si se tocan `./.github/workflows/`, scripts de despliegue o configuracion publica (`src/infrastructure/config/publicConfig.ts`), registrar en `docs/todo.md` evidencia de validacion tecnica local y el impacto esperado en produccion.
@@ -144,6 +180,8 @@ Plantilla obligatoria para `C`:
 - Regla de seguridad cliente: `lint:client-secrets` falla si detecta secretos `VITE_*` o headers sensibles en frontend.
 - Regla de cobertura: `lint:test-coverage` falla si la cobertura global cae por debajo de umbrales definidos en `scripts/test-coverage-thresholds.json`.
 - Regla de bloqueo externo de deploy: si existe `C2` de deploy/operacion en `docs/todo.md`, debe quedar explicito el dato externo faltante y el proximo chequeo tecnico a ejecutar en cuanto se disponga de ese dato.
+- Regla de arquitectura: `lint:layers` bloquea imports que violan limites entre capas y no se cierra turno con violaciones activas.
+- Regla de Vue: cambios en `src/ui/` o `.vue` deben dejar evidencia de `test:a11y` y `check:css` en `docs/todo.md`.
 
 ## Archivos asociados
 - `AGENTS.md`: contrato operativo.
@@ -154,7 +192,10 @@ Plantilla obligatoria para `C`:
 - `scripts/check-client-secrets.mjs`: enforcement local/CI para evitar exposicion de secretos y headers sensibles en cliente.
 - `scripts/check-test-coverage.mjs`: valida umbrales minimos de cobertura global.
 - `scripts/test-coverage-thresholds.json`: umbrales de cobertura bloqueantes del repositorio.
+- `scripts/layerBoundaries.mjs`: reglas de dependencias permitidas entre capas.
 - `scripts/smoke-contact-backend.mjs`: smoke tecnico de endpoint de contacto para validacion de despliegue.
+- `scripts/run-a11y.mjs`: validacion automatizada de accesibilidad para vistas/componentes clave.
+- `scripts/check-css-size.mjs`: guardrail de presupuesto CSS para evitar regresiones visuales/peso.
 - `scripts/archive-todo-completed.mjs`: automatiza archivo de tareas `[x]` desde `docs/todo.md` a `docs/todo.done.YYYY-MM.md`.
 - `scripts/compact-todo-noise.mjs`: compacta ruido operativo repetitivo desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md`.
 - `scripts/run-quality-merge.mjs`: ejecuta `quality:gate` y `test:e2e:smoke` sin fail-fast para detectar desalineaciones locales antes de push.

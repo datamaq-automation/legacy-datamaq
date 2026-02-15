@@ -145,6 +145,21 @@ No incluye:
   - Evidencia: `npm run lint:security` en verde (2026-02-15 19:44 -03:00) tras reforzar reglas de `AGENTS.md` para deploy/operacion.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 19:44 -03:00) con `P0` abierto y trazabilidad operativa minima.
   - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 19:44 -03:00) con validacion merge-ready activa.
+  - Decision tomada (B-Arquitectura): para la siguiente dimension del repo se evaluo reforzar Vue/TS solamente vs explicitar arquitectura limpia transversal; se elige arquitectura limpia por mayor impacto sobre acoplamiento y costo de cambio.
+  - Avance: incorporada en `AGENTS.md` la `Dimension de arquitectura limpia` y sus circuitos de duda (`AB`/`AC`) con reglas de capa y guardrails existentes (`lint:layers`, `typecheck`, `test`).
+  - Evidencia: `AGENTS.md` (regla 22 de continuidad, circuitos `B-Arquitectura`/`AC`, seccion `Dimension de arquitectura limpia`, regla de compliance de arquitectura y archivo asociado `scripts/layerBoundaries.mjs`).
+  - Evidencia: `npm run lint:security` en verde (2026-02-15 19:48 -03:00) tras actualizar `AGENTS.md`.
+  - Evidencia: `npm run lint:layers` en verde (2026-02-15 19:48 -03:00) sin violaciones de limites de capa.
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 19:48 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 19:48 -03:00), `31 files / 91 tests`.
+  - Evidencia: `npm run lint:todo-sync` y `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 19:48 -03:00).
+  - Decision tomada (B-Vue): para el siguiente foco de calidad se evaluo priorizar Vue vs TypeScript vs UI/UX; se elige `Vue` primero, luego `UI/UX`, y `TypeScript` en ajuste fino.
+  - Avance: incorporada en `AGENTS.md` la `Dimension de buenas practicas Vue` con circuito de dudas (`VB`/`VC`), regla de continuidad para cambios en `src/ui/` y guardrails de a11y/presupuesto CSS.
+  - Evidencia: `AGENTS.md` (regla 23 de continuidad, circuitos `B-Vue`/`VC`, seccion `Dimension de buenas practicas Vue`, regla de compliance Vue y archivos asociados `scripts/run-a11y.mjs` + `scripts/check-css-size.mjs`).
+  - Evidencia: `npm run lint:security` en verde (2026-02-15 19:53 -03:00) tras actualizar `AGENTS.md` con la dimension Vue.
+  - Evidencia: `npm run test:a11y` en verde (2026-02-15 19:53 -03:00).
+  - Evidencia: `npm run check:css` en verde (2026-02-15 19:53 -03:00), `CSS budget ok: 210770 bytes <= 211000 bytes`.
+  - Evidencia: `npm run lint:todo-sync` y `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 19:53 -03:00).
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.
