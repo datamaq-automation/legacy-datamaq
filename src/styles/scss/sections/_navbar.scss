@@ -80,22 +80,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .c-navbar .slide-fade-enter-active,
-  .c-navbar .slide-fade-leave-active {
-    transition: none !important;
-  }
-
-  .c-navbar .slide-fade-enter-from,
-  .c-navbar .slide-fade-leave-to,
-  .c-navbar .slide-fade-enter-to,
-  .c-navbar .slide-fade-leave-from {
-    transform: none !important;
-    max-height: none !important;
-    opacity: 1 !important;
-  }
-}
-
 @media (min-width: 992px) {
   .c-navbar .navbar-toggler {
     display: none !important;

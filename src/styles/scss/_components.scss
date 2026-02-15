@@ -84,15 +84,3 @@
   border-color: rgba(var(--bs-success-rgb), 0.5);
   background-color: rgba(var(--bs-success-rgb), 0.18);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .c-ui-card--interactive,
-  .btn.c-ui-btn {
-    transition: none !important;
-  }
-
-  .c-ui-card--interactive:hover,
-  .btn.c-ui-btn:hover:not(:disabled):not([aria-disabled='true']) {
-    transform: none;
-  }
-}

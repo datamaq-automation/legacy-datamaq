@@ -52,7 +52,7 @@ test.describe('Smoke E2E', () => {
     const hero = page.locator('.c-hero').first()
     const heading = hero.getByRole('heading', { level: 1 })
     const subtitle = hero.locator('.c-hero__subtitle')
-    const primaryCta = hero.getByRole('link', { name: 'WhatsApp' })
+    const primaryCta = hero.locator('.c-hero__primary-cta')
 
     await expect(heading).toBeVisible()
     await expect(subtitle).toBeVisible()
