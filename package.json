@@ -32,6 +32,7 @@
     "quality:merge": "npm run quality:gate && npm run test:e2e:smoke",
     "ci:remote:status": "node scripts/report-github-ci-status.mjs",
     "ci:branch-protection:check": "node scripts/check-branch-protection.mjs",
+    "ci:branch-protection:set-checks": "node scripts/set-branch-protection-checks.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {

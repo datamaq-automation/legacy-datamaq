@@ -62,15 +62,17 @@ try {
     }
   }
 
-  const hasQuality = hasCheck(requiredChecks, 'Quality Gate')
-  const hasSmoke = hasCheck(requiredChecks, 'Smoke E2E')
+  const requiredJobs = ['Todo Sync', 'Quality Gate', 'Smoke E2E']
+  const missingJobs = requiredJobs.filter((job) => !hasCheck(requiredChecks, job))
 
-  if (!hasQuality || !hasSmoke) {
-    console.error('FAIL: faltan checks requeridos del flujo FTPS (`Quality Gate` y/o `Smoke E2E`).')
+  if (missingJobs.length > 0) {
+    console.error(
+      `FAIL: faltan checks requeridos del flujo FTPS (${missingJobs.map((job) => `\`${job}\``).join(', ')}).`
+    )
     process.exit(1)
   }
 
-  console.log('OK: branch protection incluye `Quality Gate` y `Smoke E2E`.')
+  console.log('OK: branch protection incluye `Todo Sync`, `Quality Gate` y `Smoke E2E`.')
 } catch (error) {
   if (error instanceof Error) {
     console.error(`Error inesperado: ${error.message}`)

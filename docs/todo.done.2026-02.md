@@ -289,3 +289,117 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:25 -03:00) tras registrar trazabilidad de automatizacion.
   - Evidencia: `scripts/compact-todo-noise.mjs`, `package.json` (`todo:compact:noise`, `todo:compact:noise:dry-run`), `AGENTS.md` (regla de no mutacion en `quality:gate` + uso manual de compactacion).
   - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:31 -03:00) detecta 5 lineas compactables en 1 tarea.
+
+## Ruido operativo movido desde docs/todo.md el 2026-02-15 14:55 -03:00
+
+### Resumen
+- Tareas afectadas: 2
+- Lineas movidas: 18
+
+### Definir puerta de calidad obligatoria para merge
+  - Avance: automatizada la higiene de backlog para archivar tareas cerradas desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md` y evitar reintroduccion de ruido operativo.
+  - Avance: implementado enfoque hibrido para limpieza documental (archivo automatico de `[x]` + comando separado de compactacion de ruido operativo).
+  - Evidencia: `npm run todo:archive:dry-run` en verde (2026-02-15 13:31 -03:00) sin tareas cerradas pendientes.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:31 -03:00) tras integrar automatizacion hibrida.
+  - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:32 -03:00) detecta 10 lineas compactables en 1 tarea tras actualizar trazabilidad del turno.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:32 -03:00) con reglas de limpieza/archivo activas.
+  - Evidencia: `npm run todo:compact:noise` (2026-02-15 13:44 -03:00) mueve 14 lineas de ruido operativo a `docs/todo.done.2026-02.md`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:45 -03:00) tras compactacion del tablero activo.
+  - Evidencia: verificacion de entorno (2026-02-15 14:31 -03:00) con salida `GITHUB_TOKEN=False` y `GH_TOKEN=False`.
+  - Evidencia: deteccion segura de claves en `.env*` (2026-02-15 14:31 -03:00) confirma ausencia de `GITHUB_TOKEN`/`GH_TOKEN` en `.env.e2e`, `.env.example`, `.env.local` y `.env.remote`.
+  - Evidencia: `npm run ci:branch-protection:check` ejecutado por usuario con token (2026-02-15 14:35 -03:00) detecta `Required checks: (ninguno)` y mantiene `FAIL` por falta de `Quality Gate` y/o `Smoke E2E`.
+  - Evidencia: `scripts/check-branch-protection.mjs` actualizado para validar `Todo Sync` + `Quality Gate` + `Smoke E2E`.
+  - Evidencia: `docs/dv-03-ci-cd-inventory.md` actualizado (2026-02-15 14:37 -03:00) con resultado de branch protection consultable (`required checks: ninguno`) y procedimiento ajustado a 3 checks requeridos.
+
+### Relevar pipeline real de integracion
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:43 -03:00) en verde con run `22026695643`.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:43 -03:00) vuelve a fallar por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+  - Evidencia: verificacion de entorno local (2026-02-15 14:31 -03:00) mantiene token no exportado: `GITHUB_TOKEN=False`, `GH_TOKEN=False`.
+  - Evidencia: deteccion segura en archivos `.env*` (2026-02-15 14:31 -03:00) sin claves `GITHUB_TOKEN`/`GH_TOKEN` versionadas en repo.
+  - Evidencia: ejecucion manual con token (2026-02-15 14:35 -03:00) obtiene branch protection en `main` con `Required checks detectados: (ninguno)` y `FAIL` por falta de `Quality Gate`/`Smoke E2E`.
+
+## Ruido operativo movido desde docs/todo.md el 2026-02-15 14:59 -03:00
+
+### Resumen
+- Tareas afectadas: 2
+- Lineas movidas: 5
+
+### Definir puerta de calidad obligatoria para merge
+  - Avance: validada mitigacion interna de credenciales en este turno; la sesion local no tiene `GITHUB_TOKEN`/`GH_TOKEN` exportados y tampoco hay claves en `.env*` del repo.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 14:36 -03:00) ejecutado en sesion local del agente falla por token no exportado, consistente con el bloqueo C2 de configuracion en GitHub.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 14:46 -03:00) confirma run `22039359682` en `success` con jobs `Todo Sync`, `Quality Gate` y `Smoke E2E` en verde.
+  - Evidencia: consulta `GET /repos/AgustinMadygraf/profebustos-www/commits/main/check-runs` (2026-02-15 14:46 -03:00) devuelve checks `Todo Sync`, `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` como nombres planos.
+
+### Relevar pipeline real de integracion
+  - Evidencia: `scripts/check-branch-protection.mjs` (2026-02-15 14:36 -03:00) actualizado para exigir tambien `Todo Sync` y alinear el check local con los required checks definidos para `main`.
+
+## Movido desde docs/todo.md el 2026-02-15 15:02 -03:00
+
+### Tareas movidas (2)
+
+- [x] (P0) Definir puerta de calidad obligatoria para merge
+  - Contexto: el workflow CI/CD esta versionado en repo, pero los checks criticos aun no estan garantizados como bloqueantes hasta configurar branch protection.
+  - Accion: definir y aplicar pipeline minimo con `typecheck`, `test`, `test:a11y`, `check:css`, `lint:colors`.
+  - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
+  - Avance: implementado workflow `GitHub Actions + FTPS` con jobs `Todo Sync`, `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)`.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`, `quality:merge`, `lint:todo-sync`, `ci:remote:status`, `ci:branch-protection:check`), `docs/dv-03-ci-cd-inventory.md`.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) confirma run `22026695643` en `success` con `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+  - Avance: alineado `ci:branch-protection:check` con la politica vigente para exigir tambien `Todo Sync` junto con `Quality Gate` y `Smoke E2E`.
+  - Evidencia: `npm run ci:branch-protection:check` ejecutado por usuario con token (2026-02-15 14:54 -03:00) mantiene `Required checks: (ninguno)` y `FAIL` por falta de `Todo Sync`, `Quality Gate`, `Smoke E2E`.
+  - Evidencia: `docs/dv-03-ci-cd-inventory.md` actualizado (2026-02-15 14:55 -03:00) con snippet PowerShell para aplicar contexts requeridos por API cuando la UI no lista checks.
+  - Avance: agregada mitigacion interna para evitar errores de formato en PowerShell mediante comando unico `npm run ci:branch-protection:set-checks`.
+  - Evidencia: `scripts/set-branch-protection-checks.mjs`, `package.json` (`ci:branch-protection:set-checks`) (2026-02-15 14:58 -03:00).
+  - Evidencia: `npm run ci:branch-protection:set-checks` (2026-02-15 14:59 -03:00) ejecutado en sesion local del agente falla por token no exportado; el comando queda listo para usar en la sesion del usuario con token activo.
+  - Avance: branch protection de `main` configurada exitosamente con required checks del flujo FTPS (`Todo Sync`, `Quality Gate`, `Smoke E2E`).
+  - Evidencia: ejecucion manual de usuario (2026-02-15 15:02 -03:00) `npm run ci:branch-protection:set-checks` en verde con `Required checks configurados: Todo Sync, Quality Gate, Smoke E2E`.
+  - Evidencia: ejecucion manual de usuario (2026-02-15 15:02 -03:00) `npm run ci:branch-protection:check` en verde con `OK: branch protection incluye Todo Sync, Quality Gate y Smoke E2E`.
+  - Dependencias: DV-03 (estado real de CI/CD).
+  - Riesgo: Alto.
+  - Decision tomada (B): para reducir ruido operativo, se mueve a `docs/todo.done.2026-02.md` el historial de tareas completadas y seguimiento repetitivo, manteniendo `docs/todo.md` como tablero activo.
+  - Decision tomada (B): se automatiza el archivo de tareas cerradas con `todo:archive` y se enforcea limpieza en `lint:todo-sync` para sostener `docs/todo.md` como tablero activo.
+  - Decision tomada (B): se adopta estrategia hibrida para ruido documental: `todo:archive` automatiza `[x]` y `todo:compact:noise` queda como comando manual separado; `quality:gate` permanece solo de validacion.
+  - Decision tomada (B): para cerrar DV-03 se prioriza configurar required checks; `Require branches to be up to date before merging` queda opcional y se puede activar despues como endurecimiento adicional.
+  - Decision tomada (B): para minimizar errores manuales en la carga de required checks, se automatiza el PATCH de branch protection en un script npm dedicado.
+  - Decision tomada (C): se mantiene bloqueo externo hasta aplicar en GitHub los required checks del flujo FTPS sobre branch protection de `main`.
+  - Tipo C: C2.
+  - Informacion faltante: branch protection de `main` configurada con required checks del flujo FTPS (`CI/CD FTPS / Todo Sync`, `CI/CD FTPS / Quality Gate`, `CI/CD FTPS / Smoke E2E`).
+  - Mitigacion interna ejecutada: verificacion remota publica con `ci:remote:status`, consulta de `check-runs` para validar nombres reales de checks, reejecuciones manuales con token que confirman `required checks` vacios, y enforcement local con `lint:todo-sync`.
+  - Tareas externas (solo C2 y acciones fuera del repo): ejecutar con token `npm run ci:branch-protection:set-checks` (o configurar por UI/API) para exigir `Todo Sync`, `Quality Gate` y `Smoke E2E` en branch protection de `main`.
+  - Bloqueador residual: falta activar required checks y branch protection en `main`.
+  - Siguiente paso: ejecutar `npm run ci:branch-protection:set-checks` con token en sesion local para aplicar required checks y luego revalidar con `npm run ci:branch-protection:check`.
+  - Siguiente accion interna ejecutable ahora: tras correr `npm run ci:branch-protection:set-checks` con token, reejecutar `npm run ci:branch-protection:check` y registrar evidencia del resultado.
+
+### P0 completadas (archivadas)
+- UX-01 Consolidar header/nav y jerarquia above the fold (desktop + mobile).
+- UX-02 Accesibilidad interactiva critica (focus, teclado, menu, CTAs).
+- Evidencia y detalle: `docs/todo.done.2026-02.md` (seccion "Movido desde docs/todo.md el 2026-02-15").
+
+### P1
+
+- [x] (P0) Relevar pipeline real de integracion
+  - Contexto: los checks criticos no estan garantizados por evidencia local.
+  - Accion: inventariar estado real y decidir implementacion en repo o fuera del repo.
+  - DoD (criterio de aceptacion): inventario de checks actuales + decision de implementacion en repo o fuera del repo.
+  - Avance: inventario completado y decision ejecutada: `GitHub Actions + FTPS` en repo, con jobs `Todo Sync`, `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)`.
+  - Evidencia: `docs/dv-03-ci-cd-inventory.md`, `./.github/workflows/ci-cd-ftps.yml`.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) en verde con run `22026695643`.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 14:46 -03:00) muestra run reciente `22039359682` en `success` con jobs `Todo Sync`, `Quality Gate` y `Smoke E2E`.
+  - Evidencia: API publica de check-runs (2026-02-15 14:46 -03:00) lista nombres planos `Todo Sync`, `Quality Gate`, `Smoke E2E` (sin prefijo obligatorio del workflow).
+  - Evidencia: revalidacion manual con token (2026-02-15 14:54 -03:00) sigue reportando `Required checks detectados: (ninguno)` pese a tener `Require status checks to pass before merging` activo.
+  - Evidencia: `scripts/set-branch-protection-checks.mjs` + `npm run ci:branch-protection:set-checks` agregados (2026-02-15 14:58 -03:00) para aplicar required checks por API sin multilinea manual de PowerShell.
+  - Evidencia: cierre DV-03 (2026-02-15 15:02 -03:00) con `npm run ci:branch-protection:set-checks` y `npm run ci:branch-protection:check` en verde desde sesion de usuario.
+  - Riesgo: Medio.
+  - Bloqueador residual: branch protection sin required checks del flujo FTPS en `main`.
+  - Decision tomada (B): para indexar checks sin abrir PR se elige `workflow_dispatch` sobre `main` en lugar de push tecnico.
+  - Decision tomada (B): exigir checks del flujo FTPS vigente (`Todo Sync` + `Quality Gate` + `Smoke E2E`) y no checks legacy.
+  - Siguiente paso: aplicar en GitHub los required checks del flujo FTPS en `main` (`Todo Sync`, `Quality Gate`, `Smoke E2E`) por UI o API y revalidar con `ci:branch-protection:check`.
+  - Nota C (2026-02-15): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
+  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:branch-protection:check` luego de aplicar required checks en GitHub y actualizar `docs/dv-03-ci-cd-inventory.md` con los contexts detectados.
+
+### DV-UX-01: Objetivo de conversion y KPI minimo
+Duda:
+- Cual es el objetivo primario medible de la landing (click a WhatsApp, envio de formulario, scroll a tarifas, etc.) y que evento define "lead valido".
+
+Tarea de verificacion:

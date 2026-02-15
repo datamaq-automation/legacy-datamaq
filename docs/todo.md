@@ -50,42 +50,6 @@ No incluye:
   - Siguiente paso: coordinar despliegue externo del adaptador Chatwoot en backend Docker (VPS) y, con URL final disponible, validar formulario real -> conversacion en Chatwoot.
   - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- <URL_FINAL>` inmediatamente despues de recibir confirmacion de despliegue backend con endpoint publico operativo.
 
-- [>] (P0) Definir puerta de calidad obligatoria para merge
-  - Contexto: el workflow CI/CD esta versionado en repo, pero los checks criticos aun no estan garantizados como bloqueantes hasta configurar branch protection.
-  - Accion: definir y aplicar pipeline minimo con `typecheck`, `test`, `test:a11y`, `check:css`, `lint:colors`.
-  - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
-  - Avance: implementado workflow `GitHub Actions + FTPS` con jobs `Todo Sync`, `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)`.
-  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`, `quality:merge`, `lint:todo-sync`, `ci:remote:status`, `ci:branch-protection:check`), `docs/dv-03-ci-cd-inventory.md`.
-  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) confirma run `22026695643` en `success` con `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
-  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
-  - Avance: automatizada la higiene de backlog para archivar tareas cerradas desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md` y evitar reintroduccion de ruido operativo.
-  - Avance: implementado enfoque hibrido para limpieza documental (archivo automatico de `[x]` + comando separado de compactacion de ruido operativo).
-  - Evidencia: `npm run todo:archive:dry-run` en verde (2026-02-15 13:31 -03:00) sin tareas cerradas pendientes.
-  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:31 -03:00) tras integrar automatizacion hibrida.
-  - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:32 -03:00) detecta 10 lineas compactables en 1 tarea tras actualizar trazabilidad del turno.
-  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:32 -03:00) con reglas de limpieza/archivo activas.
-  - Evidencia: `npm run todo:compact:noise` (2026-02-15 13:44 -03:00) mueve 14 lineas de ruido operativo a `docs/todo.done.2026-02.md`.
-  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:45 -03:00) tras compactacion del tablero activo.
-  - Dependencias: DV-03 (estado real de CI/CD).
-  - Riesgo: Alto.
-  - Decision tomada (B): para reducir ruido operativo, se mueve a `docs/todo.done.2026-02.md` el historial de tareas completadas y seguimiento repetitivo, manteniendo `docs/todo.md` como tablero activo.
-  - Decision tomada (B): se automatiza el archivo de tareas cerradas con `todo:archive` y se enforcea limpieza en `lint:todo-sync` para sostener `docs/todo.md` como tablero activo.
-  - Decision tomada (B): se adopta estrategia hibrida para ruido documental: `todo:archive` automatiza `[x]` y `todo:compact:noise` queda como comando manual separado; `quality:gate` permanece solo de validacion.
-  - Decision tomada (C): se mantiene bloqueo externo hasta disponer de token GitHub con permisos para leer/aplicar branch protection en `main`.
-  - Tipo C: C2.
-  - Informacion faltante: `GITHUB_TOKEN` o `GH_TOKEN` con alcance suficiente para consultar y, fuera del repo, configurar required checks.
-  - Mitigacion interna ejecutada: verificacion remota publica con `ci:remote:status`, reejecucion de `ci:branch-protection:check`, y enforcement local con `lint:todo-sync`.
-  - Tareas externas (solo C2 y acciones fuera del repo): provisionar `GITHUB_TOKEN`/`GH_TOKEN` con permisos de branch protection y configurar en GitHub `main` los required checks `CI/CD FTPS / Todo Sync`, `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E`.
-  - Bloqueador residual: falta activar required checks y branch protection en `main`.
-  - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Todo Sync` + `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
-  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:branch-protection:check` apenas exista `GITHUB_TOKEN`/`GH_TOKEN` con permisos para consultar branch protection y registrar evidencia.
-
-### P0 completadas (archivadas)
-- UX-01 Consolidar header/nav y jerarquia above the fold (desktop + mobile).
-- UX-02 Accesibilidad interactiva critica (focus, teclado, menu, CTAs).
-- Evidencia y detalle: `docs/todo.done.2026-02.md` (seccion "Movido desde docs/todo.md el 2026-02-15").
-
-### P1
 - [>] (P1) UX-03 Normalizar tipografia, espaciado y componentes base (design tokens minimo)
   - Contexto: mejoras UX sustentables requieren consistencia (botones, badges, cards, spacing, tipo).
   - Accion:
@@ -163,29 +127,6 @@ No incluye:
 
 ## 5) Dudas activas
 
-### DV-03: Estado real de CI/CD y reglas de merge
-Duda:
-- El pipeline principal ya se implemento en repo, pero falta confirmar enforcement final (required checks + branch protection).
-
-Tarea de verificacion:
-- [>] (P0) Relevar pipeline real de integracion
-  - Contexto: los checks criticos no estan garantizados por evidencia local.
-  - Accion: inventariar estado real y decidir implementacion en repo o fuera del repo.
-  - DoD (criterio de aceptacion): inventario de checks actuales + decision de implementacion en repo o fuera del repo.
-  - Avance: inventario completado y decision ejecutada: `GitHub Actions + FTPS` en repo, con jobs `Todo Sync`, `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)`.
-  - Evidencia: `docs/dv-03-ci-cd-inventory.md`, `./.github/workflows/ci-cd-ftps.yml`.
-  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) en verde con run `22026695643`.
-  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
-  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:43 -03:00) en verde con run `22026695643`.
-  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:43 -03:00) vuelve a fallar por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
-  - Riesgo: Medio.
-  - Bloqueador residual: configurar branch protection y required checks en GitHub.
-  - Decision tomada (B): para indexar checks sin abrir PR se elige `workflow_dispatch` sobre `main` en lugar de push tecnico.
-  - Decision tomada (B): exigir checks del flujo FTPS vigente (`Todo Sync` + `Quality Gate` + `Smoke E2E`) y no checks legacy.
-  - Siguiente paso: ejecutar `workflow_dispatch` en `main`, luego aplicar branch protection y exigir `CI/CD FTPS / Todo Sync` + `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
-  - Nota C (2026-02-15): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
-  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:branch-protection:check` apenas exista `GITHUB_TOKEN`/`GH_TOKEN` con permisos y actualizar `docs/dv-03-ci-cd-inventory.md` con el resultado.
-
 ### DV-UX-01: Objetivo de conversion y KPI minimo
 Duda:
 - Cual es el objetivo primario medible de la landing (click a WhatsApp, envio de formulario, scroll a tarifas, etc.) y que evento define "lead valido".
@@ -209,10 +150,10 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: decisiones de gobernanza (`workflow_dispatch`, required checks del flujo FTPS vigente, y limpieza operativa de `todo.md`).
 - Clasificacion B aplicada en: automatizacion de limpieza documental (`todo:archive` + `lint:todo-sync --require-no-done-tasks`) para mantener `docs/todo.md` sin tareas `[x]`.
 - Clasificacion B aplicada en: dudas de bajo nivel resueltas para higiene documental (enfoque hibrido con `todo:compact:noise` manual y `quality:gate` sin mutaciones).
-- Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend) y P0 branch protection (bloqueo externo por token/permisos GitHub).
+- Clasificacion B aplicada en: alineacion del guardrail `ci:branch-protection:check` para exigir `Todo Sync` ademas de `Quality Gate` y `Smoke E2E`.
+- Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend).
 - Historial detallado de clasificaciones y reintentos: `docs/todo.done.2026-02.md`.
 
 ## 7) Proximos pasos
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
-- Completar DV-03 en GitHub (branch protection + required checks) usando los checks del flujo FTPS vigente.
 - Ejecutar UX-03 como siguiente frente interno de mejora UX una vez cerrado bloqueo P0 externo.

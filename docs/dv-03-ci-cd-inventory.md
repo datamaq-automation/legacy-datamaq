@@ -33,7 +33,7 @@ Checks e2e versionados:
 
 Script de soporte operativo:
 - `npm run ci:remote:status` (consulta runs/jobs del workflow FTPS por GitHub API publica).
-- `npm run ci:branch-protection:check` (valida required checks en branch protection; requiere `GITHUB_TOKEN`/`GH_TOKEN`).
+- `npm run ci:branch-protection:check` (valida required checks en branch protection: `Todo Sync`, `Quality Gate`, `Smoke E2E`; requiere `GITHUB_TOKEN`/`GH_TOKEN`).
 
 ## 3) Evidencia de ejecucion
 Ejecucion local verificada el 2026-02-15:
@@ -45,6 +45,23 @@ Ejecucion local verificada el 2026-02-15:
 - Revalidacion operativa (2026-02-15 12:35 -03:00):
   - `npm run ci:remote:status` -> OK; ultimo run `22026695643` (`push`) en `success` con jobs `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
   - `npm run ci:branch-protection:check` -> FAIL esperado por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+- Revalidacion con token (2026-02-15 14:35 -03:00):
+  - `npm run ci:branch-protection:check` -> FAIL; branch protection consultable, pero `Required checks detectados: (ninguno)`.
+  - Interpretacion: falta configurar required checks en la regla de `main`.
+- Revalidacion de indexacion de checks (2026-02-15 14:46 -03:00):
+  - `npm run ci:remote:status` -> OK; run `22039359682` en `success` con jobs `Todo Sync`, `Quality Gate` y `Smoke E2E`.
+  - `GET /repos/AgustinMadygraf/profebustos-www/commits/main/check-runs` -> checks presentes como nombres planos: `Todo Sync`, `Quality Gate`, `Smoke E2E`.
+  - Interpretacion: en UI de branch protection, buscar checks por nombre plano (sin prefijo `CI/CD FTPS /` si no aparece).
+- Revalidacion manual posterior (2026-02-15 14:54 -03:00):
+  - `npm run ci:branch-protection:check` -> FAIL; mantiene `Required checks detectados: (ninguno)`.
+  - Interpretacion: la regla de `main` tiene activo `Require status checks to pass before merging` pero aun sin contexts seleccionados.
+- Intento manual fallido de API por formato (2026-02-15 14:58 -03:00):
+  - Error observado en PowerShell: `Invoke-RestMethod` ejecutado sin `Uri` por corte de multilinea; parametros `-Method/-Uri/-Headers/-Body` quedaron como comandos separados.
+  - Mitigacion aplicada en repo: comando automatizado `npm run ci:branch-protection:set-checks` para evitar errores de sintaxis manual.
+- Cierre operativo DV-03 (2026-02-15 15:02 -03:00):
+  - `npm run ci:branch-protection:set-checks` -> OK; `Required checks configurados: Todo Sync, Quality Gate, Smoke E2E`.
+  - `npm run ci:branch-protection:check` -> OK; branch protection incluye `Todo Sync`, `Quality Gate` y `Smoke E2E`.
+  - Interpretacion: enforcement de merge quedo aplicado y verificable en `main`.
 
 Evidencia remota (GitHub API publica) verificada el 2026-02-15:
 - Workflow run `22026695643` (`push`) en `main`: `conclusion=success`.
@@ -85,14 +102,14 @@ Opcion B: GitHub Actions + FTPS (elegida)
 - Desventajas: requiere gestionar secrets FTPS y branch protection manual en GitHub.
 
 ## 6) Brecha actual
-Pendiente fuera de repo:
-- Configurar secrets de FTPS en GitHub (`FTPS_SERVER`, `FTPS_USERNAME`, `FTPS_PASSWORD`, `FTPS_REMOTE_DIR`, opcional `FTPS_PORT`).
-- Activar branch protection en `main`.
-- Marcar `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E` como required checks.
+Estado al 2026-02-15:
+- Branch protection de `main` configurada con required checks `Todo Sync`, `Quality Gate`, `Smoke E2E`.
+- No quedan brechas bloqueantes de gobernanza CI/CD dentro del alcance DV-03.
 
 Nota operativa (GitHub sin rulesets):
 - Si no aparecen checks en "Require status checks to pass", primero ejecutar al menos 1 corrida del workflow sobre `main` (sin PR) para que GitHub indexe los status checks.
 - Usar branch protection clasica en `main` (no requiere rulesets) y seleccionar exactamente:
+  - `CI/CD FTPS / Todo Sync`
   - `CI/CD FTPS / Quality Gate`
   - `CI/CD FTPS / Smoke E2E`
 - En repos privados puede demorar unos minutos en aparecer el listado luego de la primera corrida.
@@ -107,7 +124,7 @@ Decision de bajo nivel (B): indexar checks sin PR
 - Motivo de eleccion: menor ruido en historial y cumple objetivo de indexacion de checks.
 
 Decision de bajo nivel (B): checks a exigir en branch protection
-- Opcion 1: exigir solo checks del flujo vigente FTPS (`Quality Gate`, `Smoke E2E`) (elegida).
+- Opcion 1: exigir checks del flujo vigente FTPS (`Todo Sync`, `Quality Gate`, `Smoke E2E`) (elegida).
   - Ventaja: alinea enforcement con pipeline actual versionado en repo.
   - Desventaja: no fuerza checks legacy externos.
 - Opcion 2: exigir tambien `Cloudflare Pages`.
@@ -132,21 +149,47 @@ Parametros operativos confirmados:
 
 Estado operativo actual:
 - Pipeline CI/CD funcional y deploy FTPS operativo.
-- Enforcement de merge pendiente de confirmacion final (required check visible y aplicado).
-- Este pendiente no bloquea ejecucion de otros P0 funcionales, pero mantiene riesgo de gobernanza de cambios.
-- Mitigacion transitoria en repo: ejecutar `npm run quality:merge` antes de cualquier merge/deploy manual.
-- Verificacion de branch protection via API requiere autenticacion (respuesta actual: `401 Requires authentication`).
-- Script disponible para cierre cuando haya token: `npm run ci:branch-protection:check`.
+- Enforcement de merge activo en `main` con required checks `Todo Sync`, `Quality Gate`, `Smoke E2E`.
+- Riesgo de gobernanza reducido: el bloqueo de branch protection quedo resuelto.
+- Verificacion de branch protection via API: `npm run ci:branch-protection:check` en verde (2026-02-15 15:02 -03:00).
+- Script de verificacion disponible y alineado a checks requeridos del flujo FTPS: `npm run ci:branch-protection:check`.
 
 Procedimiento operativo sin PR:
 1. Ir a `Actions` -> workflow `CI/CD FTPS`.
 2. Ejecutar `Run workflow` sobre la rama `main`.
-3. Verificar run en verde con jobs `Quality Gate` y `Smoke E2E`.
+3. Verificar run en verde con jobs `Todo Sync`, `Quality Gate` y `Smoke E2E`.
 4. Ir a `Settings` -> `Branches` -> regla de `main`.
 5. Activar `Require status checks to pass before merging` y seleccionar:
+   - `CI/CD FTPS / Todo Sync`
    - `CI/CD FTPS / Quality Gate`
    - `CI/CD FTPS / Smoke E2E`
-6. Guardar y validar que ambos checks figuren como requeridos en la regla.
+   - Si no aparecen con prefijo, seleccionar equivalentes planos: `Todo Sync`, `Quality Gate`, `Smoke E2E`.
+   - Si siguen sin aparecer en UI, aplicar por API REST (`PUT /repos/{owner}/{repo}/branches/{branch}/protection`) con `required_status_checks.contexts`.
+6. Guardar y validar que los tres checks figuren como requeridos en la regla.
+
+Ejemplo PowerShell (API, fallback cuando la UI no lista checks):
+```powershell
+$headers = @{
+  Accept = 'application/vnd.github+json'
+  Authorization = "Bearer $env:GITHUB_TOKEN"
+  'X-GitHub-Api-Version' = '2022-11-28'
+}
+$body = @{
+  strict = $false
+  contexts = @('Todo Sync', 'Quality Gate', 'Smoke E2E')
+} | ConvertTo-Json
+Invoke-RestMethod `
+  -Method Patch `
+  -Uri 'https://api.github.com/repos/AgustinMadygraf/profebustos-www/branches/main/protection/required_status_checks' `
+  -Headers $headers `
+  -Body $body `
+  -ContentType 'application/json'
+```
+
+Fallback recomendado (evita multilinea manual):
+```powershell
+npm run ci:branch-protection:set-checks
+```
 
 ## 7) Minimo recomendado de checks obligatorios
 Checks requeridos para PR/merge:
@@ -160,7 +203,7 @@ Checks requeridos para PR/merge:
 
 Implementacion recomendada:
 - Reutilizar `npm run quality:gate` como comando unificado en CI.
-- Exponer `Quality Gate` y `Smoke E2E` como status obligatorios.
+- Exponer `Todo Sync`, `Quality Gate` y `Smoke E2E` como status obligatorios.
 
 ## 8) DoD propuesto para cerrar DV-03
 - Inventario de CI/CD documentado en repo.
@@ -168,6 +211,7 @@ Implementacion recomendada:
 - Branch protection configurada con checks obligatorios.
 - Evidencia de una corrida en `main` (`workflow_dispatch` o push) con status checks visibles.
 - Confirmacion visual en GitHub de los checks requeridos activos sobre `main`.
+- Estado al 2026-02-15: CUMPLIDO.
 
 ## 9) Mensaje sugerido para Plataforma
-"Implementamos CI/CD en repo con `GitHub Actions + FTPS` (`./.github/workflows/ci-cd-ftps.yml`). Necesitamos completar configuracion de GitHub: secrets FTPS, branch protection en `main` y required checks `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E`."
+"Implementamos CI/CD en repo con `GitHub Actions + FTPS` (`./.github/workflows/ci-cd-ftps.yml`) y cerramos branch protection en `main` con required checks `Todo Sync`, `Quality Gate` y `Smoke E2E`. Mantener verificacion periodica con `npm run ci:branch-protection:check`."
