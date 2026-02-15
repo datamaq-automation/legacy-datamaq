@@ -12,6 +12,7 @@ export interface ContactEngagementContext extends Record<string, unknown> {
 
 const CHAT_EVENT_NAME = conversionEvents.contact
 const EMAIL_EVENT_NAME = conversionEvents.generateLead
+const SCROLL_EVENT_NAME = conversionEvents.scrollToSection
 const DEDUPE_WINDOW_MS = 2000
 
 export class EngagementTracker {
@@ -41,6 +42,14 @@ export class EngagementTracker {
       return
     }
     this.tracking.trackEvent(EMAIL_EVENT_NAME, context)
+  }
+
+  trackSectionScroll(section: string, trafficSource: string): void {
+    const context = this.buildContext(section, trafficSource)
+    if (this.shouldSkipEvent(SCROLL_EVENT_NAME, context)) {
+      return
+    }
+    this.tracking.trackEvent(SCROLL_EVENT_NAME, context)
   }
 
   private buildContext(section: string, trafficSource: string): ContactEngagementContext {

@@ -54,7 +54,9 @@ export const content: AppContent = {
     primaryCta: {
       label: 'Pedi coordinacion',
       action: 'whatsapp',
-      href: buildWhatsAppHref('Hola, quiero cotizar un servicio industrial de DataMaq.')
+      href: buildWhatsAppHref(
+        'Hola, quiero coordinar un servicio industrial. Servicio: [indicar]. Zona: [indicar]. Urgencia: [baja/media/alta].'
+      )
     },
     secondaryCta: {
       label: 'Ver servicios',
@@ -115,7 +117,9 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref('Hola, quiero cotizar la instalacion industrial de Powermeter.'),
+          href: buildWhatsAppHref(
+            'Hola, quiero coordinar instalacion industrial de Powermeter. Zona: [indicar]. Urgencia: [baja/media/alta].'
+          ),
           section: 'servicios-instalacion'
         }
       },
@@ -148,7 +152,9 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref('Hola, necesito diagnostico de una falla electrica en planta.'),
+          href: buildWhatsAppHref(
+            'Hola, quiero coordinar diagnostico en planta. Zona: [indicar]. Urgencia: [baja/media/alta].'
+          ),
           section: 'servicios-diagnostico'
         }
       },
@@ -174,7 +180,9 @@ export const content: AppContent = {
         cta: {
           label: 'Pedi coordinacion urgente',
           action: 'whatsapp',
-          href: buildWhatsAppHref('Hola, necesito atencion urgente para una falla industrial.'),
+          href: buildWhatsAppHref(
+            'Hola, necesito atencion urgente en planta. Servicio: [indicar]. Zona: [indicar]. Urgencia: alta.'
+          ),
           section: 'servicios-urgencias'
         }
       }

@@ -38,7 +38,7 @@ const {
       <SobreProfeBustos />
       <LegalSection />
     </main>
-    <Footer />
+    <Footer :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('footer')" />
     <ConsentBanner />
   </div>
 </template>

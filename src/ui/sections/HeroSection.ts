@@ -8,10 +8,10 @@ export function useHeroSection(_props: HeroSectionProps) {
   const benefit2 = hero.benefits[1]!
   const benefit3 = hero.benefits[2]!
   const heroChips = [
-    'Industria',
-    'GBA Norte prioritario',
-    'Equipo provisto por el cliente',
-    'Instalacion tipica ~4h'
+    'Checklist + verificacion final',
+    'Documentacion tecnica de cierre',
+    'Respuesta en menos de 24 horas',
+    'Cobertura GBA Norte / AMBA'
   ]
 
   return {

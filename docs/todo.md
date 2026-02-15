@@ -51,29 +51,6 @@ No incluye:
   - Siguiente paso: coordinar despliegue externo del adaptador Chatwoot en backend Docker (VPS) y, con URL final disponible, validar formulario real -> conversacion en Chatwoot.
   - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- <URL_FINAL>` inmediatamente despues de recibir confirmacion de despliegue backend con endpoint publico operativo.
 
-### P1
-- [>] (P1) UX-06 CTA y conversion tracking (sin romper consentimiento)
-  - Contexto: hay CTA WhatsApp y "Ver servicios"; falta jerarquia consistente y medicion.
-  - Accion:
-    - Definir CTA primario unico por pantalla (WhatsApp/Contacto) + secundario (Servicios).
-    - Mensaje prellenado de WhatsApp con contexto (servicio + zona + urgencia).
-    - Eventos de analitica solo tras consentimiento (alineado al flujo actual).
-  - DoD:
-    - CTA primario consistente (mismo label/estilo) en hero, header y footer.
-    - Tracking de click CTA y scroll a secciones (si aplica) respetando consentimiento.
-  - Riesgo: Medio (acople con analytics/consent).
-
-- [>] (P1) UX-07 Señales de confianza (trust) sin ruido
-  - Contexto: servicios industriales requieren reducir incertidumbre (quien, como, evidencia).
-  - Accion: incorporar 2-4 señales maximas:
-    - "Checklist + verificacion final + documentacion"
-    - "Respuesta < 24hs"
-    - Cobertura/zonas
-    - (Opcional) mini caso/testimonio o logos (si existen)
-  - DoD:
-    - Trust signals visibles en hero o primera pantalla sin saturar.
-    - No compiten visualmente con CTA (jerarquia clara).
-
 ### P2
 - [>] (P2) UX-08 Performance percibida (LCP/imagenes/CLS)
   - Contexto: ilustracion hero grande en mobile puede penalizar LCP; cambios de layout pueden generar CLS.
@@ -99,6 +76,15 @@ Tarea de verificacion:
 - [>] (P1) Definir KPI y evento canonico de conversion
   - Accion: acordar 1 KPI primario + 1 secundario y mapear eventos (respetando consentimiento).
   - DoD: definicion escrita en `docs/` + eventos implementados/validados (si aplica).
+  - Evidencia: `docs/dv-ux-01-kpi-proposal.md`.
+  - Decision tomada (C): la seleccion final del KPI primario impacta definicion comercial de "lead valido", por lo que no se fuerza una eleccion tecnica unilateral.
+  - Tipo C: C1.
+  - Bloqueador residual: falta confirmar KPI primario oficial de conversion para cerrar mapeo canonico de eventos.
+  - Informacion faltante: prioridad comercial entre WhatsApp vs formulario como conversion principal.
+  - Mitigacion interna ejecutada: propuesta cerrada A/B/C documentada con recomendacion tecnica y reutilizacion de eventos ya instrumentados (`contact`, `generate_lead`, `scroll_to_section`).
+  - Pregunta cerrada pendiente (solo C1): Para DV-UX-01, elegis KPI primario A/B/C? (A: WhatsApp primario, B: Formulario primario, C: Conversion compuesta).
+  - Siguiente paso: aplicar la opcion elegida, actualizar documento canonico de conversion y ajustar tracking si corresponde.
+  - Siguiente accion interna ejecutable ahora: apenas se confirme A/B/C, implementar mapeo final en `docs/` y validar eventos en entorno local.
 
 ### DV-UX-02: Inventario de contenido real disponible para trust
 Duda:
@@ -118,9 +104,12 @@ Tarea de verificacion:
 - Avance: UX-03 archivada en `docs/todo.done.2026-02.md` y tablero activo reordenado con seccion `### P1` tras `todo:archive`.
 - Clasificacion B aplicada en: UX-04, implementando secciones ancladas en bloque dedicado para reducir impacto en componentes existentes.
 - Clasificacion B aplicada en: UX-05, normalizando copy y CTA con convenio ASCII para evitar ruido de encoding sin perder claridad comercial.
+- Clasificacion B aplicada en: UX-06, tracking de scroll por `hashchange` para reducir acople y mantener consentimiento centralizado en `TrackingFacade`.
+- Clasificacion B aplicada en: UX-07, reforzando trust en hero mediante chips existentes para no competir con CTA.
 - Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend).
+- Clasificacion C aplicada en: DV-UX-01 (C1 pendiente de definicion comercial de KPI primario).
 - Historial detallado de clasificaciones y reintentos: `docs/todo.done.2026-02.md`.
 
 ## 7) Proximos pasos
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
-- Ejecutar UX-06 como siguiente frente interno para jerarquia de CTA y tracking de conversion respetando consentimiento.
+- Resolver DV-UX-01 (KPI/evento canonico) y DV-UX-02 (inventario trust) para habilitar decisiones cerradas de conversion en UX.

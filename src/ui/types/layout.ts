@@ -5,3 +5,11 @@ export interface NavbarProps {
 export interface NavbarEmits {
   (e: 'contact'): void
 }
+
+export interface FooterProps {
+  contactCtaEnabled: boolean
+}
+
+export interface FooterEmits {
+  (e: 'contact'): void
+}

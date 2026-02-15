@@ -71,4 +71,34 @@ describe('EngagementTracker', () => {
     })
     expect(logger.warn).toHaveBeenCalledTimes(1)
   })
+
+  it('trackea scroll a seccion con evento dedicado y contexto base', () => {
+    let now = 500
+    const clock: Clock = { now: () => now }
+    const location: LocationProvider = {
+      href: () => 'https://example.com/',
+      referrer: () => '',
+      search: () => ''
+    }
+    const tracking: TrackingPort = {
+      trackEvent: vi.fn(),
+      trackPageView: () => {}
+    }
+    const logger: LoggerPort = {
+      debug: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn()
+    }
+
+    const tracker = new EngagementTracker(clock, location, tracking, logger)
+
+    tracker.trackSectionScroll('faq', 'direct')
+
+    expect(tracking.trackEvent).toHaveBeenCalledWith(conversionEvents.scrollToSection, {
+      section: 'faq',
+      pageUrl: 'https://example.com/',
+      trafficSource: 'direct',
+      navigationTimeMs: 0
+    })
+  })
 })

@@ -29,6 +29,17 @@ export function openWhatsApp(section: string = 'whatsapp', href?: string): void 
   engagementTracker.trackChat(section, trafficSource)
 }
 
+export function trackSectionScroll(sectionHref: string): void {
+  const normalizedSection = normalizeSection(sectionHref)
+  if (!normalizedSection) {
+    return
+  }
+
+  const { engagementTracker, environment } = useContainer()
+  const trafficSource = getTrafficSource(environment)
+  engagementTracker.trackSectionScroll(normalizedSection, trafficSource)
+}
+
 export function submitContact(section: string, payload: EmailContactPayload) {
   return useContactFacade().submitContact(section, payload)
 }
@@ -53,4 +64,13 @@ function normalizeHref(href: string | undefined): string | undefined {
   }
   const trimmedHref = href.trim()
   return trimmedHref ? trimmedHref : undefined
+}
+
+function normalizeSection(sectionHref: string): string | undefined {
+  const trimmed = sectionHref.trim()
+  if (!trimmed) {
+    return undefined
+  }
+  const section = trimmed.startsWith('#') ? trimmed.slice(1) : trimmed
+  return section.trim() || undefined
 }

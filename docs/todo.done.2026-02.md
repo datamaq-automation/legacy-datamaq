@@ -482,3 +482,56 @@ Tarea de verificacion:
   - Evidencia: `npm run test` en verde (2026-02-15 16:19 -03:00), 28 archivos y 76 tests pasando.
   - Evidencia: `npm run build` en verde (2026-02-15 16:19 -03:00).
   - Avance: DoD de UX-05 cumplido y listo para archivo.
+
+## Movido desde docs/todo.md el 2026-02-15 16:25 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P1) UX-06 CTA y conversion tracking (sin romper consentimiento)
+  - Contexto: hay CTA WhatsApp y "Ver servicios"; falta jerarquia consistente y medicion.
+  - Accion:
+    - Definir CTA primario unico por pantalla (WhatsApp/Contacto) + secundario (Servicios).
+    - Mensaje prellenado de WhatsApp con contexto (servicio + zona + urgencia).
+    - Eventos de analitica solo tras consentimiento (alineado al flujo actual).
+  - DoD:
+    - CTA primario consistente (mismo label/estilo) en hero, header y footer.
+    - Tracking de click CTA y scroll a secciones (si aplica) respetando consentimiento.
+  - Riesgo: Medio (acople con analytics/consent).
+  - Decision tomada (B): para registrar scroll a secciones sin acoplar cada componente, se instrumenta `hashchange` en Home y se reusa `EngagementTracker` + `TrackingFacade` (que ya respeta consentimiento).
+  - Avance: CTA primaria de WhatsApp consistente en hero, navbar y footer (`Pedi coordinacion`) con mismo estilo visual primario.
+  - Avance: mensaje WhatsApp prellenado actualizado con contexto guiado (`Servicio`, `Zona`, `Urgencia`) en hero, servicios y bloque de decision.
+  - Avance: tracking de scroll a secciones incorporado con evento `scroll_to_section` y deduplicacion del tracker existente.
+  - Evidencia: `src/ui/layout/Footer.vue`, `src/ui/layout/Footer.ts`, `src/ui/pages/HomePage.vue`, `src/ui/pages/HomePage.ts`, `src/ui/views/ThanksView.vue`, `src/ui/pages/MedicionConsumoEscobar.vue`.
+  - Evidencia: `src/ui/controllers/contactController.ts`, `src/application/analytics/engagementTracker.ts`, `src/application/analytics/conversionEvents.ts`.
+  - Evidencia: `src/infrastructure/content/content.ts`, `src/ui/sections/DecisionFlowSection.vue`, `src/ui/types/layout.ts`.
+  - Evidencia: `tests/unit/ui/footer.test.ts`, `tests/unit/application/engagementTracker.test.ts`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 16:25 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 16:25 -03:00), 29 archivos y 79 tests pasando.
+  - Evidencia: `npm run build` en verde (2026-02-15 16:25 -03:00).
+  - Avance: DoD de UX-06 cumplido y listo para archivo.
+
+## Movido desde docs/todo.md el 2026-02-15 16:29 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P1) UX-07 Señales de confianza (trust) sin ruido
+  - Contexto: servicios industriales requieren reducir incertidumbre (quien, como, evidencia).
+  - Accion: incorporar 2-4 señales maximas:
+    - "Checklist + verificacion final + documentacion"
+    - "Respuesta < 24hs"
+    - Cobertura/zonas
+    - (Opcional) mini caso/testimonio o logos (si existen)
+  - DoD:
+    - Trust signals visibles en hero o primera pantalla sin saturar.
+    - No compiten visualmente con CTA (jerarquia clara).
+  - Decision tomada (B): se prioriza reforzar trust en la primera pantalla reutilizando chips del hero en vez de agregar nuevos bloques visuales, para evitar competir con CTA principal.
+  - Avance: chips del hero ajustados a 4 senales concretas de confianza (checklist/verificacion, documentacion, respuesta <24h, cobertura).
+  - Avance: se mantienen jerarquia y contraste de CTA primario sin agregar elementos de alto peso visual.
+  - Evidencia: `src/ui/sections/HeroSection.ts`.
+  - Evidencia: `tests/unit/ui/heroSection.test.ts`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-15 16:27 -03:00).
+  - Evidencia: `npm run test` en verde (2026-02-15 16:27 -03:00), 30 archivos y 80 tests pasando.
+  - Evidencia: `npm run build` en verde (2026-02-15 16:27 -03:00).
+  - Avance: DoD de UX-07 cumplido y listo para archivo.
+
+### P2

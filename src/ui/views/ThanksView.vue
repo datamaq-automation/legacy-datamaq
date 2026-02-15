@@ -48,7 +48,7 @@ const { contactCtaEnabled, handleChat, handleGoHome } = useThanksView()
         </div>
       </div>
     </main>
-    <Footer />
+    <Footer :contactCtaEnabled="contactCtaEnabled" @contact="handleChat" />
     <ConsentBanner />
   </div>
 </template>

@@ -85,7 +85,7 @@
               </ul>
               <a
                 class="btn c-ui-btn c-ui-btn--primary mt-3"
-                href="https://wa.me/5491135162685?text=Hola%2C%20quiero%20coordinar%20un%20servicio%20industrial."
+                href="https://wa.me/5491135162685?text=Hola%2C%20quiero%20coordinar%20un%20servicio%20industrial.%20Servicio%3A%20%5Bindicar%5D.%20Zona%3A%20%5Bindicar%5D.%20Urgencia%3A%20%5Bbaja%2Fmedia%2Falta%5D."
                 target="_blank"
                 rel="noopener noreferrer"
               >

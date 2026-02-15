@@ -99,7 +99,7 @@ const {
         :on-submit="handleEmailSubmit"
       />
     </main>
-    <Footer />
+    <Footer :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('landing-escobar-footer')" />
     <ConsentBanner />
   </div>
 </template>
