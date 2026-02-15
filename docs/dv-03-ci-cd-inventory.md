@@ -42,8 +42,13 @@ Ejecucion local verificada el 2026-02-15:
 - `npm run ci:remote:status` -> OK
 - `npm run ci:branch-protection:check` -> FAIL esperado sin token (`Falta token: define GITHUB_TOKEN o GH_TOKEN`).
 - Resultado: todas las validaciones anteriores en verde.
+- Revalidacion operativa (2026-02-15 12:35 -03:00):
+  - `npm run ci:remote:status` -> OK; ultimo run `22026695643` (`push`) en `success` con jobs `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
+  - `npm run ci:branch-protection:check` -> FAIL esperado por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
 
 Evidencia remota (GitHub API publica) verificada el 2026-02-15:
+- Workflow run `22026695643` (`push`) en `main`: `conclusion=success`.
+  - Jobs observados: `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en `success`.
 - Workflow run `22026083056` (`workflow_dispatch`) en `main`: `conclusion=success`.
   - Jobs observados: `Quality Gate` y `Deploy Production (FTPS)` en `success`.
 - Workflow run `22026104230` (`push`) en `main`: jobs `Quality Gate=success` y `Smoke E2E=success` (deploy en curso al momento de la consulta).

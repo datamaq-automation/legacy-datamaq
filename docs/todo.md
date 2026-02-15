@@ -57,6 +57,10 @@ No incluye:
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 12:19 -03:00) falla con `fetch failed`.
   - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15 12:19 -03:00).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:19 -03:00) tras actualizar trazabilidad de gobernanza + reintento smoke.
+  - Avance: nuevo reintento de smoke backend en turno 2026-02-15 12:33 -03:00; persiste bloqueo externo y se mantiene `C2`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 12:33 -03:00) falla con `fetch failed`.
+  - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15 12:33 -03:00).
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15 12:37 -03:00) sin regresion frontend durante seguimiento `C2`.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Dependencias: DV-02 (contrato backend).
   - Riesgo: Alto.
@@ -67,9 +71,10 @@ No incluye:
   - Mitigacion interna ejecutada: revalidacion en turno actual de `smoke:contact:backend` + `lint:origin-verify` para confirmar bloqueo externo sin regresion frontend.
   - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 11:43 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para mantener monitoreo activo del bloqueo externo.
   - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 12:19 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para seguimiento continuo del bloqueo externo.
+  - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 12:33 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para validar persistencia del bloqueo externo sin regresiones en frontend.
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
-  - Siguiente paso: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (o URL final) y luego validar formulario real -> conversacion en Chatwoot.
-  - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` al inicio del turno y registrar resultado hasta obtener `2xx`.
+  - Siguiente paso: coordinar despliegue externo del adaptador Chatwoot en backend Docker (VPS) y, con URL final disponible, validar formulario real -> conversacion en Chatwoot.
+  - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- <URL_FINAL>` inmediatamente despues de recibir confirmacion de despliegue backend con endpoint publico operativo.
 
 - [>] (P0) Definir puerta de calidad obligatoria para merge
   - Contexto: el workflow CI/CD ya esta versionado en repo, pero los checks criticos todavia no estan garantizados como bloqueantes hasta configurar branch protection.
@@ -117,6 +122,11 @@ No incluye:
   - Evidencia: `scripts/check-todo-sync.mjs` (valida campos obligatorios de `Decision tomada (C)` y detecta mas de una pregunta `C1` pendiente).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:17 -03:00) tras cambios de gobernanza.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:18 -03:00) tras actualizar `docs/todo.md` con la decision `B` del turno.
+  - Avance: revalidado estado de pipeline remoto y bloqueo de branch protection en turno 2026-02-15 12:35 -03:00.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 12:33 -03:00) confirma ultimo run `22026695643` (`push`) en `success` con jobs `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 12:35 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15 12:37 -03:00) como mitigacion operativa local mientras sigue pendiente enforcement externo.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:44 -03:00) tras actualizar trazabilidad de este turno.
   - Siguiente paso: mantener monitoreo de consistencia y, en paralelo, cerrar el bloqueo externo de branch protection en GitHub con token/permisos.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
@@ -127,9 +137,9 @@ No incluye:
   - Bloqueador residual: falta activar required checks y branch protection en `main`.
   - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Todo Sync` + `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota C (2026-02-15): bloqueo de configuracion en GitHub (entorno externo al repo).
-  - Siguiente accion interna ejecutable ahora: ejecutar `npm run ci:remote:status` en cada turno y actualizar evidencia de runs mientras persiste el bloqueo de token/permiso.
+  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:branch-protection:check` apenas exista `GITHUB_TOKEN`/`GH_TOKEN` con permisos para consultar branch protection y registrar evidencia.
 
-- [>] (P0) UX-01 Consolidar header/nav y jerarquia “above the fold” (desktop + mobile)
+- [x] (P0) UX-01 Consolidar header/nav y jerarquia “above the fold” (desktop + mobile)
   - Contexto: evidencia visual actual muestra header/nav no consolidado y mucho espacio “muerto”; en mobile el hero prioriza ilustracion y desplaza el valor/CTA abajo.
   - Accion:
     - Desktop: header fijo/consistente con logo + nav + CTA primario (WhatsApp/Contacto).
@@ -144,11 +154,12 @@ No incluye:
   - Avance: hero mobile reordenado para priorizar H1 + soporte + CTA antes de la ilustracion; navbar consolidado con layout estable en desktop y menu superpuesto en mobile.
   - Evidencia: `src/ui/sections/HeroSection.vue`, `src/styles/scss/sections/_hero.scss`, `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
   - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile hero keeps headline, support copy and primary CTA above fold`.
-  - Evidencia: `npm run quality:merge` en verde (2026-02-15).
-  - Bloqueador residual: falta adjuntar comparativa visual (antes/despues) en PR/issue.
-  - Siguiente accion interna ejecutable ahora: crear evidencia local de comparativa en `docs/evidence/ux-01-before-after.md` con referencias de capturas desktop/mobile.
+  - Avance: completada comparativa visual local before/after en el repositorio con capturas desktop y mobile.
+  - Evidencia: `docs/evidence/ux-01-after-desktop-1280x720.png`, `docs/evidence/ux-01-after-mobile-360x740.png`, `docs/evidence/ux-01-before-after.md`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-15 12:37 -03:00).
+  - Bloqueador residual: ninguno en el repositorio; resta adjuntar referencia de evidencia en PR/issue externo cuando se abra.
 
-- [>] (P0) UX-02 Accesibilidad interactiva critica (focus, teclado, menu, CTAs)
+- [x] (P0) UX-02 Accesibilidad interactiva critica (focus, teclado, menu, CTAs)
   - Contexto: ya existen guardrails a11y; falta asegurar experiencia real: foco visible, navegacion por teclado y roles/aria correctos en header/menu/botones.
   - Accion:
     - Focus visible consistente (no solo outline por default) y sin “focus trap”.
@@ -163,9 +174,10 @@ No incluye:
   - Evidencia: `src/ui/layout/Navbar.ts`, `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
   - Evidencia: `tests/unit/ui/navbar.test.ts` (aria-expanded, lock/unlock scroll, foco con `Esc`, foco inicial en primer link).
   - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile menu closes with Escape and restores focus`.
-  - Evidencia: `npm run test:a11y` y `npm run quality:merge` en verde (2026-02-15).
-  - Bloqueador residual: falta checklist manual de teclado/contraste documentado en PR.
-  - Siguiente accion interna ejecutable ahora: crear checklist manual en `docs/evidence/ux-02-keyboard-contrast-checklist.md` y registrar resultado de validacion.
+  - Avance: checklist manual de teclado/contraste documentado localmente y alineado con la validacion automatizada.
+  - Evidencia: `docs/evidence/ux-02-keyboard-contrast-checklist.md`.
+  - Evidencia: `npm run test:a11y` y `npm run quality:merge` en verde (2026-02-15 12:37 -03:00).
+  - Bloqueador residual: ninguno en el repositorio; resta adjuntar referencia de checklist en PR/issue externo cuando se abra.
 
 ### P1
 - [>] (P1) UX-03 Normalizar tipografia, espaciado y componentes base (design tokens minimo)
@@ -263,13 +275,16 @@ Tarea de verificacion:
   - Evidencia: `npm run ci:remote:status` en verde (2026-02-15) con detalle de runs/jobs remotos.
   - Evidencia: GitHub API publica confirma runs `22026083056` (`workflow_dispatch`) y `22026104230` (`push`) con jobs `Quality Gate` y `Smoke E2E` exitosos.
   - Evidencia: run `22026104230` mostro deploy FTPS colgado ~41m y cancelado por `concurrency`; mitigado con timeout en `./.github/workflows/ci-cd-ftps.yml`.
+  - Avance: revalidado estado remoto en turno 2026-02-15 12:35 -03:00; el ultimo run `22026695643` sigue en `success`.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 12:33 -03:00) reporta run `22026695643` (`push`) con `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 12:35 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
   - Riesgo: Medio.
   - Bloqueador residual: configurar branch protection y required checks en GitHub.
   - Decision tomada (B): para indexar checks sin abrir PR se elige `workflow_dispatch` sobre `main` en lugar de push tecnico.
   - Decision tomada (B): exigir solo checks del flujo FTPS vigente (`Quality Gate` + `Smoke E2E`) y no checks legacy (`Cloudflare Pages`) para evitar acoplamiento a pipeline no vigente.
   - Siguiente paso: ejecutar `workflow_dispatch` en `main`, luego aplicar branch protection y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota C (2026-02-15): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
-  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:remote:status` y actualizar `docs/dv-03-ci-cd-inventory.md` con el ultimo run disponible.
+  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:branch-protection:check` apenas exista `GITHUB_TOKEN`/`GH_TOKEN` con permisos y actualizar `docs/dv-03-ci-cd-inventory.md` con el resultado.
 
 ### DV-UX-01: Objetivo de conversion y KPI minimo
 Duda:
@@ -292,6 +307,8 @@ Tarea de verificacion:
 ## 6) Notas de ejecucion A/B/C (actualizado 2026-02-15)
 - Clasificacion A aplicada en: UX-01 (reordenamiento hero mobile + consolidacion header/nav + validacion automatizada viewport 360x740).
 - Clasificacion A aplicada en: UX-02 (teclado/focus/menu mobile con `Esc` + lock scroll + pruebas unit/e2e).
+- Clasificacion A aplicada en: cierre UX-01 con evidencia visual local (`docs/evidence/ux-01-before-after.md` + capturas desktop/mobile) y validacion `quality:merge`.
+- Clasificacion A aplicada en: cierre UX-02 con checklist manual local (`docs/evidence/ux-02-keyboard-contrast-checklist.md`) y validacion `quality:merge`.
 - Clasificacion A aplicada en: P0 puerta de calidad (compliance local `lint:todo-sync` + endurecimiento de `AGENTS.md` + integracion en `quality:gate`).
 - Clasificacion A aplicada en: P0 puerta de calidad (modo estricto de trazabilidad en `lint:todo-sync` + fail-fast en `quality:gate`).
 - Clasificacion A aplicada en: P0 puerta de calidad (job CI dedicado `Todo Sync` como prerequisito de `Quality Gate` y `Smoke E2E`).
@@ -310,11 +327,14 @@ Tarea de verificacion:
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (revalidacion en turno actual de `smoke:contact:backend` con resultado `fetch failed` + `lint:origin-verify` en verde).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (2026-02-15 11:43 -03:00: `smoke:contact:backend` con `fetch failed` + `lint:origin-verify` en verde).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (2026-02-15 12:19 -03:00: `smoke:contact:backend` con `fetch failed` + `lint:origin-verify` en verde).
+- Clasificacion C aplicada en: P0 secreto/frontend-backend (2026-02-15 12:33 -03:00: `smoke:contact:backend` con `fetch failed` + `lint:origin-verify` en verde).
 - Clasificacion C mantenida en: P0 seguridad/frontend-backend y DV-03 por depender de entornos externos.
 - Clasificacion C aplicada en: P0 puerta de calidad/branch protection (reejecucion de `ci:branch-protection:check` sin token + mitigacion con `ci:remote:status` run `22026695643` exitoso).
+- Clasificacion C aplicada en: P0 puerta de calidad/branch protection (2026-02-15 12:35 -03:00: `ci:branch-protection:check` sin token + `ci:remote:status` con run `22026695643` en verde).
+- Clasificacion C aplicada en: DV-03 relevamiento CI/CD (2026-02-15 12:35 -03:00: evidencia remota actualizada y bloqueo externo de branch protection mantenido).
 
 ## 7) Proximos pasos
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
 - Completar DV-03 en GitHub (branch protection + required checks) usando los checks del flujo FTPS vigente.
-- Cerrar residual P0 UX en PR/issue (comparativa visual antes/despues + checklist manual teclado/contraste).
+- Adjuntar en PR/issue externo la evidencia ya generada en repo para UX-01 y UX-02.
 - Mantener `npm run quality:merge` como control operativo manual hasta cerrar enforcement externo.
