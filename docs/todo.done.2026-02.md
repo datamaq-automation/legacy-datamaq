@@ -268,3 +268,24 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
 - Se movio el detalle historico completo de clasificaciones A/B/C repetitivas fuera del tablero activo.
 - `docs/todo.md` conserva un resumen activo y referencia a este archivo para auditoria historica.
 
+## Ruido operativo movido desde docs/todo.md el 2026-02-15 13:44 -03:00
+
+### Resumen
+- Tareas afectadas: 1
+- Lineas movidas: 14
+
+### Definir puerta de calidad obligatoria para merge
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:43 -03:00) mantiene run `22026695643` en `success` con `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:43 -03:00) vuelve a fallar por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+  - Evidencia: historial detallado de gobernanza y revalidaciones archivado en `docs/todo.done.2026-02.md`.
+  - Avance: limpieza operativa ejecutada para mover tareas completadas y trazabilidad repetitiva fuera del tablero activo.
+  - Evidencia: `docs/todo.md` compactado y `docs/todo.done.2026-02.md` actualizado con seccion `Movido desde docs/todo.md el 2026-02-15 (limpieza operativa)`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:17 -03:00) tras la limpieza documental.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:18 -03:00) tras verificacion final de cumplimiento.
+  - Evidencia: `scripts/archive-todo-completed.mjs`, `scripts/check-todo-sync.mjs`, `package.json`, `AGENTS.md`.
+  - Evidencia: `npm run todo:archive:dry-run` en verde (2026-02-15 13:24 -03:00) sin tareas `[x]` pendientes de archivo.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:24 -03:00) con `--require-no-done-tasks`.
+  - Evidencia: `node scripts/archive-todo-completed.mjs --check` en verde (2026-02-15 13:25 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:25 -03:00) tras registrar trazabilidad de automatizacion.
+  - Evidencia: `scripts/compact-todo-noise.mjs`, `package.json` (`todo:compact:noise`, `todo:compact:noise:dry-run`), `AGENTS.md` (regla de no mutacion en `quality:gate` + uso manual de compactacion).
+  - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:31 -03:00) detecta 5 lineas compactables en 1 tarea.

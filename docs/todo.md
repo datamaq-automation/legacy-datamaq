@@ -36,6 +36,8 @@ No incluye:
   - Evidencia: `scripts/check-origin-verify-leaks.mjs`, `package.json` (`lint:origin-verify` dentro de `quality:gate`).
   - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15 13:09 -03:00).
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 13:09 -03:00) falla con `fetch failed`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 13:43 -03:00) mantiene `Smoke FAIL: fetch failed`.
+  - Avance: reintento interno de smoke ejecutado en este turno; el bloqueo externo C2 se mantiene sin endpoint backend operativo.
   - Evidencia: historial detallado de reintentos archivado en `docs/todo.done.2026-02.md`.
   - Dependencias: DV-02 (contrato backend).
   - Riesgo: Alto.
@@ -56,24 +58,14 @@ No incluye:
   - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`, `quality:merge`, `lint:todo-sync`, `ci:remote:status`, `ci:branch-protection:check`), `docs/dv-03-ci-cd-inventory.md`.
   - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) confirma run `22026695643` en `success` con `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
   - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
-  - Evidencia: historial detallado de gobernanza y revalidaciones archivado en `docs/todo.done.2026-02.md`.
-  - Avance: limpieza operativa ejecutada para mover tareas completadas y trazabilidad repetitiva fuera del tablero activo.
-  - Evidencia: `docs/todo.md` compactado y `docs/todo.done.2026-02.md` actualizado con seccion `Movido desde docs/todo.md el 2026-02-15 (limpieza operativa)`.
-  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:17 -03:00) tras la limpieza documental.
-  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:18 -03:00) tras verificacion final de cumplimiento.
   - Avance: automatizada la higiene de backlog para archivar tareas cerradas desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md` y evitar reintroduccion de ruido operativo.
-  - Evidencia: `scripts/archive-todo-completed.mjs`, `scripts/check-todo-sync.mjs`, `package.json`, `AGENTS.md`.
-  - Evidencia: `npm run todo:archive:dry-run` en verde (2026-02-15 13:24 -03:00) sin tareas `[x]` pendientes de archivo.
-  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:24 -03:00) con `--require-no-done-tasks`.
-  - Evidencia: `node scripts/archive-todo-completed.mjs --check` en verde (2026-02-15 13:25 -03:00).
-  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:25 -03:00) tras registrar trazabilidad de automatizacion.
   - Avance: implementado enfoque hibrido para limpieza documental (archivo automatico de `[x]` + comando separado de compactacion de ruido operativo).
-  - Evidencia: `scripts/compact-todo-noise.mjs`, `package.json` (`todo:compact:noise`, `todo:compact:noise:dry-run`), `AGENTS.md` (regla de no mutacion en `quality:gate` + uso manual de compactacion).
-  - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:31 -03:00) detecta 5 lineas compactables en 1 tarea.
   - Evidencia: `npm run todo:archive:dry-run` en verde (2026-02-15 13:31 -03:00) sin tareas cerradas pendientes.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:31 -03:00) tras integrar automatizacion hibrida.
   - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:32 -03:00) detecta 10 lineas compactables en 1 tarea tras actualizar trazabilidad del turno.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:32 -03:00) con reglas de limpieza/archivo activas.
+  - Evidencia: `npm run todo:compact:noise` (2026-02-15 13:44 -03:00) mueve 14 lineas de ruido operativo a `docs/todo.done.2026-02.md`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:45 -03:00) tras compactacion del tablero activo.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
   - Decision tomada (B): para reducir ruido operativo, se mueve a `docs/todo.done.2026-02.md` el historial de tareas completadas y seguimiento repetitivo, manteniendo `docs/todo.md` como tablero activo.
@@ -184,6 +176,8 @@ Tarea de verificacion:
   - Evidencia: `docs/dv-03-ci-cd-inventory.md`, `./.github/workflows/ci-cd-ftps.yml`.
   - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) en verde con run `22026695643`.
   - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15 13:43 -03:00) en verde con run `22026695643`.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:43 -03:00) vuelve a fallar por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
   - Riesgo: Medio.
   - Bloqueador residual: configurar branch protection y required checks en GitHub.
   - Decision tomada (B): para indexar checks sin abrir PR se elige `workflow_dispatch` sobre `main` en lugar de push tecnico.
@@ -222,4 +216,3 @@ Tarea de verificacion:
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).
 - Completar DV-03 en GitHub (branch protection + required checks) usando los checks del flujo FTPS vigente.
 - Ejecutar UX-03 como siguiente frente interno de mejora UX una vez cerrado bloqueo P0 externo.
-
