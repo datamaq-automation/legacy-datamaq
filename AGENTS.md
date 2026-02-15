@@ -11,6 +11,10 @@ Definir reglas operativas obligatorias para cualquier agente que trabaje en este
 5. Si se modifica `src/` o `tests/`, se debe actualizar `docs/todo.md` y pasar el check `npm run lint:todo-sync`.
 6. No revertir cambios del usuario sin instruccion explicita.
 7. Si hay bloqueo externo (GitHub, VPS, legal, credenciales), documentar como `C` y ejecutar primero todas las mitigaciones internas posibles.
+8. En cada turno se trabaja en bucle por prioridad (`P0` > `P1` > `P2`) hasta agotar acciones internas posibles.
+9. Si aparece una duda `C`, primero se ejecutan mitigaciones internas; luego se hace exactamente 1 pregunta cerrada solo si esa respuesta destraba el trabajo dentro del turno.
+10. Si el bloqueo `C` es externo y no resoluble por el usuario en el turno, no se pregunta: se documenta `C` y se continua con la siguiente tarea prioritaria.
+11. El turno solo termina cuando no quedan acciones `A/B` ejecutables o existe exactamente 1 pregunta `C` pendiente para desbloqueo.
 
 ## Protocolo de arranque obligatorio (cada turno)
 1. Leer `docs/todo.md`.
@@ -19,6 +23,7 @@ Definir reglas operativas obligatorias para cualquier agente que trabaje en este
 4. Ejecutar cambios minimos y trazables.
 5. Validar con comandos segun el tipo de cambio.
 6. Registrar evidencia concreta en `docs/todo.md` (archivos + comandos + fecha).
+7. Repetir desde el paso 2 mientras existan acciones internas ejecutables de la misma prioridad.
 
 ## Marco de decision (A/B/C)
 ### A) Certeza total

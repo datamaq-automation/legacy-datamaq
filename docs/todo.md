@@ -77,6 +77,9 @@ No incluye:
   - Evidencia: `npm run quality:gate` en verde (2026-02-15) tras integrar `Todo Sync` y mantener `lint:todo-sync` como fail-fast local.
   - Avance: documentada guia operativa para iniciar sesiones con Codex y forzar alineacion con `AGENTS.md` + `docs/todo.md`.
   - Evidencia: `docs/codex-usage.md`, `README.md` (link a guia).
+  - Avance: `AGENTS.md` actualizado con reglas explicitas de ejecucion continua por prioridad, pregunta unica en `C`, y criterio de corte de turno.
+  - Evidencia: `AGENTS.md` (reglas 8-11 y paso 7 del protocolo de arranque).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15) tras actualizar `AGENTS.md` y `docs/todo.md` en el mismo turno.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
   - Bloqueador residual: falta activar required checks y branch protection en `main`.
@@ -246,6 +249,7 @@ Tarea de verificacion:
 - Clasificacion A aplicada en: P0 puerta de calidad (compliance local `lint:todo-sync` + endurecimiento de `AGENTS.md` + integracion en `quality:gate`).
 - Clasificacion A aplicada en: P0 puerta de calidad (modo estricto de trazabilidad en `lint:todo-sync` + fail-fast en `quality:gate`).
 - Clasificacion A aplicada en: P0 puerta de calidad (job CI dedicado `Todo Sync` como prerequisito de `Quality Gate` y `Smoke E2E`).
+- Clasificacion A aplicada en: P0 puerta de calidad (reglas operativas nuevas en `AGENTS.md`: ejecucion continua + manejo estricto de `C` con pregunta unica).
 - Clasificacion B aplicada en: DV-03 indexacion de checks sin PR (`workflow_dispatch` en `main`).
 - Clasificacion B aplicada en: DV-03 seleccion de required checks (`Todo Sync` + `Quality Gate` + `Smoke E2E` en flujo FTPS vigente).
 - Clasificacion B aplicada en: DV-03 automatizacion de verificacion de branch protection (`ci:branch-protection:check` con token).
