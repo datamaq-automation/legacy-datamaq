@@ -113,6 +113,17 @@ No incluye:
   - Avance: informacion de recomendacion Cloudflare incorporada en documentacion de CI/CD y seguridad para dejar criterio operativo versionado.
   - Evidencia: `docs/dv-03-ci-cd-inventory.md` (seccion `Evaluacion Cloudflare delante de DonWeb Cloud IaaS (2026-02-15)` con opciones, ventajas/desventajas, fases y fuentes).
   - Evidencia: `docs/dv-04-security-headers-audit.md` (seccion `Addendum 2026-02-15: ruta de mitigacion con Cloudflare` con controles tecnicos y riesgos a evitar).
+  - Decision tomada (B-Testing): para fortalecer la dimension de testing se evaluo umbral agresivo inmediato vs umbral incremental; se elige baseline incremental bloqueante (`lines>=75`, `statements>=75`, `functions>=80`, `branches>=65`) para ganar enforcement sin romper el flujo actual.
+  - Avance: dimension de testing incorporada en `AGENTS.md` con reglas obligatorias, circuito de dudas (`TB`/`TC`) y compliance de cobertura.
+  - Evidencia: `AGENTS.md` (regla 19 de continuidad, marco A actualizado a `lint:test-coverage`, circuitos `B-Testing`/`TC`, seccion `Dimension de testing`, compliance y archivos asociados).
+  - Avance: guardrail de cobertura implementado y cableado al gate principal de calidad.
+  - Evidencia: `scripts/check-test-coverage.mjs`, `scripts/test-coverage-thresholds.json`, `package.json` (`test:coverage` con `json-summary`, `lint:test-coverage`, `lint:testing`, `quality:gate` con coverage gate).
+  - Evidencia: `README.md` actualizado con scripts `test:coverage`, `lint:test-coverage` y `lint:testing`.
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-15 19:04 -03:00) con resultado global `lines=78.65`, `statements=78.07`, `functions=82.90`, `branches=66.76`.
+  - Evidencia: `npm run lint:security` en verde (2026-02-15 19:04 -03:00) tras cambios en `scripts/`, `AGENTS.md` y `package.json`.
+  - Evidencia: `npm run quality:gate` en verde (2026-02-15 19:06 -03:00) incluyendo `lint:test-coverage`.
+  - Evidencia: `npm run lint:testing` en verde (2026-02-15 19:06 -03:00), ejecutando `lint:test-coverage` + `test:e2e:smoke` (5/5 tests).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 19:07 -03:00) tras actualizar trazabilidad de este turno.
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.

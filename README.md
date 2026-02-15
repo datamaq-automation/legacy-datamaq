@@ -40,11 +40,14 @@ npm run test:e2e    # ejecuta suite e2e con Playwright
 npm run test:e2e:smoke # ejecuta smoke e2e (home/contacto/gracias)
 npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts # smoke contacto
 npm run test:a11y   # auditoria heuristica de accesibilidad
+npm run test:coverage # cobertura unitaria con salida json-summary
 npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
 npm run lint:layers # valida limites de dependencias entre capas
 npm run lint:client-secrets # evita secretos VITE_* y headers sensibles en frontend
 npm run lint:security # corre guardrails de seguridad cliente (origin-verify + client-secrets)
+npm run lint:test-coverage # valida umbrales minimos de cobertura global
+npm run lint:testing # lint:test-coverage + smoke e2e
 npm run lint:todo-sync # valida trazabilidad obligatoria src/tests -> docs/todo.md
 npm run quality:merge # puerta local recomendada antes de merge/deploy
 npm run ci:remote:status # estado remoto del workflow FTPS via GitHub API publica

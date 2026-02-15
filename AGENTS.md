@@ -25,6 +25,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
    - Si no existe `C1`: `Tareas externas` con bloqueadores `C2` y acciones recomendadas fuera del repo.
    - Si no hay tareas externas activas: indicar `Sin tareas externas activas`.
 18. Si se modifican `src/`, `tests/`, `scripts/`, `AGENTS.md` o `package.json`, ejecutar `npm run lint:security` y registrar evidencia en `docs/todo.md`.
+19. Si se modifican `src/` o `tests/`, registrar evidencia explicita de `npm run lint:test-coverage` (umbral de cobertura).
 
 ## Protocolo operativo por turno
 1. Leer `docs/todo.md`.
@@ -43,7 +44,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 ## Marco A/B/C
 ### A) Certeza total
 - Implementar directo.
-- Validar al menos con `npm run typecheck`, `npm run test` y `npm run build`.
+- Validar al menos con `npm run typecheck`, `npm run lint:test-coverage` y `npm run build`.
 - Si hubo cambios en `src/` o `tests/`, sumar `npm run quality:merge`.
 - Registrar evidencia.
 
@@ -54,6 +55,8 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 - Registrar `Decision tomada (B): ...` y evidencia.
 - Circuito SB (duda de ciberseguridad de bajo nivel): comparar opciones por superficie de ataque/blast radius y elegir la de menor exposicion operativa.
 - Registrar `Decision tomada (B-Seguridad): ...` cuando aplique.
+- Circuito TB (duda de testing de bajo nivel): comparar opcion de prueba (unitaria/integracion/e2e/contrato), elegir la de mejor signal-to-noise y menor fragilidad.
+- Registrar `Decision tomada (B-Testing): ...` cuando aplique.
 
 ### C) Duda de alto nivel
 - Ejecutar mitigaciones internas primero.
@@ -61,6 +64,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 - No modificar codigo dentro del alcance bloqueado.
 - Mantener la tarea en `[ ]` o `[>]`.
 - Circuito SC (duda de ciberseguridad de alto nivel): usar `C1/C2` para modelo de confianza, politicas legales, retencion de datos o credenciales maestras.
+- Circuito TC (duda de testing de alto nivel): usar `C1/C2` para criterios de aceptacion de negocio, alcance de regresion requerido por producto o entornos externos no disponibles.
 
 Plantilla obligatoria para `C`:
 - `Decision tomada (C): ...`
@@ -90,8 +94,23 @@ Plantilla obligatoria para `C`:
   - `npm run lint:client-secrets`
   - `npm run lint:security`
 
+## Dimension de testing (obligatoria)
+- Principio: cada cambio relevante debe tener deteccion automatica de regresion proporcional al riesgo.
+- Cobertura minima global bloqueante (sobre `coverage/coverage-summary.json`):
+  - `lines >= 75%`
+  - `statements >= 75%`
+  - `functions >= 80%`
+  - `branches >= 65%`
+- Guardrails obligatorios:
+  - `npm run lint:test-coverage`
+  - `npm run test:e2e:smoke`
+  - `npm run lint:testing`
+- Si la cobertura baja de umbral, no se cierra turno hasta recuperar baseline o clasificar `C` con mitigaciones internas.
+- Casos criticos (contacto, consentimiento, navegacion principal) deben mantener al menos 1 prueba automatizada estable por flujo.
+
 ## Compliance automatizado
 - Comando obligatorio: `npm run lint:security`.
+- Comando obligatorio: `npm run lint:test-coverage`.
 - Comando obligatorio: `npm run lint:todo-sync`.
 - Comando obligatorio de cierre cuando cambian `src/` o `tests/`: `npm run lint:todo-sync:merge-ready`.
 - Regla base: falla si hay cambios en `src/` o `tests/` sin cambios en `docs/todo.md`.
@@ -103,6 +122,7 @@ Plantilla obligatoria para `C`:
 - Regla de merge-ready local (`--require-merge-evidence`): si cambian `src/` o `tests/`, `docs/todo.md` debe incluir evidencia de `npm run quality:merge` (o `quality:gate` + `test:e2e:smoke`).
 - Integracion obligatoria local y CI: usar los mismos flags de compliance para evitar desalineaciones.
 - Regla de seguridad cliente: `lint:client-secrets` falla si detecta secretos `VITE_*` o headers sensibles en frontend.
+- Regla de cobertura: `lint:test-coverage` falla si la cobertura global cae por debajo de umbrales definidos en `scripts/test-coverage-thresholds.json`.
 
 ## Archivos asociados
 - `AGENTS.md`: contrato operativo.
@@ -111,8 +131,10 @@ Plantilla obligatoria para `C`:
 - `scripts/check-todo-sync.mjs`: enforcement local/CI.
 - `scripts/check-origin-verify-leaks.mjs`: guardrail de no regresion para secreto/header legado en frontend.
 - `scripts/check-client-secrets.mjs`: enforcement local/CI para evitar exposicion de secretos y headers sensibles en cliente.
+- `scripts/check-test-coverage.mjs`: valida umbrales minimos de cobertura global.
+- `scripts/test-coverage-thresholds.json`: umbrales de cobertura bloqueantes del repositorio.
 - `scripts/archive-todo-completed.mjs`: automatiza archivo de tareas `[x]` desde `docs/todo.md` a `docs/todo.done.YYYY-MM.md`.
 - `scripts/compact-todo-noise.mjs`: compacta ruido operativo repetitivo desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md`.
 - `scripts/run-quality-merge.mjs`: ejecuta `quality:gate` y `test:e2e:smoke` sin fail-fast para detectar desalineaciones locales antes de push.
-- `package.json`: integra `lint:security` + `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.
+- `package.json`: integra `lint:security` + `lint:test-coverage` + `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.
 - `./.github/workflows/ci-cd-ftps.yml`: gate remoto.
