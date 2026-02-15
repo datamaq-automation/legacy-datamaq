@@ -57,6 +57,11 @@ Evidencia remota (GitHub API publica) verificada el 2026-02-15:
   - `GET /repos/AgustinMadygraf/profebustos-www/actions/runs/{run_id}/jobs`
   - `GET /repos/AgustinMadygraf/profebustos-www/commits/main/check-runs`
 
+Hallazgo de performance CI/CD (2026-02-15):
+- En el run `22026104230`, el paso `Deploy dist via FTPS` quedo en ejecucion ~41 minutos y termino `cancelled` por `concurrency` al iniciar un run nuevo.
+- Duracion observada del paso (job `Deploy Production (FTPS)`): `2026-02-14T23:32:04Z` -> `2026-02-15T00:13:06Z`.
+- Interpretacion: transferencia FTPS sin timeout estricto en el paso de deploy.
+
 ## 4) Decision tomada
 Decision adoptada: `GitHub Actions + FTPS`.
 
@@ -104,6 +109,17 @@ Decision de bajo nivel (B): checks a exigir en branch protection
   - Ventaja: mayor cobertura si ese flujo aun fuera relevante.
   - Desventaja: acopla merges a un flujo no vigente para deploy productivo actual.
 - Motivo de eleccion: evitar dependencias heredadas y sostener como obligatorios los checks del flujo FTPS oficial.
+
+Decision de bajo nivel (B): limitar tiempo maximo de deploy FTPS
+- Opcion 1: agregar timeout de job + timeout de comando `lftp` (elegida).
+  - Ventaja: evita runs colgados de larga duracion y acelera feedback ante fallas de red/FTPS.
+  - Desventaja: si el deploy legitimo supera el umbral, podria cortar prematuramente.
+- Opcion 2: mantener ejecucion sin timeout.
+  - Ventaja: cero riesgo de corte por tiempo.
+  - Desventaja: riesgo de esperas largas (>35m) y cancelaciones por `concurrency`.
+- Implementacion aplicada:
+  - `timeout-minutes: 20` en job `Deploy Production (FTPS)`.
+  - `timeout 900 lftp ...` + `net:timeout`/`net:max-retries` para fallar rapido.
 
 Parametros operativos confirmados:
 - `FTPS_REMOTE_DIR=/public_html`

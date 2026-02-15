@@ -100,6 +100,7 @@ No incluye:
   - Evidencia: script `npm run ci:remote:status` para relevar estado remoto de runs/jobs FTPS por GitHub API publica.
   - Evidencia: script `npm run ci:branch-protection:check` agregado para validar required checks con token (`GITHUB_TOKEN`/`GH_TOKEN`).
   - Evidencia: runs remotos por API publica (`22026083056`, `22026104230`) con `Quality Gate` y `Smoke E2E` en verde; check-runs de `main` confirmados por API (`Quality Gate`, `Smoke E2E`, `Deploy Production (FTPS)` y `Cloudflare Pages` legacy); detalle en `docs/dv-03-ci-cd-inventory.md`.
+  - Evidencia: hard timeout de deploy FTPS aplicado en workflow (`timeout-minutes: 20` y `timeout 900 lftp`) para evitar ejecuciones colgadas >35m.
   - Owner: Shared
   - Dependencias: DV-03 (estado real de CI/CD)
   - Riesgo: Alto
@@ -269,6 +270,7 @@ Tarea de verificacion:
   - Evidencia: `npm run ci:remote:status` en verde (2026-02-15) con detalle de runs/jobs remotos.
   - Evidencia: `npm run ci:branch-protection:check` falla sin token (2026-02-15), confirmando bloqueo de autenticacion para validar enforcement.
   - Evidencia: GitHub API publica confirma runs `22026083056` (`workflow_dispatch`) y `22026104230` (`push`) con jobs `Quality Gate` y `Smoke E2E` exitosos, y check-runs reales de `main`.
+  - Evidencia: run `22026104230` muestra deploy FTPS colgado ~41m y cancelado por `concurrency`; mitigado con timeout en `./.github/workflows/ci-cd-ftps.yml`.
   - Owner: Shared
   - Dependencias: Ninguna
   - Riesgo: Medio
@@ -305,6 +307,7 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: DV-03 indexacion de checks sin PR (opcion elegida: `workflow_dispatch` en `main` para evitar commits tecnicos).
 - Clasificacion B aplicada en: DV-03 seleccion de required checks (opcion elegida: exigir `Quality Gate` + `Smoke E2E` del flujo FTPS vigente y excluir `Cloudflare Pages` legacy).
 - Clasificacion B aplicada en: DV-03 automatizacion de verificacion de branch protection (opcion elegida: script `ci:branch-protection:check` con token en lugar de validacion manual permanente).
+- Clasificacion B aplicada en: DV-03 timeout de deploy FTPS (opcion elegida: timeout de job + timeout de comando para evitar cuelgues prolongados).
 - Clasificacion B aplicada en: DV-02 endpoint backend estimativo (opcion elegida: documentar base `https://chatwoot.datamaq.com.ar/` + path tentativo `/contact` manteniendo `VITE_CONTACT_API_URL` parametrizada).
 - Clasificacion B aplicada en: P0 puerta de calidad (opcion elegida: mitigacion local `npm run quality:merge` mientras el enforcement externo de branch protection sigue pendiente).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (decision de alcance: sin backend minimo en este repo; implementacion directa en backend de produccion).
