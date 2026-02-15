@@ -42,10 +42,17 @@ No incluye:
   - Evidencia: referencia operativa estimativa de endpoint backend `https://chatwoot.datamaq.com.ar/contact` (puede variar).
   - Evidencia: script de smoke backend `scripts/smoke-contact-backend.mjs` + script npm `smoke:contact:backend`.
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15) falla con `fetch failed` en estado previo a despliegue backend.
+  - Avance: agregado guardrail anti-regresion `lint:origin-verify` para bloquear reintroduccion de `VITE_ORIGIN_VERIFY_SECRET` y `X-Origin-Verify` en frontend.
+  - Evidencia: `scripts/check-origin-verify-leaks.mjs`, `package.json` (`lint:origin-verify` dentro de `quality:gate`).
+  - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15).
+  - Evidencia: `npm run quality:gate` en verde (2026-02-15) con `lint:origin-verify` ejecutado en modo fail-fast.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15, reintento) falla con `fetch failed`.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Dependencias: DV-02 (contrato backend).
   - Riesgo: Alto.
   - Decision tomada (C): no se implementara backend minimo en este repositorio; el cierre se ejecutara sobre backend de produccion cuando corresponda.
+  - Informacion faltante: endpoint backend productivo definitivo con respuesta `2xx` y evidencia de creacion de conversacion en Chatwoot.
+  - Mitigacion interna ejecutada: enforcement local/CI para impedir que el frontend vuelva a usar secreto o header de verificacion.
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
   - Siguiente paso: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (o URL final) y luego validar formulario real -> conversacion en Chatwoot.
 
@@ -245,6 +252,7 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: DV-03 timeout de deploy FTPS (timeout de job + timeout de comando `lftp`).
 - Clasificacion B aplicada en: DV-02 endpoint backend estimativo (`https://chatwoot.datamaq.com.ar/contact`) manteniendo `VITE_CONTACT_API_URL` parametrizada.
 - Clasificacion B aplicada en: P0 puerta de calidad (mitigacion local `npm run quality:merge` mientras enforcement externo sigue pendiente).
+- Clasificacion C aplicada en: P0 secreto/frontend-backend (reintento de smoke backend + guardrail `lint:origin-verify` como mitigacion interna).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (sin backend minimo en este repo; implementacion directa en backend de produccion).
 - Clasificacion C mantenida en: P0 seguridad/frontend-backend y DV-03 por depender de entornos externos.
 
