@@ -60,13 +60,15 @@ No incluye:
   - Evidencia: `README.md` actualizado con flujo CI/CD vigente (`Quality Gate` + `Smoke E2E`) y despliegue sobre `main`/`workflow_dispatch`.
   - Evidencia: `docs/dv-02-chatwoot-contract.md` actualizado con checklist operativo de cierre y validacion E2E.
   - Evidencia: referencia operativa estimativa de endpoint backend `https://chatwoot.datamaq.com.ar/contact` (puede variar) en `docs/dv-02-chatwoot-contract.md` y `.env.example`.
+  - Evidencia: script de smoke backend `scripts/smoke-contact-backend.mjs` + script npm `smoke:contact:backend` para validar `CONTACT_API_URL`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-14) falla con `fetch failed` en estado previo a despliegue backend.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-02 (contrato backend)
   - Riesgo: Alto
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
-  - Siguiente paso: ejecutar checklist de `docs/dv-02-chatwoot-contract.md` (seccion 6.1) sobre backend VPS y adjuntar evidencia de endpoint + conversacion en Chatwoot.
-  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot); hay dominio estimativo (`https://chatwoot.datamaq.com.ar/`) pero falta confirmar URL final y evidencia E2E real.
+  - Siguiente paso: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (o URL final) y luego validar formulario real -> conversacion en Chatwoot.
+  - Nota C (2026-02-14): el cierre restante esta fuera de este repo (backend Docker/VPS y operacion Chatwoot); hay dominio estimativo (`https://chatwoot.datamaq.com.ar/`) pero el smoke actual falla (`fetch failed`) y falta confirmar URL final + evidencia E2E real.
 
 - [x] (P0) Corregir accesibilidad en landing de Escobar
   - Contexto: `npm run test:a11y` falla por secciones sin etiqueta accesible en `src/ui/pages/MedicionConsumoEscobar.vue`.

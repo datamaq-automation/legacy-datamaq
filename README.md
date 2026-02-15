@@ -37,6 +37,7 @@ npm run typecheck   # valida TypeScript estricto
 npm run test        # ejecuta tests unitarios
 npm run test:e2e    # ejecuta suite e2e con Playwright
 npm run test:e2e:smoke # ejecuta smoke e2e (home/contacto/gracias)
+npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact # smoke backend (estimativo, puede variar)
 npm run test:a11y   # auditoria heuristica de accesibilidad
 npm run check:css   # valida presupuesto de CSS
 npm run lint:colors # valida regla anti-HEX fuera de tokens
@@ -90,6 +91,12 @@ Configuracion recomendada en GitHub:
 3. Confirmar en verde `Quality Gate` y `Smoke E2E`.
 4. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
 5. Verificar en QA que el formulario crea/actualiza conversacion en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
+
+## Smoke de backend de contacto
+- Script: `npm run smoke:contact:backend -- <CONTACT_API_URL>`.
+- Referencia estimativa actual: `https://chatwoot.datamaq.com.ar/contact`.
+- La URL puede variar hasta cerrar infraestructura backend en VPS.
+- El script falla (exit code `1`) cuando el backend no responde `2xx`.
 
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.

@@ -111,7 +111,7 @@ Headers requeridos:
    - Mantenerlo parametrizado porque puede variar.
 5. Validar smoke tecnico del endpoint backend (desde terminal):
 ```bash
-curl -i -X POST "https://<backend-domain>/contact" \
+curl -i -X POST "https://chatwoot.datamaq.com.ar/contact" \
   -H "Content-Type: application/json" \
   -d '{
     "firstName":"Test",
@@ -124,8 +124,17 @@ curl -i -X POST "https://<backend-domain>/contact" \
     "attribution":{}
   }'
 ```
+Tambien puede ejecutarse desde este repo con:
+```bash
+npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact
+```
+Nota: la URL actual es estimativa y puede variar.
 6. Validar E2E funcional: envio desde formulario productivo y confirmacion de conversacion en Chatwoot.
 7. Registrar evidencia (fecha, endpoint validado y resultado) para cerrar P0 en `docs/todo.md`.
+
+Estado de ejecucion observado (2026-02-14):
+- `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` -> `Smoke FAIL: fetch failed`.
+- Interpretacion: backend no disponible aun en esa URL estimativa o infraestructura aun no finalizada.
 
 ## 6.2) Bloqueos de alto nivel vigentes (C)
 - Este repositorio no contiene el codigo backend Docker, por lo que no puede completarse aqui la implementacion del adaptador Chatwoot.
