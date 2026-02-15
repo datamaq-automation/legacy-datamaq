@@ -47,14 +47,19 @@ No incluye:
   - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15).
   - Evidencia: `npm run quality:gate` en verde (2026-02-15) con `lint:origin-verify` ejecutado en modo fail-fast.
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15, reintento) falla con `fetch failed`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15, turno de ejecucion actual) falla con `fetch failed`.
+  - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15, turno de ejecucion actual).
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Dependencias: DV-02 (contrato backend).
   - Riesgo: Alto.
   - Decision tomada (C): no se implementara backend minimo en este repositorio; el cierre se ejecutara sobre backend de produccion cuando corresponda.
+  - Tipo C: C2.
   - Informacion faltante: endpoint backend productivo definitivo con respuesta `2xx` y evidencia de creacion de conversacion en Chatwoot.
   - Mitigacion interna ejecutada: enforcement local/CI para impedir que el frontend vuelva a usar secreto o header de verificacion.
+  - Mitigacion interna ejecutada: revalidacion en turno actual de `smoke:contact:backend` + `lint:origin-verify` para confirmar bloqueo externo sin regresion frontend.
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
   - Siguiente paso: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (o URL final) y luego validar formulario real -> conversacion en Chatwoot.
+  - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` al inicio del turno y registrar resultado hasta obtener `2xx`.
 
 - [>] (P0) Definir puerta de calidad obligatoria para merge
   - Contexto: el workflow CI/CD ya esta versionado en repo, pero los checks criticos todavia no estan garantizados como bloqueantes hasta configurar branch protection.
@@ -66,6 +71,8 @@ No incluye:
   - Evidencia: `npm run quality:merge` en verde (2026-02-15).
   - Evidencia: `npm run ci:remote:status` en verde (2026-02-15) con detalle de runs/jobs remotos.
   - Evidencia: `npm run ci:branch-protection:check` falla sin token (2026-02-15), confirmando bloqueo de autenticacion para validar enforcement.
+  - Evidencia: `npm run ci:branch-protection:check` (2026-02-15, turno de ejecucion actual) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
+  - Evidencia: `npm run ci:remote:status` (2026-02-15, turno de ejecucion actual) reporta run `22026695643` (`push`) en `success` con jobs `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
   - Evidencia: timeout de deploy FTPS aplicado en workflow (`timeout-minutes: 20` y `timeout 900 lftp`) para evitar ejecuciones colgadas >35m.
   - Avance: endurecida gobernanza del agente con `AGENTS.md` y compliance automatizado para trazabilidad `src/tests -> docs/todo.md`.
   - Evidencia: `scripts/check-todo-sync.mjs`, `package.json` (`lint:todo-sync` dentro de `quality:gate`), `./.github/workflows/ci-cd-ftps.yml` (`fetch-depth: 0` en `quality-gate`).
@@ -80,11 +87,23 @@ No incluye:
   - Avance: `AGENTS.md` actualizado con reglas explicitas de ejecucion continua por prioridad, pregunta unica en `C`, y criterio de corte de turno.
   - Evidencia: `AGENTS.md` (reglas 8-11 y paso 7 del protocolo de arranque).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15) tras actualizar `AGENTS.md` y `docs/todo.md` en el mismo turno.
+  - Avance: refinado el contrato operativo con subtipos `C1/C2` y criterio de cierre basado en `Siguiente accion interna ejecutable ahora` para tareas `P0` abiertas.
+  - Evidencia: `AGENTS.md` (reglas 3, 9-16; plantilla `C` con `Tipo C` y `Pregunta cerrada pendiente` para `C1`).
+  - Evidencia: `scripts/check-todo-sync.mjs` agrega `--require-open-p0` (valida `P0` abierta con accion interna, `Tipo C`, y pregunta para `C1`).
+  - Evidencia: `scripts/check-todo-sync.mjs` corrige patrones regex de trazabilidad (`Evidencia/Avance/Decision/Siguiente accion`) para evitar falsos negativos por delimitadores de palabra luego de `:`.
+  - Evidencia: `package.json` activa `lint:todo-sync` con `--require-open-p0`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15, turno de mejora de gobernanza Codex).
+  - Evidencia: `npm run quality:gate` en verde (2026-02-15, turno de mejora de gobernanza Codex) con `lint:todo-sync --require-open-p0` ejecutado primero.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
+  - Decision tomada (C): se mantiene bloqueo externo hasta disponer de token GitHub con permisos para leer/aplicar branch protection en `main`.
+  - Tipo C: C2.
+  - Informacion faltante: `GITHUB_TOKEN` o `GH_TOKEN` con alcance suficiente para consultar y, fuera del repo, configurar required checks.
+  - Mitigacion interna ejecutada: verificacion remota publica con `ci:remote:status` y reejecucion del check local de branch protection para confirmar estado.
   - Bloqueador residual: falta activar required checks y branch protection en `main`.
   - Siguiente paso: configurar branch protection y exigir `CI/CD FTPS / Todo Sync` + `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota C (2026-02-15): bloqueo de configuracion en GitHub (entorno externo al repo).
+  - Siguiente accion interna ejecutable ahora: ejecutar `npm run ci:remote:status` en cada turno y actualizar evidencia de runs mientras persiste el bloqueo de token/permiso.
 
 - [>] (P0) UX-01 Consolidar header/nav y jerarquia “above the fold” (desktop + mobile)
   - Contexto: evidencia visual actual muestra header/nav no consolidado y mucho espacio “muerto”; en mobile el hero prioriza ilustracion y desplaza el valor/CTA abajo.
@@ -103,6 +122,7 @@ No incluye:
   - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile hero keeps headline, support copy and primary CTA above fold`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-15).
   - Bloqueador residual: falta adjuntar comparativa visual (antes/despues) en PR/issue.
+  - Siguiente accion interna ejecutable ahora: crear evidencia local de comparativa en `docs/evidence/ux-01-before-after.md` con referencias de capturas desktop/mobile.
 
 - [>] (P0) UX-02 Accesibilidad interactiva critica (focus, teclado, menu, CTAs)
   - Contexto: ya existen guardrails a11y; falta asegurar experiencia real: foco visible, navegacion por teclado y roles/aria correctos en header/menu/botones.
@@ -121,6 +141,7 @@ No incluye:
   - Evidencia: `tests/e2e/smoke.spec.ts` agrega test `mobile menu closes with Escape and restores focus`.
   - Evidencia: `npm run test:a11y` y `npm run quality:merge` en verde (2026-02-15).
   - Bloqueador residual: falta checklist manual de teclado/contraste documentado en PR.
+  - Siguiente accion interna ejecutable ahora: crear checklist manual en `docs/evidence/ux-02-keyboard-contrast-checklist.md` y registrar resultado de validacion.
 
 ### P1
 - [>] (P1) UX-03 Normalizar tipografia, espaciado y componentes base (design tokens minimo)
@@ -224,6 +245,7 @@ Tarea de verificacion:
   - Decision tomada (B): exigir solo checks del flujo FTPS vigente (`Quality Gate` + `Smoke E2E`) y no checks legacy (`Cloudflare Pages`) para evitar acoplamiento a pipeline no vigente.
   - Siguiente paso: ejecutar `workflow_dispatch` en `main`, luego aplicar branch protection y exigir `CI/CD FTPS / Quality Gate` + `CI/CD FTPS / Smoke E2E`.
   - Nota C (2026-02-15): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
+  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:remote:status` y actualizar `docs/dv-03-ci-cd-inventory.md` con el ultimo run disponible.
 
 ### DV-UX-01: Objetivo de conversion y KPI minimo
 Duda:
@@ -256,9 +278,12 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: DV-03 timeout de deploy FTPS (timeout de job + timeout de comando `lftp`).
 - Clasificacion B aplicada en: DV-02 endpoint backend estimativo (`https://chatwoot.datamaq.com.ar/contact`) manteniendo `VITE_CONTACT_API_URL` parametrizada.
 - Clasificacion B aplicada en: P0 puerta de calidad (mitigacion local `npm run quality:merge` mientras enforcement externo sigue pendiente).
+- Clasificacion B aplicada en: P0 puerta de calidad (refactor de gobernanza `C1/C2` + enforcement automatizado de `P0` abierta en `lint:todo-sync`).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (reintento de smoke backend + guardrail `lint:origin-verify` como mitigacion interna).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (sin backend minimo en este repo; implementacion directa en backend de produccion).
+- Clasificacion C aplicada en: P0 secreto/frontend-backend (revalidacion en turno actual de `smoke:contact:backend` con resultado `fetch failed` + `lint:origin-verify` en verde).
 - Clasificacion C mantenida en: P0 seguridad/frontend-backend y DV-03 por depender de entornos externos.
+- Clasificacion C aplicada en: P0 puerta de calidad/branch protection (reejecucion de `ci:branch-protection:check` sin token + mitigacion con `ci:remote:status` run `22026695643` exitoso).
 
 ## 7) Proximos pasos
 - Ejecutar P0 de seguridad en backend productivo (adaptador Chatwoot + evidencia E2E real).

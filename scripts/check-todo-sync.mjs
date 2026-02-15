@@ -1,19 +1,24 @@
 import { execFileSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 
 const TODO_PATH = 'docs/todo.md'
 const TRACKED_SCOPES = ['src/', 'tests/']
 const DIFF_FILTER = 'ACDMR'
 const REQUIRE_EVIDENCE =
   process.argv.includes('--require-evidence') || process.env.TODO_SYNC_REQUIRE_EVIDENCE === '1'
+const REQUIRE_OPEN_P0 =
+  process.argv.includes('--require-open-p0') || process.env.TODO_SYNC_REQUIRE_OPEN_P0 === '1'
 const envRange = process.env.TODO_COMPLIANCE_DIFF?.trim()
 const EVIDENCE_PATTERNS = [
-  /\bEvidencia:\b/i,
-  /\bAvance:\b/i,
-  /\bDecision tomada \([ABC]\):\b/i,
-  /\bBloqueador residual:\b/i,
-  /\bSiguiente paso:\b/i,
-  /\bClasificacion [ABC] aplicada en:\b/i
+  /\bEvidencia:/i,
+  /\bAvance:/i,
+  /\bDecision tomada \([ABC]\):/i,
+  /\bBloqueador residual:/i,
+  /\bSiguiente paso:/i,
+  /\bClasificacion [ABC] aplicada en:/i
 ]
+const OPEN_P0_TASK_PATTERN = /^- \[(?: |>)\] \(P0\) (.+)$/
+const TASK_HEADER_PATTERN = /^- \[(?: |>)\] \(P[0-2]\) /
 
 function runGit(args) {
   try {
@@ -117,7 +122,102 @@ function containsEvidenceLine(lines) {
   return lines.some((line) => EVIDENCE_PATTERNS.some((pattern) => pattern.test(line)))
 }
 
+function readTodoContent() {
+  try {
+    return readFileSync(TODO_PATH, 'utf8')
+  } catch (error) {
+    const message = error?.message || 'read failed'
+    throw new Error(`[todo-sync] ERROR: no se pudo leer ${TODO_PATH}: ${message}`)
+  }
+}
+
+function extractOpenP0Tasks(todoContent) {
+  const lines = todoContent.split(/\r?\n/)
+  const tasks = []
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index]
+    const match = line.match(OPEN_P0_TASK_PATTERN)
+    if (!match) {
+      continue
+    }
+
+    const block = [line]
+    let cursor = index + 1
+    while (cursor < lines.length && !TASK_HEADER_PATTERN.test(lines[cursor])) {
+      block.push(lines[cursor])
+      cursor += 1
+    }
+
+    tasks.push({
+      title: match[1].trim(),
+      line: index + 1,
+      block: block.join('\n')
+    })
+
+    index = cursor - 1
+  }
+
+  return tasks
+}
+
+function validateOpenP0Tasks(todoContent) {
+  const tasks = extractOpenP0Tasks(todoContent)
+  const issues = []
+
+  for (const task of tasks) {
+    if (!/\bSiguiente accion interna ejecutable ahora:/i.test(task.block)) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" no declara "Siguiente accion interna ejecutable ahora: ...".`
+      )
+    }
+
+    const hasDecisionC = /\bDecision tomada \(C\):/i.test(task.block)
+    const typeMatch = task.block.match(/\bTipo C:\s*(C1|C2)\b/i)
+
+    if (hasDecisionC && !typeMatch) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" incluye Decision tomada (C) sin "Tipo C: C1|C2".`
+      )
+    }
+
+    if (
+      typeMatch &&
+      typeMatch[1].toUpperCase() === 'C1' &&
+      !/\bPregunta cerrada pendiente \(solo C1\):/i.test(task.block)
+    ) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" marca "Tipo C: C1" sin "Pregunta cerrada pendiente (solo C1): ...".`
+      )
+    }
+  }
+
+  return issues
+}
+
+function ensureOpenP0Compliance() {
+  if (!REQUIRE_OPEN_P0) {
+    return
+  }
+
+  const todoContent = readTodoContent()
+  const issues = validateOpenP0Tasks(todoContent)
+
+  if (issues.length === 0) {
+    console.log('[todo-sync] OK: tareas P0 abiertas con trazabilidad operativa minima.')
+    return
+  }
+
+  console.error('[todo-sync] ERROR: incumplimiento de trazabilidad en tareas P0 abiertas.')
+  for (const issue of issues) {
+    console.error(`- ${issue}`)
+  }
+  process.exit(1)
+}
+
 function main() {
+  ensureOpenP0Compliance()
+
   const ciRange = resolveCiRange()
   const files = ciRange ? listChangedFilesByRange(ciRange) : listLocalChangedFiles()
   const hasCodeChanges = hasTrackedScopeChanges(files)
