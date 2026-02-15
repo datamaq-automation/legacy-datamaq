@@ -139,6 +139,12 @@ No incluye:
   - Evidencia: `npm run lint:security` en verde (2026-02-15 19:29 -03:00) tras actualizar `AGENTS.md` y trazabilidad en `docs/todo.md`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-15 19:29 -03:00) con `quality:gate` + `test:e2e:smoke` en la misma corrida.
   - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 19:29 -03:00) con regla `--require-merge-evidence` activa.
+  - Decision tomada (B-Deploy): para reforzar `AGENTS.md` se evaluo agregar solo notas de deploy vs incorporar un circuito completo de operacion; se elige circuito completo con reglas explicitas (`DB`/`DC`, `C2` externo y trazabilidad de verificacion).
+  - Avance: incorporada en `AGENTS.md` la `Dimension de deploy/operacion` con guardrails operativos, criterios de bloqueo externo y archivos asociados de inventario/auditoria.
+  - Evidencia: `AGENTS.md` (regla 21 de continuidad, circuitos `B-Deploy`/`DC`, seccion `Dimension de deploy/operacion`, regla de compliance para bloqueo externo de deploy, y archivos asociados `smoke-contact-backend` + DV-03/DV-04).
+  - Evidencia: `npm run lint:security` en verde (2026-02-15 19:44 -03:00) tras reforzar reglas de `AGENTS.md` para deploy/operacion.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 19:44 -03:00) con `P0` abierto y trazabilidad operativa minima.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-15 19:44 -03:00) con validacion merge-ready activa.
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.

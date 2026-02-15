@@ -27,6 +27,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 18. Si se modifican `src/`, `tests/`, `scripts/`, `AGENTS.md` o `package.json`, ejecutar `npm run lint:security` y registrar evidencia en `docs/todo.md`.
 19. Si se modifican `src/` o `tests/`, registrar evidencia explicita de `npm run lint:test-coverage` (umbral de cobertura).
 20. La politica permanente de automatizacion de tests se define en `AGENTS.md`; la ejecucion priorizada y evidencia del turno se define en `docs/todo.md`.
+21. Si existe bloqueo `C2` de deploy/operacion, `docs/todo.md` debe mantener el ultimo intento de validacion tecnica y una `Siguiente accion interna ejecutable ahora` condicionada al dato externo faltante.
 
 ## Protocolo operativo por turno
 1. Leer `docs/todo.md`.
@@ -58,6 +59,8 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 - Registrar `Decision tomada (B-Seguridad): ...` cuando aplique.
 - Circuito TB (duda de testing de bajo nivel): comparar opcion de prueba (unitaria/integracion/e2e/contrato), elegir la de mejor signal-to-noise y menor fragilidad.
 - Registrar `Decision tomada (B-Testing): ...` cuando aplique.
+- Circuito DB (duda de deploy/operacion de bajo nivel): comparar opciones por facilidad de rollback y menor riesgo de corte en produccion.
+- Registrar `Decision tomada (B-Deploy): ...` cuando aplique.
 
 ### C) Duda de alto nivel
 - Ejecutar mitigaciones internas primero.
@@ -66,6 +69,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 - Mantener la tarea en `[ ]` o `[>]`.
 - Circuito SC (duda de ciberseguridad de alto nivel): usar `C1/C2` para modelo de confianza, politicas legales, retencion de datos o credenciales maestras.
 - Circuito TC (duda de testing de alto nivel): usar `C1/C2` para criterios de aceptacion de negocio, alcance de regresion requerido por producto o entornos externos no disponibles.
+- Circuito DC (duda de deploy/operacion de alto nivel): usar `C1/C2` para host canonico, estrategia CDN/WAF, politicas TLS/headers o decisiones de proveedor externo.
 
 Plantilla obligatoria para `C`:
 - `Decision tomada (C): ...`
@@ -112,6 +116,18 @@ Plantilla obligatoria para `C`:
 - Si la cobertura baja de umbral, no se cierra turno hasta recuperar baseline o clasificar `C` con mitigaciones internas.
 - Casos criticos (contacto, consentimiento, navegacion principal) deben mantener al menos 1 prueba automatizada estable por flujo.
 
+## Dimension de deploy/operacion (obligatoria)
+- Principio: cada release debe ser verificable, trazable y con riesgo de rollback controlado.
+- Si se tocan `./.github/workflows/`, scripts de despliegue o configuracion publica (`src/infrastructure/config/publicConfig.ts`), registrar en `docs/todo.md` evidencia de validacion tecnica local y el impacto esperado en produccion.
+- Guardrails operativos del repo:
+  - Mantener `npm run quality:merge` en verde cuando cambian `src/` o `tests/`.
+  - Cerrar cambios con `npm run lint:todo-sync:merge-ready` cuando cambian `src/` o `tests/`.
+  - Ejecutar `npm run smoke:contact:backend -- <url>` cuando se disponga de `inbox_identifier` productivo para validar flujo de contacto extremo a extremo.
+- Bloqueos externos de deploy/operacion (clasificar `C2`):
+  - DNS/CDN/WAF, certificados TLS, headers server-side (`HSTS`, `CSP`, etc.), host canonico y redirecciones.
+  - Configuracion productiva de Chatwoot (`inbox_identifier`, `secure mode`, `identifier_hash`).
+- Si falta una definicion externa de deploy/operacion, no cerrar como resuelto: mantener `Tipo C: C2`, `Informacion faltante`, `Tareas externas` y `Siguiente accion interna ejecutable ahora`.
+
 ## Compliance automatizado
 - Comando obligatorio: `npm run lint:security`.
 - Comando obligatorio: `npm run lint:test-coverage`.
@@ -127,6 +143,7 @@ Plantilla obligatoria para `C`:
 - Integracion obligatoria local y CI: usar los mismos flags de compliance para evitar desalineaciones.
 - Regla de seguridad cliente: `lint:client-secrets` falla si detecta secretos `VITE_*` o headers sensibles en frontend.
 - Regla de cobertura: `lint:test-coverage` falla si la cobertura global cae por debajo de umbrales definidos en `scripts/test-coverage-thresholds.json`.
+- Regla de bloqueo externo de deploy: si existe `C2` de deploy/operacion en `docs/todo.md`, debe quedar explicito el dato externo faltante y el proximo chequeo tecnico a ejecutar en cuanto se disponga de ese dato.
 
 ## Archivos asociados
 - `AGENTS.md`: contrato operativo.
@@ -137,8 +154,11 @@ Plantilla obligatoria para `C`:
 - `scripts/check-client-secrets.mjs`: enforcement local/CI para evitar exposicion de secretos y headers sensibles en cliente.
 - `scripts/check-test-coverage.mjs`: valida umbrales minimos de cobertura global.
 - `scripts/test-coverage-thresholds.json`: umbrales de cobertura bloqueantes del repositorio.
+- `scripts/smoke-contact-backend.mjs`: smoke tecnico de endpoint de contacto para validacion de despliegue.
 - `scripts/archive-todo-completed.mjs`: automatiza archivo de tareas `[x]` desde `docs/todo.md` a `docs/todo.done.YYYY-MM.md`.
 - `scripts/compact-todo-noise.mjs`: compacta ruido operativo repetitivo desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md`.
 - `scripts/run-quality-merge.mjs`: ejecuta `quality:gate` y `test:e2e:smoke` sin fail-fast para detectar desalineaciones locales antes de push.
+- `docs/dv-03-ci-cd-inventory.md`: inventario de pipeline y decisiones operativas de borde (incluyendo Cloudflare).
+- `docs/dv-04-security-headers-audit.md`: auditoria de headers y hardening de capa edge fuera del repo.
 - `package.json`: integra `lint:security` + `lint:test-coverage` + `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.
 - `./.github/workflows/ci-cd-ftps.yml`: gate remoto.
