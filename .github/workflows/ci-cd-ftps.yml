@@ -33,7 +33,7 @@ jobs:
           node-version: 20
 
       - name: Validate todo sync compliance
-        run: node scripts/check-todo-sync.mjs --require-evidence
+        run: node scripts/check-todo-sync.mjs --require-evidence --require-open-p0
 
   quality-gate:
     name: Quality Gate

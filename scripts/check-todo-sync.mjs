@@ -164,6 +164,7 @@ function extractOpenP0Tasks(todoContent) {
 function validateOpenP0Tasks(todoContent) {
   const tasks = extractOpenP0Tasks(todoContent)
   const issues = []
+  const c1PendingTasks = []
 
   for (const task of tasks) {
     if (!/\bSiguiente accion interna ejecutable ahora:/i.test(task.block)) {
@@ -174,6 +175,13 @@ function validateOpenP0Tasks(todoContent) {
 
     const hasDecisionC = /\bDecision tomada \(C\):/i.test(task.block)
     const typeMatch = task.block.match(/\bTipo C:\s*(C1|C2)\b/i)
+    const hasQuestionC1 = /\bPregunta cerrada pendiente \(solo C1\):/i.test(task.block)
+
+    if (typeMatch && !hasDecisionC) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" declara "Tipo C" sin "Decision tomada (C): ...".`
+      )
+    }
 
     if (hasDecisionC && !typeMatch) {
       issues.push(
@@ -181,15 +189,49 @@ function validateOpenP0Tasks(todoContent) {
       )
     }
 
+    if (hasDecisionC && !/\bBloqueador residual:/i.test(task.block)) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" incluye Decision tomada (C) sin "Bloqueador residual: ...".`
+      )
+    }
+
+    if (hasDecisionC && !/\bInformacion faltante:/i.test(task.block)) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" incluye Decision tomada (C) sin "Informacion faltante: ...".`
+      )
+    }
+
+    if (hasDecisionC && !/\bMitigacion interna ejecutada:/i.test(task.block)) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" incluye Decision tomada (C) sin "Mitigacion interna ejecutada: ...".`
+      )
+    }
+
+    if (hasDecisionC && !/\bSiguiente paso:/i.test(task.block)) {
+      issues.push(
+        `${TODO_PATH}:${task.line} "${task.title}" incluye Decision tomada (C) sin "Siguiente paso: ...".`
+      )
+    }
+
     if (
       typeMatch &&
       typeMatch[1].toUpperCase() === 'C1' &&
-      !/\bPregunta cerrada pendiente \(solo C1\):/i.test(task.block)
+      !hasQuestionC1
     ) {
       issues.push(
         `${TODO_PATH}:${task.line} "${task.title}" marca "Tipo C: C1" sin "Pregunta cerrada pendiente (solo C1): ...".`
       )
     }
+
+    if (typeMatch && typeMatch[1].toUpperCase() === 'C1' && hasQuestionC1) {
+      c1PendingTasks.push(`${task.title} (linea ${task.line})`)
+    }
+  }
+
+  if (c1PendingTasks.length > 1) {
+    issues.push(
+      `Hay mas de una pregunta C1 pendiente en tareas P0 abiertas: ${c1PendingTasks.join('; ')}.`
+    )
   }
 
   return issues

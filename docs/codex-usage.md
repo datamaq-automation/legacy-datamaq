@@ -14,7 +14,7 @@ Usar este texto al comenzar cada sesion:
 ```text
 Aplica AGENTS.md para este repo. Usa docs/todo.md como unica fuente de verdad.
 Ejecuta la tarea abierta mas prioritaria (P0 > P1 > P2) con marco A/B/C.
-No pidas confirmaciones intermedias salvo duda C.
+Trabaja en bucle de forma ininterrumpida y no pidas confirmaciones intermedias salvo duda C1.
 Actualiza docs/todo.md en el mismo turno con avance, evidencia (archivos/comandos/fecha), bloqueadores y siguiente paso.
 ```
 
@@ -33,6 +33,7 @@ No propongas cambios fuera de alcance sin clasificacion A/B/C.
 3. Se ejecutaron validaciones acordes al cambio.
 4. Se actualizo `docs/todo.md` con evidencia concreta.
 5. Si hubo bloqueo externo, quedo documentado como C.
+6. Si hubo pregunta al usuario, quedo clasificada como C1 y fue exactamente una pregunta cerrada.
 
 ## Notas
 - `AGENTS.md` define reglas operativas; `README.md` solo referencia esta guia.

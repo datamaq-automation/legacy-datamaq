@@ -49,6 +49,14 @@ No incluye:
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15, reintento) falla con `fetch failed`.
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15, turno de ejecucion actual) falla con `fetch failed`.
   - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15, turno de ejecucion actual).
+  - Avance: reejecutado smoke backend en turno 2026-02-15 11:43 -03:00; el bloqueo externo persiste y se mantiene clasificacion `C2`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 11:43 -03:00) falla con `fetch failed`.
+  - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15 11:43 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 11:43 -03:00) con `--require-evidence --require-open-p0`.
+  - Avance: nuevo reintento de smoke backend en turno 2026-02-15 12:19 -03:00; persiste bloqueo externo y se mantiene `C2`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (2026-02-15 12:19 -03:00) falla con `fetch failed`.
+  - Evidencia: `npm run lint:origin-verify` en verde (2026-02-15 12:19 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:19 -03:00) tras actualizar trazabilidad de gobernanza + reintento smoke.
   - Evidencia: `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Dependencias: DV-02 (contrato backend).
   - Riesgo: Alto.
@@ -57,6 +65,8 @@ No incluye:
   - Informacion faltante: endpoint backend productivo definitivo con respuesta `2xx` y evidencia de creacion de conversacion en Chatwoot.
   - Mitigacion interna ejecutada: enforcement local/CI para impedir que el frontend vuelva a usar secreto o header de verificacion.
   - Mitigacion interna ejecutada: revalidacion en turno actual de `smoke:contact:backend` + `lint:origin-verify` para confirmar bloqueo externo sin regresion frontend.
+  - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 11:43 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para mantener monitoreo activo del bloqueo externo.
+  - Mitigacion interna ejecutada: nuevo reintento en turno 2026-02-15 12:19 -03:00 de `smoke:contact:backend` + `lint:origin-verify` para seguimiento continuo del bloqueo externo.
   - Bloqueador residual: falta implementar en backend Docker (VPS) el adaptador Chatwoot y validar E2E en produccion.
   - Siguiente paso: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` (o URL final) y luego validar formulario real -> conversacion en Chatwoot.
   - Siguiente accion interna ejecutable ahora: reejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/contact` al inicio del turno y registrar resultado hasta obtener `2xx`.
@@ -94,6 +104,20 @@ No incluye:
   - Evidencia: `package.json` activa `lint:todo-sync` con `--require-open-p0`.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15, turno de mejora de gobernanza Codex).
   - Evidencia: `npm run quality:gate` en verde (2026-02-15, turno de mejora de gobernanza Codex) con `lint:todo-sync --require-open-p0` ejecutado primero.
+  - Avance: relevamiento de gobernanza para endurecer ejecucion ininterrumpida (solo pausa por `C1`) y reducir redundancia normativa en `AGENTS.md`.
+  - Evidencia: auditoria cruzada de `AGENTS.md`, `scripts/check-todo-sync.mjs`, `package.json`, `./.github/workflows/ci-cd-ftps.yml` y `docs/codex-usage.md` (2026-02-15 11:48 -03:00).
+  - Evidencia: inconsistencia detectada: job CI `Todo Sync` ejecuta `node scripts/check-todo-sync.mjs --require-evidence` sin `--require-open-p0`, mientras `package.json` exige ambos flags en `lint:todo-sync`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 11:49 -03:00) tras registrar trazabilidad del relevamiento.
+  - Decision tomada (B): adoptar `AGENTS.md` compacto (nucleo operativo + anexos de enforcement) en lugar de seguir agregando reglas extensas; mejora legibilidad, reduce conflictos y facilita cumplimiento automatico.
+  - Avance: simplificado `AGENTS.md` con politica de continuidad sin redundancias, tipificacion explicita de bloqueos de alto nivel (`C1`) y externos (`C2`), y formatos permitidos para pregunta cerrada.
+  - Avance: alineado enforcement remoto/local de `todo-sync` y reforzada validacion automatica de plantilla `C` en tareas `P0` abiertas.
+  - Evidencia: `AGENTS.md` (politica de continuidad y marco A/B/C compactados, sin duplicados operativos).
+  - Evidencia: `docs/codex-usage.md` (prompt operativo actualizado: pausa solo por `C1` en ejecucion ininterrumpida).
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml` (`Todo Sync` ahora ejecuta `--require-evidence --require-open-p0`).
+  - Evidencia: `scripts/check-todo-sync.mjs` (valida campos obligatorios de `Decision tomada (C)` y detecta mas de una pregunta `C1` pendiente).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:17 -03:00) tras cambios de gobernanza.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 12:18 -03:00) tras actualizar `docs/todo.md` con la decision `B` del turno.
+  - Siguiente paso: mantener monitoreo de consistencia y, en paralelo, cerrar el bloqueo externo de branch protection en GitHub con token/permisos.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
   - Decision tomada (C): se mantiene bloqueo externo hasta disponer de token GitHub con permisos para leer/aplicar branch protection en `main`.
@@ -279,9 +303,13 @@ Tarea de verificacion:
 - Clasificacion B aplicada en: DV-02 endpoint backend estimativo (`https://chatwoot.datamaq.com.ar/contact`) manteniendo `VITE_CONTACT_API_URL` parametrizada.
 - Clasificacion B aplicada en: P0 puerta de calidad (mitigacion local `npm run quality:merge` mientras enforcement externo sigue pendiente).
 - Clasificacion B aplicada en: P0 puerta de calidad (refactor de gobernanza `C1/C2` + enforcement automatizado de `P0` abierta en `lint:todo-sync`).
+- Clasificacion B aplicada en: P0 puerta de calidad (relevamiento de redundancias en `AGENTS.md` y desalineaciones de enforcement entre CI y `lint:todo-sync` para plan de simplificacion).
+- Clasificacion B aplicada en: P0 puerta de calidad (decision de infraestructura: `AGENTS.md` compacto con reglas nucleares + enforcement reforzado en `check-todo-sync` y CI).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (reintento de smoke backend + guardrail `lint:origin-verify` como mitigacion interna).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (sin backend minimo en este repo; implementacion directa en backend de produccion).
 - Clasificacion C aplicada en: P0 secreto/frontend-backend (revalidacion en turno actual de `smoke:contact:backend` con resultado `fetch failed` + `lint:origin-verify` en verde).
+- Clasificacion C aplicada en: P0 secreto/frontend-backend (2026-02-15 11:43 -03:00: `smoke:contact:backend` con `fetch failed` + `lint:origin-verify` en verde).
+- Clasificacion C aplicada en: P0 secreto/frontend-backend (2026-02-15 12:19 -03:00: `smoke:contact:backend` con `fetch failed` + `lint:origin-verify` en verde).
 - Clasificacion C mantenida en: P0 seguridad/frontend-backend y DV-03 por depender de entornos externos.
 - Clasificacion C aplicada en: P0 puerta de calidad/branch protection (reejecucion de `ci:branch-protection:check` sin token + mitigacion con `ci:remote:status` run `22026695643` exitoso).
 
