@@ -90,6 +90,8 @@ No incluye:
   - Decision tomada (B): para el fallo `mkdir: Fatal error: max-retries exceeded` en deploy FTPS se evaluo mantener un unico bloque `lftp` vs separar preflight y mirror; se elige separar para aislar causa (conexion/permisos/ruta) con diagnostico explicito.
   - Avance: hardening del workflow FTPS aplicado en este turno: normalizacion de `FTPS_REMOTE_DIR`, validacion de formato de ruta, preflight (`mkdir/cd/pwd`) y mensaje de error dedicado antes del `mirror`.
   - Evidencia: `./.github/workflows/ci-cd-ftps.yml` (`Deploy dist via FTPS`), con `::notice` de destino y `::error` especifico para fallo de preflight.
+  - Evidencia: workflow remoto ejecutado en verde tras hardening FTPS (2026-02-15 18:11 -03:00), sin reproduccion del fallo `mkdir: Fatal error: max-retries exceeded`.
+  - Avance: mitigacion de deploy FTPS validada; el bloqueo activo remanente del P0 sigue concentrado en configuracion de Chatwoot (`inbox_identifier` y politica secure mode).
   - Dependencias: DV-02 (contrato de contacto Chatwoot).
   - Riesgo: Alto.
   - Decision tomada (C): se elimina dependencia de adaptador backend propio para este flujo; el bloqueo remanente queda en configuracion externa de inbox productivo y politica de secure mode.
