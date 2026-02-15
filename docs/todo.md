@@ -67,10 +67,18 @@ No incluye:
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:24 -03:00) con `--require-no-done-tasks`.
   - Evidencia: `node scripts/archive-todo-completed.mjs --check` en verde (2026-02-15 13:25 -03:00).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:25 -03:00) tras registrar trazabilidad de automatizacion.
+  - Avance: implementado enfoque hibrido para limpieza documental (archivo automatico de `[x]` + comando separado de compactacion de ruido operativo).
+  - Evidencia: `scripts/compact-todo-noise.mjs`, `package.json` (`todo:compact:noise`, `todo:compact:noise:dry-run`), `AGENTS.md` (regla de no mutacion en `quality:gate` + uso manual de compactacion).
+  - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:31 -03:00) detecta 5 lineas compactables en 1 tarea.
+  - Evidencia: `npm run todo:archive:dry-run` en verde (2026-02-15 13:31 -03:00) sin tareas cerradas pendientes.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:31 -03:00) tras integrar automatizacion hibrida.
+  - Evidencia: `npm run todo:compact:noise:dry-run` en verde (2026-02-15 13:32 -03:00) detecta 10 lineas compactables en 1 tarea tras actualizar trazabilidad del turno.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 13:32 -03:00) con reglas de limpieza/archivo activas.
   - Dependencias: DV-03 (estado real de CI/CD).
   - Riesgo: Alto.
   - Decision tomada (B): para reducir ruido operativo, se mueve a `docs/todo.done.2026-02.md` el historial de tareas completadas y seguimiento repetitivo, manteniendo `docs/todo.md` como tablero activo.
   - Decision tomada (B): se automatiza el archivo de tareas cerradas con `todo:archive` y se enforcea limpieza en `lint:todo-sync` para sostener `docs/todo.md` como tablero activo.
+  - Decision tomada (B): se adopta estrategia hibrida para ruido documental: `todo:archive` automatiza `[x]` y `todo:compact:noise` queda como comando manual separado; `quality:gate` permanece solo de validacion.
   - Decision tomada (C): se mantiene bloqueo externo hasta disponer de token GitHub con permisos para leer/aplicar branch protection en `main`.
   - Tipo C: C2.
   - Informacion faltante: `GITHUB_TOKEN` o `GH_TOKEN` con alcance suficiente para consultar y, fuera del repo, configurar required checks.
@@ -206,6 +214,7 @@ Tarea de verificacion:
 - Clasificacion A aplicada en: UX-01 y UX-02 (completadas y archivadas en `docs/todo.done.2026-02.md`).
 - Clasificacion B aplicada en: decisiones de gobernanza (`workflow_dispatch`, required checks del flujo FTPS vigente, y limpieza operativa de `todo.md`).
 - Clasificacion B aplicada en: automatizacion de limpieza documental (`todo:archive` + `lint:todo-sync --require-no-done-tasks`) para mantener `docs/todo.md` sin tareas `[x]`.
+- Clasificacion B aplicada en: dudas de bajo nivel resueltas para higiene documental (enfoque hibrido con `todo:compact:noise` manual y `quality:gate` sin mutaciones).
 - Clasificacion C aplicada en: P0 seguridad/frontend-backend (bloqueo externo por despliegue backend) y P0 branch protection (bloqueo externo por token/permisos GitHub).
 - Historial detallado de clasificaciones y reintentos: `docs/todo.done.2026-02.md`.
 

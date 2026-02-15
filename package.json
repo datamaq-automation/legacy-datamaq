@@ -26,6 +26,8 @@
     "lint:todo-sync": "node scripts/check-todo-sync.mjs --require-evidence --require-open-p0 --require-no-done-tasks",
     "todo:archive": "node scripts/archive-todo-completed.mjs",
     "todo:archive:dry-run": "node scripts/archive-todo-completed.mjs --dry-run",
+    "todo:compact:noise": "node scripts/compact-todo-noise.mjs",
+    "todo:compact:noise:dry-run": "node scripts/compact-todo-noise.mjs --dry-run",
     "quality:gate": "npm run lint:todo-sync && npm run lint:origin-verify && npm run typecheck && npm run test && npm run lint:colors && npm run lint:layers && npm run test:a11y && npm run check:css",
     "quality:merge": "npm run quality:gate && npm run test:e2e:smoke",
     "ci:remote:status": "node scripts/report-github-ci-status.mjs",
