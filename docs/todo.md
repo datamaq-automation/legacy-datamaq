@@ -331,4 +331,17 @@ No incluye:
   - Siguiente paso: ejecutar la opcion elegida y validar end-to-end.
   - Siguiente accion interna ejecutable ahora: aplicar implementacion de `A` o `B` inmediatamente despues de la definicion.
 
+  - Decision tomada (B): ante bloqueo operativo SMTP en Chatwoot (IMAP OK, envio FAIL), se evalua diagnostico ad-hoc disperso vs handover estructurado para operador con acceso VPS; se elige handover estructurado para reducir tiempo de resolucion y falsos cambios en frontend.
+  - Avance: generado informe tecnico detallado para otro Codex CLI con acceso al VPS, con baseline SMTP, runbook de comandos, matriz de decision y DoD.
+  - Evidencia: `docs/dv-05-chatwoot-smtp-vps-handover.md`.
+  - Evidencia: el informe documenta sintoma critico reportado `undefined method 'message_id' for nil` y flujo de validacion web/sidekiq + conectividad TLS (`openssl`) + prueba SMTP (`swaks`).
+  - Decision tomada (C): el desbloqueo total de envio email depende de ejecucion externa en VPS/Chatwoot (fuera de este repo).
+  - Tipo C: C2.
+  - Bloqueador residual: sin acceso operativo al VPS no se puede confirmar/ajustar config SMTP ni validar logs reales de ActionMailer/Sidekiq.
+  - Informacion faltante: host SMTP real, puerto/encryption final validado, modo de auth aceptado por proveedor, y evidencia de envio exitoso.
+  - Mitigacion interna ejecutada: handover completo versionado en `docs/` con pasos ejecutables y criterio de salida.
+  - Tareas externas (solo C2 y acciones fuera del repo): ejecutar runbook DV-05 en VPS y devolver evidencia minima de envio/invitacion/reply exitosos.
+  - Siguiente paso: recibir resultados del runbook VPS y ajustar decision de canal final (API inbox vs Email channel/widget) segun evidencia.
+  - Siguiente accion interna ejecutable ahora: al recibir evidencia externa, actualizar contrato operativo en `docs/dv-02-chatwoot-contract.md` y depurar frontend segun canal definitivo.
+
 ### P2
