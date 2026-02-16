@@ -139,12 +139,8 @@ describe('ContactApiGateway', () => {
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 503 })
   })
 
-  it('routes Chatwoot Public API with contact -> conversation -> message flow', async () => {
+  it('treats Chatwoot Public API URL as backend endpoint and performs single POST', async () => {
     const http = createHttpClient()
-    vi.mocked(http.postJson)
-      .mockResolvedValueOnce({ ok: true, status: 200, data: { source_id: 'ct_123' } })
-      .mockResolvedValueOnce({ ok: true, status: 200, data: { id: 'conv_456' } })
-      .mockResolvedValueOnce({ ok: true, status: 200, data: {} })
 
     const logger = createLogger()
     const gateway = new ContactApiGateway(
@@ -157,27 +153,15 @@ describe('ContactApiGateway', () => {
     const result = await gateway.submit(createPayload())
 
     expect(result).toEqual({ ok: true, data: undefined })
-    expect(http.postJson).toHaveBeenCalledTimes(3)
-    expect(http.postJson).toHaveBeenNthCalledWith(
-      1,
+    expect(http.postJson).toHaveBeenCalledTimes(1)
+    expect(http.postJson).toHaveBeenCalledWith(
       'https://chatwoot.example.com/public/api/v1/inboxes/inbox_1/contacts',
       expect.objectContaining({
-        identifier: 'juan@example.com',
         email: 'juan@example.com',
-        name: 'juan'
-      })
-    )
-    expect(http.postJson).toHaveBeenNthCalledWith(
-      2,
-      'https://chatwoot.example.com/public/api/v1/inboxes/inbox_1/contacts/ct_123/conversations',
-      expect.any(Object)
-    )
-    expect(http.postJson).toHaveBeenNthCalledWith(
-      3,
-      'https://chatwoot.example.com/public/api/v1/inboxes/inbox_1/contacts/ct_123/conversations/conv_456/messages',
-      expect.objectContaining({
-        content: 'Necesito una propuesta para mantenimiento electrico.'
-      })
+        name: 'juan',
+        message: 'Necesito una propuesta para mantenimiento electrico.'
+      }),
+      undefined
     )
   })
 })
