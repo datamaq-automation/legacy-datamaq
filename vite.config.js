@@ -17,7 +17,8 @@ export default defineConfig(({ mode }) => {
     removeConsole({ exclude: ['info', 'error', 'warn'] })
   ]
   const customOutDir = process.env.BUILD_OUT_DIR?.trim()
-  const outDir = customOutDir ? path.resolve(customOutDir) : 'dist'
+  const defaultOutDir = process.platform === 'win32' ? 'C:/AppServ/www' : 'dist'
+  const outDir = customOutDir ? path.resolve(customOutDir) : defaultOutDir
 
   if (mode !== 'production') {
     plugins.push(vueDevTools())

@@ -1,7 +1,11 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 
-const assetsDir = join(process.cwd(), 'dist', 'assets')
+const defaultOutDir = process.platform === 'win32' ? 'C:/AppServ/www' : 'dist'
+const outDir = process.env.BUILD_OUT_DIR?.trim()
+  ? resolve(process.env.BUILD_OUT_DIR.trim())
+  : defaultOutDir
+const assetsDir = join(outDir, 'assets')
 const budgetPath = join(process.cwd(), 'scripts', 'css-budget.json')
 
 let budget
@@ -22,13 +26,13 @@ let files
 try {
   files = await readdir(assetsDir)
 } catch (error) {
-  console.error('dist/assets not found. Run `npm run build` first.')
+  console.error(`${assetsDir} not found. Run \`npm run build\` first.`)
   process.exit(1)
 }
 
 const cssFiles = files.filter((file) => file.endsWith('.css'))
 if (cssFiles.length === 0) {
-  console.log('No CSS files found in dist/assets.')
+  console.log(`No CSS files found in ${assetsDir}.`)
   process.exit(0)
 }
 

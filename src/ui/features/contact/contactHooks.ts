@@ -25,7 +25,7 @@ export function useContactForm(props: ContactFormProps) {
   const isSubmitting = ref(false)
   const feedback = reactive<{ message: string; success: boolean }>({ message: '', success: false })
   const feedbackMessageRef = ref<HTMLParagraphElement | null>(null)
-  const { content } = useContainer()
+  const { content, config } = useContainer()
   const contact = content.getContactContent()
   let unsubscribeFromStatus: (() => void) | undefined
 
@@ -112,6 +112,14 @@ export function useContactForm(props: ContactFormProps) {
     void ensureContactBackendStatus()
       .then((status) => {
         console.log('[contact:debug] backend-status:ensure', { status })
+        if (status === 'unavailable') {
+          console.error('[contact:debug] backend-status:unavailable', {
+            inquiryApiUrl: config.inquiryApiUrl ?? null,
+            hasContactEmail: Boolean(props.contactEmail),
+            hint:
+              'Verifica VITE_INQUIRY_API_URL en build y que el endpoint responda POST en produccion.'
+          })
+        }
       })
       .catch((error) => {
         console.error('[contact:debug] backend-status:error', error)
