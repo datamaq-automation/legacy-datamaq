@@ -7,6 +7,10 @@ import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { StoragePort } from '@/application/ports/Storage'
 import { submitBackendContact } from './backendContactChannel'
+import {
+  isChatwootPublicContactsEndpoint,
+  submitChatwootPublicContact
+} from './chatwootPublicContactChannel'
 import { buildContactPayloadBundle } from './contactPayloadBuilder'
 import { mapSubmitResponseError } from './contactSubmissionErrors'
 
@@ -26,7 +30,9 @@ export class ContactApiGateway implements ContactGateway {
     }
 
     const payloads = buildContactPayloadBundle(payload, this.storage)
-    const response = await submitBackendContact(this.http, apiUrl, payloads)
+    const response = isChatwootPublicContactsEndpoint(apiUrl)
+      ? await submitChatwootPublicContact(this.http, apiUrl, payloads)
+      : await submitBackendContact(this.http, apiUrl, payloads)
 
     if (!response.ok) {
       this.logger.warn('[contactApiGateway] response no OK', {
