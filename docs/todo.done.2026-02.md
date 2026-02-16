@@ -877,3 +877,49 @@ Tarea de verificacion:
   - Evidencia: `src/infrastructure/contact/contactApiGateway.ts` usa exclusivamente `submitBackendContact` (POST unico al endpoint de backend configurado).
   - Evidencia: `src/infrastructure/contact/backendContactChannel.ts` implementa canal generico sin llamadas especificas de Chatwoot.
   - Evidencia: `src/application/contact/contactBackendStatus.ts` realiza probe `OPTIONS` generico sobre `inquiryApiUrl` y considera `404` como backend disponible.
+
+## Ruido operativo movido desde docs/todo.md el 2026-02-16 18:48 -03:00
+
+### Resumen
+- Tareas afectadas: 1
+- Lineas movidas: 18
+
+### Definir y habilitar endpoint operativo de ingesta de consultas
+  - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/application/contactBackendStatus.test.ts tests/unit/application/submitContact.test.ts` en verde (2026-02-16 17:43 -03:00), `3 files / 11 tests`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/QYovgpgLB6t8tQwLBzP5UXkD/contacts` (2026-02-16 17:35 -03:00) falla con `404 Not Found`.
+  - Evidencia: documentacion oficial Chatwoot (consulta 2026-02-16) confirma `Create Contact` en Client API bajo ruta `/public/api/v1/inboxes/{inbox_identifier}/contacts` y alternativa Application API con `inbox_id` + `api_access_token` server-side.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 17:36 -03:00).
+  - Avance: `ContactBackendMonitor` ahora omite `OPTIONS` en rutas `.../public/api/v1/inboxes/{id}/contacts`, marca canal disponible y conserva probe para endpoint backend generico.
+  - Evidencia: `src/application/contact/contactBackendStatus.ts` agrega deteccion `CHATWOOT_PUBLIC_CONTACTS_PATTERN` y short-circuit de probe.
+  - Evidencia: `tests/unit/application/contactBackendStatus.test.ts` cubre ambos escenarios (Chatwoot sin `OPTIONS` y backend generico con `OPTIONS`).
+  - Evidencia: `npm run test -- tests/unit/application/contactBackendStatus.test.ts` en verde (2026-02-16 18:33 -03:00), `1 file / 2 tests`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 18:33 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 18:33 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 18:33 -03:00), cobertura global `lines=81.40`, `statements=80.67`, `functions=82.90`, `branches=70.30`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 18:33 -03:00), incluyendo `quality:gate` + `test:e2e:smoke`.
+  - Evidencia: `src/infrastructure/contact/contactApiGateway.ts` reintroduce selector `isChatwootPublicContactsEndpoint(...)` y llamada `submitChatwootPublicContact(...)`.
+  - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` agrega caso de flujo Chatwoot con 3 `POST` y verificacion de endpoints encadenados.
+  - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/application/contactBackendStatus.test.ts` en verde (2026-02-16 18:37 -03:00), `2 files / 7 tests`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 18:37 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 18:37 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 18:37 -03:00), cobertura global `lines=81.41`, `statements=80.70`, `functions=83.47`, `branches=69.76`.
+
+## Movido desde docs/todo.md el 2026-02-16 19:01 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P0) Definir y habilitar endpoint operativo de ingesta de consultas
+  - Contexto: el secreto frontend ya fue eliminado; el frente activo es mantener formulario custom con endpoint operativo (`VITE_INQUIRY_API_URL`).
+  - Accion: sostener flujo `formulario -> contacto -> conversacion -> mensaje` para URLs Chatwoot Public API y preservar fallback generico de backend.
+  - DoD (criterio de aceptacion): frontend sin `VITE_ORIGIN_VERIFY_SECRET`/`X-Origin-Verify`, formulario genera conversacion en Chatwoot y guardrails de calidad en verde.
+  - Avance: flujo de 3 pasos Chatwoot (`create-contact -> create-conversation -> create-message`) restaurado en gateway para endpoints `/public/api/v1/inboxes/{id}/contacts`; probe de backend omite `OPTIONS` en ese patron para evitar ruido.
+  - Evidencia: `src/infrastructure/contact/contactApiGateway.ts`, `src/infrastructure/contact/chatwootPublicContactChannel.ts`, `src/application/contact/contactBackendStatus.ts`.
+  - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/application/contactBackendStatus.test.ts`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 18:38 -03:00), incluyendo `quality:gate` + `test:e2e:smoke`.
+  - Evidencia: confirmacion manual de usuario (2026-02-16): el formulario registra consulta como conversacion en Chatwoot.
+  - Bloqueador residual: sin bloqueador operativo activo para creacion de conversacion desde el formulario.
+  - Siguiente paso: mantener monitoreo tecnico y registrar cualquier regresion de endpoint/flujo.
+  - Siguiente accion interna ejecutable ahora: ejecutar `npm run smoke:contact:backend -- <INQUIRY_API_URL_OPERATIVA>` como control periodico y ante cambios de configuracion.
+  - Avance: compactacion documental aplicada en este turno para mantener `docs/todo.md` como tablero vivo; contexto/alcance/prioridades se movieron a `docs/dv-00-operating-baseline.md`.
+
+### P2
