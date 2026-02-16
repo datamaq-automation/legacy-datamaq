@@ -286,5 +286,49 @@ No incluye:
   - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 14:51 -03:00) con evidencia de merge local requerida.
   - Siguiente paso: validar en Chatwoot que una consulta real desde el formulario ahora crea conversacion y mensaje en el inbox objetivo.
   - Siguiente accion interna ejecutable ahora: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts` con el inbox de consultas activo y confirmar presencia del hilo en Conversations.
+  - Decision tomada (C): ante pedido de migrar frontend a `Email Channel nativo`, se ejecuta mitigacion interna de verificacion documental/codigo y se confirma incompatibilidad directa de contrato publico actual con inbox de tipo Email sin backend intermedio.
+  - Tipo C: C1.
+  - Bloqueador residual: el frontend actual solo puede usar Client/Public APIs con `inbox_identifier` de API inbox; para Email inbox se requiere integracion de servidor (Application API con `api_access_token`) o cambio de canal/flujo.
+  - Informacion faltante: definicion de arquitectura objetivo para este formulario sin backend propio (mantener API inbox, incorporar backend minimo, o migrar a Website widget + continuidad por email).
+  - Mitigacion interna ejecutada: contraste de docs oficiales Chatwoot y codigo (`chatwootPublicContactChannel`) para validar limites reales del contrato cliente.
+  - Pregunta cerrada pendiente (solo C1): `A/B/C` — A) mantener `API inbox` en frontend y resolver replies via callback/backend externo, B) crear backend minimo y usar `Email inbox` + Application API, C) abandonar formulario API y migrar a Website widget con captura de email.
+  - Siguiente paso: implementar el camino seleccionado sin romper flujo actual.
+  - Siguiente accion interna ejecutable ahora: aplicar cambios de frontend correspondientes apenas se defina `A/B/C`.
+  - Decision tomada (B): usuario confirma cambio de contrato; se evalua corte brusco del soporte Chatwoot Public API vs migracion contractual progresiva. Se elige migracion progresiva: contrato canonico `frontend -> backend`, manteniendo compatibilidad tecnica del gateway para no romper entornos existentes durante la transicion.
+  - Avance: documentacion y entorno del frontend alineados a `VITE_INQUIRY_API_URL` como endpoint backend de ingesta (Chatwoot/email encapsulados server-side).
+  - Evidencia: `.env.example` actualizado con ejemplos de backend (`/api/contact`) y retiro de referencia canonica a `inbox_identifier` en frontend.
+  - Evidencia: `README.md` actualizado (arquitectura, requisitos, configuracion y smoke) con contrato `frontend -> backend de contacto`.
+  - Evidencia: `docs/dv-02-chatwoot-contract.md` reescrito a contrato vigente `frontend -> backend`, incluyendo compatibilidad temporal y checklist operativo.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 15:00 -03:00) tras registrar trazabilidad del cambio contractual.
+  - Decision tomada (C): el cierre total de la migracion depende de infraestructura externa no versionada en este repo.
+  - Tipo C: C2.
+  - Bloqueador residual: falta endpoint backend productivo operativo que reciba consultas y gestione entrega/respuesta por email en Chatwoot.
+  - Informacion faltante: URL productiva final del backend de contacto y confirmacion operativa del canal de salida email.
+  - Mitigacion interna ejecutada: contrato frontend desacoplado, docs operativas actualizadas y compatibilidad de transicion preservada.
+  - Tareas externas (solo C2 y acciones fuera del repo): publicar backend de contacto y conectar provider/canal email para replies end-to-end.
+  - Siguiente paso: una vez disponible la URL backend productiva, cargarla en `.env.local` y ejecutar smoke real.
+  - Siguiente accion interna ejecutable ahora: correr `npm run smoke:contact:backend -- <BACKEND_INQUIRY_URL>` cuando se disponga del endpoint externo.
+  - Decision tomada (B): para cerrar la migracion contractual se evaluo mantener bifurcacion Chatwoot Public API en frontend vs consolidar backend-only; se elige backend-only para eliminar acoplamiento del navegador a tipos de inbox y evitar falsos positivos operativos.
+  - Avance: frontend de contacto consolidado a contrato unico `POST VITE_INQUIRY_API_URL` (backend), eliminando rutas especiales de Chatwoot en gateway y monitor de disponibilidad.
+  - Evidencia: `src/infrastructure/contact/contactApiGateway.ts` usa solo `submitBackendContact`.
+  - Evidencia: `src/application/contact/contactBackendStatus.ts` elimina bypass especial Chatwoot y vuelve a probe `OPTIONS` estandar para endpoint backend.
+  - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` elimina escenarios Chatwoot directos y valida contrato backend.
+  - Evidencia: `tests/unit/application/contactBackendStatus.test.ts` alineado a probe de endpoint backend.
+  - Evidencia: `scripts/smoke-contact-backend.mjs` simplificado a smoke backend-only (`POST` unico con payload canonico de consulta).
+  - Evidencia: `README.md` y `docs/dv-02-chatwoot-contract.md` alineados al contrato backend-only.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 15:07 -03:00), incluyendo `lint:todo-sync`, `lint:security`, `typecheck`, `lint:test-coverage`, `lint:layers`, `test:a11y`, `check:css` y `test:e2e:smoke`.
+  - Evidencia: `npm run lint:test-coverage` en verde dentro de `quality:merge` (2026-02-16 15:07 -03:00), cobertura global `lines=81.28`, `statements=80.55`, `functions=82.83`, `branches=70.27`.
+  - Evidencia: `npm run lint:security` en verde dentro de `quality:merge` (2026-02-16 15:07 -03:00).
+  - Bloqueador residual: sin backend productivo publicado no puede completarse validacion real de entrega y reply por email.
+  - Siguiente paso: provisionar URL backend productiva y ejecutar smoke real + prueba manual de reply en Chatwoot.
+  - Siguiente accion interna ejecutable ahora: al recibir URL externa, correr `npm run smoke:contact:backend -- <BACKEND_INQUIRY_URL>` y verificar hilo/entrega end-to-end.
+  - Decision tomada (C): se corrige supuesto de arquitectura; por definicion del usuario no existe backend propio y el unico backend permitido es Chatwoot.
+  - Tipo C: C1.
+  - Bloqueador residual: sin backend propio no hay capa para transformar formulario custom en flujo de email channel server-to-server; el API channel directo no garantiza entrega de replies por email al contacto.
+  - Informacion faltante: decision de producto sobre mantener formulario custom o migrar a canal/widget que soporte continuidad por email sin backend propio.
+  - Mitigacion interna ejecutada: verificacion de limite tecnico y de docs oficiales (API inbox vs continuidad email en widget/email channel).
+  - Pregunta cerrada pendiente (solo C1): `A/B` — A) revertimos frontend al flujo directo Chatwoot API inbox (formulario custom, conversaciones en inbox, sin garantia de reply email), B) migramos frontend a widget Website de Chatwoot con email collect/conversation continuity para habilitar reply por email sin backend propio.
+  - Siguiente paso: ejecutar la opcion elegida y validar end-to-end.
+  - Siguiente accion interna ejecutable ahora: aplicar implementacion de `A` o `B` inmediatamente despues de la definicion.
 
 ### P2

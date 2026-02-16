@@ -4,7 +4,7 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 
 ## Caracteristicas principales
 - SPA liviana optimizada para CTAs de WhatsApp y correo electronico.
-- Integracion directa con Chatwoot Public API para registrar contactos desde formulario.
+- Integracion de formulario via endpoint backend (`VITE_INQUIRY_API_URL`).
 - Instrumentacion analitica con GA4 y Microsoft Clarity.
 - Componentes accesibles y reutilizables segun la guia de `docs/`.
 - Banner de consentimiento que bloquea GA4/Clarity hasta aceptacion explicita.
@@ -13,24 +13,24 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 ## Requisitos previos
 - Node.js >= 20.19.0
 - npm >= 8
-- Acceso HTTPS a Chatwoot y `inbox_identifier` publico.
+- Endpoint backend HTTPS para ingesta de consultas.
 
 ## Configuracion de entorno
 1. Usa `.env.example` como plantilla canonica y crea solo los archivos necesarios para tu entorno:
    - `.env.local` para desarrollo local (no versionado).
    - `.env.e2e` para pruebas E2E del repo (versionado).
    - `.env.e2e.local` para overrides E2E locales (no versionado).
-2. Configura `VITE_INQUIRY_API_URL` con formato `https://<chatwoot-host>/public/api/v1/inboxes/<inbox_identifier>/contacts`.
-   - Usa el `inbox_identifier` real en `.env.local`.
-   - Mantene `.env.e2e` con endpoint de prueba/mocks para no generar contactos reales en CI.
-3. Si usas secure mode (`identifier_hash`/HMAC), necesitas firmar desde backend; no expongas secretos en frontend.
+2. Configura `VITE_INQUIRY_API_URL` apuntando al backend de contacto (ejemplo: `https://api.tudominio.com/contact`).
+   - Usa la URL real en `.env.local`.
+   - Mantene `.env.e2e` con endpoint de prueba/mocks para no impactar datos reales en CI.
+3. Chatwoot, provider de email y credenciales sensibles deben resolverse server-to-server fuera del frontend.
 4. Ajusta los IDs de analitica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segun la propiedad correspondiente.
 
 ## Arquitectura de contacto y despliegue
 - Frontend estatico en Ferozo (DonWeb), publicado en `public_html` via FTPS.
-- Flujo de contacto: `frontend -> Chatwoot Public API`.
-- `VITE_INQUIRY_API_URL` define el endpoint de create-contact por inbox.
-- Si se exige secure mode con `identifier_hash`, se incorpora un firmador backend fuera de este repo.
+- Flujo de contacto: `frontend -> backend de contacto -> Chatwoot/Email`.
+- `VITE_INQUIRY_API_URL` define el endpoint backend de ingesta.
+- Credenciales, tokens y reglas de entrega quedan fuera de este repo (server-side).
 - Contrato tecnico DV-02: `docs/dv-02-chatwoot-contract.md`.
 
 ## Instalacion y scripts
@@ -43,7 +43,7 @@ npm run typecheck   # valida TypeScript estricto
 npm run test        # ejecuta tests unitarios
 npm run test:e2e    # ejecuta suite e2e con Playwright
 npm run test:e2e:smoke # ejecuta smoke e2e (home/contacto/gracias)
-npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts # smoke contacto
+npm run smoke:contact:backend -- https://api.tudominio.com/contact # smoke contacto
 npm run test:a11y   # auditoria heuristica de accesibilidad
 npm run test:coverage # cobertura unitaria con salida json-summary
 npm run check:css   # valida presupuesto de CSS
@@ -108,9 +108,8 @@ Configuracion recomendada en GitHub:
 
 ## Smoke de backend de contacto
 - Script: `npm run smoke:contact:backend -- <INQUIRY_API_URL>`.
-- Referencia recomendada: `https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts`.
-- Si el endpoint corresponde a Chatwoot Public API, el script valida create-contact.
-- El script falla (exit code `1`) cuando cualquier paso no responde `2xx`.
+- Referencia recomendada: `https://api.tudominio.com/contact`.
+- El script envía un `POST` de consulta al endpoint configurado y falla (exit code `1`) si no recibe `2xx`.
 
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.

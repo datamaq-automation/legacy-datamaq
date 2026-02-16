@@ -36,24 +36,7 @@ function createLogger(): LoggerPort {
 }
 
 describe('ContactBackendMonitor', () => {
-  it('skips OPTIONS probe for Chatwoot public contacts endpoint', async () => {
-    const http = createHttpClient(404)
-    const logger = createLogger()
-    const monitor = new ContactBackendMonitor(
-      http,
-      createConfig('https://chatwoot.example.com/public/api/v1/inboxes/demo/contacts'),
-      createRuntime(true),
-      logger
-    )
-
-    const status = await monitor.ensureStatus()
-
-    expect(status).toBe('available')
-    expect(monitor.getStatus()).toBe('available')
-    expect(http.options).not.toHaveBeenCalled()
-  })
-
-  it('uses OPTIONS probe for non-Chatwoot endpoints', async () => {
+  it('uses OPTIONS probe for configured backend endpoint', async () => {
     const http = createHttpClient(204)
     const monitor = new ContactBackendMonitor(
       http,
