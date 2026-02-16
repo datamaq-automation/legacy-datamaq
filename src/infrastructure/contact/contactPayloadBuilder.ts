@@ -4,15 +4,9 @@ import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
 
 export interface ContactPayloadBundle {
   backendPayload: {
-    firstName: string
-    lastName: string
     name: string
     email: string
-    phoneNumber: string | undefined
-    normalizedPhoneNumber: string | undefined
-    city: string | undefined
-    country: string | undefined
-    company: string | undefined
+    message: string
     custom_attributes: Record<string, string>
     meta: {
       page_location: string
@@ -29,28 +23,15 @@ export function buildContactPayloadBundle(
   storage: StoragePort
 ): ContactPayloadBundle {
   const enrichedPayload = attachAttributionToPayload(payload, storage)
-  const normalizedPhone = normalizePhoneNumber(payload.phoneNumber, payload.country)
-  const rawCustomAttributes = {
-    first_name: payload.firstName,
-    last_name: payload.lastName,
-    company: payload.company,
-    city: payload.city,
-    country: payload.country,
-    ...(payload.phoneNumber && !normalizedPhone ? { phone_raw: payload.phoneNumber } : {})
-  }
-  const customAttributes = sanitizeCustomAttributes(rawCustomAttributes)
+  const customAttributes = sanitizeCustomAttributes({
+    message: payload.message
+  })
 
   return {
     backendPayload: {
-      firstName: payload.firstName,
-      lastName: payload.lastName,
       name: enrichedPayload.name,
       email: enrichedPayload.email,
-      phoneNumber: payload.phoneNumber,
-      normalizedPhoneNumber: normalizedPhone,
-      city: payload.city,
-      country: payload.country,
-      company: payload.company,
+      message: payload.message,
       custom_attributes: customAttributes,
       meta: {
         page_location: payload.pageLocation,
@@ -78,51 +59,4 @@ function sanitizeCustomAttributes(attrs: Record<string, unknown>): Record<string
     .filter(Boolean) as Array<[string, string]>
 
   return Object.fromEntries(entries)
-}
-
-function normalizePhoneNumber(
-  phoneNumber: string | undefined,
-  country: string | undefined
-): string | undefined {
-  if (!phoneNumber) {
-    return undefined
-  }
-
-  const trimmed = phoneNumber.trim()
-  if (!trimmed) {
-    return undefined
-  }
-
-  if (trimmed.startsWith('+')) {
-    const digits = trimmed.replace(/[^\d]/g, '')
-    if (digits.length < 8 || digits.length > 15) {
-      return undefined
-    }
-    return `+${digits}`
-  }
-
-  const digits = trimmed.replace(/[^\d]/g, '')
-  if (!digits) {
-    return undefined
-  }
-
-  const normalizedCountry = country?.trim().toLowerCase()
-  const isArgentina = !normalizedCountry || normalizedCountry === 'argentina' || normalizedCountry === 'ar'
-
-  if (isArgentina) {
-    let normalized = digits
-    if (normalized.startsWith('0')) {
-      normalized = normalized.slice(1)
-    }
-    if (normalized.startsWith('54')) {
-      normalized = normalized.slice(2)
-    }
-    if (normalized.length >= 8 && normalized.length <= 13) {
-      return `+54${normalized}`
-    }
-    return undefined
-  }
-
-  // For non-AR numbers we require explicit international prefix.
-  return undefined
 }

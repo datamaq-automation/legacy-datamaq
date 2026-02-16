@@ -28,19 +28,17 @@ export class SubmitContactUseCase {
     section: string,
     payload: EmailContactPayload
   ): Promise<Result<void, ContactError>> {
-    const fullName = `${payload.firstName} ${payload.lastName}`.trim()
+    const fullName = inferContactNameFromEmail(payload.email)
     const contactInput: {
       id: string
       name: string
       email: string
-      company?: string
+      message?: string
     } = {
       id: buildContactId(this.clock.now()),
       name: fullName,
-      email: payload.email
-    }
-    if (typeof payload.company !== 'undefined') {
-      contactInput.company = payload.company
+      email: payload.email,
+      message: payload.message
     }
 
     const contactResult = this.contactService.createContact(contactInput)
@@ -54,29 +52,6 @@ export class SubmitContactUseCase {
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
-    const extraDetails: {
-      firstName?: string
-      lastName?: string
-      phoneNumber?: string
-      city?: string
-      country?: string
-    } = {}
-    if (typeof payload.firstName !== 'undefined') {
-      extraDetails.firstName = payload.firstName
-    }
-    if (typeof payload.lastName !== 'undefined') {
-      extraDetails.lastName = payload.lastName
-    }
-    if (typeof payload.phoneNumber !== 'undefined') {
-      extraDetails.phoneNumber = payload.phoneNumber
-    }
-    if (typeof payload.city !== 'undefined') {
-      extraDetails.city = payload.city
-    }
-    if (typeof payload.country !== 'undefined') {
-      extraDetails.country = payload.country
-    }
-
     const submitResult = await this.contactGateway.submit(
       mapContactRequestToSubmitPayload(
         contactResult.data,
@@ -85,8 +60,7 @@ export class SubmitContactUseCase {
         trafficSource: getTrafficSource(this.location),
         userAgent: this.navigator.userAgent(),
         createdAt: new Date(this.clock.now()).toISOString()
-        },
-        extraDetails
+        }
       )
     )
 
@@ -104,6 +78,13 @@ export class SubmitContactUseCase {
     this.eventBus.publish(new ContactSubmitted(contactResult.data.id))
     return { ok: true, data: undefined }
   }
+}
+
+function inferContactNameFromEmail(email: string): string {
+  const localPart = email.split('@')[0]?.trim() ?? ''
+  const normalizedLocalPart = localPart.replace(/[._-]+/g, ' ').trim()
+  const fallback = 'Contacto Web'
+  return normalizedLocalPart.length >= 2 ? normalizedLocalPart : fallback
 }
 
 function buildContactId(now: number): string {

@@ -1,7 +1,7 @@
 # DV-02 - Contrato de contacto con Chatwoot Public API
 
 Fecha de definicion inicial: 2026-02-14  
-Fecha de actualizacion: 2026-02-15
+Fecha de actualizacion: 2026-02-16
 
 ## 1) Decision de arquitectura vigente
 - Frontend: sitio estatico en Ferozo.
@@ -9,21 +9,17 @@ Fecha de actualizacion: 2026-02-15
 
 Decision tomada:
 - Se adopta integracion directa con rutas publicas de Chatwoot (`/public/api/v1/...`), sin secreto en frontend.
-- `VITE_CONTACT_API_URL` queda como endpoint de create-contact por inbox.
+- `VITE_INQUIRY_API_URL` queda como endpoint de create-contact por inbox.
 
 ## 2) Contrato frontend -> Chatwoot
 Endpoint base configurable:
-- `POST {VITE_CONTACT_API_URL}`
+- `POST {VITE_INQUIRY_API_URL}`
 - Formato obligatorio:
   - `https://<chatwoot-host>/public/api/v1/inboxes/{inbox_identifier}/contacts`
 
 Flujo implementado en frontend:
 1. Crear contacto:
    - `POST /public/api/v1/inboxes/{inbox_identifier}/contacts`
-2. Crear conversacion:
-   - `POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations`
-3. Crear mensaje:
-   - `POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations/{conversation_id}/messages`
 
 Payload resumido:
 - Contacto:
@@ -32,10 +28,6 @@ Payload resumido:
   - `email`
   - `phone_number` (si existe formato internacional valido)
   - `custom_attributes`
-- Conversacion:
-  - `custom_attributes`
-- Mensaje:
-  - `content` (resumen del formulario)
 
 Headers:
 - `Content-Type: application/json`
@@ -49,7 +41,7 @@ Headers:
 - La alternativa sin `inbox_identifier` en URL es usar Application APIs (`/api/v1/accounts/...`), que requieren `api_access_token` y se recomiendan server-to-server (no frontend directo).
 
 Inferencia operativa desde fuentes:
-- Si el formulario no crea conversacion y la URL no incluye `inbox_identifier` valido, la causa probable es configuracion incompleta del inbox/endpoint.
+- Si create-contact falla y la URL no incluye `inbox_identifier` valido, la causa probable es configuracion incompleta del inbox/endpoint.
 - Si el inbox tiene HMAC habilitado y no se envia `identifier_hash`, la creacion de contacto puede ser rechazada.
 
 ## 3) Seguridad y limites
@@ -64,16 +56,16 @@ Inferencia operativa desde fuentes:
 - [ ] Validacion E2E real en entorno productivo con inbox final.
 
 ## 5) Checklist operativo
-1. Definir `VITE_CONTACT_API_URL` con inbox real:
+1. Definir `VITE_INQUIRY_API_URL` con inbox real:
    - `https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts`
+   - Ubicacion recomendada: `.env.local` (no versionado).
+   - `.env.example` queda solo con placeholders y `.env.e2e` se mantiene con endpoint de pruebas/mocks.
 2. Ejecutar smoke tecnico:
 ```bash
 npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts
 ```
 3. Confirmar en Chatwoot que se crean:
-   - contacto,
-   - conversacion,
-   - mensaje.
+   - contacto.
 4. Validar E2E funcional desde landing productiva.
 5. Registrar evidencia de cierre en `docs/todo.md`.
 

@@ -21,13 +21,8 @@ vi.mock('@/di/container', () => ({
         title: 'Contacto',
         subtitle: 'Dejanos tu consulta y te contactamos.',
         labels: {
-          firstName: 'Nombre',
-          lastName: 'Apellido',
           email: 'Correo electronico',
-          phone: 'Telefono (opcional)',
-          city: 'Ciudad (opcional)',
-          country: 'Pais',
-          company: 'Empresa (opcional)'
+          message: 'Mensaje'
         },
         submitLabel: 'Enviar consulta por correo',
         checkingMessage: 'Verificando disponibilidad...',
@@ -80,20 +75,17 @@ describe('ContactFormSection', () => {
       }
     })
 
-    await fireEvent.update(screen.getByLabelText('Nombre'), 'Ana')
-    await fireEvent.update(screen.getByLabelText('Apellido'), 'Lopez')
     await fireEvent.update(screen.getByLabelText('Correo electronico'), 'ana@example.com')
+    await fireEvent.update(screen.getByLabelText('Mensaje'), 'Necesito una propuesta para mi planta')
     await fireEvent.click(screen.getByRole('button', { name: 'Enviar consulta por correo' }))
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1)
     })
-    expect(onSubmit).toHaveBeenCalledWith(
+      expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
-        firstName: 'Ana',
-        lastName: 'Lopez',
         email: 'ana@example.com',
-        country: 'Argentina'
+        message: 'Necesito una propuesta para mi planta'
       })
     )
     expect(backendMocks.ensureContactBackendStatus).toHaveBeenCalledTimes(1)

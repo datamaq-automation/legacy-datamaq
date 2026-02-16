@@ -8,14 +8,9 @@ import { ContactApiGateway } from '@/infrastructure/contact/contactApiGateway'
 
 function createPayload(overrides: Partial<ContactSubmitPayload> = {}): ContactSubmitPayload {
   return {
-    firstName: 'Juan',
-    lastName: 'Perez',
-    name: 'Juan Perez',
+    name: 'juan',
     email: 'juan@example.com',
-    phoneNumber: '11 2345 6789',
-    city: 'Escobar',
-    country: 'AR',
-    company: 'DataMaq',
+    message: 'Necesito una propuesta para mantenimiento electrico.',
     pageLocation: 'https://www.datamaq.com.ar/contacto',
     trafficSource: 'organic',
     userAgent: 'Vitest',
@@ -24,9 +19,9 @@ function createPayload(overrides: Partial<ContactSubmitPayload> = {}): ContactSu
   }
 }
 
-function createConfig(contactApiUrl: string | undefined): ConfigPort {
+function createConfig(inquiryApiUrl: string | undefined): ConfigPort {
   return {
-    contactApiUrl
+    inquiryApiUrl
   } as ConfigPort
 }
 
@@ -74,7 +69,7 @@ describe('ContactApiGateway', () => {
     const result = await gateway.submit(createPayload())
 
     expect(result).toEqual({ ok: false, error: { type: 'Unavailable' } })
-    expect(logger.error).toHaveBeenCalledWith('CONTACT_API_URL no esta configurada')
+    expect(logger.error).toHaveBeenCalledWith('INQUIRY_API_URL no esta configurada')
     expect(http.postJson).not.toHaveBeenCalled()
   })
 
@@ -95,14 +90,11 @@ describe('ContactApiGateway', () => {
     expect(http.postJson).toHaveBeenCalledWith(
       'https://api.example.com/contact',
       expect.objectContaining({
-        firstName: 'Juan',
-        lastName: 'Perez',
-        name: 'Juan Perez',
+        name: 'juan',
         email: 'juan@example.com',
-        phoneNumber: '11 2345 6789',
+        message: 'Necesito una propuesta para mantenimiento electrico.',
         custom_attributes: expect.objectContaining({
-          first_name: 'Juan',
-          last_name: 'Perez'
+          message: 'Necesito una propuesta para mantenimiento electrico.'
         }),
         meta: expect.objectContaining({
           page_location: 'https://www.datamaq.com.ar/contacto'
@@ -136,9 +128,8 @@ describe('ContactApiGateway', () => {
       'https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts',
       expect.objectContaining({
         identifier: 'juan@example.com',
-        name: 'Juan Perez',
-        email: 'juan@example.com',
-        phone_number: '+541123456789'
+        name: 'juan',
+        email: 'juan@example.com'
       })
     )
     expect(http.postJson).toHaveBeenNthCalledWith(
@@ -154,10 +145,27 @@ describe('ContactApiGateway', () => {
       3,
       'https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts/contact_123/conversations/77/messages',
       expect.objectContaining({
-        content: expect.stringContaining('Nueva consulta desde landing DataMaq.')
+        content: 'Necesito una propuesta para mantenimiento electrico.'
       })
     )
     expect(http.patchJson).not.toHaveBeenCalled()
+  })
+
+  it('maps Chatwoot response without source_id to backend error', async () => {
+    const http = createHttpClient()
+    vi.mocked(http.postJson).mockResolvedValueOnce({ ok: true, status: 200, data: {} })
+    const logger = createLogger()
+    const gateway = new ContactApiGateway(
+      http,
+      createConfig('https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts'),
+      createStorage(),
+      logger
+    )
+
+    const result = await gateway.submit(createPayload())
+
+    expect(result).toEqual({ ok: false, error: { type: 'BackendError', status: 502 } })
+    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 502 })
   })
 
   it('maps status 0 to network error', async () => {
@@ -175,23 +183,6 @@ describe('ContactApiGateway', () => {
 
     expect(result).toEqual({ ok: false, error: { type: 'NetworkError' } })
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 0 })
-  })
-
-  it('maps Chatwoot responses without source_id to backend error', async () => {
-    const http = createHttpClient()
-    vi.mocked(http.postJson).mockResolvedValueOnce({ ok: true, status: 200, data: {} })
-    const logger = createLogger()
-    const gateway = new ContactApiGateway(
-      http,
-      createConfig('https://chatwoot.example.com/public/api/v1/inboxes/demo-inbox/contacts'),
-      createStorage(),
-      logger
-    )
-
-    const result = await gateway.submit(createPayload())
-
-    expect(result).toEqual({ ok: false, error: { type: 'BackendError', status: 502 } })
-    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 502 })
   })
 
   it('maps non-zero status to backend error', async () => {

@@ -170,5 +170,121 @@ No incluye:
   - Bloqueador residual: falta configuracion externa final del inbox de produccion para validar `2xx` real y verificar conversacion/mensaje en Chatwoot.
   - Siguiente paso: configurar `VITE_CONTACT_API_URL` final con inbox productivo y ejecutar validacion real de formulario contra Chatwoot.
   - Siguiente accion interna ejecutable ahora: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts` apenas se confirme `<INBOX_IDENTIFIER>` productivo.
+  - Avance: reevaluacion del P0 ejecutada en este turno; se confirma que la unica dependencia pendiente para cierre es externa y no hay mitigaciones internas adicionales sin `inbox_identifier` productivo.
+  - Decision tomada (C): se mantiene clasificacion de bloqueo externo porque el flujo ya esta implementado y validado localmente; resta solo validacion tecnica contra inbox real de produccion.
+  - Tipo C: C2.
+  - Informacion faltante: `inbox_identifier` productivo definitivo y confirmacion de `secure mode` para ese inbox.
+  - Mitigacion interna ejecutada: verificacion documental/operativa del tablero activo y trazabilidad para mantener siguiente accion interna condicionada al dato externo.
+  - Tareas externas (solo C2 y acciones fuera del repo): provisionar `inbox_identifier` productivo y definir politica final de `secure mode` (con firmador backend o desactivacion en este canal).
+  - Bloqueador residual: sin `inbox_identifier` productivo no es posible ejecutar smoke real `2xx` ni validar creacion de conversacion en Chatwoot.
+  - Siguiente paso: al recibir el dato externo, actualizar `VITE_CONTACT_API_URL` del entorno objetivo y correr smoke de contacto end-to-end.
+  - Evidencia: lectura de tablero y prioridad activa (`docs/todo.md`) + verificacion de estado de trabajo (`git status --short`) (2026-02-16 13:04 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 13:04 -03:00) con `--require-evidence --require-open-p0 --require-no-done-tasks`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 13:05 -03:00) tras registrar la trazabilidad final de este turno.
+  - Decision tomada (B): ante duda de implementacion (solo crear contacto vs crear conversacion), se contrasta API Public/Client vs Application API de Chatwoot y se mantiene el flujo actual `contacto -> conversacion -> mensaje` porque el objetivo del formulario es abrir hilo operativo en inbox.
+  - Avance: verificacion tecnica completada en este turno con fuentes oficiales y codigo del gateway; no hay evidencia de que el flujo publico de Chatwoot funcione sin `inbox_identifier` en URL.
+  - Evidencia: doc oficial Chatwoot Client API `Create contact` confirma ruta `POST /public/api/v1/inboxes/{inbox_identifier}/contacts` y uso de `identifier_hash` cuando aplica secure mode (consulta: 2026-02-16 13:11 -03:00).
+  - Evidencia: doc oficial Chatwoot Client API `Create a conversation` confirma ruta `POST /public/api/v1/inboxes/{inbox_identifier}/contacts/{contact_identifier}/conversations` (consulta: 2026-02-16 13:11 -03:00).
+  - Evidencia: doc oficial Chatwoot Application API `Create Contact Inbox` confirma alternativa server-to-server con `api_access_token` + `inbox_id` (sin `inbox_identifier` publico en URL) (consulta: 2026-02-16 13:11 -03:00).
+  - Evidencia: `src/infrastructure/contact/contactApiGateway.ts` selecciona canal Chatwoot publico solo cuando la URL coincide con `/public/api/v1/inboxes/{inbox_identifier}/contacts`; en otro caso usa `backendContactChannel`.
+  - Evidencia: `src/infrastructure/contact/chatwootPublicContactChannel.ts` ejecuta 3 llamadas encadenadas: crear contacto (`source_id`) -> crear conversacion (`id`) -> crear mensaje.
+  - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` valida ruta Chatwoot publica con 3 POST y expectativas de endpoints `/contacts`, `/conversations` y `/messages`.
+  - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts` en verde (2026-02-16 13:11 -03:00), `1 file / 6 tests`.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 13:12 -03:00) tras registrar trazabilidad de verificacion API/flujo.
+  - Bloqueador residual: se mantiene C2 porque sin `inbox_identifier` productivo (o sin pasar a Application API con backend + token) no puede validarse flujo real en produccion.
+  - Siguiente accion interna ejecutable ahora: al recibir `inbox_identifier` productivo, ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts` y validar alta de contacto/conversacion/mensaje.
+  - Decision tomada (A): por definicion de producto de este turno, el formulario queda en modo `solo contacto` (sin crear conversacion ni mensaje) sobre Chatwoot Public API.
+  - Decision tomada (B): para reducir caos de variables de entorno se evalua mantener multiples `.env*` sin convencion vs establecer un esquema minimo; se elige esquema canonico con `.env.example` como plantilla, `.env.local` para desarrollo local y `.env.e2e` para pruebas.
+  - Avance: flujo de contacto ajustado para ejecutar un unico `POST` de create-contact cuando `VITE_CONTACT_API_URL` apunta a `/public/api/v1/inboxes/{inbox_identifier}/contacts`.
+  - Evidencia: `src/infrastructure/contact/chatwootPublicContactChannel.ts` removio el encadenado de `conversations/messages` y conserva solo create-contact.
+  - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` actualizado a `contact payload only` con 1 llamada `POST` (5 tests en verde).
+  - Evidencia: `scripts/smoke-contact-backend.mjs` actualizado para validar create-contact en endpoint Chatwoot Public API sin pasos de conversacion/mensaje.
+  - Evidencia: `docs/dv-02-chatwoot-contract.md` y `README.md` alineados al flujo `solo contacto` y convencion de `.env`.
+  - Evidencia: `.env.example` actualizado como plantilla canonica para entorno local/e2e.
+  - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts` en verde (2026-02-16 13:39 -03:00), `1 file / 5 tests`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 13:39 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 13:39 -03:00), cobertura global `lines=81.98`, `statements=81.31`, `functions=83.98`, `branches=70.71`.
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 13:39 -03:00).
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 13:39 -03:00), ejecutando `quality:gate` + `test:e2e:smoke`.
+  - Duda pendiente: confirmar si en produccion se mantendra `secure mode` desactivado para este canal frontend; si se activa, create-contact exigira `identifier_hash` y reaparece bloqueo externo C2 por falta de firmador backend.
+  - Avance: saneada la gestion de variables de entorno para evitar contaminacion de repositorio con `inbox_identifier` real y duplicados en archivos versionados.
+  - Evidencia: `.env.example` limpiado (sin valores reales; solo placeholders canonicos).
+  - Evidencia: `.env.e2e` normalizado a endpoint de pruebas local (`http://127.0.0.1:4173/api/contact`) sin inbox real.
+  - Evidencia: `.gitignore` actualizado para permitir override local E2E en `.env.e2e.local` sin versionado.
+  - Evidencia: `README.md` y `docs/dv-02-chatwoot-contract.md` actualizados con regla operativa: `inbox_identifier` real solo en `.env.local`; `.env.e2e` para pruebas/mocks.
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 13:50 -03:00) tras saneamiento final de `.env*`.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 13:50 -03:00) con evidencia de `quality:merge` vigente en este turno.
+  - Avance: `secure mode` confirmado desactivado para este flujo; no se requiere backend firmador (`identifier_hash`) y se mantiene arquitectura frontend -> Chatwoot Public API.
+  - Avance: eliminada variable de entorno `VITE_CONTACT_EMAIL`; el email de contacto queda en configuracion versionada del repo (`publicConfig/content`) para reducir variables operativas.
+  - Evidencia: `src/infrastructure/config/viteConfig.ts` ya no consume `import.meta.env.VITE_CONTACT_EMAIL`.
+  - Evidencia: `src/env.d.ts` removio tipado `VITE_CONTACT_EMAIL`.
+  - Evidencia: `.env.example` removio `VITE_CONTACT_EMAIL`.
+  - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/JyAJAHb4yHSWt7Rr4Wjt9Sjt/contacts` en verde (2026-02-16 13:57 -03:00), `Smoke OK: Chatwoot Public API create-contact (200)`.
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 13:57 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 13:58 -03:00), cobertura global `lines=81.98`, `statements=81.31`, `functions=83.98`, `branches=70.71`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 13:59 -03:00), ejecutando `quality:gate` + `test:e2e:smoke`.
+  - Decision tomada (B): para evitar falso negativo visual en consola por precheck de disponibilidad se evaluo mantener `OPTIONS` para todo endpoint vs bypass selectivo en Chatwoot Public API; se elige bypass selectivo porque `OPTIONS` retorna `404` en ese endpoint aunque `POST` real funciona.
+  - Avance: monitor de disponibilidad actualizado para omitir `OPTIONS` cuando `contactApiUrl` coincide con Chatwoot Public API (`/public/api/v1/inboxes/{inbox_identifier}/contacts`) y marcar canal disponible.
+  - Evidencia: `src/application/contact/contactBackendStatus.ts` agrega deteccion de endpoint Chatwoot y short-circuit de probe sin request `OPTIONS`.
+  - Evidencia: `tests/unit/application/contactBackendStatus.test.ts` agregado (2 casos): omite `OPTIONS` para Chatwoot y mantiene `OPTIONS` para endpoint generico.
+  - Evidencia: `npm run test -- tests/unit/application/contactBackendStatus.test.ts tests/unit/infrastructure/contactApiGateway.test.ts` en verde (2026-02-16 14:04 -03:00), `2 files / 7 tests`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 14:04 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 14:04 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 14:04 -03:00), cobertura global `lines=81.09`, `statements=80.40`, `functions=82.71`, `branches=69.60`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 14:06 -03:00), ejecutando `quality:gate` + `test:e2e:smoke` tras ajuste de probe Chatwoot.
+  - Decision tomada (B-Vue): ante cambio de alcance de formulario se evaluo mantener formulario extendido (nombre/apellido/empresa/etc.) vs simplificar a interfaz tipo email; se elige simplificar a `email + mensaje` para reducir friccion y complejidad de datos.
+  - Avance: formulario UI y validacion aplicativa simplificados a dos campos (`email` identificador + `message`), manteniendo submit hacia Chatwoot Public API.
+  - Evidencia: `src/ui/features/contact/ContactFormSection.vue` reduce inputs a `#contacto-email` y `#contacto-mensaje`.
+  - Evidencia: `src/ui/features/contact/contactHooks.ts`, `src/ui/features/contact/useContactValidation.ts`, `src/application/validation/contactSchema.ts`, `src/application/dto/contact.ts` alineados al payload minimo.
+  - Evidencia: `src/application/use-cases/submitContact.ts` infiere `name` desde email (fallback `Contacto Web`) y conserva `message` para el submit.
+  - Evidencia: `src/application/contact/mappers/contactPayloadMapper.ts` y `src/infrastructure/contact/contactPayloadBuilder.ts` migrados a contrato `name/email/message` + metadata.
+  - Evidencia: `src/infrastructure/contact/chatwootPublicContactChannel.ts` mantiene create-contact sin telefono/campos legacy.
+  - Evidencia: `src/domain/types/content.ts`, `src/domain/schemas/contentSchema.ts`, `src/infrastructure/content/content.ts` actualizados con etiquetas de contacto simplificadas.
+  - Evidencia: `tests/unit/ui/contactFormSection.test.ts`, `tests/unit/ui/contactSubmitThanksFlow.test.ts`, `tests/unit/application/contactPayloadMapper.test.ts`, `tests/unit/application/contactSchema.test.ts`, `tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/e2e/smoke.spec.ts` ajustados al nuevo formulario.
+  - Evidencia: `npm run test -- tests/unit/ui/contactFormSection.test.ts tests/unit/ui/contactSubmitThanksFlow.test.ts tests/unit/application/contactPayloadMapper.test.ts tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/application/contactSchema.test.ts` en verde (2026-02-16 14:18 -03:00), `5 files / 13 tests`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 14:18 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 14:18 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 14:18 -03:00), cobertura global `lines=82.04`, `statements=81.29`, `functions=83.96`, `branches=70.36`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 14:20 -03:00), incluye `quality:gate` + `test:e2e:smoke` con formulario simplificado.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 14:20 -03:00) tras trazabilidad de simplificacion `email + mensaje`.
+  - Decision tomada (B): para alinear naming de producto (`consulta`) con contrato tecnico se evaluo mantener variable heredada `contact` vs renombrar a `inquiry`; se elige `inquiry` para reducir ambiguedad semantica en frontend/configuracion.
+  - Avance: rename aplicado en codigo/config/docs operativos de `VITE_CONTACT_API_URL` a `VITE_INQUIRY_API_URL` y de `contactApiUrl` a `inquiryApiUrl`.
+  - Evidencia: `src/application/ports/Config.ts`, `src/infrastructure/config/viteConfig.ts`, `src/infrastructure/config/publicConfig.ts`, `src/env.d.ts`, `src/application/contact/contactBackendStatus.ts`, `src/infrastructure/contact/contactApiGateway.ts`.
+  - Evidencia: `scripts/smoke-contact-backend.mjs` usa `INQUIRY_API_URL`/`VITE_INQUIRY_API_URL`.
+  - Evidencia: `README.md` y `docs/dv-02-chatwoot-contract.md` actualizados al nuevo nombre de variable de entorno.
+  - Evidencia: `.env.example` y `.env.e2e` actualizados con `VITE_INQUIRY_API_URL`.
+  - Evidencia: tests de contrato/config actualizados (`tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/application/contactBackendStatus.test.ts`, `tests/unit/ui/defaultSeo.test.ts`).
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 14:33 -03:00).
+  - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/application/contactBackendStatus.test.ts tests/unit/ui/defaultSeo.test.ts` en verde (2026-02-16 14:33 -03:00), `3 files / 12 tests`.
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 14:33 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 14:33 -03:00), cobertura global `lines=82.04`, `statements=81.29`, `functions=83.96`, `branches=70.36`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 14:35 -03:00), con `quality:gate` + `test:e2e:smoke` tras rename a `inquiry`.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 14:35 -03:00) con trazabilidad merge local del rename completada.
+  - Decision tomada (B-Testing): ante necesidad de diagnostico en runtime se evaluo depurar solo en infraestructura HTTP vs agregar trazas en orquestacion de formulario; se elige trazas en hook de UI para observar estado de canal, validacion, resultado y condicion de redireccion en navegador.
+  - Avance: instrumentado debug explicito con `console.log/warn/error` en flujo de submit y estado de backend; redireccion endurecida para ocurrir solo con `result?.ok === true`.
+  - Evidencia: `src/ui/features/contact/contactHooks.ts` agrega logs `submit:start|payload-collected|validation-ok|result|failed-no-redirect|exception|end` y `backend-status:update|ensure|error`.
+  - Evidencia: `src/ui/features/contact/contactHooks.ts` usa condicion de navegacion estricta: `if (result?.ok === true) router.push({ name: 'thanks' })`.
+  - Evidencia: `npm run test -- tests/unit/ui/contactFormSection.test.ts tests/unit/ui/contactSubmitThanksFlow.test.ts` en verde (2026-02-16 14:40 -03:00), `2 files / 3 tests`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 14:40 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 14:40 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 14:41 -03:00), cobertura global `lines=81.64`, `statements=80.91`, `functions=83.68`, `branches=70.27`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 14:43 -03:00), con `quality:gate` + `test:e2e:smoke` tras instrumentacion de debug.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 14:43 -03:00) con trazabilidad de depuracion y redireccion condicionada.
+  - Bloqueador residual: no hay bloqueo tecnico interno para create-contact; queda verificacion operativa externa en Chatwoot (confirmar alta visible del contacto smoke y definir limpieza/retencion de contactos de prueba).
+  - Siguiente paso: validar en panel Chatwoot que el contacto de smoke fue creado en el inbox objetivo y ajustar politica operativa de limpieza de pruebas.
+  - Siguiente accion interna ejecutable ahora: mantener smoke tecnico periodico (`npm run smoke:contact:backend -- <CONTACT_API_URL>`) y continuar con siguiente frente prioritario de UX sin cambios de arquitectura.
+  - Decision tomada (B): ante cambio de objetivo funcional (que la consulta figure en conversaciones del inbox), se evaluo mantener modo `solo contacto` vs restaurar flujo `contacto -> conversacion -> mensaje`; se elige restaurar el flujo completo para cumplir visibilidad operativa en Chatwoot.
+  - Avance: restaurado en este turno el flujo Chatwoot Public API completo para que el formulario cree contacto, abra conversacion y publique mensaje en el inbox.
+  - Evidencia: `src/infrastructure/contact/chatwootPublicContactChannel.ts` vuelve a ejecutar 3 llamadas encadenadas (`/contacts`, `/conversations`, `/messages`) y valida estructura minima (`source_id`, `id`) con error `502` si falta dato requerido.
+  - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` actualizado a contrato de 3 `POST` y agrega caso de error por `source_id` faltante.
+  - Evidencia: `scripts/smoke-contact-backend.mjs` vuelve a validar flujo extremo a extremo Chatwoot Public API (`create-contact -> create-conversation -> create-message`).
+  - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/ui/contactFormSection.test.ts tests/unit/ui/contactSubmitThanksFlow.test.ts` en verde (2026-02-16 14:50 -03:00).
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 14:50 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 14:50 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 14:50 -03:00), cobertura global sobre umbrales bloqueantes.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 14:51 -03:00), ejecutando `quality:gate` + `test:e2e:smoke` tras restaurar flujo de conversacion.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 14:51 -03:00) con evidencia de merge local requerida.
+  - Siguiente paso: validar en Chatwoot que una consulta real desde el formulario ahora crea conversacion y mensaje en el inbox objetivo.
+  - Siguiente accion interna ejecutable ahora: ejecutar `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts` con el inbox de consultas activo y confirmar presencia del hilo en Conversations.
 
 ### P2

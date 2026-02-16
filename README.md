@@ -16,15 +16,20 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 - Acceso HTTPS a Chatwoot y `inbox_identifier` publico.
 
 ## Configuracion de entorno
-1. Copia `.env.example` a `.env` y completa los valores reales para cada entorno.
-2. Configura `VITE_CONTACT_API_URL` con formato `https://<chatwoot-host>/public/api/v1/inboxes/<inbox_identifier>/contacts`.
+1. Usa `.env.example` como plantilla canonica y crea solo los archivos necesarios para tu entorno:
+   - `.env.local` para desarrollo local (no versionado).
+   - `.env.e2e` para pruebas E2E del repo (versionado).
+   - `.env.e2e.local` para overrides E2E locales (no versionado).
+2. Configura `VITE_INQUIRY_API_URL` con formato `https://<chatwoot-host>/public/api/v1/inboxes/<inbox_identifier>/contacts`.
+   - Usa el `inbox_identifier` real en `.env.local`.
+   - Mantene `.env.e2e` con endpoint de prueba/mocks para no generar contactos reales en CI.
 3. Si usas secure mode (`identifier_hash`/HMAC), necesitas firmar desde backend; no expongas secretos en frontend.
 4. Ajusta los IDs de analitica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segun la propiedad correspondiente.
 
 ## Arquitectura de contacto y despliegue
 - Frontend estatico en Ferozo (DonWeb), publicado en `public_html` via FTPS.
 - Flujo de contacto: `frontend -> Chatwoot Public API`.
-- `VITE_CONTACT_API_URL` define el endpoint de create-contact por inbox.
+- `VITE_INQUIRY_API_URL` define el endpoint de create-contact por inbox.
 - Si se exige secure mode con `identifier_hash`, se incorpora un firmador backend fuera de este repo.
 - Contrato tecnico DV-02: `docs/dv-02-chatwoot-contract.md`.
 
@@ -99,12 +104,12 @@ Configuracion recomendada en GitHub:
 2. Ejecutar workflow en GitHub (por `push` a `main` o `workflow_dispatch` sobre `main`).
 3. Confirmar en verde `Quality Gate` y `Smoke E2E`.
 4. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
-5. Verificar en QA que el formulario crea contacto + conversacion + mensaje en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
+5. Verificar en QA que el formulario crea contacto en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
 
 ## Smoke de backend de contacto
-- Script: `npm run smoke:contact:backend -- <CONTACT_API_URL>`.
+- Script: `npm run smoke:contact:backend -- <INQUIRY_API_URL>`.
 - Referencia recomendada: `https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/<INBOX_IDENTIFIER>/contacts`.
-- Si el endpoint corresponde a Chatwoot Public API, el script ejecuta flujo completo: contacto -> conversacion -> mensaje.
+- Si el endpoint corresponde a Chatwoot Public API, el script valida create-contact.
 - El script falla (exit code `1`) cuando cualquier paso no responde `2xx`.
 
 ## Recursos adicionales

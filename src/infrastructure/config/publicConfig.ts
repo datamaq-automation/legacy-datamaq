@@ -25,5 +25,5 @@ export const publicConfig = {
   businessLng: undefined,
   businessArea: undefined,
   contactEmail: 'contacto@datamaq.com.ar',
-  contactApiUrl: undefined
+  inquiryApiUrl: undefined
 } as const

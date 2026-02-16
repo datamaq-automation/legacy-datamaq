@@ -23,9 +23,9 @@ export class ContactApiGateway implements ContactGateway {
   ) {}
 
   async submit(payload: ContactSubmitPayload): Promise<Result<void, ContactError>> {
-    const apiUrl = this.config.contactApiUrl
+    const apiUrl = this.config.inquiryApiUrl
     if (!apiUrl) {
-      this.logger.error('CONTACT_API_URL no esta configurada')
+      this.logger.error('INQUIRY_API_URL no esta configurada')
       return { ok: false, error: { type: 'Unavailable' } }
     }
 

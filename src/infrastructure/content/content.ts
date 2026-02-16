@@ -255,15 +255,10 @@ export const content: AppContent = {
 
   contact: {
     title: 'Queres recibir una propuesta por correo?',
-    subtitle: `Completa el formulario y te enviamos una propuesta para servicios industriales (instalacion ${POWERMETER}/${AUTOMATE} y diagnostico electrico). Si es urgente, escribinos por WhatsApp.`,
+    subtitle: `Dejanos tu correo y mensaje. Te respondemos con una propuesta para servicios industriales (instalacion ${POWERMETER}/${AUTOMATE} y diagnostico electrico).`,
     labels: {
-      firstName: 'Nombre',
-      lastName: 'Apellido',
       email: 'Correo electronico',
-      phone: 'Telefono (opcional)',
-      city: 'Ciudad (opcional)',
-      country: 'Pais',
-      company: 'Empresa (opcional)'
+      message: 'Mensaje'
     },
     submitLabel: 'Enviar consulta por correo',
     checkingMessage: 'Verificando la disponibilidad del servicio de correo electronico...',

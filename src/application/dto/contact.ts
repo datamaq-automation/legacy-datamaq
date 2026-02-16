@@ -1,11 +1,6 @@
 export interface EmailContactPayload {
-  firstName: string
-  lastName: string
   email: string
-  phoneNumber?: string
-  city?: string
-  country?: string
-  company?: string
+  message: string
 }
 
 export interface ContactSubmitPayload extends EmailContactPayload {

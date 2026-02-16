@@ -6,7 +6,7 @@ type NullableString = string | undefined
 const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
 
 export class ViteConfig implements ConfigPort {
-  contactApiUrl: NullableString
+  inquiryApiUrl: NullableString
   contactEmail: NullableString
   analyticsEnabled: boolean | undefined
   siteUrl: NullableString
@@ -28,16 +28,11 @@ export class ViteConfig implements ConfigPort {
   businessArea: NullableString
 
   constructor() {
-    this.contactEmail =
-      ensureEmail(
-        normalize(import.meta.env.VITE_CONTACT_EMAIL) ??
-          normalize(publicConfig.contactEmail),
-        'contactEmail'
-      ) ?? CONTACT_EMAIL_FALLBACK
-    this.contactApiUrl = ensureApiUrl(
-      normalize(import.meta.env.VITE_CONTACT_API_URL) ??
-        normalize(publicConfig.contactApiUrl),
-      'contactApiUrl'
+    this.contactEmail = normalize(publicConfig.contactEmail) ?? CONTACT_EMAIL_FALLBACK
+    this.inquiryApiUrl = ensureApiUrl(
+      normalize(import.meta.env.VITE_INQUIRY_API_URL) ??
+        normalize(publicConfig.inquiryApiUrl),
+      'inquiryApiUrl'
     )
     this.analyticsEnabled = publicConfig.analyticsEnabled
     this.siteUrl = normalize(publicConfig.siteUrl)
@@ -63,22 +58,6 @@ export class ViteConfig implements ConfigPort {
 function normalize(value: string | undefined): NullableString {
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
-}
-
-function ensureEmail(value: NullableString, envKey: string): NullableString {
-  if (!value) {
-    return undefined
-  }
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailPattern.test(value)) {
-      console.warn(
-        `[config] La variable ${envKey} debe ser un correo electronico valido. Valor recibido: ${value}`
-      )
-    return undefined
-  }
-
-  return value
 }
 
 function ensureApiUrl(value: NullableString, envKey: string): NullableString {

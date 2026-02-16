@@ -3,14 +3,14 @@
 import process from 'node:process'
 
 const urlFromArg = process.argv[2]
-const urlFromEnv = process.env.CONTACT_API_URL ?? process.env.VITE_CONTACT_API_URL
+const urlFromEnv = process.env.INQUIRY_API_URL ?? process.env.VITE_INQUIRY_API_URL
 const endpoint = (urlFromArg ?? urlFromEnv ?? '').trim()
 const CHATWOOT_PUBLIC_CONTACTS_PATTERN = /\/public\/api\/v1\/inboxes\/[^/]+\/contacts\/?$/i
 
 if (!endpoint) {
-  console.error('Uso: node scripts/smoke-contact-backend.mjs <CONTACT_API_URL>')
+  console.error('Uso: node scripts/smoke-contact-backend.mjs <INQUIRY_API_URL>')
   console.error(
-    'Tambien podes definir CONTACT_API_URL o VITE_CONTACT_API_URL en el entorno.'
+    'Tambien podes definir INQUIRY_API_URL o VITE_INQUIRY_API_URL en el entorno.'
   )
   process.exit(1)
 }
@@ -48,7 +48,6 @@ const chatwootContactPayload = {
   identifier: 'smoke@datamaq.com.ar',
   name: 'Smoke Datamaq',
   email: 'smoke@datamaq.com.ar',
-  phone_number: '+5491100000000',
   custom_attributes: {
     source: 'frontend-smoke-script',
     page_location: 'https://www.datamaq.com.ar',
@@ -71,13 +70,11 @@ try {
     const contactData = parseJson(contactResponse.text)
     const contactIdentifier = readStringValue(contactData?.source_id)
     if (!contactIdentifier) {
-      console.error('Smoke FAIL: Chatwoot no devolvio source_id en create contact')
+      console.error('Smoke FAIL: Chatwoot no devolvio source_id en create-contact')
       process.exit(1)
     }
 
-    const conversationsEndpoint = `${stripTrailingSlash(endpoint)}/${encodeURIComponent(
-      contactIdentifier
-    )}/conversations`
+    const conversationsEndpoint = `${stripTrailingSlash(endpoint)}/${encodeURIComponent(contactIdentifier)}/conversations`
     const conversationResponse = await postJson(
       conversationsEndpoint,
       {
@@ -96,7 +93,7 @@ try {
     const conversationData = parseJson(conversationResponse.text)
     const conversationId = readStringValue(conversationData?.id)
     if (!conversationId) {
-      console.error('Smoke FAIL: Chatwoot no devolvio id en create conversation')
+      console.error('Smoke FAIL: Chatwoot no devolvio id en create-conversation')
       process.exit(1)
     }
 

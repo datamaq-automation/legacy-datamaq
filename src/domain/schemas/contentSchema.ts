@@ -81,13 +81,8 @@ const ContactSchema = z.object({
   title: z.string(),
   subtitle: z.string(),
   labels: z.object({
-    firstName: z.string(),
-    lastName: z.string(),
     email: z.string(),
-    phone: z.string(),
-    city: z.string(),
-    country: z.string(),
-    company: z.string()
+    message: z.string()
   }),
   submitLabel: z.string(),
   checkingMessage: z.string(),

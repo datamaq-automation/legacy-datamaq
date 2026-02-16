@@ -15,13 +15,8 @@ import { useRouter } from 'vue-router'
 export function useContactForm(props: ContactFormProps) {
   const formRef = ref<HTMLFormElement | null>(null)
   const form = reactive({
-    firstName: '',
-    lastName: '',
     email: '',
-    phoneNumber: '',
-    city: '',
-    country: 'Argentina',
-    company: ''
+    message: ''
   })
   const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus())
   const isBackendAvailable = computed(() => backendStatus.value === 'available')
@@ -50,40 +45,48 @@ export function useContactForm(props: ContactFormProps) {
     feedback.message = ''
     feedback.success = false
 
+    console.log('[contact:debug] submit:start', {
+      isChannelEnabled: isChannelEnabled.value,
+      backendStatus: backendStatus.value
+    })
+
     if (!isChannelEnabled.value) {
+      console.warn('[contact:debug] submit:blocked-channel-disabled', {
+        backendStatus: backendStatus.value,
+        hasContactEmail: Boolean(props.contactEmail)
+      })
       return
     }
     if (formElement && !formElement.reportValidity()) {
+      console.warn('[contact:debug] submit:blocked-invalid-form')
       return
     }
     isSubmitting.value = true
     try {
       const payload: EmailContactPayload = {
-        firstName: form.firstName,
-        lastName: form.lastName,
         email: form.email,
-        company: form.company
+        message: form.message
       }
-      if (form.phoneNumber) {
-        payload.phoneNumber = form.phoneNumber
-      }
-      if (form.city) {
-        payload.city = form.city
-      }
-      if (form.country) {
-        payload.country = form.country
-      }
+      console.log('[contact:debug] submit:payload-collected', {
+        email: payload.email,
+        messageLength: payload.message.length
+      })
 
       const parsed = validate(payload)
       if (!parsed.ok) {
+        console.warn('[contact:debug] submit:validation-failed')
         await announceFeedback(contact.errorMessage, false)
         return
       }
+      console.log('[contact:debug] submit:validation-ok')
       const result = await props.onSubmit(parsed.data)
-      if (result && result.ok) {
+      console.log('[contact:debug] submit:result', result)
+      if (result?.ok === true) {
+        console.log('[contact:debug] submit:success-redirecting', { route: 'thanks' })
         void router.push({ name: 'thanks' })
         return
       } else {
+        console.warn('[contact:debug] submit:failed-no-redirect', result)
         await announceFeedback(
           mapContactError(result?.error, {
             unavailable: contact.unavailableMessage,
@@ -93,17 +96,26 @@ export function useContactForm(props: ContactFormProps) {
         )
       }
     } catch (error) {
+      console.error('[contact:debug] submit:exception', error)
       await announceFeedback(contact.unexpectedErrorMessage, false)
     } finally {
       isSubmitting.value = false
+      console.log('[contact:debug] submit:end')
     }
   }
 
   onMounted(() => {
     unsubscribeFromStatus = subscribeToContactBackendStatus((status) => {
+      console.log('[contact:debug] backend-status:update', { from: backendStatus.value, to: status })
       backendStatus.value = status
     })
     void ensureContactBackendStatus()
+      .then((status) => {
+        console.log('[contact:debug] backend-status:ensure', { status })
+      })
+      .catch((error) => {
+        console.error('[contact:debug] backend-status:error', error)
+      })
   })
 
   onBeforeUnmount(() => {

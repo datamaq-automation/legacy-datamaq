@@ -36,7 +36,7 @@ export async function submitChatwootPublicContact(
     return {
       ok: false,
       status: MISSING_DATA_STATUS,
-      text: 'Chatwoot no devolvio source_id para el contacto.'
+      text: 'Chatwoot no devolvio source_id para create-contact.'
     }
   }
 
@@ -55,7 +55,7 @@ export async function submitChatwootPublicContact(
     return {
       ok: false,
       status: MISSING_DATA_STATUS,
-      text: 'Chatwoot no devolvio id de conversacion.'
+      text: 'Chatwoot no devolvio id para create-conversation.'
     }
   }
 
@@ -69,7 +69,6 @@ function buildChatwootContactPayload(payloads: ContactPayloadBundle) {
     identifier: payload.email.trim().toLowerCase(),
     name: payload.name,
     email: payload.email,
-    ...(payload.normalizedPhoneNumber ? { phone_number: payload.normalizedPhoneNumber } : {}),
     custom_attributes: {
       ...payload.custom_attributes,
       source: 'landing_form',
@@ -92,22 +91,8 @@ function buildConversationPayload(payloads: ContactPayloadBundle) {
 }
 
 function buildMessagePayload(payloads: ContactPayloadBundle) {
-  const payload = payloads.backendPayload
-  const lines = [
-    'Nueva consulta desde landing DataMaq.',
-    `Nombre: ${payload.name}`,
-    `Email: ${payload.email}`,
-    `Telefono: ${payload.normalizedPhoneNumber ?? payload.phoneNumber ?? 'No informado'}`,
-    `Empresa: ${payload.company ?? 'No informada'}`,
-    `Ciudad: ${payload.city ?? 'No informada'}`,
-    `Pais: ${payload.country ?? 'No informado'}`,
-    `Origen: ${payload.meta.traffic_source}`,
-    `Pagina: ${payload.meta.page_location}`,
-    `Fecha: ${payload.meta.created_at}`
-  ]
-
   return {
-    content: lines.join('\n')
+    content: payloads.backendPayload.message
   }
 }
 

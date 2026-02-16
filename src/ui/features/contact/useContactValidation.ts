@@ -14,21 +14,8 @@ export function useContactValidation() {
     }
 
     const validatedPayload: EmailContactPayload = {
-      firstName: parsed.data.firstName,
-      lastName: parsed.data.lastName,
-      email: parsed.data.email
-    }
-    if (typeof parsed.data.phoneNumber !== 'undefined') {
-      validatedPayload.phoneNumber = parsed.data.phoneNumber
-    }
-    if (typeof parsed.data.city !== 'undefined') {
-      validatedPayload.city = parsed.data.city
-    }
-    if (typeof parsed.data.country !== 'undefined') {
-      validatedPayload.country = parsed.data.country
-    }
-    if (typeof parsed.data.company !== 'undefined') {
-      validatedPayload.company = parsed.data.company
+      email: parsed.data.email,
+      message: parsed.data.message
     }
 
     return { ok: true, data: validatedPayload }

@@ -22,13 +22,8 @@ vi.mock('@/di/container', () => ({
         title: 'Contacto',
         subtitle: 'Dejanos tu consulta y te contactamos.',
         labels: {
-          firstName: 'Nombre',
-          lastName: 'Apellido',
           email: 'Correo electronico',
-          phone: 'Telefono (opcional)',
-          city: 'Ciudad (opcional)',
-          country: 'Pais',
-          company: 'Empresa (opcional)'
+          message: 'Mensaje'
         },
         submitLabel: 'Enviar consulta por correo',
         checkingMessage: 'Verificando disponibilidad...',
@@ -99,9 +94,8 @@ describe('Contact submit and thanks flow', () => {
       }
     })
 
-    await fireEvent.update(screen.getByLabelText('Nombre'), 'Maria')
-    await fireEvent.update(screen.getByLabelText('Apellido'), 'Gomez')
     await fireEvent.update(screen.getByLabelText('Correo electronico'), 'maria@example.com')
+    await fireEvent.update(screen.getByLabelText('Mensaje'), 'Necesito una propuesta para una planta.')
     await fireEvent.click(screen.getByRole('button', { name: 'Enviar consulta por correo' }))
 
     await waitFor(() => {

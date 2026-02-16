@@ -20,39 +20,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
                 novalidate
                 @submit.prevent="handleSubmit"
               >
-                <div class="col-12 col-md-6">
-                  <label class="form-label" for="contacto-nombre">
-                    {{ contact.labels.firstName }}
-                  </label>
-                  <input
-                    id="contacto-nombre"
-                    v-model="form.firstName"
-                    type="text"
-                    class="form-control"
-                    name="firstName"
-                    required
-                    autocomplete="given-name"
-                    maxlength="80"
-                    :disabled="!isChannelEnabled"
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label" for="contacto-apellido">
-                    {{ contact.labels.lastName }}
-                  </label>
-                  <input
-                    id="contacto-apellido"
-                    v-model="form.lastName"
-                    type="text"
-                    class="form-control"
-                    name="lastName"
-                    required
-                    autocomplete="family-name"
-                    maxlength="80"
-                    :disabled="!isChannelEnabled"
-                  />
-                </div>
-                <div class="col-md-6">
+                <div class="col-12">
                   <label class="form-label" for="contacto-email">{{ contact.labels.email }}</label>
                   <input
                     id="contacto-email"
@@ -67,56 +35,17 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     :disabled="!isChannelEnabled"
                   />
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label" for="contacto-telefono">{{ contact.labels.phone }}</label>
-                  <input
-                    id="contacto-telefono"
-                    v-model="form.phoneNumber"
-                    type="tel"
+                <div class="col-12">
+                  <label class="form-label" for="contacto-mensaje">{{ contact.labels.message }}</label>
+                  <textarea
+                    id="contacto-mensaje"
+                    v-model="form.message"
                     class="form-control"
-                    name="phoneNumber"
-                    autocomplete="tel"
-                    maxlength="30"
-                    inputmode="tel"
-                    :disabled="!isChannelEnabled"
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label" for="contacto-empresa">{{ contact.labels.company }}</label>
-                  <input
-                    id="contacto-empresa"
-                    v-model="form.company"
-                    type="text"
-                    class="form-control"
-                    name="company"
-                    autocomplete="organization"
-                    maxlength="160"
-                    :disabled="!isChannelEnabled"
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label" for="contacto-ciudad">{{ contact.labels.city }}</label>
-                  <input
-                    id="contacto-ciudad"
-                    v-model="form.city"
-                    type="text"
-                    class="form-control"
-                    name="city"
-                    autocomplete="address-level2"
-                    maxlength="120"
-                    :disabled="!isChannelEnabled"
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label" for="contacto-pais">{{ contact.labels.country }}</label>
-                  <input
-                    id="contacto-pais"
-                    v-model="form.country"
-                    type="text"
-                    class="form-control"
-                    name="country"
-                    autocomplete="country-name"
-                    maxlength="80"
+                    name="message"
+                    rows="5"
+                    required
+                    minlength="10"
+                    maxlength="2000"
                     :disabled="!isChannelEnabled"
                   />
                 </div>

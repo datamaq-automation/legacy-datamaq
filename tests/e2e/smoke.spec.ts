@@ -88,10 +88,8 @@ test.describe('Smoke E2E', () => {
   test('contact flow submits and navigates to thanks', async ({ page }) => {
     await page.goto('/')
 
-    await page.fill('#contacto-nombre', 'Ada')
-    await page.fill('#contacto-apellido', 'Lovelace')
     await page.fill('#contacto-email', 'ada@example.com')
-    await page.fill('#contacto-empresa', 'Analytical Engines')
+    await page.fill('#contacto-mensaje', 'Necesito una propuesta para mantenimiento industrial.')
 
     await page.getByRole('button', { name: /Enviar consulta por correo/i }).click()
 

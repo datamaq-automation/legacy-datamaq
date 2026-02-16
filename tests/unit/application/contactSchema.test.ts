@@ -4,10 +4,8 @@ import { validateContactDomainRules } from '@/application/validation/contactSche
 describe('validateContactDomainRules', () => {
   it('accepts valid contact data', () => {
     const result = validateContactDomainRules({
-      firstName: 'Ada',
-      lastName: 'Lovelace',
       email: 'ada@example.com',
-      company: 'Analytical'
+      message: 'Necesito cotizar instalacion para una linea industrial.'
     })
 
     expect(result.ok).toBe(true)
@@ -15,9 +13,8 @@ describe('validateContactDomainRules', () => {
 
   it('rejects invalid email', () => {
     const result = validateContactDomainRules({
-      firstName: 'Ada',
-      lastName: 'Lovelace',
-      email: 'ada-at-example'
+      email: 'ada-at-example',
+      message: 'Necesito cotizar instalacion para una linea industrial.'
     })
 
     expect(result.ok).toBe(false)
@@ -26,16 +23,12 @@ describe('validateContactDomainRules', () => {
     }
   })
 
-  it('rechaza nombre demasiado corto', () => {
+  it('no aplica regla de largo de mensaje en validacion de dominio', () => {
     const result = validateContactDomainRules({
-      firstName: 'A',
-      lastName: '',
-      email: 'ada@example.com'
+      email: 'ada@example.com',
+      message: 'Hola'
     })
 
-    expect(result.ok).toBe(false)
-    if (!result.ok) {
-      expect(result.error.type).toBe('InvalidName')
-    }
+    expect(result.ok).toBe(true)
   })
 })
