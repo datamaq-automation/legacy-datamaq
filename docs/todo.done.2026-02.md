@@ -923,3 +923,37 @@ Tarea de verificacion:
   - Avance: compactacion documental aplicada en este turno para mantener `docs/todo.md` como tablero vivo; contexto/alcance/prioridades se movieron a `docs/dv-00-operating-baseline.md`.
 
 ### P2
+
+## Movido desde docs/todo.md el 2026-02-16 20:23 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P0) Quick wins de conversion UX en landing (mobile-first)
+  - Contexto: se solicita mejorar conversion/usabilidad de la landing sin nuevas dependencias, priorizando mobile y evitando regresiones visuales en desktop.
+  - Accion: modernizar navbar/hero/servicios/cookies con Bootstrap utilities, mejorar foco/contraste y corregir copy visible.
+  - DoD (criterio de aceptacion): header compacto y colapsado en mobile, hero con CTA jerarquizada above-the-fold, servicios sin solapes, banner de cookies sin tapar CTA, foco visible y sin overflow horizontal.
+  - Decision tomada (B-Vue): se evalua parchear estilos puntuales vs reestructurar componentes clave; se elige reestructurar `Navbar`, `Hero`, `Servicios` y `ConsentBanner` para resolver causa raiz (layout y jerarquia) con cambios acotados.
+  - Avance: inspeccion completada de ruta landing (`/`), componentes involucrados y copy objetivo.
+  - Evidencia: `src/router/routes.ts`, `src/ui/pages/HomePage.vue`, `src/ui/layout/Navbar.vue`, `src/ui/sections/HeroSection.vue`, `src/ui/sections/ServiciosSection.vue`, `src/ui/features/contact/ConsentBanner.vue`.
+  - Avance: navbar migrado a `navbar-expand-lg` con `container`, toggler accesible (`aria-controls`, `aria-expanded`, `aria-label`) y CTA principal integrada.
+  - Evidencia: `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
+  - Avance: hero simplificado para priorizar CTA above-the-fold, microcopy operacional y jerarquia primaria/secundaria de acciones.
+  - Evidencia: `src/ui/sections/HeroSection.vue`, `src/ui/sections/HeroSection.ts`, `src/styles/scss/sections/_hero.scss`.
+  - Avance: servicios reestructurados a grid responsive (`row-cols-1/2/3`) con cards limpias sin overlays absolutos ni capas que tapen texto.
+  - Evidencia: `src/ui/sections/ServiciosSection.vue`, `src/ui/sections/ServiceCard.vue`, `src/styles/scss/sections/_services.scss`.
+  - Avance: banner de cookies ajustado para no tapar contenido (reserva de espacio con `body.has-consent-banner`) y botones tactiles con foco visible.
+  - Evidencia: `src/ui/features/contact/ConsentBanner.vue`, `src/styles/scss/sections/_consent.scss`, `src/styles/scss/base/global.scss`, `src/styles/scss/_tokens.scss`.
+  - Avance: copy visible corregido (tildes/ortografia en CTAs, servicios y textos de contacto/cookies).
+  - Evidencia: `src/infrastructure/content/content.ts`.
+  - Evidencia: `npm run test -- tests/unit/ui/navbar.test.ts tests/unit/ui/heroSection.test.ts tests/unit/ui/consentBanner.test.ts tests/unit/ui/contactFormSection.test.ts tests/unit/ui/contactSubmitThanksFlow.test.ts` en verde (2026-02-16 20:13 -03:00), `5 files / 8 tests`.
+  - Decision tomada (B-Testing): se evalua validar responsive manualmente vs automatizar asserts E2E por breakpoint; se elige ampliar `tests/e2e/smoke.spec.ts` (375/768/1366 + header <=80px + no overflow + banner de cookies con reserva de espacio) por mejor signal-to-noise y menor fragilidad operacional.
+  - Mitigacion interna ejecutada: primer intento de `quality:merge` fallo por selector E2E invalido (`.c-service-card`); se corrigio a selector real (`.c-services__card`) y se revalido en verde.
+  - Evidencia: `tests/e2e/smoke.spec.ts`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 20:18 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 20:18 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 20:19 -03:00), cobertura global `lines=81.10`, `statements=80.38`, `functions=83.40`, `branches=69.42`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 20:23 -03:00), incluye `quality:gate` + `test:e2e:smoke (8 passed)`.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 20:23 -03:00).
+  - Bloqueador residual: ninguno.
+  - Siguiente paso: archivar tarea completada para mantener `docs/todo.md` sin `[x]`.
+  - Siguiente accion interna ejecutable ahora: ejecutar `npm run todo:archive` y revalidar `npm run lint:todo-sync`.

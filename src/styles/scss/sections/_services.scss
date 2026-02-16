@@ -3,25 +3,23 @@
     letter-spacing: var(--ui-letter-spacing-sm);
   }
 
+  &__panel {
+    border: 1px solid rgba(var(--dm-border-0-rgb), 0.28);
+    border-radius: 1rem;
+    background: rgba(var(--dm-bg-1-rgb), 0.88);
+    box-shadow: 0 1rem 2rem rgba(var(--dm-shadow-rgb), 0.2);
+  }
+
   &__media {
     flex-shrink: 0;
   }
 
   &__media-image {
     display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 7 / 6;
+    max-height: 140px;
+    width: auto;
+    margin-inline: auto;
     object-fit: contain;
-  }
-
-  &__list {
-    display: grid;
-    gap: 0.65rem;
-  }
-
-  &__item {
-    align-items: flex-start;
   }
 
   &__note {
@@ -30,14 +28,6 @@
 
   &__alert {
     margin-top: 1rem;
-  }
-
-  &__body {
-    gap: 1.25rem;
-  }
-
-  &__header {
-    align-items: center;
   }
 
   &__card-title {
@@ -52,40 +42,13 @@
     letter-spacing: var(--ui-letter-spacing-sm);
   }
 
-  &__list-item {
-    align-items: flex-start;
-  }
-
-  &__list-bullet {
-    font-size: 1.05rem;
-  }
-
   &__list-text {
-    line-height: 1.4;
-  }
-
-  &__cta {
-    max-width: 320px;
-    margin: 0 auto;
+    line-height: 1.5;
   }
 
   &__cta-button {
     letter-spacing: var(--ui-letter-spacing-sm);
-  }
-
-  &__figure {
-    margin-bottom: 1.5rem;
-  }
-
-  &__figure-image {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
-
-  &__caption {
-    color: var(--ui-neutral-100-72);
+    min-height: 2.75rem;
   }
 
   &__chips .c-ui-chip {

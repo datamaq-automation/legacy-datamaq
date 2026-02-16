@@ -47,12 +47,12 @@ function buildWhatsAppHref(message: string): string {
 
 export const content: AppContent = {
   hero: {
-    badge: 'Tarifa base publicada - Respuesta en menos de 24 horas',
+    badge: 'Tarifa base publicada · Respuesta en menos de 24 horas',
     title: 'Servicios industriales prolijos, seguros y documentados',
-    subtitle: `Instalacion de ${POWERMETER}/${AUTOMATE} y diagnostico electrico industrial. Checklist previo, verificacion final y cierre documentado en cada visita.`,
+    subtitle: `Instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico industrial. Checklist previo, verificación final y cierre documentado en cada visita.`,
     responseNote: `Te respondemos por WhatsApp en menos de 24 horas con tarifa base desde ${TARIFA_BASE}, alcance incluido y variaciones por distancia/urgencia desde ${BASE}${TRASLADO_TEXT}.`,
     primaryCta: {
-      label: 'Pedi coordinacion',
+      label: 'Pedí coordinación',
       action: 'whatsapp',
       href: buildWhatsAppHref(
         'Hola, quiero coordinar un servicio industrial. Servicio: [indicar]. Zona: [indicar]. Urgencia: [baja/media/alta].'
@@ -74,7 +74,7 @@ export const content: AppContent = {
         variant: 'primary'
       },
       {
-        title: 'Diagnostico orientado a operacion',
+        title: 'Diagnóstico orientado a operación',
         text: 'Metodo de medicion y descarte para identificar causa probable, priorizar seguridad y reducir reincidencia de fallas.',
         variant: 'warning'
       }
@@ -92,8 +92,8 @@ export const content: AppContent = {
     cards: [
       {
         id: 'instalacion',
-        title: `Instalacion industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
-        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medicion funcionando con verificacion final.`,
+        title: `Instalación industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
+        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medición funcionando con verificación final.`,
         subtitle: 'Incluye',
         media: {
           src: installTools,
@@ -103,8 +103,8 @@ export const content: AppContent = {
         },
         items: [
           'Relevamiento del tablero: accesibilidad, punto de instalacion, protecciones y condiciones de seguridad.',
-          `Instalacion del ${POWERMETER} y verificacion de lectura de referencia.`,
-          'Registro y documentacion: fotos del tablero y checklist tecnico.',
+          `Instalación del ${POWERMETER} y verificación de lectura de referencia.`,
+          'Registro y documentación: fotos del tablero y checklist técnico.',
           'Tiempo tipico: media jornada (aprox. 4 horas), segun condiciones del tablero.'
         ],
         figure: {
@@ -112,7 +112,7 @@ export const content: AppContent = {
           alt: `Ilustracion de medidor ${POWERMETER}`,
           width: 220,
           height: 140,
-          caption: `Tarifa base desde ${TARIFA_BASE}. Traslado segun distancia desde ${BASE}${TRASLADO_TEXT}.`
+          caption: `Tarifa base desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}.`
         },
         cta: {
           label: 'Cotizar por WhatsApp',
@@ -125,9 +125,9 @@ export const content: AppContent = {
       },
       {
         id: 'diagnostico',
-        title: 'Diagnostico y reparacion de fallas electricas/electronicas (industria)',
+        title: 'Diagnóstico y reparación de fallas eléctricas/electrónicas (industria)',
         description:
-          'Diagnostico en planta para fallas intermitentes o criticas con medicion, prueba, aislamiento y propuesta de correccion.',
+          'Diagnóstico en planta para fallas intermitentes o críticas con medición, prueba, aislamiento y propuesta de corrección.',
         subtitle: 'Resultado',
         media: {
           src: analyticsDashboard,
@@ -136,8 +136,8 @@ export const content: AppContent = {
           height: 140
         },
         items: [
-          'Diagnostico en campo con instrumental y metodo de descarte.',
-          'Identificacion de causa probable y plan de reparacion inmediato o programado.',
+          'Diagnóstico en campo con instrumental y método de descarte.',
+          'Identificación de causa probable y plan de reparación inmediato o programado.',
           'Recomendaciones para prevenir recurrencia y mejorar seguridad del tablero.'
         ],
         note:
@@ -172,13 +172,13 @@ export const content: AppContent = {
         },
         items: [
           'Priorizacion segun criticidad, seguridad y disponibilidad operativa.',
-          'Intervenciones fuera de horario y fines de semana con coordinacion previa.',
-          'Relevamiento y plan de accion inmediato o programado segun el caso.'
+          'Intervenciones fuera de horario y fines de semana con coordinación previa.',
+          'Relevamiento y plan de acción inmediato o programado según el caso.'
         ],
         note:
           'Condiciones: no se interviene si el entorno no es seguro, se agenda por prioridad y puede aplicar recargo por urgencia.',
         cta: {
-          label: 'Pedi coordinacion urgente',
+          label: 'Pedí coordinación urgente',
           action: 'whatsapp',
           href: buildWhatsAppHref(
             'Hola, necesito atencion urgente en planta. Servicio: [indicar]. Zona: [indicar]. Urgencia: alta.'
@@ -192,7 +192,7 @@ export const content: AppContent = {
   profile: {
     title: 'Perfil tecnico',
     bullets: [
-      'Servicios industriales con foco en seguridad, trazabilidad y documentacion.',
+      'Servicios industriales con foco en seguridad, trazabilidad y documentación.',
       'Formacion: Tecnico Electronico - Tec. Univ. en Mantenimiento Industrial - Estudiante de Lic. en IA y Robotica.',
       'Enfoque de trabajo: checklist, verificacion de funcionamiento, registro de cambios y handoff.'
     ]
@@ -201,9 +201,9 @@ export const content: AppContent = {
   about: {
     title: 'Sobre DataMaq',
     paragraphs: [
-      'DataMaq brinda servicios tecnicos para industria: instalacion de medicion, diagnostico electrico y asistencia en campo con criterio operativo.',
-      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA segun disponibilidad.`,
-      'Objetivo: decisiones tecnicas con datos reales, intervenciones seguras y trabajo documentado.'
+      'DataMaq brinda servicios técnicos para industria: instalación de medición, diagnóstico eléctrico y asistencia en campo con criterio operativo.',
+      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA según disponibilidad.`,
+      'Objetivo: decisiones técnicas con datos reales, intervenciones seguras y trabajo documentado.'
     ],
     image: {
       src: teamTraining,
@@ -242,37 +242,37 @@ export const content: AppContent = {
         href: '#contacto'
       }
     ],
-    contactLabel: 'Pedi coordinacion'
+    contactLabel: 'Pedí coordinación'
   },
 
   footer: {
-    note: `Base: ${BASE} - Industria - Diagnostico electrico - Instalacion documentada`
+    note: `Base: ${BASE} - Industria - Diagnóstico eléctrico - Instalación documentada`
   },
 
   legal: {
-    text: `La tarifa base publicada para Powermeter corresponde a la instalacion de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificacion de lectura de referencia al finalizar. El traslado se cotiza segun distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalacion requiere adecuaciones minimas de seguridad, se informa y presupuesta antes de intervenir. En casos particulares que requieran intervencion o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analitica (GA4 y Clarity) se habilitan unicamente tras tu consentimiento explicito.`
+    text: `La tarifa base publicada para Powermeter corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. En casos particulares que requieran intervención o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
   },
 
   contact: {
-    title: 'Queres recibir una propuesta por correo?',
-    subtitle: `Dejanos tu correo y mensaje. Te respondemos con una propuesta para servicios industriales (instalacion ${POWERMETER}/${AUTOMATE} y diagnostico electrico).`,
+    title: '¿Querés recibir una propuesta por correo?',
+    subtitle: `Dejanos tu correo y mensaje. Te respondemos con una propuesta para servicios industriales (instalación ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico).`,
     labels: {
-      email: 'Correo electronico',
+      email: 'Correo electrónico',
       message: 'Mensaje'
     },
     submitLabel: 'Enviar consulta por correo',
-    checkingMessage: 'Verificando la disponibilidad del servicio de correo electronico...',
+    checkingMessage: 'Verificando la disponibilidad del servicio de correo electrónico...',
     unavailableMessage:
-      'El canal de correo electronico esta en mantenimiento. Escribinos por WhatsApp para coordinar una respuesta rapida.',
+      'El canal de correo electrónico está en mantenimiento. Escribinos por WhatsApp para coordinar una respuesta rápida.',
     successMessage: 'Consulta enviada correctamente. Te responderemos a la brevedad.',
-    errorMessage: 'No se pudo enviar la consulta. Intenta nuevamente mas tarde.',
-    unexpectedErrorMessage: 'Ocurrio un error inesperado. Intenta nuevamente mas tarde.'
+    errorMessage: 'No se pudo enviar la consulta. Intenta nuevamente más tarde.',
+    unexpectedErrorMessage: 'Ocurrió un error inesperado. Intenta nuevamente más tarde.'
   },
 
   consent: {
-    title: 'Usamos cookies para analitica',
+    title: 'Usamos cookies para analítica',
     description:
-      'Acepta para habilitar Google Analytics 4 y Microsoft Clarity. Podes revisar los detalles en la seccion legal del sitio.',
+      'Aceptá para habilitar Google Analytics 4 y Microsoft Clarity. Podés revisar los detalles en la sección legal del sitio.',
     acceptLabel: 'Aceptar',
     rejectLabel: 'Rechazar'
   }

@@ -45,7 +45,7 @@ describe('Navbar', () => {
       }
     })
 
-    const toggleButton = screen.getByRole('button', { name: 'Abrir menu' })
+    const toggleButton = screen.getByRole('button', { name: 'Abrir navegacion' })
     expect(toggleButton).toHaveAttribute('aria-expanded', 'false')
 
     await fireEvent.click(toggleButton)
@@ -71,7 +71,7 @@ describe('Navbar', () => {
       }
     })
 
-    const toggleButton = screen.getByRole('button', { name: 'Abrir menu' })
+    const toggleButton = screen.getByRole('button', { name: 'Abrir navegacion' })
     await fireEvent.click(toggleButton)
 
     const firstLink = await screen.findByRole('link', { name: 'Servicios' })

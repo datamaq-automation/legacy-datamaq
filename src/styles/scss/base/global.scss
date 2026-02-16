@@ -1,10 +1,14 @@
 body {
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
+  font-size: var(--ui-font-size-body);
+  line-height: var(--ui-line-height-body);
+  overflow-x: hidden;
 }
 
 body.has-consent-banner {
   --cookie-banner-height: var(--cookie-banner-visible-height);
+  padding-bottom: var(--cookie-banner-height);
 }
 
 section[aria-labelledby],
@@ -19,7 +23,7 @@ img {
 }
 
 :focus-visible {
-  outline: 3px solid var(--dm-accent-orange);
+  outline: 3px solid rgba(var(--dm-data-cyan-rgb), 0.95);
   outline-offset: 4px;
 }
 

@@ -4,7 +4,7 @@
     border-top: 1px solid rgba(var(--dm-border-0-rgb), 0.7);
     color: var(--dm-text-0);
     z-index: 1080;
-    width: min(92vw, 640px);
+    width: min(95vw, 560px);
   }
 
   &__actions {
@@ -33,7 +33,10 @@
 @media (max-width: 991.98px) {
   .c-consent-banner--shell {
     @include safe-area-bottom(0px);
-    margin-inline: 1rem;
+    margin-inline: 0.75rem;
+    left: 0;
+    right: 0;
+    width: auto;
   }
 
   .c-consent-banner__button {

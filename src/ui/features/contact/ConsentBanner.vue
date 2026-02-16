@@ -4,7 +4,7 @@ Path: src/ui/features/contact/ConsentBanner.vue
 <template>
   <div
     v-if="visible"
-    class="c-consent-banner c-consent-banner--shell position-fixed bottom-0 start-0 ms-3 mb-3 shadow-lg"
+    class="c-consent-banner c-consent-banner--shell position-fixed bottom-0 start-0 mb-3 shadow-lg"
     role="dialog"
     aria-modal="true"
     aria-labelledby="consent-banner-title"
