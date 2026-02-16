@@ -6,6 +6,7 @@ import type { LoggerPort } from '../ports/Logger'
 export type ContactBackendStatus = 'unknown' | 'available' | 'unavailable'
 
 type StatusListener = (status: ContactBackendStatus) => void
+const CHATWOOT_PUBLIC_CONTACTS_PATTERN = /\/public\/api\/v1\/inboxes\/[^/]+\/contacts\/?$/i
 
 export class ContactBackendMonitor {
   private listeners = new Set<StatusListener>()
@@ -82,6 +83,16 @@ export class ContactBackendMonitor {
       return this.status
     }
 
+    if (isChatwootPublicContactsEndpoint(apiUrl)) {
+      this.logger.debug(
+        '[contactBackendStatus] Probe omitida para endpoint Chatwoot Public API',
+        { apiUrl }
+      )
+      this.status = 'available'
+      this.notify()
+      return this.status
+    }
+
     try {
       this.logger.debug('[contactBackendStatus] Probe start', { apiUrl })
       const response = await this.http.options(apiUrl)
@@ -106,4 +117,8 @@ export class ContactBackendMonitor {
     this.notify()
     return this.status
   }
+}
+
+function isChatwootPublicContactsEndpoint(apiUrl: string): boolean {
+  return CHATWOOT_PUBLIC_CONTACTS_PATTERN.test(apiUrl.split(/[?#]/, 1)[0] ?? apiUrl)
 }

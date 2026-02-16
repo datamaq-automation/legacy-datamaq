@@ -3,6 +3,7 @@ import Navbar from '@/ui/layout/Navbar.vue'
 import Footer from '@/ui/layout/Footer.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
+import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import { landingPages } from '@/seo/landingPages'
 import { useMedicionConsumoEscobar } from './MedicionConsumoEscobar'
 
@@ -101,5 +102,6 @@ const {
     </main>
     <Footer :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('landing-escobar-footer')" />
     <ConsentBanner />
+    <WhatsAppFab />
   </div>
 </template>

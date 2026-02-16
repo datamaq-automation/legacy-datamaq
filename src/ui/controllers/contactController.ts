@@ -6,6 +6,10 @@ export function getWhatsAppEnabled(): boolean {
   return Boolean(resolveWhatsAppUrl())
 }
 
+export function getWhatsAppHref(): string | undefined {
+  return resolveWhatsAppUrl()
+}
+
 export function getContactEmail(): string | undefined {
   const value = useContainer().config.contactEmail
   return value?.trim() ? value : undefined

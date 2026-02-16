@@ -13,6 +13,10 @@ async function hasHorizontalOverflow(page: Page) {
   )
 }
 
+function getWhatsAppFab(page: Page) {
+  return page.getByRole('link', { name: 'Abrir WhatsApp para pedir coordinación' })
+}
+
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('**/api/contact', async (route) => {
@@ -63,10 +67,12 @@ test.describe('Smoke E2E', () => {
     await expect(heading).toBeVisible()
     await expect(subtitle).toBeVisible()
     await expect(primaryCta).toBeVisible()
+    await expect(getWhatsAppFab(page)).toBeVisible()
 
     expect(await isInsideViewport(heading)).toBe(true)
     expect(await isInsideViewport(subtitle)).toBe(true)
     expect(await isInsideViewport(primaryCta)).toBe(true)
+    await expect(getWhatsAppFab(page)).toHaveAttribute('href', /wa\.me/)
     expect(await hasHorizontalOverflow(page)).toBe(false)
   })
 
@@ -79,17 +85,20 @@ test.describe('Smoke E2E', () => {
     const heading = hero.getByRole('heading', { level: 1 })
     const subtitle = hero.locator('.c-hero__subtitle')
     const primaryCta = hero.locator('.c-hero__primary-cta')
+    const whatsappFab = getWhatsAppFab(page)
 
     await expect(header).toBeVisible()
     await expect(heading).toBeVisible()
     await expect(subtitle).toBeVisible()
     await expect(primaryCta).toBeVisible()
+    await expect(whatsappFab).toBeVisible()
 
     const headerHeight = await header.evaluate((element) => element.getBoundingClientRect().height)
     expect(headerHeight).toBeLessThanOrEqual(80)
     expect(await isInsideViewport(heading)).toBe(true)
     expect(await isInsideViewport(subtitle)).toBe(true)
     expect(await isInsideViewport(primaryCta)).toBe(true)
+    await expect(whatsappFab).toHaveAttribute('href', /wa\.me/)
     expect(await hasHorizontalOverflow(page)).toBe(false)
   })
 
@@ -117,18 +126,29 @@ test.describe('Smoke E2E', () => {
     await page.goto('/')
 
     const banner = page.locator('.c-consent-banner')
+    const whatsappFab = getWhatsAppFab(page)
     await expect(banner).toBeVisible()
     await expect(page.getByTestId('consent-reject')).toBeVisible()
     await expect(page.getByTestId('consent-accept')).toBeVisible()
+    await expect(whatsappFab).toBeVisible()
 
     const hasBannerClass = await page.evaluate(() =>
       document.body.classList.contains('has-consent-banner')
     )
     const bodyPaddingBottom = await page.evaluate(() => getComputedStyle(document.body).paddingBottom)
     const bodyPaddingBottomPx = Number.parseFloat(bodyPaddingBottom)
+    const bannerRect = await banner.evaluate((element) => {
+      const rect = element.getBoundingClientRect()
+      return { top: rect.top, bottom: rect.bottom }
+    })
+    const fabRect = await whatsappFab.evaluate((element) => {
+      const rect = element.getBoundingClientRect()
+      return { top: rect.top, bottom: rect.bottom }
+    })
 
     expect(hasBannerClass).toBe(true)
     expect(bodyPaddingBottomPx).toBeGreaterThanOrEqual(80)
+    expect(fabRect.bottom).toBeLessThanOrEqual(bannerRect.top)
     expect(await hasHorizontalOverflow(page)).toBe(false)
   })
 

@@ -1,0 +1,32 @@
+.c-whatsapp-fab {
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--bs-success);
+  color: var(--dm-bg-0);
+  box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.35);
+  z-index: 1060;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.c-whatsapp-fab:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.4);
+}
+
+.c-whatsapp-fab:focus-visible {
+  outline: 3px solid rgba(var(--dm-data-cyan-rgb), 0.95);
+  outline-offset: 4px;
+}
+
+.c-whatsapp-fab__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+body.has-consent-banner .whatsapp-fab {
+  bottom: calc(
+    1rem + env(safe-area-inset-bottom) + max(var(--cookie-banner-height, 6rem), 13rem) + 0.75rem
+  );
+}

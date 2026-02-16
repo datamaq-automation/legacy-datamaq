@@ -52,7 +52,7 @@ describe('ContactBackendMonitor', () => {
     expect(http.options).toHaveBeenCalledWith('https://api.example.com/contact')
   })
 
-  it('uses OPTIONS probe for Chatwoot Public contacts endpoint too', async () => {
+  it('skips OPTIONS probe for Chatwoot Public contacts endpoint', async () => {
     const http = createHttpClient(404)
     const monitor = new ContactBackendMonitor(
       http,
@@ -64,9 +64,6 @@ describe('ContactBackendMonitor', () => {
     const status = await monitor.ensureStatus()
 
     expect(status).toBe('available')
-    expect(http.options).toHaveBeenCalledTimes(1)
-    expect(http.options).toHaveBeenCalledWith(
-      'https://chatwoot.example.com/public/api/v1/inboxes/abc123/contacts'
-    )
+    expect(http.options).not.toHaveBeenCalled()
   })
 })

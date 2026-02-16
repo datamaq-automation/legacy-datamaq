@@ -9,6 +9,7 @@ import SobreProfeBustos from '@/ui/sections/SobreProfeBustos.vue'
 import Footer from '@/ui/layout/Footer.vue'
 import LegalSection from '@/ui/sections/LegalSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
+import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import { useHomePage } from './HomePage'
 
 const {
@@ -40,5 +41,6 @@ const {
     </main>
     <Footer :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('footer')" />
     <ConsentBanner />
+    <WhatsAppFab />
   </div>
 </template>
