@@ -13,6 +13,12 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     if (typeof document === 'undefined') {
       return
     }
+    const appRoot = document.getElementById('app')
+    document.documentElement.classList.toggle('dmq-offcanvas-open', isOpen)
+    document.body.classList.toggle('dmq-offcanvas-open', isOpen)
+    appRoot?.classList.toggle('dmq-offcanvas-open', isOpen)
+
+    // Backwards compatibility for existing tests/styles while migrating to dmq-offcanvas-open.
     document.body.classList.toggle('offcanvas-open', isOpen)
   }
 
@@ -37,6 +43,9 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     offcanvasRef.value.setAttribute('aria-hidden', 'true')
     offcanvasRef.value.removeAttribute('role')
 
+    document.documentElement.classList.remove('dmq-offcanvas-open')
+    document.body.classList.remove('dmq-offcanvas-open')
+    document.getElementById('app')?.classList.remove('dmq-offcanvas-open')
     document.body.classList.remove('offcanvas-open')
     document.body.classList.remove('offcanvas-backdrop')
     document.body.style.removeProperty('overflow')

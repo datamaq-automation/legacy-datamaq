@@ -7,6 +7,17 @@
   opacity: 0.72;
 }
 
+.dmq-offcanvas {
+  --bs-offcanvas-width: 100vw;
+  height: 100dvh;
+}
+
+@media (min-width: 576px) {
+  .dmq-offcanvas {
+    --bs-offcanvas-width: 380px;
+  }
+}
+
 .c-navbar .c-navbar__inner {
   max-width: 1200px;
   margin-inline: auto;
@@ -59,7 +70,6 @@
   }
 
   .c-navbar .c-navbar__offcanvas {
-    width: min(88vw, 22rem);
     border-left: 1px solid rgba(var(--dm-border-0-rgb), 0.85);
     background: rgba(var(--dm-bg-1-rgb), 0.98);
   }

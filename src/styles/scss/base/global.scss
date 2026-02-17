@@ -6,6 +6,17 @@ body {
   overflow-x: hidden;
 }
 
+html.dmq-offcanvas-open,
+body.dmq-offcanvas-open {
+  overflow: hidden;
+  height: 100dvh;
+}
+
+#app.dmq-offcanvas-open {
+  overflow: hidden;
+  height: 100dvh;
+}
+
 body.has-consent-banner {
   --cookie-banner-height: var(--cookie-banner-visible-height);
   padding-bottom: var(--cookie-banner-height);

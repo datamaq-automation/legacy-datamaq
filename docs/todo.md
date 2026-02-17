@@ -76,6 +76,19 @@
   - Evidencia: `npm run lint:security` en verde (2026-02-16 22:14 -03:00).
   - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 22:14 -03:00), cobertura global `lines=80.87`, `statements=80.07`, `functions=81.85`, `branches=71.09`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-16 22:15 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
+  - Decision tomada (B-Vue): se evalua mantener offcanvas dentro del header vs moverlo a `body`; se elige `Teleport to="body"` para evitar stacking/scroll bugs por contenedores padre y asegurar backdrop + lock consistentes en mobile.
+  - Avance: offcanvas mobile teletransportado a `body` con `data-bs-backdrop="true"` y `data-bs-scroll="false"`, preservando CTA/links con `data-bs-dismiss`.
+  - Evidencia: `src/ui/layout/Navbar.vue`.
+  - Avance: lock de scroll endurecido para `html`, `body` y `#app` con clase `dmq-offcanvas-open`; se mantiene compatibilidad con clase previa `offcanvas-open`.
+  - Evidencia: `src/ui/layout/Navbar.ts`, `src/styles/scss/base/global.scss`.
+  - Avance: offcanvas mobile ajustado a full-height (`100dvh`) y ancho responsive (`100vw` en xs, `380px` desde `sm`), sin overrides conflictivos de posicion.
+  - Evidencia: `src/styles/scss/sections/_navbar.scss`.
+  - Avance: FAB oculto cuando offcanvas esta abierto usando estado `body.dmq-offcanvas-open`, evitando superposicion sobre backdrop/menu.
+  - Evidencia: `src/styles/scss/sections/_whatsapp-fab.scss`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 22:22 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 22:22 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 22:22 -03:00), cobertura global `lines=80.70`, `statements=79.90`, `functions=81.85`, `branches=71.09`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 22:24 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
   - Mitigacion interna ejecutada: el primer ajuste E2E uso asercion fragil (`firstNavLink` invisible) y fallo por visibilidad residual del nodo; se reemplazo por validacion estructural robusta de cierre (`#main-navbar` sin clase `show`).
   - Evidencia: `tests/e2e/smoke.spec.ts` (assert `not.toHaveClass(/show/)` despues de click en link).
   - Evidencia: `npm run typecheck` en verde (2026-02-17 21:17 -03:00).

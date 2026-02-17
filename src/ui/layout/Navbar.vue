@@ -35,49 +35,54 @@ Path: src/ui/layout/Navbar.vue
         </ul>
       </nav>
 
-      <div
-        id="mainOffcanvas"
-        ref="offcanvasRef"
-        class="offcanvas offcanvas-end text-bg-dark c-navbar__offcanvas d-lg-none"
-        tabindex="-1"
-        aria-labelledby="mainOffcanvasLabel"
-      >
-        <div class="offcanvas-header">
-          <h5 id="mainOffcanvasLabel" class="offcanvas-title">{{ navbar.brand }}</h5>
-          <button
-            type="button"
-            class="btn-close btn-close-white"
-            data-bs-dismiss="offcanvas"
-            aria-label="Cerrar"
-          ></button>
-        </div>
-        <div class="offcanvas-body">
-          <ul class="navbar-nav gap-2 c-navbar__links">
-            <li v-for="link in navbar.links" :key="`mobile-${link.href}`" class="nav-item">
-              <a
-                class="nav-link"
-                :href="link.href"
-                data-bs-dismiss="offcanvas"
-                @click="handleMobileNavLinkClick"
-              >
-                {{ link.label }}
-              </a>
-            </li>
-          </ul>
-          <div v-if="contactCtaEnabled" class="d-grid mt-3">
+    </div>
+  </header>
+
+  <teleport to="body">
+    <div
+      id="mainOffcanvas"
+      ref="offcanvasRef"
+      class="offcanvas offcanvas-end text-bg-dark c-navbar__offcanvas dmq-offcanvas d-lg-none"
+      tabindex="-1"
+      aria-labelledby="mainOffcanvasLabel"
+      data-bs-backdrop="true"
+      data-bs-scroll="false"
+    >
+      <div class="offcanvas-header">
+        <h5 id="mainOffcanvasLabel" class="offcanvas-title">{{ navbar.brand }}</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="offcanvas"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav gap-2 c-navbar__links">
+          <li v-for="link in navbar.links" :key="`mobile-${link.href}`" class="nav-item">
             <a
-              class="btn c-ui-btn c-ui-btn--primary c-navbar__cta"
-              href="#contacto"
+              class="nav-link"
+              :href="link.href"
               data-bs-dismiss="offcanvas"
-              @click.prevent="handleContactClickMobile"
+              @click="handleMobileNavLinkClick"
             >
-              {{ navbar.contactLabel }}
+              {{ link.label }}
             </a>
-          </div>
+          </li>
+        </ul>
+        <div v-if="contactCtaEnabled" class="d-grid mt-3">
+          <a
+            class="btn c-ui-btn c-ui-btn--primary c-navbar__cta"
+            href="#contacto"
+            data-bs-dismiss="offcanvas"
+            @click.prevent="handleContactClickMobile"
+          >
+            {{ navbar.contactLabel }}
+          </a>
         </div>
       </div>
     </div>
-  </header>
+  </teleport>
 </template>
 
 <script setup lang="ts">
