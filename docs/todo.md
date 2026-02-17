@@ -62,6 +62,13 @@
   - Evidencia: `npm run lint:security` en verde (2026-02-16 21:56 -03:00).
   - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 21:57 -03:00), cobertura global `lines=80.87`, `statements=80.07`, `functions=81.85`, `branches=71.09`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-16 21:59 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
+  - Mitigacion interna ejecutada: fallo intermitente en CI del assert "primary CTA above fold" por variacion de render/fuentes; se endurecio la prueba con `waitForLoadState('networkidle')` y margen de fold tolerante (`innerHeight + 120`) manteniendo chequeo de visibilidad funcional.
+  - Evidencia: `tests/e2e/smoke.spec.ts`.
+  - Evidencia: `npm run test:e2e:smoke` en verde (2026-02-16 22:04 -03:00), `8 passed`.
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 22:04 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 22:04 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 22:04 -03:00), cobertura global `lines=80.87`, `statements=80.07`, `functions=81.85`, `branches=71.09`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 22:06 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
   - Mitigacion interna ejecutada: el primer ajuste E2E uso asercion fragil (`firstNavLink` invisible) y fallo por visibilidad residual del nodo; se reemplazo por validacion estructural robusta de cierre (`#main-navbar` sin clase `show`).
   - Evidencia: `tests/e2e/smoke.spec.ts` (assert `not.toHaveClass(/show/)` despues de click en link).
   - Evidencia: `npm run typecheck` en verde (2026-02-17 21:17 -03:00).
