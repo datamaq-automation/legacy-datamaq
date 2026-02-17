@@ -1110,3 +1110,31 @@ Tarea de verificacion:
   - Evidencia: `npm run quality:merge` en verde (2026-02-16 20:42 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
   - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/application/contactBackendStatus.test.ts`.
   - Evidencia: `npm run typecheck` en verde (2026-02-16 20:31 -03:00).
+
+## Movido desde docs/todo.md el 2026-02-17 11:07 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P0) Optimizar UI/UX secuencial por breakpoints (mobile-first real)
+  - Contexto: optimizacion UX se ejecuta por etapas bloqueantes `XS -> SM -> MD -> LG` para evitar regresiones entre breakpoints.
+  - Avance: `XS`, `SM`, `MD` y `LG` completados; mejoras aplicadas en hero/nav, servicios/contacto.
+  - Ciclo completado 2026-02-17: eliminacion de `!important` en hero/services/navbar + validacion LG desktop.
+  - Decision tomada (B-CSS): lote LG sin nuevas media queries (presupuesto CSS constraintado); desktop layout ya soportado por reglas base + breakpoint MD.
+  - Cambios ejecutados:
+    - Eliminación de 11 ocurrencias de `!important` en:
+      - `src/styles/scss/sections/_hero.scss` (10 remociones); reemplazado por cascada explícita con selectores más específicos (ej: `.c-hero > .container`)
+      - `src/styles/scss/sections/_services.scss` (2 remociones); padding/margin overrides sin `!important`
+      - `src/styles/scss/sections/_navbar.scss` (1 remoción); especificidad `.navbar.c-navbar` en lugar de `!important`
+  - Mitigacion interna ejecutada: ajuste presupuesto CSS; se descartó bloque `@media (min-width: 992px)` independiente para mantener bajo umbral 211000 bytes.
+  - Evidencia:
+    - `npm run test:e2e:smoke:lg` en verde (2026-02-17 13:44 -03:00)
+    - `npm run quality:responsive` en verde XS→SM→MD→LG secuencial (2026-02-17 13:45 -03:00)
+    - `npm run quality:mobile` en verde (responsive + a11y + CSS budget) (2026-02-17 13:47 -03:00)
+    - `npm run quality:merge` en verde (gate + responsive + mobile consolidado) (2026-02-17 13:48 -03:00)
+    - CSS budget final: 210883 bytes ≤ 211000 bytes ✅
+    - Sin hallazgos de accesibilidad (a11y)
+  - Bloqueador residual: ninguno.
+  - Siguiente accion interna ejecutable ahora: ejecutar `npm run lint:todo-sync:merge-ready` para validar cambios P0 y cerrar turno.
+  - Anexo tecnico: `docs/dv-uiux-01.md`.
+  - Decision tomada (B-Arquitectura): se mantiene regla ITCSS-like (mobile-first) con preferencia por cascada simple sobre `!important` para reducir fragilidad.
+  - Evidencia: `npm run lint:security` en verde (2026-02-17); `npm run lint:todo-sync` en verde (2026-02-17).

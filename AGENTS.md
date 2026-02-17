@@ -159,6 +159,37 @@ Plantilla obligatoria para `C`:
   - `npm run quality:mobile`
 - Si una mejora Vue requiere redefinir framework de UI o convenciones globales de producto, clasificar `C` por circuito `VC` antes de implementar.
 
+## Dimension frontend lead CSS/SCSS + Bootstrap (obligatoria cuando aplique)
+- Rol por defecto para auditorias de estilos: actuar como `Frontend Lead (Vue 3 + Vite SSG)` con foco en arquitectura `CSS/SCSS` y `Bootstrap 5.3.x`.
+- Contexto tecnico confirmado del proyecto:
+  - Bootstrap por npm con personalizacion SCSS en `src/styles/vendors/bootstrap.custom.scss`.
+  - Bootstrap JS bundle e icons importados desde `main.ts`.
+  - Compilacion con Vite + `sass` (sin PostCSS/Autoprefixer/Stylelint/Prettier por defecto).
+  - Estructura de estilos ITCSS-like en `src/styles/` + CSS adicional en secciones/componentes.
+- Prioridad por defecto si el usuario no define otra:
+  - `A`: eliminar `!important` y consolidar CSS duplicado.
+  - `D`: reducir deuda tecnica (fosiles y reorganizacion de overrides).
+  - `B`: setup minimo y no disruptivo de guardrails.
+  - `C`: dark/light toggle solo con enfoque confirmado.
+- Secuencia de ejecucion obligatoria:
+  1. Analisis de alto nivel (arquitectura/estructura/dependencias/convenciones y relacion Bootstrap-SCSS) sin implementar cambios que dependan de decisiones de estrategia no confirmadas.
+  2. Plan de bajo nivel priorizado.
+  3. Implementacion solo en certezas (cambios seguros, reversibles y de bajo riesgo).
+- Manejo de dudas:
+  - Duda de bajo nivel: presentar 2-3 opciones con pros/contras, recomendacion tecnica e implementacion sugerida.
+  - Duda de alto nivel: no cambiar codigo dentro del alcance bloqueado y cerrar con exactamente 1 pregunta de alto nivel.
+- Entregable obligatorio en auditorias CSS/SCSS:
+  - `A) Analisis de alto nivel (sin cambios)`: mapa ITCSS, mapa de integracion Bootstrap, riesgos/antipatrones con evidencia y lista de certezas/desconocidos.
+  - `B) Plan de bajo nivel`: backlog priorizado (`P0/P1/P2`) con esfuerzo (`S/M/L`), impacto, riesgo y archivos.
+  - `C) Implementacion (solo certezas)`: diffs/snippets antes-despues + checklist de verificacion (build, bundle CSS, regresion visual sugerida, warnings SCSS).
+  - `D) Cierre`: si hay duda de alto nivel, 1 sola pregunta; si no, declarar explicitamente `No hay preguntas de alto nivel; tareas finalizadas`.
+- Cambios tipicos permitidos cuando hay certeza:
+  - Reducir/eliminar `!important` via cascada/especificidad/orden ITCSS/utilidades Bootstrap.
+  - Consolidar CSS duplicado (`src/ui/sections/*.css` vs SCSS central).
+  - Encapsular overrides fragiles en ubicacion clara sin re-arquitectura masiva.
+  - Retirar o aislar assets fosiles solo si su desuso esta verificado.
+  - Integrar `check:css` al gate solo si es directo y no disruptivo.
+
 ## Dimension de deploy/operacion (obligatoria)
 - Principio: cada release debe ser verificable, trazable y con riesgo de rollback controlado.
 - Si se tocan `./.github/workflows/`, scripts de despliegue o configuracion publica (`src/infrastructure/config/publicConfig.ts`), registrar en `docs/todo.md` evidencia de validacion tecnica local y el impacto esperado en produccion.
