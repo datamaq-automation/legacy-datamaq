@@ -26,41 +26,22 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     emit('contact')
   }
 
-  function closeOffcanvas() {
-    if (!offcanvasRef.value || typeof window === 'undefined' || typeof document === 'undefined') {
+  function hideOffcanvas() {
+    if (!offcanvasRef.value) {
       return
     }
-
-    const bootstrap = (
-      window as Window & {
-        bootstrap?: { Offcanvas?: { getOrCreateInstance: (el: Element) => { hide: () => void } } }
-      }
-    ).bootstrap
-    bootstrap?.Offcanvas?.getOrCreateInstance(offcanvasRef.value)?.hide()
-
-    offcanvasRef.value.classList.remove('show')
-    offcanvasRef.value.setAttribute('aria-modal', 'false')
-    offcanvasRef.value.setAttribute('aria-hidden', 'true')
-    offcanvasRef.value.removeAttribute('role')
-
-    document.documentElement.classList.remove('dmq-offcanvas-open')
-    document.body.classList.remove('dmq-offcanvas-open')
-    document.getElementById('app')?.classList.remove('dmq-offcanvas-open')
-    document.body.classList.remove('offcanvas-open')
-    document.body.classList.remove('offcanvas-backdrop')
-    document.body.style.removeProperty('overflow')
-    document.body.style.removeProperty('padding-right')
-
-    document.querySelectorAll('.offcanvas-backdrop').forEach((backdrop) => backdrop.remove())
+    offcanvasRef.value
+      .querySelector<HTMLButtonElement>('button[data-bs-dismiss="offcanvas"]')
+      ?.click()
   }
 
   function handleMobileNavLinkClick() {
-    closeOffcanvas()
+    hideOffcanvas()
   }
 
   function handleContactClickMobile() {
     emit('contact')
-    closeOffcanvas()
+    hideOffcanvas()
   }
 
   function handleShown() {

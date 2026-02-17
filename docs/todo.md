@@ -92,6 +92,20 @@
   - Evidencia: `npm run lint:security` en verde (2026-02-16 22:22 -03:00).
   - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 22:22 -03:00), cobertura global `lines=80.70`, `statements=79.90`, `functions=81.85`, `branches=71.09`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-16 22:24 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
+  - Decision tomada (B-Vue): se evalua mantener cierre manual del offcanvas (DOM + clases) vs delegar en Bootstrap `data-bs-dismiss`; se elige delegar en Bootstrap para evitar desincronizacion de estado (menu que abre al segundo click).
+  - Avance: removido cierre programatico forzado en `Navbar.ts`; links/CTA mobile quedan bajo cierre nativo de offcanvas.
+  - Evidencia: `src/ui/layout/Navbar.ts`.
+  - Avance: corregidos selectores SCSS del offcanvas teletransportado para que estilos mobile apliquen fuera de `.c-navbar` (evita panel parcial/mal anclado).
+  - Evidencia: `src/styles/scss/sections/_navbar.scss`.
+  - Avance: FAB WhatsApp ajustado a verde oficial con hover dedicado y color de icono blanco; se mantienen reglas de ocultamiento al abrir offcanvas.
+  - Evidencia: `src/styles/scss/_dm.tokens.scss`, `src/styles/scss/sections/_whatsapp-fab.scss`.
+  - Mitigacion interna ejecutada: primer intento de cierre por API `Offcanvas` importada duplico backdrop en smoke (mezcla bundle + modulo); se reemplazo por cierre nativo disparando el boton `data-bs-dismiss` del propio offcanvas.
+  - Evidencia: `src/ui/layout/Navbar.ts` (uso de `button[data-bs-dismiss=\"offcanvas\"]?.click()`).
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 22:50 -03:00).
+  - Evidencia: `npm run test:e2e:smoke` en verde (2026-02-16 22:50 -03:00), `8 passed`.
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 22:53 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 22:53 -03:00), cobertura global `lines=81.68`, `statements=80.93`, `functions=82.22`, `branches=71.45`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 22:53 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
   - Mitigacion interna ejecutada: el primer ajuste E2E uso asercion fragil (`firstNavLink` invisible) y fallo por visibilidad residual del nodo; se reemplazo por validacion estructural robusta de cierre (`#main-navbar` sin clase `show`).
   - Evidencia: `tests/e2e/smoke.spec.ts` (assert `not.toHaveClass(/show/)` despues de click en link).
   - Evidencia: `npm run typecheck` en verde (2026-02-17 21:17 -03:00).
