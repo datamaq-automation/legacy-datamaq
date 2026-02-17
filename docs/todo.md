@@ -26,6 +26,9 @@
   - Decision tomada (B-Deploy): se evalua configurar `VITE_INQUIRY_API_URL` solo en entorno local de build vs endurecer CI/CD para exigirlo en `deploy-production`; se elige validacion explicita + inyeccion por `environment` secret para evitar builds productivos con `inquiryApiUrl: null`.
   - Avance: workflow de deploy actualizado para exigir `VITE_INQUIRY_API_URL` y exportarlo en el paso `Build`.
   - Evidencia: `.github/workflows/ci-cd-ftps.yml` (`Validate inquiry API URL` + `Build.env.VITE_INQUIRY_API_URL`).
+  - Mitigacion interna ejecutada: incidente productivo detectado con `VITE_INQUIRY_API_URL` cargada como identificador (`9BkS1a5AsmAtFy7FjwujYcra`) en vez de URL HTTPS; se endurecio el gate de deploy para fallar si el secreto no comienza con `https://`.
+  - Evidencia: `.github/workflows/ci-cd-ftps.yml` (paso `Validate inquiry API URL` con regex `^https://`).
+  - Evidencia: consola runtime reportada (`[config] inquiryApiUrl debe comenzar con "https://"` + `backend-status:unavailable`) valida que la causa fue configuracion externa incorrecta.
   - Decision tomada (B-Vue): se evalua mantener navbar mobile como overlay absoluto vs volver a flujo push-down; se elige push-down con panel solido y scroll interno para evitar superposicion con hero/cards.
   - Avance: `Navbar` mobile ajustado para panel en flujo normal (`position: static`), CTA dentro del panel sin posicion fija y contenedor `dmq-navpanel` con fondo solido.
   - Evidencia: `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.

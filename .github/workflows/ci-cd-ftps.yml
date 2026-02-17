@@ -116,6 +116,10 @@ jobs:
             echo "::error::Missing secret VITE_INQUIRY_API_URL"
             exit 1
           fi
+          if ! printf '%s' "${VITE_INQUIRY_API_URL}" | grep -Eq '^https://'; then
+            echo "::error::Invalid VITE_INQUIRY_API_URL. It must start with https:// and point to backend contact endpoint."
+            exit 1
+          fi
 
       - name: Build
         env:
