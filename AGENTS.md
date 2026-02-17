@@ -30,6 +30,7 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 21. Si existe bloqueo `C2` de deploy/operacion, `docs/todo.md` debe mantener el ultimo intento de validacion tecnica y una `Siguiente accion interna ejecutable ahora` condicionada al dato externo faltante.
 22. Si un cambio cruza capas (`ui`, `application`, `domain`, `infrastructure`), validar limites arquitectonicos con `npm run lint:layers` y registrar decision tecnica en `docs/todo.md`.
 23. Si se modifica `src/ui/` o archivos `.vue`, ejecutar `npm run test:a11y` y `npm run check:css`, y registrar evidencia en `docs/todo.md`.
+24. Si se modifica `src/ui/`, archivos `.vue` o `tests/e2e/`, ejecutar `npm run quality:mobile` para validar comportamiento mobile-first (smoke + a11y + CSS) y registrar evidencia en `docs/todo.md`.
 
 ## Protocolo operativo por turno
 1. Leer `docs/todo.md`.
@@ -38,12 +39,13 @@ Definir un contrato operativo claro para que el agente trabaje de forma ininterr
 4. Ejecutar cambios minimos y trazables.
 5. Validar con comandos acordes al cambio.
 6. Si hubo cambios en `src/`, `tests/`, `scripts/`, `AGENTS.md` o `package.json`, ejecutar `npm run lint:security`.
-7. Si hubo cambios en `src/` o `tests/`, ejecutar `npm run quality:merge` para exponer en una sola corrida los fallos de `quality:gate` y `test:e2e:smoke`, y cerrar con `npm run lint:todo-sync:merge-ready`.
-8. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
-9. Si quedaron tareas `[x]` en `docs/todo.md`, ejecutar `npm run todo:archive` y volver a validar.
-10. Si hay ruido operativo repetitivo (entradas de `Avance/Evidencia/Mitigacion` sin valor incremental), compactar con `npm run todo:compact:noise` y volver a validar.
-11. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
-12. Cerrar con la seccion final obligatoria segun regla 17.
+7. Si hubo cambios en `src/ui/`, archivos `.vue` o `tests/e2e/`, ejecutar `npm run quality:mobile` y registrar evidencia.
+8. Si hubo cambios en `src/` o `tests/`, ejecutar `npm run quality:merge` para exponer en una sola corrida los fallos de `quality:gate` y `test:e2e:smoke`, y cerrar con `npm run lint:todo-sync:merge-ready`.
+9. Registrar evidencia concreta (archivos, comandos, fecha) en `docs/todo.md`.
+10. Si quedaron tareas `[x]` en `docs/todo.md`, ejecutar `npm run todo:archive` y volver a validar.
+11. Si hay ruido operativo repetitivo (entradas de `Avance/Evidencia/Mitigacion` sin valor incremental), compactar con `npm run todo:compact:noise` y volver a validar.
+12. Repetir desde el paso 2 mientras haya acciones internas ejecutables.
+13. Cerrar con la seccion final obligatoria segun regla 17.
 
 ## Marco A/B/C
 ### A) Certeza total
@@ -150,6 +152,7 @@ Plantilla obligatoria para `C`:
   - `npm run test`
   - `npm run test:a11y`
   - `npm run check:css`
+  - `npm run quality:mobile`
 - Si una mejora Vue requiere redefinir framework de UI o convenciones globales de producto, clasificar `C` por circuito `VC` antes de implementar.
 
 ## Dimension de deploy/operacion (obligatoria)
@@ -199,6 +202,7 @@ Plantilla obligatoria para `C`:
 - `scripts/archive-todo-completed.mjs`: automatiza archivo de tareas `[x]` desde `docs/todo.md` a `docs/todo.done.YYYY-MM.md`.
 - `scripts/compact-todo-noise.mjs`: compacta ruido operativo repetitivo desde `docs/todo.md` hacia `docs/todo.done.YYYY-MM.md`.
 - `scripts/run-quality-merge.mjs`: ejecuta `quality:gate` y `test:e2e:smoke` sin fail-fast para detectar desalineaciones locales antes de push.
+- `scripts/run-mobile-first-checks.mjs`: ejecuta `test:e2e:smoke` + `test:a11y` + `check:css` sin fail-fast para validar mobile-first en una sola corrida.
 - `docs/dv-03-ci-cd-inventory.md`: inventario de pipeline y decisiones operativas de borde (incluyendo Cloudflare).
 - `docs/dv-04-security-headers-audit.md`: auditoria de headers y hardening de capa edge fuera del repo.
 - `package.json`: integra `lint:security` + `lint:test-coverage` + `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.

@@ -34,6 +34,7 @@
     "todo:compact:noise": "node scripts/compact-todo-noise.mjs",
     "todo:compact:noise:dry-run": "node scripts/compact-todo-noise.mjs --dry-run",
     "quality:gate": "npm run lint:todo-sync && npm run lint:security && npm run typecheck && npm run lint:test-coverage && npm run lint:colors && npm run lint:layers && npm run test:a11y && npm run check:css",
+    "quality:mobile": "node scripts/run-mobile-first-checks.mjs",
     "quality:merge": "node scripts/run-quality-merge.mjs",
     "ci:remote:status": "node scripts/report-github-ci-status.mjs",
     "ci:branch-protection:check": "node scripts/check-branch-protection.mjs",

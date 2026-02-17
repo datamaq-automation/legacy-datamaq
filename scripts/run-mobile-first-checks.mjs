@@ -1,14 +1,15 @@
 import { spawnSync } from 'node:child_process'
 
 const checks = [
-  { label: 'quality:gate', command: 'npm run quality:gate' },
-  { label: 'quality:mobile', command: 'npm run quality:mobile' }
+  { label: 'test:e2e:smoke', command: 'npm run test:e2e:smoke' },
+  { label: 'test:a11y', command: 'npm run test:a11y' },
+  { label: 'check:css', command: 'npm run check:css' }
 ]
 
 const failures = []
 
 for (const check of checks) {
-  console.log(`[quality:merge] running: ${check.command}`)
+  console.log(`[quality:mobile] running: ${check.command}`)
 
   const result = spawnSync(check.command, {
     stdio: 'inherit',
@@ -32,11 +33,11 @@ for (const check of checks) {
 }
 
 if (failures.length > 0) {
-  console.error('[quality:merge] failed checks:')
+  console.error('[quality:mobile] failed checks:')
   for (const failure of failures) {
     console.error(`- ${failure}`)
   }
   process.exit(1)
 }
 
-console.log('[quality:merge] all checks passed.')
+console.log('[quality:mobile] all checks passed.')

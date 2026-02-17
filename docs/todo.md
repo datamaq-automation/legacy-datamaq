@@ -106,12 +106,33 @@
   - Evidencia: `npm run lint:security` en verde (2026-02-16 22:53 -03:00).
   - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 22:53 -03:00), cobertura global `lines=81.68`, `statements=80.93`, `functions=82.22`, `branches=71.45`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-16 22:53 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
+  - Mitigacion interna ejecutada: cierre de offcanvas via import de modulo `offcanvas` genero doble backdrop por convivencia con `bootstrap.bundle`; se retiro ese camino y se adopto cierre deterministico disparando el boton nativo `data-bs-dismiss`.
+  - Evidencia: `src/ui/layout/Navbar.ts` (funcion `hideOffcanvas`).
+  - Evidencia: `npm run typecheck` en verde (2026-02-16 23:48 -03:00).
+  - Evidencia: `npm run test:e2e:smoke` en verde (2026-02-16 23:48 -03:00), `8 passed`.
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 23:48 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 23:48 -03:00), cobertura global `lines=81.68`, `statements=80.93`, `functions=82.22`, `branches=71.45`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-16 23:48 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
   - Mitigacion interna ejecutada: el primer ajuste E2E uso asercion fragil (`firstNavLink` invisible) y fallo por visibilidad residual del nodo; se reemplazo por validacion estructural robusta de cierre (`#main-navbar` sin clase `show`).
   - Evidencia: `tests/e2e/smoke.spec.ts` (assert `not.toHaveClass(/show/)` despues de click en link).
   - Evidencia: `npm run typecheck` en verde (2026-02-17 21:17 -03:00).
   - Evidencia: `npm run lint:security` en verde (2026-02-17 21:17 -03:00).
   - Evidencia: `npm run lint:test-coverage` en verde (2026-02-17 21:18 -03:00), cobertura global `lines=81.12`, `statements=80.40`, `functions=82.97`, `branches=69.92`.
   - Evidencia: `npm run quality:merge` en verde (2026-02-17 21:20 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`) con caso mobile navbar.
+  - Decision tomada (B-Testing): se evalua exigir chequeos mobile-first solo por documentacion vs agregar un runner dedicado reutilizando comandos existentes; se elige runner dedicado para reducir omisiones operativas sin introducir dependencias.
+  - Avance: agregado runner no fail-fast `quality:mobile` (`test:e2e:smoke` + `test:a11y` + `check:css`) y expuesto en scripts de npm.
+  - Evidencia: `scripts/run-mobile-first-checks.mjs`, `package.json`.
+  - Avance: contrato operativo actualizado para exigir `npm run quality:mobile` cuando se modifique `src/ui/` o archivos `.vue`.
+  - Evidencia: `AGENTS.md`.
+  - Decision tomada (B-Testing): se evalua mantener `quality:mobile` desacoplado de `quality:merge` vs integrarlo como segundo paso de merge; se elige integrarlo para evitar omisiones y alinear validacion mobile-first en cierre de turno.
+  - Avance: `quality:merge` ahora ejecuta `quality:gate` y luego `quality:mobile`.
+  - Evidencia: `scripts/run-quality-merge.mjs`.
+  - Avance: contrato operativo endurecido para exigir `npm run quality:mobile` tambien cuando se modifique `tests/e2e/`.
+  - Evidencia: `AGENTS.md`.
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 23:55 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 23:55 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-16 23:58 -03:00).
+  - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 23:58 -03:00).
   - Mitigacion interna ejecutada: `quality:merge` detecto solape FAB/banner en mobile (assert E2E `fabRect.bottom <= bannerRect.top`); se ajusto offset del FAB en estado `body.has-consent-banner` hasta eliminar interseccion.
   - Evidencia: `src/styles/scss/sections/_whatsapp-fab.scss` (offset con `max(..., 13rem) + 0.75rem`).
   - Evidencia: `npm run typecheck` en verde (2026-02-16 20:45 -03:00).
