@@ -53,10 +53,14 @@ Path: src/ui/layout/Navbar.vue
         <h5 id="mainOffcanvasLabel" class="offcanvas-title">{{ navbar.brand }}</h5>
         <button
           type="button"
-          class="btn-close btn-close-white"
+          class="c-navbar__close-btn"
           data-bs-dismiss="offcanvas"
           aria-label="Cerrar"
-        ></button>
+        >
+          <svg class="c-navbar__close-icon" viewBox="0 0 16 16" width="20" height="20">
+            <path fill="currentColor" d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"/>
+          </svg>
+        </button>
       </div>
       <div class="offcanvas-body">
         <ul class="navbar-nav gap-2 c-navbar__links">

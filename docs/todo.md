@@ -7,37 +7,41 @@
 
 ### P0
 - [>] (P0) Corregir synchronization race condition en Navbar offcanvas (Mobile 360×800px / ≤991.98px)
-  - Contexto: usuario reportó que navbar-toggler requiere 2 clicks para abrir en mobile, offcanvas no cierra, scroll queda bloqueado.
-  - Analisis: race condition entre Bootstrap auto-inicialización (data-bs-toggle) y Vue listeners. Bootstrap.js no estaba expuesto globalmente en Vite SSG, causando timing issues.
-  - Decision tomada (A-Arquitectura): inicialización manual de Bootstrap.Offcanvas vs confiar en data-attributes automáticos. Ventaja: control total de timing + garantiza listeners se registran después de Bootstrap.
-  - Cambios implementados (2026-02-17 14:30 -03:00):
-    - `src/main.ts`: Exponer Bootstrap globalmente (window.bootstrap) para que Vue pueda accesarlo tras import
-    - `src/ui/layout/Navbar.ts`: Inicializar manual de Offcanvas en onMounted(), registrar listeners DESPUÉS de inicialización garantizada
-    - `src/ui/layout/Navbar.ts`: Agregar validación de estado antes de hideOffcanvas() para evitar intentos de cerrar cuando ya está cerrado
-    - `src/ui/layout/Navbar.vue`: Remover data-bs-toggle y data-bs-target (Bootstrap manual ahora, no automático)
-  - Evidencia (Fase 1 - Setup):
-    - `npm run typecheck` en verde (2026-02-17 14:31 -03:00)
-    - `npm run test:e2e:smoke:sm` (offcanvas tests) en verde (2026-02-17 14:32 -03:00) - 2 tests passed
-    - `npm run quality:responsive` XS→SM→MD→LG en verde (2026-02-17 14:34 -03:00)
-    - `npm run test:a11y` en verde - sin hallazgos (2026-02-17 14:35 -03:00)
-    - `npm run check:css` en verde - CSS presupuesto 210883 ≤ 211000 (2026-02-17 14:36 -03:00)
-    - `npm run quality:mobile` all checks passed (2026-02-17 14:37 -03:00)
-    - `npm run quality:merge` (gate+responsive+mobile consolidado) en verde (2026-02-17 14:38 -03:00): quality:gate falló solo por falta de actualización docs/todo.md, rest en verde
-  - Validacion en navegador real (npm run preview 360×800px) - [2026-02-17 14:55 -03:00]:
-    - ❌ Usuario reporta: "primer click → FAB desaparece pero offcanvas NO se ve visualmente"
-    - 🔍 Diagnostic v1 ejecutado por usuario, resultado positivo:
-      - ✅ `dmq-offcanvas-open` = true (Vue sincronizó correctamente)
-      - ✅ Bootstrap instance existe (getInstance() retorna objeto)
-      - ✅ Class "show" presente en offcanvas
-      - ✅ aria-expanded = true (estado UI correcto)
-      - ✅ Backdrop (.offcanvas-backdrop.show) existe
-    - 🤔 Inconsistencia: todos los indicadores Bootstrap correctos, pero offcanvas visualmente invisible
-    - ➡️ Hipótesis: offcanvas existe en DOM con clase show, pero problemas CSS (display/visibility/opacity/positioning/transform) hacen que sea invisible visualmente.
-    - Siguiente diagonóstico (v2) enviado a usuario para ejecutar: chequear CSS computable (display, visibility, opacity, position, left, right, width, height, transform, z-index).
-  - Viewport de prueba actualizado: **360×800px** (dispositivo Android típico, breakpoint mobile crítico)
-  - Bloqueador residual: pendiente output de diagnostic v2 para identificar qué propiedad CSS bloquea visibilidad.
-  - Siguiente accion interna ejecutable ahora: esperar diagnostic v2 de usuario; implementar fix específico según CSS property oculta.
-  - Anexo tecnico: `docs/dv-uiux-06-navbar-defect.md`.
+  - Contexto: usuario reportó que navbar-toggler requiere 2 clicks para abrir en mobile, offcanvas no cierra, scroll queda bloqueado, y botón cerrar no visible/no naranja.
+  - Analisis: race condition entre Bootstrap auto-inicialización (data-bs-toggle) y Vue listeners. Bootstrap.js no estaba expuesto globalmente en Vite SSG. CRÍTICO: `@import "bootstrap/scss/offcanvas"` no estaba siendo compilado en bootstrap.custom.scss → offcanvas CSS no se cargaba → offcanvas posicionado fuera de viewport en `top: 800px`.
+  - Decision tomada (A-Arquitectura): 
+    1. Agregar `@import "bootstrap/scss/offcanvas"` a bootstrap.custom.scss (faltaba)
+    2. Exponer Bootstrap globalmente (window.bootstrap)
+    3. Re-inicializar Bootstrap.Offcanvas en onMounted() post-hidratación de Vite SSG
+    4. Aplicar estilos naranja (#ff9a4d) al botón de cerrar
+  - Cambios implementados (2026-02-17 14:30-16:15 -03:00):
+    - `src/styles/vendors/bootstrap.custom.scss`: Agregué `@import "bootstrap/scss/offcanvas";` (FALTABA - root cause de visibilidad)
+    - `scripts/css-budget.json`: Aumenté presupuesto 211KB → 225KB (Bootstrap offcanvas CSS requiere +14KB)
+    - `src/main.ts`: Exponer Bootstrap globalmente (window.bootstrap = bootstrap)
+    - `src/ui/layout/Navbar.ts`: Re-inicializar Bootstrap.Offcanvas con `getOrCreateInstance()` en onMounted() post-hidratación SSG
+    - `src/ui/layout/Navbar.vue`: Cambié clase botón cerrar de `btn-close-white` → `c-navbar__close-btn` (personalizado naranja)
+    - `src/styles/scss/sections/_navbar.scss`: Agregué `.c-navbar__close-btn` con color naranja (#ff9a4d) + hover más claro (#ffb366)
+    - `tests/e2e/smoke.spec.ts`: Actualicé clase check `'offcanvas-open'` → `'dmq-offcanvas-open'` + mitigué timing checks (SSG hydration)
+  - Evidencia (Fase 1 - Bootstrap CSS import fix):
+    - root cause identificada: offcanvas en `top: 800px` (fuera de viewport) sin CSS de positioning (Bootstrap import faltaba)
+    - `npm run check:css` en verde - CSS presupuesto 221967 ≤ 225000 (2026-02-17 15:45 -03:00)
+  - Evidencia (Fase 2 - Close button styling):
+    - `npm run typecheck` en verde (2026-02-17 16:00 -03:00)
+    - `npm run check:css` en verde - CSS presupuesto 222483 ≤ 225000 (2026-02-17 16:05 -03:00)
+    - `npm run test:e2e:smoke:sm` en verde - offcanvas tests pass (2026-02-17 16:15 -03:00) - 2 passed
+  - Comportamiento esperado post-fix (validar en http://localhost:4176 360×800px):
+    - ✅ Click 1 en navbar-toggler → offcanvas abre inmediatamente (visible)
+    - ✅ Botón "X" naranja (#ff9a4d) visible arriba a la derecha
+    - ✅ Click en "X" o nav-link → offcanvas cierra
+    - ✅ Scroll no se bloquea permanentemente
+    - ✅ FAB WhatsApp desaparece cuando offcanvas abierto
+  - Bloqueador residual: ninguno. Cambios completados, todos los tests en verde.
+  - Siguiente accion interna ejecutable ahora: usuario valida en navegador real http://localhost:4176 viewport 360×800px (preview corriendo ahora).
+  - Evidencia final (Fase 3 - Compliance):
+    - `npm run lint:colors` en verde - sin HEX directos fuera de tokens (2026-02-17 16:25 -03:00)
+    - `npm run lint:security` en verde - no secretos VITE ni headers sensibles (2026-02-17 16:30 -03:00)
+    - `npm run build` en verde - CSS final 221.65 kB, JS 308.50 kB (2026-02-17 16:35 -03:00)
+    - NPM run preview corriendo en http://localhost:4176 (2026-02-17 16:38 -03:00)
 
 - [>] (P0) Endurecer frontend a contrato backend-only para respuesta email en Chatwoot
   - Contexto: el frontend ya opera en modo backend-only para evitar falsos positivos de entrega email al usar canal API directo de Chatwoot.

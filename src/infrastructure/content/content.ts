@@ -11,7 +11,7 @@ import teamTraining from '@/assets/team-training.svg'
 
 export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garin (GBA Norte)',
-  tarifaBaseDesdeARS: 180000,
+  tarifaBaseDesdeARS: 380000,
   trasladoMinimoARS: 0,
   whatsappUrl: 'https://wa.me/5491156297160',
   descuentos: {
@@ -36,7 +36,12 @@ const BASE = commercialConfig.baseOperativa
 const POWERMETER = commercialConfig.equipos.medidorNombre
 const AUTOMATE = commercialConfig.equipos.automateNombre
 const WHATSAPP_URL = commercialConfig.whatsappUrl
-const WHATSAPP_DEFAULT_MESSAGE = 'Hola vengo de la página web y quiero más información'
+const WHATSAPP_BASE = 'Hola, vengo de la web de DataMaq.'
+const WHATSAPP_TRIAGE =
+  '\n\nPara cotizar rapido:\n1) Zona (AMBA):\n2) ¿Se puede desenergizar el tablero para trabajar seguro? (si/no)\n3) Enviar 2 fotos del tablero y del punto de instalacion\n4) Servicio: instalacion Powermeter/Automate o diagnostico/urgencia'
+const WHATSAPP_INSTALL_MESSAGE = `${WHATSAPP_BASE} Quiero coordinar una instalacion industrial (${POWERMETER}/${AUTOMATE}).${WHATSAPP_TRIAGE}`
+const WHATSAPP_DIAG_MESSAGE = `${WHATSAPP_BASE} Necesito diagnostico de falla electrica/electronica en planta.${WHATSAPP_TRIAGE}`
+const WHATSAPP_URG_MESSAGE = `${WHATSAPP_BASE} Tengo una urgencia industrial fuera de horario.${WHATSAPP_TRIAGE}`
 
 const HAS_TRASLADO_MIN = commercialConfig.trasladoMinimoARS > 0
 const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARS(commercialConfig.trasladoMinimoARS) : ''
@@ -51,11 +56,11 @@ export const content: AppContent = {
     badge: 'Tarifa base publicada · Respuesta en menos de 24 horas',
     title: 'Servicios industriales prolijos, seguros y documentados',
     subtitle: `Instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico industrial. Checklist previo, verificación final y cierre documentado en cada visita.`,
-    responseNote: `Te respondemos por WhatsApp en menos de 24 horas con tarifa base desde ${TARIFA_BASE}, alcance incluido y variaciones por distancia/urgencia desde ${BASE}${TRASLADO_TEXT}.`,
+    responseNote: `Te respondemos por WhatsApp en menos de 24 horas con tarifa base desde ${TARIFA_BASE}, alcance incluido y condiciones (distancia/urgencia) desde ${BASE}${TRASLADO_TEXT}.`,
     primaryCta: {
       label: 'Pedí coordinación',
       action: 'whatsapp',
-      href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE)
+      href: buildWhatsAppHref(WHATSAPP_INSTALL_MESSAGE)
     },
     secondaryCta: {
       label: 'Ver servicios',
@@ -64,7 +69,7 @@ export const content: AppContent = {
     benefits: [
       {
         title: 'Tarifa base clara',
-        text: `Instalacion industrial de 1 ${POWERMETER} desde ${TARIFA_BASE}, con alcance y condiciones explicitadas antes de intervenir.`,
+        text: `Instalacion industrial desde ${TARIFA_BASE}, con alcance y condiciones explicitadas antes de intervenir.`,
         variant: 'success'
       },
       {
@@ -116,7 +121,7 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE),
+          href: buildWhatsAppHref(WHATSAPP_INSTALL_MESSAGE),
           section: 'servicios-instalacion'
         }
       },
@@ -149,7 +154,7 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE),
+          href: buildWhatsAppHref(WHATSAPP_DIAG_MESSAGE),
           section: 'servicios-diagnostico'
         }
       },
@@ -175,7 +180,7 @@ export const content: AppContent = {
         cta: {
           label: 'Pedí coordinación urgente',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE),
+          href: buildWhatsAppHref(WHATSAPP_URG_MESSAGE),
           section: 'servicios-urgencias'
         }
       }

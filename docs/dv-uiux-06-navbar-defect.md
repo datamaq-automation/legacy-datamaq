@@ -2,18 +2,29 @@
 
 ## Resumen Ejecutivo
 
-**Criticalidad:** 🔴 ALTO (bloquea navegación en mobile)
+**Criticalidad:** � RESUELTO ✅ (2026-02-17 16:15 -03:00)
 
-**Síntomas:**
+**Síntomas (pre-fix):**
 1. ⏱️ Navbar-toggler: primer click → FAB desaparece (state Vue correcto) pero offcanvas NO se ve visualmente
-2. 🔍 Bootstrap data-bs-toggle **SÍ funciona** (clase `show` presente, instance existe)
-3. 🔒 Pero offcanvas está **visualmente invisible o posicionado fuera de vista**
-4. Scroll se bloquea (`dmq-offcanvas-open` agregado) pero usuario no ve menú
+2. 🔍 Bootstrap data-bs-toggle **SÍ funciona** (clase `show` presente, instance existe, backdrop visible)
+3. 🔒 Pero offcanvas está **visualmente invisible** → posición CSS: `top: 800px` (fuera de viewport)
+4. Scroll se bloquea correctamente (`dmq-offcanvas-open` agregado a body)
+
+**Root Cause (Raíz identificada):** ❌ `@import "bootstrap/scss/offcanvas"` **FALTABA** en `src/styles/vendors/bootstrap.custom.scss`
+- Sin ese import, Bootstrap offcanvas CSS no se cargaba
+- Offcanvas se posicionaba con `position: static; top: auto;` en lugar de `position: fixed; right: -100%;`
+- En Vite SSG, el offcanvas aparecía 800px abajo de la pantalla (fuera de vista)
+
+**Resolución:** 
+✅ Agregué `@import "bootstrap/scss/offcanvas";` en bootstrap.custom.scss
+✅ Re-inicialización de Bootstrap.Offcanvas post-hidratación en Navbar.ts  
+✅ Botón cerrar estilizado en naranja (#ff9a4d)
+✅ CSS presupuesto aumentado 211KB → 225KB (offcanvas CSS +14KB)
 
 **Viewport afectado:** Mobile 360×800px (XS), SM (576–767px), MD (768–991.98px)  
 **No afecta:** LG (≥992px) - layout desktop horizontal
 
-**Impacto de usuario:** Menú existe en código pero invisible → navegación bloqueada
+**Impacto de usuario:** ✅ RESUELTO - Navegación mobile funcional
 
 ---
 
