@@ -6,6 +6,33 @@
 ## Backlog activo
 
 ### P0
+- [>] (P0) Corregir synchronization race condition en Navbar offcanvas (Mobile ≤991.98px)
+  - Contexto: usuario reportó que navbar-toggler requiere 2 clicks para abrir en mobile, offcanvas no cierra, scroll queda bloqueado.
+  - Analisis: race condition entre Bootstrap auto-inicialización (data-bs-toggle) y Vue listeners. Bootstrap.js no estaba expuesto globalmente en Vite SSG, causando timing issues.
+  - Decision tomada (A-Arquitectura): inicialización manual de Bootstrap.Offcanvas vs confiar en data-attributes automáticos. Ventaja: control total de timing + garantiza listeners se registran después de Bootstrap.
+  - Cambios implementados (2026-02-17 14:30 -03:00):
+    - `src/main.ts`: Exponer Bootstrap globalmente (window.bootstrap) para que Vue pueda accesarlo tras import
+    - `src/ui/layout/Navbar.ts`: Inicializar manual de Offcanvas en onMounted(), registrar listeners DESPUÉS de inicialización garantizada
+    - `src/ui/layout/Navbar.ts`: Agregar validación de estado antes de hideOffcanvas() para evitar intentos de cerrar cuando ya está cerrado
+    - `src/ui/layout/Navbar.vue`: Remover data-bs-toggle y data-bs-target (Bootstrap manual ahora, no automático)
+  - Evidencia:
+    - `npm run typecheck` en verde (2026-02-17 14:31 -03:00)
+    - `npm run test:e2e:smoke:sm` (offcanvas tests) en verde (2026-02-17 14:32 -03:00) - 2 tests passed
+    - `npm run quality:responsive` XS→SM→MD→LG en verde (2026-02-17 14:34 -03:00)
+    - `npm run test:a11y` en verde - sin hallazgos (2026-02-17 14:35 -03:00)
+    - `npm run check:css` en verde - CSS presupuesto 210883 ≤ 211000 (2026-02-17 14:36 -03:00)
+    - `npm run quality:mobile` all checks passed (2026-02-17 14:37 -03:00)
+    - `npm run quality:merge` (gate+responsive+mobile consolidado) en verde (2026-02-17 14:38 -03:00): quality:gate falló solo por falta de actualización docs/todo.md, rest en verde
+  - Comportamiento esperado post-fix:
+    - Click 1 en navbar-toggler → offcanvas abre inmediatamente (sin necesidad de 2 clicks)
+    - Click en nav-link o botón cerrar → offcanvas cierra, scroll recuperado
+    - Bootstrap eventos shown.bs.offcanvas / hidden.bs.offcanvas se disparan correctamente
+    - Scroll no se bloquea permanentemente
+  - Bloqueador residual: ninguno interno.
+  - Siguiente paso: usuario debe validar en navegador real (npm run preview) que el defecto se resolvió (1 click vs 2 clicks anteriores, scroll fluido).
+  - Siguiente accion interna ejecutable ahora: ejecutar `npm run lint:todo-sync:merge-ready` para finalizar validación de setup.
+  - Anexo tecnico: `docs/dv-uiux-06-navbar-defect.md`.
+
 - [>] (P0) Endurecer frontend a contrato backend-only para respuesta email en Chatwoot
   - Contexto: el frontend ya opera en modo backend-only para evitar falsos positivos de entrega email al usar canal API directo de Chatwoot.
   - Avance: cliente desacoplado de Chatwoot Public API; envio centralizado a endpoint backend de ingesta.

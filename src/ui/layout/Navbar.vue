@@ -10,8 +10,6 @@ Path: src/ui/layout/Navbar.vue
         ref="toggleButtonRef"
         class="navbar-toggler d-lg-none c-navbar__toggle"
         type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#mainOffcanvas"
         aria-controls="mainOffcanvas"
         :aria-expanded="isOffcanvasOpen ? 'true' : 'false'"
         aria-label="Abrir navegacion"

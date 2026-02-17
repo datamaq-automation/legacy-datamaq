@@ -4,8 +4,18 @@ import App from './ui/App.vue'
 import { routes } from './router/routes'
 import './styles/main.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import { enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
+
+// Exponer Bootstrap globalmente para que Vue pueda accesarlo
+declare global {
+  interface Window {
+    bootstrap: typeof bootstrap
+  }
+}
+if (typeof window !== 'undefined') {
+  window.bootstrap = bootstrap
+}
 import { initAttribution } from './infrastructure/attribution/utm'
 import { consentManagerKey, type ConsentStatus } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'

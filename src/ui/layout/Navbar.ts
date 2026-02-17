@@ -31,6 +31,10 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     if (!offcanvasRef.value) {
       return
     }
+    // Validar que el offcanvas está realmente abierto antes de intentar cerrarlo
+    if (!isOffcanvasOpen.value) {
+      return
+    }
     offcanvasRef.value
       .querySelector<HTMLButtonElement>('button[data-bs-dismiss="offcanvas"]')
       ?.click()
@@ -60,8 +64,38 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
   }
 
   onMounted(() => {
-    offcanvasRef.value?.addEventListener('shown.bs.offcanvas', handleShown)
-    offcanvasRef.value?.addEventListener('hidden.bs.offcanvas', handleHidden)
+    if (!offcanvasRef.value) {
+      return
+    }
+
+    // Inicializar Bootstrap Offcanvas manualmente para evitar race conditions
+    // con data-bs-toggle automático.
+    // Esto garantiza que los listeners se registren DESPUÉS de que Bootstrap esté listo.
+    const globalWindow = typeof window !== 'undefined' ? (window as any) : null
+    if (globalWindow?.bootstrap?.Offcanvas) {
+      // Crear instancia manual: esto previene múltiples inicializaciones
+      const offcanvasInstance = new globalWindow.bootstrap.Offcanvas(offcanvasRef.value)
+      
+      // Remueve el atributo data-bs-toggle para evitar auto-inicialización duplicada
+      // que puede causar race conditions
+      toggleButtonRef.value?.removeAttribute('data-bs-toggle')
+      toggleButtonRef.value?.removeAttribute('data-bs-target')
+      
+      // Ahora add event listeners DESPUÉS de que Bootstrap esté inicializado
+      offcanvasRef.value.addEventListener('shown.bs.offcanvas', handleShown)
+      offcanvasRef.value.addEventListener('hidden.bs.offcanvas', handleHidden)
+      
+      // Registrar listener para que el toggle button manual dispare toggle
+      toggleButtonRef.value?.addEventListener('click', (e) => {
+        e.preventDefault()
+        offcanvasInstance.toggle()
+      })
+    } else {
+      // Fallback: si Bootstrap no está disponible, usar el método anterior
+      offcanvasRef.value.addEventListener('shown.bs.offcanvas', handleShown)
+      offcanvasRef.value.addEventListener('hidden.bs.offcanvas', handleHidden)
+    }
+
     window.addEventListener('hashchange', handleHashChange)
   })
 
