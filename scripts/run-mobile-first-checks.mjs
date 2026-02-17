@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process'
 
 const checks = [
-  { label: 'test:e2e:smoke', command: 'npm run test:e2e:smoke' },
+  { label: 'quality:responsive', command: 'npm run quality:responsive' },
   { label: 'test:a11y', command: 'npm run test:a11y' },
   { label: 'check:css', command: 'npm run check:css' }
 ]

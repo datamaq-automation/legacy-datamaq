@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process'
 
 const checks = [
   { label: 'quality:gate', command: 'npm run quality:gate' },
+  { label: 'quality:responsive', command: 'npm run quality:responsive' },
   { label: 'quality:mobile', command: 'npm run quality:mobile' }
 ]
 
