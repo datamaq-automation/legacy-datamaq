@@ -6,7 +6,7 @@ Path: src/ui/sections/ServiceCard.vue
   <div class="card h-100 bg-transparent border-0 c-services__card">
     <div class="card-body p-0">
       <article class="c-ui-card c-ui-card--interactive h-100 c-services__panel">
-        <div class="p-4 d-flex flex-column h-100">
+        <div class="p-4 d-flex flex-column h-100 c-services__panel-body">
           <div class="text-center">
             <img
               :src="card.media.src"

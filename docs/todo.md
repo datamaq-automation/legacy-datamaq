@@ -6,6 +6,46 @@
 ## Backlog activo
 
 ### P0
+- [>] (P0) Optimizar UI/UX secuencial por breakpoints (mobile-first real)
+  - Contexto: el objetivo operativo del turno es mejorar conversion/UX visual de forma progresiva sin saltar etapas.
+  - Decision tomada (B-Testing): se evalua trabajar mejoras UI por lotes mixtos vs flujo bloqueante por viewport; se elige flujo bloqueante para reducir regresiones cruzadas.
+  - Avance: pipeline secuencial ya disponible (`quality:responsive`: `XS -> SM -> MD -> LG`) y debe usarse como gate de avance por etapa.
+  - Evidencia: `package.json`, `scripts/run-responsive-stages.mjs`, `scripts/run-mobile-first-checks.mjs`, `scripts/run-quality-merge.mjs`.
+  - Decision tomada (B-Vue): se evalua mantener doble CTA hero con igual peso en XS vs bajar prominencia de CTA secundaria y reducir densidad visual; se elige reducir densidad para priorizar accion principal above-the-fold.
+  - Avance: lote XS aplicado en hero/nav (`cta` secundaria menos dominante, microcopy/chips mas compactos y panel offcanvas con targets tactiles mas legibles).
+  - Evidencia: `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_navbar.scss`.
+  - Evidencia: `npm run test:e2e:smoke:xs` en verde (2026-02-17 00:22 -03:00).
+  - Evidencia: `npm run test:e2e:smoke:sm` en verde (2026-02-17 00:23 -03:00).
+  - Evidencia: `npm run test:e2e:smoke:md` en verde (2026-02-17 00:23 -03:00).
+  - Evidencia: `npm run test:e2e:smoke:lg` en verde (2026-02-17 00:23 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:24 -03:00).
+  - Evidencia: `npm run quality:mobile` en verde (2026-02-17 00:26 -03:00).
+  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:30 -03:00).
+  - Decision tomada (B-Vue): se evalua mantener densidad original en `SM` vs compactar cards/form para bajar friccion tactil; se elige compactar manteniendo semantica y contraste.
+  - Avance: lote `SM` aplicado en servicios/contacto (espaciado de cards, legibilidad de titulos, CTA tactil >= 48px, campos de formulario y subtitulo optimizados).
+  - Evidencia: `src/ui/sections/ServiceCard.vue`, `src/ui/features/contact/ContactFormSection.vue`, `src/styles/scss/sections/_services.scss`, `src/styles/scss/sections/_contact.scss`.
+  - Evidencia: `npm run test:e2e:smoke:sm` en verde (2026-02-17 00:32 -03:00).
+  - Evidencia: `npm run test:e2e:smoke:md` en verde (2026-02-17 00:32 -03:00).
+  - Evidencia: `npm run test:e2e:smoke:lg` en verde (2026-02-17 00:32 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:33 -03:00).
+  - Evidencia: `npm run quality:mobile` en verde (2026-02-17 00:34 -03:00).
+  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:35 -03:00).
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:35 -03:00).
+  - Decision tomada (B-Vue): se evalua optimizar `MD` con un paquete amplio de reglas nuevas vs ajuste incremental con control de budget CSS; se elige incremental para mantener estabilidad de pipeline.
+  - Avance: lote `MD` aplicado en tipografia/ritmo de hero tablet y limpieza de reglas redundantes para sostener presupuesto CSS.
+  - Evidencia: `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_services.scss`, `src/styles/scss/sections/_contact.scss`.
+  - Evidencia: `npm run test:e2e:smoke:md` en verde (2026-02-17 00:35 -03:00).
+  - Evidencia: `npm run test:e2e:smoke:lg` en verde (2026-02-17 00:35 -03:00).
+  - Mitigacion interna ejecutada: primera corrida de cierre fallo por budget CSS (`211549 > 211000`); se recortaron reglas `MD` no esenciales hasta recuperar margen (`210996 <= 211000`).
+  - Evidencia: `npm run check:css` fallo controlado (2026-02-17 00:37 -03:00) y posterior verde (2026-02-17 00:40 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:40 -03:00).
+  - Evidencia: `npm run quality:mobile` en verde (2026-02-17 00:43 -03:00).
+  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:45 -03:00).
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:45 -03:00).
+  - Bloqueador residual: ninguno interno para iniciar mejoras UI.
+  - Siguiente paso: ejecutar lote `LG` para jerarquia visual desktop y microajustes de conversion sin afectar compactacion del header.
+  - Siguiente accion interna ejecutable ahora: ajustar `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_services.scss` y `src/styles/scss/sections/_navbar.scss` con foco `>=992px`, luego validar `LG` + `quality:mobile` + `quality:merge`.
+
 - [>] (P0) Endurecer frontend a contrato backend-only para respuesta email en Chatwoot
   - Contexto: evidencia operativa de produccion confirma que el flujo iniciado en `Channel::Api` no garantiza salida SMTP como `Channel::Email`; para respuesta por email confiable el frontend debe integrarse a backend propio que asegure vinculacion al inbox email.
   - Decision tomada (B-Arquitectura): se evaluo mantener compatibilidad directa con endpoint publico Chatwoot vs forzar contrato backend-only en cliente; se elige backend-only para reducir acoplamiento al canal API y evitar falsos positivos de entrega por correo.
@@ -45,5 +85,11 @@
   - Mitigacion interna ejecutada: frontend desacoplado del flujo Chatwoot Public API para evitar que el cliente modele conversaciones API como si fueran email-ready.
   - Tareas externas (solo C2 y acciones fuera del repo): implementar/validar `ensure_email_routable_contact` en backend, configurar `email_inbox_id` y `api_inbox_id` por entorno, y verificar trazas `SendReplyJob` + Exim.
   - Tareas externas (solo C2 y acciones fuera del repo): cargar secreto `VITE_INQUIRY_API_URL` en `GitHub > Settings > Environments > production` para que el nuevo gate de deploy pueda construir con endpoint real.
-  - Siguiente paso: correr bateria completa de calidad y registrar evidencia de merge local para este endurecimiento.
-  - Siguiente accion interna ejecutable ahora: ejecutar `npm run typecheck`, `npm run lint:security`, `npm run lint:test-coverage`, `npm run quality:merge` y `npm run lint:todo-sync:merge-ready`.
+  - Mitigacion interna ejecutada: corrida aislada de `npm run lint:test-coverage` fallo una vez por error transitorio de Vitest (`ENOENT coverage/.tmp/coverage-1.json`); se completo revalidacion integral con `quality:merge` en verde.
+  - Evidencia: `npm run typecheck` en verde (2026-02-17 00:15 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:15 -03:00).
+  - Evidencia: `npm run lint:test-coverage` con fallo transitorio (2026-02-17 00:16 -03:00), causa `ENOENT coverage/.tmp/coverage-1.json`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:20 -03:00), incluye `quality:gate` + `quality:responsive` + `quality:mobile`.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:20 -03:00).
+  - Siguiente paso: ejecutar smoke tecnico contra backend productivo cuando se disponga URL canonica del endpoint de ingesta.
+  - Siguiente accion interna ejecutable ahora: al recibir URL canonica, ejecutar `npm run smoke:contact:backend -- <url>` y registrar evidencia de respuesta.

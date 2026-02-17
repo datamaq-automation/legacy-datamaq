@@ -17,12 +17,38 @@
   &__card {
     border-radius: 1rem;
   }
+
+  &__subtitle {
+    line-height: 1.55;
+    max-width: 60ch;
+  }
 }
 
 @media (max-width: 767.98px) {
+  .c-contact__card {
+    border-radius: 0.9rem;
+  }
+
   .c-contact__title {
     font-size: 1.08rem;
     font-weight: 400;
     margin-bottom: 1.1rem;
+  }
+
+  .c-contact__subtitle {
+    font-size: 0.97rem;
+    margin-bottom: 1rem !important;
+  }
+
+  .c-contact .form-control {
+    min-height: 2.9rem;
+  }
+
+  .c-contact textarea.form-control {
+    min-height: 8.5rem;
+  }
+
+  .c-contact__submit {
+    min-height: 3rem;
   }
 }

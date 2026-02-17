@@ -11,7 +11,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
               <h2 id="contacto-title" class="h3 c-contact__title mb-3">
                 {{ contact.title }}
               </h2>
-              <p class="text-body mb-4">
+              <p class="text-body mb-4 c-contact__subtitle">
                 {{ contact.subtitle }}
               </p>
               <form

@@ -84,9 +84,25 @@
   }
 
   .c-navbar__offcanvas .offcanvas-body .nav-link {
-    min-height: 2.75rem;
+    min-height: 2.9rem;
     display: flex;
     align-items: center;
+    font-size: 1.02rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .c-navbar__offcanvas .offcanvas-header {
+    padding-top: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .c-navbar__offcanvas .offcanvas-body {
+    padding-top: 0.4rem;
+  }
+
+  .c-navbar__offcanvas .c-navbar__cta {
+    min-height: 3rem;
   }
 }
 

@@ -55,3 +55,33 @@
     font-weight: 600;
   }
 }
+
+@media (max-width: 767.98px) {
+  .c-services__title {
+    margin-bottom: 1.9rem !important;
+  }
+
+  .c-services__panel-body {
+    padding: 1.1rem !important;
+  }
+
+  .c-services__card-title {
+    font-size: 1.04rem;
+    line-height: 1.35;
+  }
+
+  .c-services__card-text {
+    font-size: 0.96rem;
+    line-height: 1.5;
+  }
+
+  .c-services__cta-button {
+    min-height: 3rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .c-services__chips li:nth-child(n + 3) {
+    display: none;
+  }
+}
