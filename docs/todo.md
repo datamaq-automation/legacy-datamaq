@@ -23,6 +23,9 @@
   - Evidencia: `src/ui/pages/HomePage.vue`, `src/ui/pages/MedicionConsumoEscobar.vue`, `src/ui/views/ThanksView.vue`, `src/styles/scss/sections/_whatsapp-fab.scss`, `src/styles/main.scss`.
   - Avance: cobertura automatica agregada para FAB (unit + e2e smoke responsive/no-solape).
   - Evidencia: `tests/unit/ui/whatsappFab.test.ts`, `tests/e2e/smoke.spec.ts`.
+  - Decision tomada (B-Deploy): se evalua configurar `VITE_INQUIRY_API_URL` solo en entorno local de build vs endurecer CI/CD para exigirlo en `deploy-production`; se elige validacion explicita + inyeccion por `environment` secret para evitar builds productivos con `inquiryApiUrl: null`.
+  - Avance: workflow de deploy actualizado para exigir `VITE_INQUIRY_API_URL` y exportarlo en el paso `Build`.
+  - Evidencia: `.github/workflows/ci-cd-ftps.yml` (`Validate inquiry API URL` + `Build.env.VITE_INQUIRY_API_URL`).
   - Mitigacion interna ejecutada: `quality:merge` detecto solape FAB/banner en mobile (assert E2E `fabRect.bottom <= bannerRect.top`); se ajusto offset del FAB en estado `body.has-consent-banner` hasta eliminar interseccion.
   - Evidencia: `src/styles/scss/sections/_whatsapp-fab.scss` (offset con `max(..., 13rem) + 0.75rem`).
   - Evidencia: `npm run typecheck` en verde (2026-02-16 20:45 -03:00).
@@ -47,5 +50,6 @@
   - Informacion faltante: URL canonica del backend de ingesta en produccion y evidencia de que aplica vinculacion a inbox Email (no solo API).
   - Mitigacion interna ejecutada: frontend desacoplado del flujo Chatwoot Public API para evitar que el cliente modele conversaciones API como si fueran email-ready.
   - Tareas externas (solo C2 y acciones fuera del repo): implementar/validar `ensure_email_routable_contact` en backend, configurar `email_inbox_id` y `api_inbox_id` por entorno, y verificar trazas `SendReplyJob` + Exim.
+  - Tareas externas (solo C2 y acciones fuera del repo): cargar secreto `VITE_INQUIRY_API_URL` en `GitHub > Settings > Environments > production` para que el nuevo gate de deploy pueda construir con endpoint real.
   - Siguiente paso: correr bateria completa de calidad y registrar evidencia de merge local para este endurecimiento.
   - Siguiente accion interna ejecutable ahora: ejecutar `npm run typecheck`, `npm run lint:security`, `npm run lint:test-coverage`, `npm run quality:merge` y `npm run lint:todo-sync:merge-ready`.

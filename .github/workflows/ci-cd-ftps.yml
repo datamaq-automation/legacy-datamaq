@@ -107,7 +107,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate inquiry API URL
+        env:
+          VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${VITE_INQUIRY_API_URL}" ]; then
+            echo "::error::Missing secret VITE_INQUIRY_API_URL"
+            exit 1
+          fi
+
       - name: Build
+        env:
+          VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
         run: npm run build
 
       - name: Install lftp client
