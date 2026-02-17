@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { CTA_COPY } from '@/application/constants/ctaCopy'
-import { getWhatsAppHref, openWhatsApp } from '@/ui/controllers/contactController'
+import { getWhatsAppHref } from '@/ui/controllers/contactController'
+import { useContainer } from '@/di/container'
 
 const whatsappHref = computed(() => getWhatsAppHref())
 const fabAriaLabel = 'Abrir WhatsApp para pedir coordinación'
@@ -11,7 +12,16 @@ function handleFabClick(event: MouseEvent): void {
     return
   }
   event.preventDefault()
-  openWhatsApp('whatsapp-fab', whatsappHref.value)
+  
+  // Abrir directamente sin openWhatsApp() para evitar fallback redirect
+  window.open(whatsappHref.value, '_blank')
+  
+  // Analytics tracking separado (inline para evitar dependencias extra)
+  const { engagementTracker, environment } = useContainer()
+  const params = new URLSearchParams(environment.search())
+  const utmSource = params.get('utm_source')
+  const trafficSource = utmSource || environment.referrer() || 'direct'
+  engagementTracker.trackChat('whatsapp-fab', trafficSource)
 }
 </script>
 

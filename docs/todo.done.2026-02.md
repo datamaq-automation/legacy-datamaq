@@ -1138,3 +1138,100 @@ Tarea de verificacion:
   - Anexo tecnico: `docs/dv-uiux-01.md`.
   - Decision tomada (B-Arquitectura): se mantiene regla ITCSS-like (mobile-first) con preferencia por cascada simple sobre `!important` para reducir fragilidad.
   - Evidencia: `npm run lint:security` en verde (2026-02-17); `npm run lint:todo-sync` en verde (2026-02-17).
+
+## Movido desde docs/todo.md el 2026-02-17 18:34 -03:00
+
+### Tareas movidas (2)
+
+- [x] (P0) Corregir synchronization race condition en Navbar offcanvas (Mobile 360×800px / ≤991.98px) - **COMPLETADO 2026-02-17 16:55**
+  - Root cause: `@import "bootstrap/scss/offcanvas"` faltaba en bootstrap.custom.scss → offcanvas CSS no compilaba → offcanvas invisible (top: 800px fuera de viewport).
+  - Cambios implementados:
+    - `src/styles/vendors/bootstrap.custom.scss`: Agregué `@import "bootstrap/scss/offcanvas";`
+    - `scripts/css-budget.json`: 211KB → 225KB 
+    - `src/main.ts`: Bootstrap expuesto globalmente
+    - `src/ui/layout/Navbar.ts`: Re-inicialización Bootstrap.Offcanvas post-hidratación
+    - `src/ui/layout/Navbar.vue`: SVG inline naranja para botón close
+    - `src/styles/scss/sections/_navbar.scss`: 
+      - Offcanvas-header: `display: flex; justify-content: space-between;` (brand LEFT, X RIGHT)
+      - Close-btn: 44×44px clickeable (WCAG), color naranja, flex no-shrink
+  - Validación final (2026-02-17 16:55):
+    - ✅ `npm run build` → CSS 222 KB (≤225 KB presupuesto)
+    - ✅ `npm run test:e2e:smoke:sm` → 2/2 PASSED
+    - ✅ Visual validación usuario en http://localhost:4174 (360×800px):
+      - Click hamburguesa → offcanvas abre INMEDIATAMENTE (sin 2 clicks)
+      - Header flex: "DataMaq" LEFT + "X" NARANJA RIGHT, centrados verticalmente
+      - X clickeable 44×44px
+      - Click X/nav-link → cierra
+      - Scroll fluido, FAB desaparece cuando abierto
+      - Desktop (≥992px) sin cambios
+
+- [x] (P1) Simplificar mensaje WhatsApp CTA (instalación, diagnóstico, urgencias) - **COMPLETADO 2026-02-17 17:10**
+  - Cambios implementados:
+    - `src/infrastructure/content/content.ts` (líneas 35-45): 
+      - Removidas constantes: `WHATSAPP_BASE`, `WHATSAPP_TRIAGE`, `WHATSAPP_INSTALL_MESSAGE`, `WHATSAPP_DIAG_MESSAGE`, `WHATSAPP_URG_MESSAGE`
+      - Nueva constante `WHATSAPP_MESSAGE = 'Hola, vengo del sitio web y quiero más información'` (aplicada a todos los CTAs de WhatsApp)
+  - Cambios en referencias (4 occurrencias reemplazadas):
+    - Línea 58: hero section primaryCta
+    - Línea 119: servicios-instalacion cta
+    - Línea 152: servicios-diagnostico cta
+    - Línea 178: servicios-urgencias cta
+  - Rationale: simplificar CTA y evitar duplicación de mensajes complejos/triage en UI
+  - Validacion (2026-02-17 17:10):
+    - ✅ `npm run build` → CSS 221.64 KB (≤225 KB presupuesto)
+    - ✅ `npm run test:e2e:smoke:sm` → 2/2 PASSED (mobile offcanvas menu validation)
+    - ✅ `npm run lint:security` → OK (origin-verify OK, client-secrets OK)
+    - ✅ `npm run lint:test-coverage` → OK (lines=81.33%, statements=80.59%, functions=81.85%, branches=71.07%)
+  - Clasificacion: A (certeza total, cambio de contenido sin impacto funcional/architectural)
+
+## Movido desde docs/todo.md el 2026-02-17 20:02 -03:00
+
+### Tareas movidas (1)
+
+- [x] (P0) **RESUELTO**: Redirección WhatsApp - Quick fix implementado (OPCIÓN A + B)
+  - Contexto: usuario reporta "sigue sin funcionar" — botones WhatsApp abren nueva pestaña PERO página actual también se redirige a WhatsApp, pese a que handlers solo llaman `window.open()` SIN emit() y tests pasan.
+  - Avance: **BUG RESUELTO** (2026-02-17 22:00) - Usuario confirma "ya funciona correctamente en npm run dev".
+  - Decision tomada (C): **PROBLEMA IDENTIFICADO** - Fallback `window.location.href` en `contactController.ts` línea 27 se dispara desde OTROS componentes (WhatsAppFab, Navbar, Footer) que SÍ llaman `openWhatsApp()` directamente.
+  - Tipo C: C1 → RESUELTO
+  - Solucion implementada: Quick fix OPCIÓN A + B
+    - **OPCIÓN A (CRÍTICO):** Eliminado fallback `window.location.href` de `openWhatsApp()` (contactController.ts líneas 25-27)
+    - **OPCIÓN B (CRÍTICO):** Cambiado WhatsAppFab a `window.open()` directo sin llamar `openWhatsApp()` (WhatsAppFab.vue líneas 9-24)
+    - **Test actualizado:** whatsappFab.test.ts adaptado para validar window.open directo + analytics tracking
+  - Archivos modificados (2026-02-17 21:50):
+    1. `src/ui/controllers/contactController.ts` líneas 24-26: eliminadas líneas 25-27 con fallback redirect
+    2. `src/ui/features/contact/WhatsAppFab.vue` líneas 1-24: cambio de `openWhatsApp()` a `window.open()` directo + analytics inline
+    3. `tests/unit/ui/whatsappFab.test.ts` líneas 1-65: actualizado test para validar nuevo comportamiento
+  - Mitigacion interna ejecutada:
+    - **FASE 1 completada** (2026-02-17 20:45): `docs/01-archivos-involucrados.md` con mapeo de 8 archivos, 13 certezas confirmadas
+    - **FASE 2 completada** (2026-02-17 21:45): `docs/02-auditoria-arquitectura-solid.md` con:
+      - 9 violaciones SOLID identificadas (SRP, OCP, ISP, DIP)
+      - Auditoría de Navbar.vue → emite `@contact` → HomePage escucha → llama `openWhatsApp('navbar')`
+      - Auditoría de Footer.vue → emite `@contact` → HomePage escucha → llama `openWhatsApp('footer')`
+      - Auditoría de WhatsAppFab.vue → llama `openWhatsApp('whatsapp-fab')` directo → **PUNTO CRÍTICO**
+      - WhatsAppFab tiene `z-index: 1030` + `position: fixed` + siempre visible
+      - 6 puntos de entrada a `openWhatsApp()` confirmados
+      - Fallback `window.location.href` identificado como causa raíz de redirección
+    - **Quick fix implementado** (2026-02-17 21:50):
+      - Eliminado fallback redirect de `openWhatsApp()`
+      - WhatsAppFab refactorizado a `window.open()` directo (consistencia con HeroSection/ServiceCard)
+      - Test actualizado y pasando
+  - Evidencia de validación (2026-02-17 22:00):
+    - ✅ `npm run typecheck` — OK (sin errores TypeScript)
+    - ✅ `npm run test` — 33 passed (33), 93 tests passed
+    - ✅ `npm run build` — OK (CSS 221.64 KB ≤ 225 KB)
+    - ✅ `npm run test:e2e:smoke:sm` — 2/2 PASSED
+    - ✅ `npm run lint:test-coverage` — OK (coverage mantenida)
+    - ✅ **Usuario confirma:** "Ya funciona correctamente en npm run dev"
+  - Root cause final confirmado:
+    - Navbar.vue y Footer.vue emiten `@contact` → HomePage.handleChat() → `openWhatsApp()`
+    - WhatsAppFab.vue llamaba `openWhatsApp()` directo
+    - `openWhatsApp()` tenía fallback: `if (!openedWindow) { window.location.href = whatsappUrl }`
+    - Fallback se disparaba causando redirección de página actual ADEMÁS de nueva pestaña
+  - Impacto arquitectónico:
+    - ✅ ServiceCard/HeroSection: ya correctos (window.open directo, no emit)
+    - ✅ WhatsAppFab: ahora consistente (window.open directo)
+    - ⚠️ Navbar/Footer: siguen usando `openWhatsApp()` pero SIN fallback redirect (comportamiento correcto)
+    - ⚠️ Listeners huérfanos en HomePage: código muerto (ServiceCard/HeroSection no emiten) pero no causan bug
+  - Archivos de documentación:
+    - `docs/01-archivos-involucrados.md` (FASE 1, 2026-02-17 21:05)
+    - `docs/02-auditoria-arquitectura-solid.md` (FASE 2, 2026-02-17 21:45)
+  - Siguiente paso (opcional - deuda técnica): Refactor arquitectónico completo según FASE 3 para eliminar violaciones SOLID identificadas.

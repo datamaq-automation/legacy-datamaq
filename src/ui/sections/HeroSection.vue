@@ -22,15 +22,13 @@ Path: src/ui/sections/HeroSection.vue
             class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-3 c-hero__actions c-cta-stack"
           >
             <div class="c-cta-stack__item">
-              <a
+              <button
+                type="button"
                 class="btn c-ui-btn c-ui-btn--primary btn-lg px-4 c-hero__primary-cta w-100"
-                :href="hero.primaryCta.href"
-                target="_blank"
-                rel="noopener noreferrer"
-                @click.prevent="emit('primary-cta', hero.primaryCta.href)"
+                @click="handleWhatsAppClick(hero.primaryCta.href)"
               >
                 {{ hero.primaryCta.label }}
-              </a>
+              </button>
             </div>
             <div class="c-cta-stack__item">
               <a
@@ -95,4 +93,9 @@ const { hero, heroChips } = useHeroSection(props)
 defineOptions({
   name: 'HeroSection'
 })
+
+function handleWhatsAppClick(href: string) {
+  // Abrir directamente sin emit para evitar openWhatsApp fallback
+  window.open(href, '_blank')
+}
 </script>

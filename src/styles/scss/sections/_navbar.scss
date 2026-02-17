@@ -75,7 +75,14 @@
   }
 
   .c-navbar__offcanvas .offcanvas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-bottom: 1px solid rgba(var(--dm-border-0-rgb), 0.6);
+  }
+
+  .c-navbar__offcanvas .offcanvas-title {
+    margin-bottom: 0;
   }
 
   .c-navbar__offcanvas .offcanvas-body {
@@ -101,7 +108,10 @@
   border: none;
   cursor: pointer;
   opacity: 1;
-  padding: 0.25rem;
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
 }
 
 .c-navbar__close-btn:hover,

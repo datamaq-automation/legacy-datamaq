@@ -47,7 +47,7 @@ describe('HeroSection', () => {
     expect(screen.getByText('Respuesta en menos de 24 horas')).toBeInTheDocument()
     expect(screen.getByText('Cobertura GBA Norte / AMBA')).toBeInTheDocument()
     expect(container.querySelectorAll('.c-hero__chips li')).toHaveLength(4)
-    expect(screen.getByRole('link', { name: 'Pedi coordinacion' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Pedi coordinacion' })).toBeInTheDocument()
 
     const heroImage = screen.getByRole('img', { name: 'Hero' })
     expect(heroImage).toHaveAttribute('loading', 'eager')

@@ -22,10 +22,7 @@ export function openWhatsApp(section: string = 'whatsapp', href?: string): void 
   }
 
   if (typeof window !== 'undefined') {
-    const openedWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
-    if (!openedWindow) {
-      window.location.href = whatsappUrl
-    }
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
   }
 
   const { engagementTracker, environment } = useContainer()

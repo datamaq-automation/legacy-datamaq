@@ -36,12 +36,7 @@ const BASE = commercialConfig.baseOperativa
 const POWERMETER = commercialConfig.equipos.medidorNombre
 const AUTOMATE = commercialConfig.equipos.automateNombre
 const WHATSAPP_URL = commercialConfig.whatsappUrl
-const WHATSAPP_BASE = 'Hola, vengo de la web de DataMaq.'
-const WHATSAPP_TRIAGE =
-  '\n\nPara cotizar rapido:\n1) Zona (AMBA):\n2) ¿Se puede desenergizar el tablero para trabajar seguro? (si/no)\n3) Enviar 2 fotos del tablero y del punto de instalacion\n4) Servicio: instalacion Powermeter/Automate o diagnostico/urgencia'
-const WHATSAPP_INSTALL_MESSAGE = `${WHATSAPP_BASE} Quiero coordinar una instalacion industrial (${POWERMETER}/${AUTOMATE}).${WHATSAPP_TRIAGE}`
-const WHATSAPP_DIAG_MESSAGE = `${WHATSAPP_BASE} Necesito diagnostico de falla electrica/electronica en planta.${WHATSAPP_TRIAGE}`
-const WHATSAPP_URG_MESSAGE = `${WHATSAPP_BASE} Tengo una urgencia industrial fuera de horario.${WHATSAPP_TRIAGE}`
+const WHATSAPP_MESSAGE = 'Hola, vengo del sitio web y quiero más información'
 
 const HAS_TRASLADO_MIN = commercialConfig.trasladoMinimoARS > 0
 const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARS(commercialConfig.trasladoMinimoARS) : ''
@@ -60,7 +55,7 @@ export const content: AppContent = {
     primaryCta: {
       label: 'Pedí coordinación',
       action: 'whatsapp',
-      href: buildWhatsAppHref(WHATSAPP_INSTALL_MESSAGE)
+      href: buildWhatsAppHref(WHATSAPP_MESSAGE)
     },
     secondaryCta: {
       label: 'Ver servicios',
@@ -121,7 +116,7 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_INSTALL_MESSAGE),
+          href: buildWhatsAppHref(WHATSAPP_MESSAGE),
           section: 'servicios-instalacion'
         }
       },
@@ -154,7 +149,7 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_DIAG_MESSAGE),
+          href: buildWhatsAppHref(WHATSAPP_MESSAGE),
           section: 'servicios-diagnostico'
         }
       },
@@ -180,7 +175,7 @@ export const content: AppContent = {
         cta: {
           label: 'Pedí coordinación urgente',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_URG_MESSAGE),
+          href: buildWhatsAppHref(WHATSAPP_MESSAGE),
           section: 'servicios-urgencias'
         }
       }

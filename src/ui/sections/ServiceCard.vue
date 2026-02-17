@@ -33,15 +33,13 @@ Path: src/ui/sections/ServiceCard.vue
           </p>
           <div class="mt-auto c-cta-stack c-services__cta">
             <div class="c-cta-stack__item">
-              <a
+              <button
+                type="button"
                 class="btn c-ui-btn c-ui-btn--outline w-100 c-services__cta-button"
-                :href="card.cta.href"
-                target="_blank"
-                rel="noopener noreferrer"
-                @click.prevent="emit('contact', { section: card.cta.section, href: card.cta.href })"
+                @click="handleWhatsAppClick(card.cta.href, card.cta.section)"
               >
                 {{ card.cta.label }}
-              </a>
+              </button>
             </div>
           </div>
           <ul
@@ -80,5 +78,10 @@ const installationChips = [
   'Instalacion tipica ~4h'
 ]
 const showChips = computed(() => props.card.id === 'instalacion')
+
+function handleWhatsAppClick(href: string, section: string) {
+  // Abrir directamente sin emit para evitar openWhatsApp fallback
+  window.open(href, '_blank')
+}
 </script>
 
