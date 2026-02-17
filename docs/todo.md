@@ -129,10 +129,26 @@
   - Evidencia: `scripts/run-quality-merge.mjs`.
   - Avance: contrato operativo endurecido para exigir `npm run quality:mobile` tambien cuando se modifique `tests/e2e/`.
   - Evidencia: `AGENTS.md`.
+  - Decision tomada (B-Vue): se evalua conservar estado implicito del toggler offcanvas vs sincronizar `aria-expanded` con estado real de apertura; se elige sincronizar para mejorar navegacion asistiva y evitar ambiguedad en mobile.
+  - Avance: navbar mobile ahora expone `aria-expanded` reactivo y cierre defensivo del offcanvas ante navegacion por hash.
+  - Evidencia: `src/ui/layout/Navbar.vue`, `src/ui/layout/Navbar.ts`.
+  - Decision tomada (B-Vue): se evalua recortar subtitulo hero con line-clamp estricto vs mantener texto completo con tipografia/espaciado optimizados en XS; se elige texto completo para legibilidad sin sacrificar fold.
+  - Avance: hero XS ajustado (padding y ritmo vertical) para mejorar lectura/CTA sin overflow ni recortes de copy.
+  - Evidencia: `src/styles/scss/sections/_hero.scss`.
   - Evidencia: `npm run lint:security` en verde (2026-02-16 23:55 -03:00).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 23:55 -03:00).
   - Evidencia: `npm run lint:security` en verde (2026-02-16 23:58 -03:00).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 23:58 -03:00).
+  - Evidencia: `npm run typecheck` en verde (2026-02-17 00:00 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:00 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-17 00:01 -03:00), cobertura global `lines=81.52`, `statements=80.77`, `functions=81.85`, `branches=71.38`.
+  - Evidencia: `npm run test:a11y` en verde (2026-02-17 00:01 -03:00).
+  - Evidencia: `npm run check:css` en verde (2026-02-17 00:01 -03:00), budget CSS `209829 <= 211000`.
+  - Evidencia: `npm run quality:mobile` en verde (2026-02-17 00:02 -03:00), incluye `test:e2e:smoke` (`8 passed`) + `test:a11y` + `check:css`.
+  - Mitigacion interna ejecutada: `quality:merge` fallo por `lint:todo-sync` al detectar cambios en `src/` sin trazabilidad; se actualizo `docs/todo.md` y se revalida pipeline de cierre.
+  - Evidencia: `npm run quality:merge` fallo controlado (2026-02-17 00:03 -03:00), causa `check-todo-sync` sobre `src/ui/layout/Navbar.ts`, `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_hero.scss`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:05 -03:00), incluye `quality:gate` + `quality:mobile` (`test:e2e:smoke` 8/8 + `test:a11y` + `check:css`).
+  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:05 -03:00).
   - Mitigacion interna ejecutada: `quality:merge` detecto solape FAB/banner en mobile (assert E2E `fabRect.bottom <= bannerRect.top`); se ajusto offset del FAB en estado `body.has-consent-banner` hasta eliminar interseccion.
   - Evidencia: `src/styles/scss/sections/_whatsapp-fab.scss` (offset con `max(..., 13rem) + 0.75rem`).
   - Evidencia: `npm run typecheck` en verde (2026-02-16 20:45 -03:00).

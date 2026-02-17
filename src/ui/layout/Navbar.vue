@@ -13,6 +13,7 @@ Path: src/ui/layout/Navbar.vue
         data-bs-toggle="offcanvas"
         data-bs-target="#mainOffcanvas"
         aria-controls="mainOffcanvas"
+        :aria-expanded="isOffcanvasOpen ? 'true' : 'false'"
         aria-label="Abrir navegacion"
       >
         <span class="navbar-toggler-icon"></span>
@@ -97,6 +98,7 @@ const {
   toggleButtonRef,
   contactCtaEnabled,
   navbar,
+  isOffcanvasOpen,
   handleMobileNavLinkClick,
   handleContactClickDesktop,
   handleContactClickMobile

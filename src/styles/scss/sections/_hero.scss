@@ -106,7 +106,7 @@
     --hero-halo-size: clamp(210px, 58vw, 280px);
     --hero-halo-x: 62%;
     --hero-halo-y: 42%;
-    padding-top: 1rem !important;
+    padding-top: 0.75rem !important;
     padding-bottom: 1.25rem !important;
   }
 
@@ -116,13 +116,10 @@
   }
 
   .c-hero__subtitle {
-    margin-bottom: 1rem !important;
-    font-size: 1rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    margin-bottom: 0.85rem !important;
+    font-size: 0.98rem;
+    line-height: 1.45;
+    max-width: 36ch;
   }
 
   .c-hero__actions {
@@ -130,7 +127,8 @@
   }
 
   .c-hero__chips {
-    margin-bottom: 0.85rem !important;
+    margin-bottom: 0.75rem !important;
+    gap: 0.4rem !important;
   }
 
   .c-hero__illustration {
@@ -139,7 +137,7 @@
 
   .c-hero__response-note,
   .c-hero__microcopy {
-    margin-bottom: 0.85rem !important;
+    margin-bottom: 0.7rem !important;
   }
 }
 
