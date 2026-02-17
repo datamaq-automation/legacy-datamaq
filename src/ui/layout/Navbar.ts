@@ -68,34 +68,17 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
       return
     }
 
-    // Inicializar Bootstrap Offcanvas manualmente para evitar race conditions
-    // con data-bs-toggle automático.
-    // Esto garantiza que los listeners se registren DESPUÉS de que Bootstrap esté listo.
-    const globalWindow = typeof window !== 'undefined' ? (window as any) : null
-    if (globalWindow?.bootstrap?.Offcanvas) {
-      // Crear instancia manual: esto previene múltiples inicializaciones
-      const offcanvasInstance = new globalWindow.bootstrap.Offcanvas(offcanvasRef.value)
-      
-      // Remueve el atributo data-bs-toggle para evitar auto-inicialización duplicada
-      // que puede causar race conditions
-      toggleButtonRef.value?.removeAttribute('data-bs-toggle')
-      toggleButtonRef.value?.removeAttribute('data-bs-target')
-      
-      // Ahora add event listeners DESPUÉS de que Bootstrap esté inicializado
-      offcanvasRef.value.addEventListener('shown.bs.offcanvas', handleShown)
-      offcanvasRef.value.addEventListener('hidden.bs.offcanvas', handleHidden)
-      
-      // Registrar listener para que el toggle button manual dispare toggle
-      toggleButtonRef.value?.addEventListener('click', (e) => {
-        e.preventDefault()
-        offcanvasInstance.toggle()
-      })
-    } else {
-      // Fallback: si Bootstrap no está disponible, usar el método anterior
-      offcanvasRef.value.addEventListener('shown.bs.offcanvas', handleShown)
-      offcanvasRef.value.addEventListener('hidden.bs.offcanvas', handleHidden)
-    }
-
+    // En Vite SSG, Bootstrap se inicializa durante pre-rendering del lado servidor.
+    // En hidratación en el cliente, necesitamos re-inicializar el instance.
+    // Obtenemos o creamos el instance de Bootstrap Offcanvas.
+    const offcanvasInstance = window?.bootstrap?.Offcanvas?.getOrCreateInstance?.(offcanvasRef.value)
+    
+    // Registrar listeners Vue para sincronizar con Bootstrap events
+    // Estos listeners se registran DESPUÉS de onMounted para garantizar que
+    // el offcanvas está completamente inicializado por Bootstrap
+    offcanvasRef.value.addEventListener('shown.bs.offcanvas', handleShown)
+    offcanvasRef.value.addEventListener('hidden.bs.offcanvas', handleHidden)
+    
     window.addEventListener('hashchange', handleHashChange)
   })
 

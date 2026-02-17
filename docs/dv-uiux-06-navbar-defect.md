@@ -5,15 +5,25 @@
 **Criticalidad:** 🔴 ALTO (bloquea navegación en mobile)
 
 **Síntomas:**
-1. ⏱️ Navbar-toggler requiere **2 clicks para abrir** (debería ser 1)
-2. 🔒 Offcanvas **no se cierra correctamente** después de abierto (links/botón X inoperante)
-3. 🚫 Scroll **bloqueado permanentemente** tras abrir offcanvas (usuario atrapado)
-4. 🎯 Cookie banner **se superpone** al offcanvas, reduce interactividad
+1. ⏱️ Navbar-toggler: primer click → FAB desaparece (state Vue correcto) pero offcanvas NO se ve visualmente
+2. 🔍 Bootstrap data-bs-toggle **SÍ funciona** (clase `show` presente, instance existe)
+3. 🔒 Pero offcanvas está **visualmente invisible o posicionado fuera de vista**
+4. Scroll se bloquea (`dmq-offcanvas-open` agregado) pero usuario no ve menú
 
-**Viewport afectado:** XS (0–575px), SM (576–767px), MD (768–991.98px)  
+**Viewport afectado:** Mobile 360×800px (XS), SM (576–767px), MD (768–991.98px)  
 **No afecta:** LG (≥992px) - layout desktop horizontal
 
-**Impacto de usuario:** Menú inaccesible en móvil → navegación completamente bloqueada
+**Impacto de usuario:** Menú existe en código pero invisible → navegación bloqueada
+
+---
+
+## Contexto Técnico (Actualizado 2026-02-17)
+
+**Stack:**
+- Framework: Vue 3.5.22 (Composition API)
+- Bootstrap: 5.3.8 (SCSS + JS bundle)
+- Build: Vite 7.1.12 + Vite SSG 28.2.2 (pre-rendered + hydration)
+- **Mobile Viewport Estándar:** 360×800px (dispositivo Android típico)
 
 ---
 
