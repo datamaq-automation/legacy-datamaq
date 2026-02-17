@@ -1,95 +1,31 @@
 # Plan Tecnico Prioritario
 
-> Baseline operativo: `docs/dv-00-operating-baseline.md`.
+> Baseline operativo: `docs/dv-opsr-01.md`.
 > Archivo de tareas completadas: `docs/todo.done.2026-02.md`.
 
 ## Backlog activo
 
 ### P0
 - [>] (P0) Optimizar UI/UX secuencial por breakpoints (mobile-first real)
-  - Contexto: el objetivo operativo del turno es mejorar conversion/UX visual de forma progresiva sin saltar etapas.
-  - Decision tomada (B-Testing): se evalua trabajar mejoras UI por lotes mixtos vs flujo bloqueante por viewport; se elige flujo bloqueante para reducir regresiones cruzadas.
-  - Avance: pipeline secuencial ya disponible (`quality:responsive`: `XS -> SM -> MD -> LG`) y debe usarse como gate de avance por etapa.
-  - Evidencia: `package.json`, `scripts/run-responsive-stages.mjs`, `scripts/run-mobile-first-checks.mjs`, `scripts/run-quality-merge.mjs`.
-  - Decision tomada (B-Vue): se evalua mantener doble CTA hero con igual peso en XS vs bajar prominencia de CTA secundaria y reducir densidad visual; se elige reducir densidad para priorizar accion principal above-the-fold.
-  - Avance: lote XS aplicado en hero/nav (`cta` secundaria menos dominante, microcopy/chips mas compactos y panel offcanvas con targets tactiles mas legibles).
-  - Evidencia: `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_navbar.scss`.
-  - Evidencia: `npm run test:e2e:smoke:xs` en verde (2026-02-17 00:22 -03:00).
-  - Evidencia: `npm run test:e2e:smoke:sm` en verde (2026-02-17 00:23 -03:00).
-  - Evidencia: `npm run test:e2e:smoke:md` en verde (2026-02-17 00:23 -03:00).
-  - Evidencia: `npm run test:e2e:smoke:lg` en verde (2026-02-17 00:23 -03:00).
-  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:24 -03:00).
-  - Evidencia: `npm run quality:mobile` en verde (2026-02-17 00:26 -03:00).
-  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:30 -03:00).
-  - Decision tomada (B-Vue): se evalua mantener densidad original en `SM` vs compactar cards/form para bajar friccion tactil; se elige compactar manteniendo semantica y contraste.
-  - Avance: lote `SM` aplicado en servicios/contacto (espaciado de cards, legibilidad de titulos, CTA tactil >= 48px, campos de formulario y subtitulo optimizados).
-  - Evidencia: `src/ui/sections/ServiceCard.vue`, `src/ui/features/contact/ContactFormSection.vue`, `src/styles/scss/sections/_services.scss`, `src/styles/scss/sections/_contact.scss`.
-  - Evidencia: `npm run test:e2e:smoke:sm` en verde (2026-02-17 00:32 -03:00).
-  - Evidencia: `npm run test:e2e:smoke:md` en verde (2026-02-17 00:32 -03:00).
-  - Evidencia: `npm run test:e2e:smoke:lg` en verde (2026-02-17 00:32 -03:00).
-  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:33 -03:00).
-  - Evidencia: `npm run quality:mobile` en verde (2026-02-17 00:34 -03:00).
-  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:35 -03:00).
-  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:35 -03:00).
-  - Decision tomada (B-Vue): se evalua optimizar `MD` con un paquete amplio de reglas nuevas vs ajuste incremental con control de budget CSS; se elige incremental para mantener estabilidad de pipeline.
-  - Avance: lote `MD` aplicado en tipografia/ritmo de hero tablet y limpieza de reglas redundantes para sostener presupuesto CSS.
-  - Evidencia: `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_services.scss`, `src/styles/scss/sections/_contact.scss`.
-  - Evidencia: `npm run test:e2e:smoke:md` en verde (2026-02-17 00:35 -03:00).
-  - Evidencia: `npm run test:e2e:smoke:lg` en verde (2026-02-17 00:35 -03:00).
-  - Mitigacion interna ejecutada: primera corrida de cierre fallo por budget CSS (`211549 > 211000`); se recortaron reglas `MD` no esenciales hasta recuperar margen (`210996 <= 211000`).
-  - Evidencia: `npm run check:css` fallo controlado (2026-02-17 00:37 -03:00) y posterior verde (2026-02-17 00:40 -03:00).
-  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:40 -03:00).
-  - Evidencia: `npm run quality:mobile` en verde (2026-02-17 00:43 -03:00).
-  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:45 -03:00).
-  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:45 -03:00).
-  - Bloqueador residual: ninguno interno para iniciar mejoras UI.
-  - Siguiente paso: ejecutar lote `LG` para jerarquia visual desktop y microajustes de conversion sin afectar compactacion del header.
-  - Siguiente accion interna ejecutable ahora: ajustar `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_services.scss` y `src/styles/scss/sections/_navbar.scss` con foco `>=992px`, luego validar `LG` + `quality:mobile` + `quality:merge`.
+  - Contexto: optimizacion UX se ejecuta por etapas bloqueantes `XS -> SM -> MD -> LG` para evitar regresiones entre breakpoints.
+  - Avance: `XS`, `SM` y `MD` completados; mejoras aplicadas en hero/nav, servicios/contacto y compactacion tipografica tablet.
+  - Mitigacion interna ejecutada: ajuste de CSS budget en `MD` tras desvio puntual, recuperado a valores en verde.
+  - Evidencia: `npm run test:e2e:smoke:xs|sm|md|lg` en verde (2026-02-17); `npm run quality:mobile` en verde (2026-02-17 00:43 -03:00); `npm run quality:merge` en verde (2026-02-17 00:45 -03:00); `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:45 -03:00).
+  - Bloqueador residual: ninguno interno.
+  - Siguiente paso: ejecutar lote `LG` para jerarquia visual desktop y microajustes de conversion.
+  - Siguiente accion interna ejecutable ahora: ajustar `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_services.scss` y `src/styles/scss/sections/_navbar.scss` con foco `>=992px`, luego validar `quality:responsive` (secuencial), `quality:mobile` y `quality:merge`.
+  - Anexo tecnico: `docs/dv-uiux-01.md`.
 
 - [>] (P0) Endurecer frontend a contrato backend-only para respuesta email en Chatwoot
-  - Contexto: evidencia operativa de produccion confirma que el flujo iniciado en `Channel::Api` no garantiza salida SMTP como `Channel::Email`; para respuesta por email confiable el frontend debe integrarse a backend propio que asegure vinculacion al inbox email.
-  - Decision tomada (B-Arquitectura): se evaluo mantener compatibilidad directa con endpoint publico Chatwoot vs forzar contrato backend-only en cliente; se elige backend-only para reducir acoplamiento al canal API y evitar falsos positivos de entrega por correo.
-  - Avance: `ContactApiGateway` consolidado a `submitBackendContact` (POST unico), sin ramificacion especial por patron Chatwoot Public API.
-  - Evidencia: `src/infrastructure/contact/contactApiGateway.ts`.
-  - Evidencia: `src/application/contact/contactBackendStatus.ts`.
-  - Decision tomada (B-Deploy): se evalua mantener probe `OPTIONS` universal vs omitirlo en endpoint Chatwoot Public (que devuelve `404` esperado y ensucia consola); se elige omitir probe para ese patron para reducir ruido operativo sin afectar estado funcional del canal.
-  - Evidencia: `src/application/contact/contactBackendStatus.ts`, `tests/unit/application/contactBackendStatus.test.ts`.
-  - Decision tomada (B-Vue): se evalua montar CTA flotante de WhatsApp solo en `HomePage` vs en todas las vistas shell; se elige montarlo en `HomePage`, `MedicionConsumoEscobar` y `ThanksView` para persistencia transversal sin introducir un layout nuevo.
-  - Decision tomada (B-Deploy): se evalua configurar `VITE_INQUIRY_API_URL` solo en entorno local de build vs endurecer CI/CD para exigirlo en `deploy-production`; se elige validacion explicita + inyeccion por `environment` secret para evitar builds productivos con `inquiryApiUrl: null`.
-  - Mitigacion interna ejecutada: incidente productivo detectado con `VITE_INQUIRY_API_URL` cargada como identificador (`9BkS1a5AsmAtFy7FjwujYcra`) en vez de URL HTTPS; se endurecio el gate de deploy para fallar si el secreto no comienza con `https://`.
-  - Decision tomada (B-Vue): se evalua mantener navbar mobile como overlay absoluto vs volver a flujo push-down; se elige push-down con panel solido y scroll interno para evitar superposicion con hero/cards.
-  - Decision tomada (B): se evalua mantener mensajes WhatsApp por servicio vs unificar mensaje comercial solicitado; se elige unificar para asegurar consistencia con la instruccion de negocio actual.
-  - Decision tomada (B-Vue): se evalua seguir con collapse mobile custom vs migrar a `Offcanvas` nativo de Bootstrap; se elige `Offcanvas` para obtener backdrop + scroll-lock robusto y cierre consistente por `data-bs-dismiss`.
-  - Decision tomada (B-Vue): se evalua mantener offcanvas dentro del header vs moverlo a `body`; se elige `Teleport to="body"` para evitar stacking/scroll bugs por contenedores padre y asegurar backdrop + lock consistentes en mobile.
-  - Decision tomada (B-Vue): se evalua mantener cierre manual del offcanvas (DOM + clases) vs delegar en Bootstrap `data-bs-dismiss`; se elige delegar en Bootstrap para evitar desincronizacion de estado (menu que abre al segundo click).
-  - Decision tomada (B-Testing): se evalua exigir chequeos mobile-first solo por documentacion vs agregar un runner dedicado reutilizando comandos existentes; se elige runner dedicado para reducir omisiones operativas sin introducir dependencias.
-  - Decision tomada (B-Testing): se evalua mantener `quality:mobile` desacoplado de `quality:merge` vs integrarlo como segundo paso de merge; se elige integrarlo para evitar omisiones y alinear validacion mobile-first en cierre de turno.
-  - Decision tomada (B-Vue): se evalua conservar estado implicito del toggler offcanvas vs sincronizar `aria-expanded` con estado real de apertura; se elige sincronizar para mejorar navegacion asistiva y evitar ambiguedad en mobile.
-  - Decision tomada (B-Vue): se evalua recortar subtitulo hero con line-clamp estricto vs mantener texto completo con tipografia/espaciado optimizados en XS; se elige texto completo para legibilidad sin sacrificar fold.
-  - Decision tomada (B-Testing): se evalua mantener validacion responsive en un smoke unico vs introducir etapas bloqueantes por viewport; se elige etapas bloqueantes para forzar progresion `XS -> SM -> MD -> LG` sin saltos.
-  - Avance: contrato operativo actualizado para exigir validacion secuencial por etapas responsive y bloqueo de avance entre breakpoints.
-  - Avance: compactado ruido operativo del tablero activo para mantener `docs/todo.md` enfocado en estado vigente y mover historial repetitivo al archivo mensual.
-  - Evidencia: `npm run todo:compact:noise` en verde (2026-02-17 00:14 -03:00), `145 lineas movidas` a `docs/todo.done.2026-02.md`.
-  - Avance: guia de inicio para Codex optimizada con prompt operativo reforzado (secuencia responsive `XS -> SM -> MD -> LG`, criterios anti-ruido y cierre merge-ready).
-  - Evidencia: `docs/codex-usage.md`.
-  - Avance: tests unitarios alineados al contrato backend-only.
-  - Mitigacion interna ejecutada: primer `npm run lint:test-coverage` fallo por asercion incompleta en `tests/unit/infrastructure/contactApiGateway.test.ts` (firma de `postJson`); se ajusto expectativa incluyendo tercer argumento `undefined` y se revalido en verde.
-  - Evidencia: `npm run lint:security` en verde (2026-02-16 20:31 -03:00).
-  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-16 20:34 -03:00), cobertura global `lines=80.95`, `statements=80.21`, `functions=82.75`, `branches=70.40`.
-  - Evidencia: `npm run quality:merge` en verde (2026-02-16 20:36 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`).
-  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 20:36 -03:00).
-  - Decision tomada (C): resolucion funcional completa depende de servicio backend externo que ejecute `upsert contact + ensure ContactInbox Email + create/reuse conversation Email`.
+  - Contexto: el frontend ya opera en modo backend-only para evitar falsos positivos de entrega email al usar canal API directo de Chatwoot.
+  - Avance: cliente desacoplado de Chatwoot Public API; envio centralizado a endpoint backend de ingesta.
+  - Decision tomada (C): resolucion funcional completa depende del backend productivo que garantice ruteo al inbox Email en Chatwoot.
   - Tipo C: C2
-  - Bloqueador residual: falta despliegue/operacion del endpoint backend productivo que implemente el ruteo email en Chatwoot.
-  - Informacion faltante: URL canonica del backend de ingesta en produccion y evidencia de que aplica vinculacion a inbox Email (no solo API).
-  - Mitigacion interna ejecutada: frontend desacoplado del flujo Chatwoot Public API para evitar que el cliente modele conversaciones API como si fueran email-ready.
-  - Tareas externas (solo C2 y acciones fuera del repo): implementar/validar `ensure_email_routable_contact` en backend, configurar `email_inbox_id` y `api_inbox_id` por entorno, y verificar trazas `SendReplyJob` + Exim.
-  - Tareas externas (solo C2 y acciones fuera del repo): cargar secreto `VITE_INQUIRY_API_URL` en `GitHub > Settings > Environments > production` para que el nuevo gate de deploy pueda construir con endpoint real.
-  - Mitigacion interna ejecutada: corrida aislada de `npm run lint:test-coverage` fallo una vez por error transitorio de Vitest (`ENOENT coverage/.tmp/coverage-1.json`); se completo revalidacion integral con `quality:merge` en verde.
-  - Evidencia: `npm run typecheck` en verde (2026-02-17 00:15 -03:00).
-  - Evidencia: `npm run lint:security` en verde (2026-02-17 00:15 -03:00).
-  - Evidencia: `npm run lint:test-coverage` con fallo transitorio (2026-02-17 00:16 -03:00), causa `ENOENT coverage/.tmp/coverage-1.json`.
-  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:20 -03:00), incluye `quality:gate` + `quality:responsive` + `quality:mobile`.
-  - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:20 -03:00).
-  - Siguiente paso: ejecutar smoke tecnico contra backend productivo cuando se disponga URL canonica del endpoint de ingesta.
-  - Siguiente accion interna ejecutable ahora: al recibir URL canonica, ejecutar `npm run smoke:contact:backend -- <url>` y registrar evidencia de respuesta.
+  - Bloqueador residual: falta URL canonica productiva del backend y evidencia de ruteo real por inbox Email.
+  - Informacion faltante: `<backend_ingest_url_https>` + evidencia operativa (`SendReplyJob`/SMTP) asociada al inbox Email.
+  - Mitigacion interna ejecutada: deploy gate endurecido para exigir `VITE_INQUIRY_API_URL` con esquema `https://`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-17 00:20 -03:00); `npm run lint:todo-sync:merge-ready` en verde (2026-02-17 00:20 -03:00).
+  - Tareas externas (solo C2 y acciones fuera del repo): desplegar/validar servicio backend (`upsert contact + ensure ContactInbox Email + create/reuse conversation Email`) y cargar secreto correcto en `GitHub Environment production`.
+  - Siguiente paso: ejecutar smoke tecnico contra backend productivo al recibir URL canonica.
+  - Siguiente accion interna ejecutable ahora: correr `npm run smoke:contact:backend -- <url>` y registrar evidencia en `docs/todo.md`.
+  - Anexo tecnico: `docs/dv-chat-02.md`.

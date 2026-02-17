@@ -24,7 +24,7 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Avance: implementada la sincronizacion `consentManager` <-> analytics con politica `hard revoke` (bloqueo real + revocacion/limpieza de cookies first-party de analytics).
   - Evidencia: `src/application/consent/consentStorage.ts`, `src/application/consent/consentManager.ts`, `src/infrastructure/consent/consent.ts`, `src/infrastructure/analytics/index.ts`, `src/infrastructure/analytics/browserAnalytics.ts`, `src/main.ts`.
   - Evidencia: `src/infrastructure/analytics/ga4.ts`, `src/infrastructure/analytics/clarity.ts`, `src/infrastructure/analytics/cookies.ts`.
-  - Evidencia: DV-01 cerrado en `docs/dv-01-consent-matrix.md` con decision `hard revoke`.
+  - Evidencia: DV-01 cerrado en `docs/dv-priv-01.md` con decision `hard revoke`.
   - Evidencia: tests `tests/unit/application/consentManager.test.ts`, `tests/unit/infrastructure/consent.test.ts`, `tests/unit/infrastructure/analyticsConsentSync.test.ts`, `tests/unit/infrastructure/analyticsCookies.test.ts`, `tests/unit/infrastructure/browserAnalytics.test.ts`; `npm run typecheck`, `npm run test` y `npm run build` en verde.
   - Owner: Shared
   - Dependencias: DV-01 (politica de consentimiento)
@@ -168,7 +168,7 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Accion: definir matriz de estados/eventos con Product/Legal y mapearla a implementacion tecnica.
   - DoD (criterio de aceptacion): documento corto aprobado con transiciones y eventos permitidos por estado.
   - Avance: matriz cerrada con decision `hard revoke` y sincronizada con implementacion tecnica.
-  - Evidencia: `docs/dv-01-consent-matrix.md`.
+  - Evidencia: `docs/dv-priv-01.md`.
   - Evidencia: `src/infrastructure/analytics/index.ts`, `src/infrastructure/analytics/ga4.ts`, `src/infrastructure/analytics/clarity.ts`, `src/infrastructure/analytics/cookies.ts`.
   - Evidencia: `tests/unit/infrastructure/analyticsConsentSync.test.ts`, `tests/unit/infrastructure/analyticsCookies.test.ts`.
   - Owner: Shared
@@ -184,7 +184,7 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Accion: definir contrato backend con Chatwoot (server-to-server), incluyendo payload, auth por token en backend y reglas de CORS.
   - DoD (criterio de aceptacion): contrato escrito con ejemplo de request valido sin secreto en cliente.
   - Avance: contrato definido y documentado con decision de arquitectura `frontend(Ferozo) -> backend Docker en VPS -> Chatwoot`.
-  - Evidencia: `docs/dv-02-chatwoot-contract.md`.
+  - Evidencia: `docs/dv-chat-01.md`.
   - Owner: Backend
   - Dependencias: Ninguna
   - Riesgo: Alto
@@ -198,7 +198,7 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Accion: medir headers reales en entorno de staging/prod y contrastar contra baseline minimo.
   - DoD (criterio de aceptacion): reporte con headers actuales y brechas priorizadas (critico/alto/medio).
   - Avance: auditoria ejecutada sobre frontend productivo con inventario de headers y brechas priorizadas.
-  - Evidencia: `docs/dv-04-security-headers-audit.md`.
+  - Evidencia: `docs/dv-secu-01.md`.
   - Evidencia: medicion por `curl` de `https://www.datamaq.com.ar`, `http://www.datamaq.com.ar` y asset JS principal.
   - Owner: Shared
   - Dependencias: acceso a entorno desplegado
@@ -309,7 +309,7 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Evidencia: deteccion segura de claves en `.env*` (2026-02-15 14:31 -03:00) confirma ausencia de `GITHUB_TOKEN`/`GH_TOKEN` en `.env.e2e`, `.env.example`, `.env.local` y `.env.remote`.
   - Evidencia: `npm run ci:branch-protection:check` ejecutado por usuario con token (2026-02-15 14:35 -03:00) detecta `Required checks: (ninguno)` y mantiene `FAIL` por falta de `Quality Gate` y/o `Smoke E2E`.
   - Evidencia: `scripts/check-branch-protection.mjs` actualizado para validar `Todo Sync` + `Quality Gate` + `Smoke E2E`.
-  - Evidencia: `docs/dv-03-ci-cd-inventory.md` actualizado (2026-02-15 14:37 -03:00) con resultado de branch protection consultable (`required checks: ninguno`) y procedimiento ajustado a 3 checks requeridos.
+  - Evidencia: `docs/dv-depl-01.md` actualizado (2026-02-15 14:37 -03:00) con resultado de branch protection consultable (`required checks: ninguno`) y procedimiento ajustado a 3 checks requeridos.
 
 ### Relevar pipeline real de integracion
   - Evidencia: `npm run ci:remote:status` (2026-02-15 13:43 -03:00) en verde con run `22026695643`.
@@ -342,12 +342,12 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Accion: definir y aplicar pipeline minimo con `typecheck`, `test`, `test:a11y`, `check:css`, `lint:colors`.
   - DoD (criterio de aceptacion): politica de merge definida y ejecutable (CI o mecanismo acordado) con esos checks como requisito.
   - Avance: implementado workflow `GitHub Actions + FTPS` con jobs `Todo Sync`, `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)`.
-  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`, `quality:merge`, `lint:todo-sync`, `ci:remote:status`, `ci:branch-protection:check`), `docs/dv-03-ci-cd-inventory.md`.
+  - Evidencia: `./.github/workflows/ci-cd-ftps.yml`, `package.json` (`quality:gate`, `quality:merge`, `lint:todo-sync`, `ci:remote:status`, `ci:branch-protection:check`), `docs/dv-depl-01.md`.
   - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) confirma run `22026695643` en `success` con `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)` en verde.
   - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
   - Avance: alineado `ci:branch-protection:check` con la politica vigente para exigir tambien `Todo Sync` junto con `Quality Gate` y `Smoke E2E`.
   - Evidencia: `npm run ci:branch-protection:check` ejecutado por usuario con token (2026-02-15 14:54 -03:00) mantiene `Required checks: (ninguno)` y `FAIL` por falta de `Todo Sync`, `Quality Gate`, `Smoke E2E`.
-  - Evidencia: `docs/dv-03-ci-cd-inventory.md` actualizado (2026-02-15 14:55 -03:00) con snippet PowerShell para aplicar contexts requeridos por API cuando la UI no lista checks.
+  - Evidencia: `docs/dv-depl-01.md` actualizado (2026-02-15 14:55 -03:00) con snippet PowerShell para aplicar contexts requeridos por API cuando la UI no lista checks.
   - Avance: agregada mitigacion interna para evitar errores de formato en PowerShell mediante comando unico `npm run ci:branch-protection:set-checks`.
   - Evidencia: `scripts/set-branch-protection-checks.mjs`, `package.json` (`ci:branch-protection:set-checks`) (2026-02-15 14:58 -03:00).
   - Evidencia: `npm run ci:branch-protection:set-checks` (2026-02-15 14:59 -03:00) ejecutado en sesion local del agente falla por token no exportado; el comando queda listo para usar en la sesion del usuario con token activo.
@@ -382,7 +382,7 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Accion: inventariar estado real y decidir implementacion en repo o fuera del repo.
   - DoD (criterio de aceptacion): inventario de checks actuales + decision de implementacion en repo o fuera del repo.
   - Avance: inventario completado y decision ejecutada: `GitHub Actions + FTPS` en repo, con jobs `Todo Sync`, `Quality Gate`, `Smoke E2E` y `Deploy Production (FTPS)`.
-  - Evidencia: `docs/dv-03-ci-cd-inventory.md`, `./.github/workflows/ci-cd-ftps.yml`.
+  - Evidencia: `docs/dv-depl-01.md`, `./.github/workflows/ci-cd-ftps.yml`.
   - Evidencia: `npm run ci:remote:status` (2026-02-15 13:09 -03:00) en verde con run `22026695643`.
   - Evidencia: `npm run ci:branch-protection:check` (2026-02-15 13:09 -03:00) falla por falta de `GITHUB_TOKEN`/`GH_TOKEN`.
   - Evidencia: `npm run ci:remote:status` (2026-02-15 14:46 -03:00) muestra run reciente `22039359682` en `success` con jobs `Todo Sync`, `Quality Gate` y `Smoke E2E`.
@@ -396,7 +396,7 @@ Extraccion automatica desde `docs/todo.md` el 2026-02-15.
   - Decision tomada (B): exigir checks del flujo FTPS vigente (`Todo Sync` + `Quality Gate` + `Smoke E2E`) y no checks legacy.
   - Siguiente paso: aplicar en GitHub los required checks del flujo FTPS en `main` (`Todo Sync`, `Quality Gate`, `Smoke E2E`) por UI o API y revalidar con `ci:branch-protection:check`.
   - Nota C (2026-02-15): el bloqueo remanente depende de configuracion en GitHub (fuera del arbol versionado).
-  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:branch-protection:check` luego de aplicar required checks en GitHub y actualizar `docs/dv-03-ci-cd-inventory.md` con los contexts detectados.
+  - Siguiente accion interna ejecutable ahora: reejecutar `npm run ci:branch-protection:check` luego de aplicar required checks en GitHub y actualizar `docs/dv-depl-01.md` con los contexts detectados.
 
 ### DV-UX-01: Objetivo de conversion y KPI minimo
 Duda:
@@ -422,7 +422,7 @@ Tarea de verificacion:
   - Evidencia: `src/styles/scss/_tokens.scss`, `src/styles/scss/_components.scss`, `src/styles/main.scss`.
   - Evidencia: `src/ui/sections/HeroSection.vue`, `src/ui/sections/ServiceCard.vue`, `src/ui/layout/Navbar.vue`, `src/ui/features/contact/ContactFormSection.vue`, `src/ui/features/contact/ConsentBanner.vue`, `src/ui/views/ThanksView.vue`, `src/ui/pages/MedicionConsumoEscobar.vue`.
   - Evidencia: `src/styles/scss/sections/_hero.scss`, `src/styles/scss/sections/_services.scss`, `src/styles/scss/sections/_contact.scss`.
-  - Evidencia: `docs/dv-ux-03-design-tokens.md`.
+  - Evidencia: `docs/dv-uiux-05.md`.
   - Decision tomada (B): para unificar componentes sin introducir wrappers Vue nuevos, se evaluo crear componentes dedicados vs clases base CSS; se elige clases base por menor impacto en markup y rollout incremental.
   - Evidencia: `npm run lint:colors` en verde (2026-02-15 15:12 -03:00).
   - Evidencia: `npm run typecheck` en verde (2026-02-15 15:12 -03:00).
@@ -543,10 +543,10 @@ Tarea de verificacion:
 - [x] (P1) Definir KPI y evento canonico de conversion
   - Accion: acordar 1 KPI primario + 1 secundario y mapear eventos (respetando consentimiento).
   - DoD: definicion escrita en `docs/` + eventos implementados/validados (si aplica).
-  - Evidencia: `docs/dv-ux-01-kpi-proposal.md`.
+  - Evidencia: `docs/dv-uiux-03.md`.
   - Decision tomada (A): confirmada opcion `A` como KPI canonico (WhatsApp primario, formulario secundario).
   - Avance: definido KPI primario `contact` y KPI secundario `generate_lead`, manteniendo `scroll_to_section` como metrica complementaria no canonica.
-  - Evidencia: `docs/dv-ux-01-conversion-kpi.md`.
+  - Evidencia: `docs/dv-uiux-02.md`.
   - Evidencia: decision de usuario `A` registrada en este turno (2026-02-15 16:37 -03:00).
   - Avance: no se requieren cambios funcionales adicionales porque el mapeo de eventos ya estaba implementado.
   - Avance: DoD de DV-UX-01 cumplido y listo para archivo.
@@ -568,7 +568,7 @@ Tarea de verificacion:
   - Evidencia: `rg -n "testimonio|caso|certif|matric|habilit|cliente|logo|marca|foto real|portfolio" src docs README.md` (2026-02-15 16:37 -03:00) no detecta inventario verificable de casos/testimonios/logos de clientes.
   - Decision tomada (A): confirmada disponibilidad de assets reales/verificables/publicables (respuesta de usuario: `Si`).
   - Avance: inventario y criterio de publicacion documentados en `docs/`.
-  - Evidencia: `docs/dv-ux-02-trust-inventory.md`.
+  - Evidencia: `docs/dv-uiux-04.md`.
   - Avance: DoD de DV-UX-02 cumplido y listo para archivo.
 
 ## 6) Notas de ejecucion A/B/C (resumen activo 2026-02-15)
@@ -671,7 +671,7 @@ Tarea de verificacion:
   - Avance: el pipeline de deploy identifico dos desviaciones internas (`check:css` y smoke e2e por desalineacion de label CTA), mitigadas en este turno.
   - Avance: despliegue confirma que el riesgo P0 externo (backend Chatwoot) se mantiene; los desvios internos de smoke/css quedaron mitigados en este turno.
   - Avance: frentes internos UX-08 y UX-09 cerrados y archivados en este turno; el unico bloqueo activo remanente sigue siendo externo en backend.
-  - Evidencia: `docs/todo.done.2026-02.md`, `docs/dv-ux-01-conversion-kpi.md`, `docs/dv-ux-02-trust-inventory.md`.
+  - Evidencia: `docs/todo.done.2026-02.md`, `docs/dv-uiux-02.md`, `docs/dv-uiux-04.md`.
   - Avance: reintento interno de smoke ejecutado en este turno; el bloqueo externo C2 se mantiene sin endpoint backend operativo.
   - Evidencia: historial detallado de reintentos archivado en `docs/todo.done.2026-02.md`.
   - Avance: hardening operativo aplicado en este turno para detectar antes en loop local los fallos que antes aparecian recien en GitHub Actions.
@@ -683,8 +683,8 @@ Tarea de verificacion:
   - Avance: implementado flujo directo Chatwoot Public API en frontend (crear contacto -> conversacion -> mensaje) y smoke tecnico adaptado a flujo publico.
   - Evidencia: `src/infrastructure/contact/chatwootPublicContactChannel.ts`, `src/infrastructure/contact/contactApiGateway.ts`, `src/infrastructure/contact/contactPayloadBuilder.ts`, `scripts/smoke-contact-backend.mjs`.
   - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` cubre estrategia Chatwoot y error estructural (`source_id` faltante -> `502`).
-  - Evidencia: `docs/dv-02-chatwoot-contract.md`, `README.md`, `.env.example` actualizados al contrato `frontend -> Chatwoot Public API`.
-  - Evidencia: `docs/dv-02-chatwoot-contract.md` actualizado con certezas/dudas verificadas en fuentes oficiales sobre `inbox_identifier`, secure mode y alternativa Application API (2026-02-15 18:00 -03:00).
+  - Evidencia: `docs/dv-chat-01.md`, `README.md`, `.env.example` actualizados al contrato `frontend -> Chatwoot Public API`.
+  - Evidencia: `docs/dv-chat-01.md` actualizado con certezas/dudas verificadas en fuentes oficiales sobre `inbox_identifier`, secure mode y alternativa Application API (2026-02-15 18:00 -03:00).
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-15 18:00 -03:00) tras actualizar trazabilidad documental.
   - Evidencia: `npm run typecheck` en verde (2026-02-15 17:50 -03:00).
   - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts` en verde (2026-02-15 17:50 -03:00), 6/6 tests.
@@ -711,8 +711,8 @@ Tarea de verificacion:
   - Evidencia: `src/infrastructure/config/publicConfig.ts` mantiene `siteUrl` y `siteOgImage` apuntando a `https://www.datamaq.com.ar`, desalineado con el host que actualmente sirve la app (`https://datamaq.com.ar`).
   - Avance: se detecta C2 adicional de ciberseguridad/operacion en infraestructura externa (alineacion de host canonico y hardening de headers server-side), fuera del alcance del repo.
   - Avance: informacion de recomendacion Cloudflare incorporada en documentacion de CI/CD y seguridad para dejar criterio operativo versionado.
-  - Evidencia: `docs/dv-03-ci-cd-inventory.md` (seccion `Evaluacion Cloudflare delante de DonWeb Cloud IaaS (2026-02-15)` con opciones, ventajas/desventajas, fases y fuentes).
-  - Evidencia: `docs/dv-04-security-headers-audit.md` (seccion `Addendum 2026-02-15: ruta de mitigacion con Cloudflare` con controles tecnicos y riesgos a evitar).
+  - Evidencia: `docs/dv-depl-01.md` (seccion `Evaluacion Cloudflare delante de DonWeb Cloud IaaS (2026-02-15)` con opciones, ventajas/desventajas, fases y fuentes).
+  - Evidencia: `docs/dv-secu-01.md` (seccion `Addendum 2026-02-15: ruta de mitigacion con Cloudflare` con controles tecnicos y riesgos a evitar).
   - Avance: dimension de testing incorporada en `AGENTS.md` con reglas obligatorias, circuito de dudas (`TB`/`TC`) y compliance de cobertura.
   - Evidencia: `AGENTS.md` (regla 19 de continuidad, marco A actualizado a `lint:test-coverage`, circuitos `B-Testing`/`TC`, seccion `Dimension de testing`, compliance y archivos asociados).
   - Avance: guardrail de cobertura implementado y cableado al gate principal de calidad.
@@ -772,7 +772,7 @@ Tarea de verificacion:
   - Evidencia: `src/infrastructure/contact/chatwootPublicContactChannel.ts` removio el encadenado de `conversations/messages` y conserva solo create-contact.
   - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` actualizado a `contact payload only` con 1 llamada `POST` (5 tests en verde).
   - Evidencia: `scripts/smoke-contact-backend.mjs` actualizado para validar create-contact en endpoint Chatwoot Public API sin pasos de conversacion/mensaje.
-  - Evidencia: `docs/dv-02-chatwoot-contract.md` y `README.md` alineados al flujo `solo contacto` y convencion de `.env`.
+  - Evidencia: `docs/dv-chat-01.md` y `README.md` alineados al flujo `solo contacto` y convencion de `.env`.
   - Evidencia: `.env.example` actualizado como plantilla canonica para entorno local/e2e.
   - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts` en verde (2026-02-16 13:39 -03:00), `1 file / 5 tests`.
   - Evidencia: `npm run typecheck` en verde (2026-02-16 13:39 -03:00).
@@ -783,7 +783,7 @@ Tarea de verificacion:
   - Evidencia: `.env.example` limpiado (sin valores reales; solo placeholders canonicos).
   - Evidencia: `.env.e2e` normalizado a endpoint de pruebas local (`http://127.0.0.1:4173/api/contact`) sin inbox real.
   - Evidencia: `.gitignore` actualizado para permitir override local E2E en `.env.e2e.local` sin versionado.
-  - Evidencia: `README.md` y `docs/dv-02-chatwoot-contract.md` actualizados con regla operativa: `inbox_identifier` real solo en `.env.local`; `.env.e2e` para pruebas/mocks.
+  - Evidencia: `README.md` y `docs/dv-chat-01.md` actualizados con regla operativa: `inbox_identifier` real solo en `.env.local`; `.env.e2e` para pruebas/mocks.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 13:50 -03:00) tras saneamiento final de `.env*`.
   - Evidencia: `npm run lint:todo-sync:merge-ready` en verde (2026-02-16 13:50 -03:00) con evidencia de `quality:merge` vigente en este turno.
   - Avance: `secure mode` confirmado desactivado para este flujo; no se requiere backend firmador (`identifier_hash`) y se mantiene arquitectura frontend -> Chatwoot Public API.
@@ -820,7 +820,7 @@ Tarea de verificacion:
   - Avance: rename aplicado en codigo/config/docs operativos de `VITE_CONTACT_API_URL` a `VITE_INQUIRY_API_URL` y de `contactApiUrl` a `inquiryApiUrl`.
   - Evidencia: `src/application/ports/Config.ts`, `src/infrastructure/config/viteConfig.ts`, `src/infrastructure/config/publicConfig.ts`, `src/env.d.ts`, `src/application/contact/contactBackendStatus.ts`, `src/infrastructure/contact/contactApiGateway.ts`.
   - Evidencia: `scripts/smoke-contact-backend.mjs` usa `INQUIRY_API_URL`/`VITE_INQUIRY_API_URL`.
-  - Evidencia: `README.md` y `docs/dv-02-chatwoot-contract.md` actualizados al nuevo nombre de variable de entorno.
+  - Evidencia: `README.md` y `docs/dv-chat-01.md` actualizados al nuevo nombre de variable de entorno.
   - Evidencia: `.env.example` y `.env.e2e` actualizados con `VITE_INQUIRY_API_URL`.
   - Evidencia: tests de contrato/config actualizados (`tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/application/contactBackendStatus.test.ts`, `tests/unit/ui/defaultSeo.test.ts`).
   - Evidencia: `npm run typecheck` en verde (2026-02-16 14:33 -03:00).
@@ -852,7 +852,7 @@ Tarea de verificacion:
   - Avance: documentacion y entorno del frontend alineados a `VITE_INQUIRY_API_URL` como endpoint backend de ingesta (Chatwoot/email encapsulados server-side).
   - Evidencia: `.env.example` actualizado con ejemplos de backend (`/api/contact`) y retiro de referencia canonica a `inbox_identifier` en frontend.
   - Evidencia: `README.md` actualizado (arquitectura, requisitos, configuracion y smoke) con contrato `frontend -> backend de contacto`.
-  - Evidencia: `docs/dv-02-chatwoot-contract.md` reescrito a contrato vigente `frontend -> backend`, incluyendo compatibilidad temporal y checklist operativo.
+  - Evidencia: `docs/dv-chat-01.md` reescrito a contrato vigente `frontend -> backend`, incluyendo compatibilidad temporal y checklist operativo.
   - Evidencia: `npm run lint:todo-sync` en verde (2026-02-16 15:00 -03:00) tras registrar trazabilidad del cambio contractual.
   - Mitigacion interna ejecutada: contrato frontend desacoplado, docs operativas actualizadas y compatibilidad de transicion preservada.
   - Avance: frontend de contacto consolidado a contrato unico `POST VITE_INQUIRY_API_URL` (backend), eliminando rutas especiales de Chatwoot en gateway y monitor de disponibilidad.
@@ -861,13 +861,13 @@ Tarea de verificacion:
   - Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts` elimina escenarios Chatwoot directos y valida contrato backend.
   - Evidencia: `tests/unit/application/contactBackendStatus.test.ts` alineado a probe de endpoint backend.
   - Evidencia: `scripts/smoke-contact-backend.mjs` simplificado a smoke backend-only (`POST` unico con payload canonico de consulta).
-  - Evidencia: `README.md` y `docs/dv-02-chatwoot-contract.md` alineados al contrato backend-only.
+  - Evidencia: `README.md` y `docs/dv-chat-01.md` alineados al contrato backend-only.
   - Evidencia: `npm run quality:merge` en verde (2026-02-16 15:07 -03:00), incluyendo `lint:todo-sync`, `lint:security`, `typecheck`, `lint:test-coverage`, `lint:layers`, `test:a11y`, `check:css` y `test:e2e:smoke`.
   - Evidencia: `npm run lint:test-coverage` en verde dentro de `quality:merge` (2026-02-16 15:07 -03:00), cobertura global `lines=81.28`, `statements=80.55`, `functions=82.83`, `branches=70.27`.
   - Evidencia: `npm run lint:security` en verde dentro de `quality:merge` (2026-02-16 15:07 -03:00).
   - Mitigacion interna ejecutada: verificacion de limite tecnico y de docs oficiales (API inbox vs continuidad email en widget/email channel).
   - Avance: generado informe tecnico detallado para otro Codex CLI con acceso al VPS, con baseline SMTP, runbook de comandos, matriz de decision y DoD.
-  - Evidencia: `docs/dv-05-chatwoot-smtp-vps-handover.md`.
+  - Evidencia: `docs/dv-chat-03.md`.
   - Evidencia: el informe documenta sintoma critico reportado `undefined method 'message_id' for nil` y flujo de validacion web/sidekiq + conectividad TLS (`openssl`) + prueba SMTP (`swaks`).
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/QYovgpgLB6t8tQwLBzP5UXkD/contacts` (2026-02-16 17:35 -03:00) falla con `Smoke FAIL: 404 Not Found`.
   - Evidencia: `npm run smoke:contact:backend -- https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/JyAJAHb4yHSWt7Rr4Wjt9Sjt/contacts` (2026-02-16 17:35 -03:00) falla con `Smoke FAIL: 404 Not Found`.
@@ -920,7 +920,7 @@ Tarea de verificacion:
   - Bloqueador residual: sin bloqueador operativo activo para creacion de conversacion desde el formulario.
   - Siguiente paso: mantener monitoreo tecnico y registrar cualquier regresion de endpoint/flujo.
   - Siguiente accion interna ejecutable ahora: ejecutar `npm run smoke:contact:backend -- <INQUIRY_API_URL_OPERATIVA>` como control periodico y ante cambios de configuracion.
-  - Avance: compactacion documental aplicada en este turno para mantener `docs/todo.md` como tablero vivo; contexto/alcance/prioridades se movieron a `docs/dv-00-operating-baseline.md`.
+  - Avance: compactacion documental aplicada en este turno para mantener `docs/todo.md` como tablero vivo; contexto/alcance/prioridades se movieron a `docs/dv-opsr-01.md`.
 
 ### P2
 

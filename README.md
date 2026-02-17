@@ -1,4 +1,4 @@
-﻿# datamaq-www
+# datamaq-www
 
 Landing corporativa construida con Vue 3 y Vite para promocionar servicios industriales de DataMaq.
 
@@ -31,7 +31,7 @@ Landing corporativa construida con Vue 3 y Vite para promocionar servicios indus
 - Flujo de contacto: `frontend -> backend de contacto -> Chatwoot/Email`.
 - `VITE_INQUIRY_API_URL` define el endpoint backend de ingesta.
 - Credenciales, tokens y reglas de entrega quedan fuera de este repo (server-side).
-- Contrato tecnico DV-02: `docs/dv-02-chatwoot-contract.md`.
+- Contrato tecnico DV-02: `docs/dv-chat-01.md`.
 
 ## Instalacion y scripts
 ```sh
@@ -93,7 +93,7 @@ Configuracion recomendada en GitHub:
 - Para evitar duplicados, se deduplican eventos en una ventana de 2 segundos.
 - GA4 y Clarity solo se inicializan cuando el banner de consentimiento registra aceptacion.
 - Politica de revocacion activa: `hard revoke` (al rechazar/revocar se bloquea tracking y se limpian cookies de analytics first-party).
-- Detalle de matriz y decision: `docs/dv-01-consent-matrix.md`.
+- Detalle de matriz y decision: `docs/dv-priv-01.md`.
 
 ## Accesibilidad
 - Ejecuta `npm run test:a11y` para analizar templates `.vue`.
@@ -109,11 +109,11 @@ Configuracion recomendada en GitHub:
 ## Smoke de backend de contacto
 - Script: `npm run smoke:contact:backend -- <INQUIRY_API_URL>`.
 - Referencia recomendada: `https://api.tudominio.com/contact`.
-- El script envía un `POST` de consulta al endpoint configurado y falla (exit code `1`) si no recibe `2xx`.
+- El script env�a un `POST` de consulta al endpoint configurado y falla (exit code `1`) si no recibe `2xx`.
 
 ## Recursos adicionales
 - Backlog tecnico priorizado: `docs/todo.md`.
 - Contrato operativo del agente: `AGENTS.md`.
-- Guia de uso con Codex: `docs/codex-usage.md`.
+- Guia de uso con Codex: `docs/dv-opsr-02.md`.
 
 Consultas: [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).

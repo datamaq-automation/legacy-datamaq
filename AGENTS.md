@@ -98,7 +98,7 @@ Plantilla obligatoria para `C`:
 ## Politicas de dominio vigentes
 - Consentimiento: `hard revoke`.
 - Al pasar a `denied`: bloquear tracking futuro, propagar denegacion a proveedores y limpiar cookies first-party de analytics en modalidad best-effort.
-- Referencia: `docs/dv-01-consent-matrix.md`.
+- Referencia: `docs/dv-priv-01.md`.
 
 ## Dimension de ciberseguridad (obligatoria)
 - Principio: `least privilege` en frontend y en CI.
@@ -208,7 +208,7 @@ Plantilla obligatoria para `C`:
 - `scripts/run-quality-merge.mjs`: ejecuta `quality:gate` + `quality:responsive` + `quality:mobile` sin fail-fast para detectar desalineaciones locales antes de push.
 - `scripts/run-responsive-stages.mjs`: ejecuta validacion responsive secuencial bloqueante (`XS -> SM -> MD -> LG`) usando smoke E2E segmentado por viewport.
 - `scripts/run-mobile-first-checks.mjs`: ejecuta `quality:responsive` + `test:a11y` + `check:css` sin fail-fast para validar mobile-first en una sola corrida.
-- `docs/dv-03-ci-cd-inventory.md`: inventario de pipeline y decisiones operativas de borde (incluyendo Cloudflare).
-- `docs/dv-04-security-headers-audit.md`: auditoria de headers y hardening de capa edge fuera del repo.
+- `docs/dv-depl-01.md`: inventario de pipeline y decisiones operativas de borde (incluyendo Cloudflare).
+- `docs/dv-secu-01.md`: auditoria de headers y hardening de capa edge fuera del repo.
 - `package.json`: integra `lint:security` + `lint:test-coverage` + `lint:todo-sync` dentro de `quality:gate` y expone `todo:archive`/`todo:compact:noise` + `lint:todo-sync:merge-ready`.
 - `./.github/workflows/ci-cd-ftps.yml`: gate remoto.
