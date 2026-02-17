@@ -8,7 +8,7 @@ Path: src/ui/sections/HeroSection.vue
       <div class="row align-items-center gy-4">
         <div class="col-12 col-lg-6 order-1 text-center text-lg-start c-hero__content">
           <div
-            class="c-ui-chip c-ui-chip--success text-uppercase"
+            class="c-ui-chip c-ui-chip--success text-uppercase d-inline-block mw-100 text-wrap"
           >
             {{ hero.badge }}
           </div>

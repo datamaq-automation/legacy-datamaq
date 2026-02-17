@@ -13,7 +13,7 @@ export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garin (GBA Norte)',
   tarifaBaseDesdeARS: 180000,
   trasladoMinimoARS: 0,
-  whatsappUrl: 'https://wa.me/5491135162685',
+  whatsappUrl: 'https://wa.me/5491156297160',
   descuentos: {
     cooperativasPct: 0,
     pymeGraficaPct: 0
@@ -36,6 +36,7 @@ const BASE = commercialConfig.baseOperativa
 const POWERMETER = commercialConfig.equipos.medidorNombre
 const AUTOMATE = commercialConfig.equipos.automateNombre
 const WHATSAPP_URL = commercialConfig.whatsappUrl
+const WHATSAPP_DEFAULT_MESSAGE = 'Hola vengo de la página web y quiero más información'
 
 const HAS_TRASLADO_MIN = commercialConfig.trasladoMinimoARS > 0
 const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARS(commercialConfig.trasladoMinimoARS) : ''
@@ -54,9 +55,7 @@ export const content: AppContent = {
     primaryCta: {
       label: 'Pedí coordinación',
       action: 'whatsapp',
-      href: buildWhatsAppHref(
-        'Hola, quiero coordinar un servicio industrial. Servicio: [indicar]. Zona: [indicar]. Urgencia: [baja/media/alta].'
-      )
+      href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE)
     },
     secondaryCta: {
       label: 'Ver servicios',
@@ -117,9 +116,7 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(
-            'Hola, quiero coordinar instalacion industrial de Powermeter. Zona: [indicar]. Urgencia: [baja/media/alta].'
-          ),
+          href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE),
           section: 'servicios-instalacion'
         }
       },
@@ -152,9 +149,7 @@ export const content: AppContent = {
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(
-            'Hola, quiero coordinar diagnostico en planta. Zona: [indicar]. Urgencia: [baja/media/alta].'
-          ),
+          href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE),
           section: 'servicios-diagnostico'
         }
       },
@@ -180,9 +175,7 @@ export const content: AppContent = {
         cta: {
           label: 'Pedí coordinación urgente',
           action: 'whatsapp',
-          href: buildWhatsAppHref(
-            'Hola, necesito atencion urgente en planta. Servicio: [indicar]. Zona: [indicar]. Urgencia: alta.'
-          ),
+          href: buildWhatsAppHref(WHATSAPP_DEFAULT_MESSAGE),
           section: 'servicios-urgencias'
         }
       }

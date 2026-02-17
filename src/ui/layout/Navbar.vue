@@ -20,14 +20,14 @@ Path: src/ui/layout/Navbar.vue
       <nav
         id="main-navbar"
         ref="menuPanelRef"
-        class="collapse navbar-collapse c-navbar__collapse"
+        class="collapse navbar-collapse c-navbar__collapse dmq-navpanel mt-2 p-3 rounded-3 shadow-sm"
         :class="{ show: menuOpen || isDesktop }"
       >
-        <ul class="navbar-nav ms-auto gap-lg-3 align-items-lg-center">
+        <ul class="navbar-nav ms-auto gap-lg-3 align-items-lg-center c-navbar__links">
           <li v-for="link in navbar.links" :key="link.href" class="nav-item">
             <a class="nav-link" :href="link.href" @click="handleNavLinkClick">{{ link.label }}</a>
           </li>
-          <li v-if="contactCtaEnabled" class="nav-item">
+          <li v-if="contactCtaEnabled" class="nav-item c-navbar__cta-item d-grid gap-2">
             <a
               class="btn c-ui-btn c-ui-btn--primary ms-lg-3 c-navbar__cta"
               href="#contacto"

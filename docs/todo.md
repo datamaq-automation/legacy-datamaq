@@ -26,6 +26,22 @@
   - Decision tomada (B-Deploy): se evalua configurar `VITE_INQUIRY_API_URL` solo en entorno local de build vs endurecer CI/CD para exigirlo en `deploy-production`; se elige validacion explicita + inyeccion por `environment` secret para evitar builds productivos con `inquiryApiUrl: null`.
   - Avance: workflow de deploy actualizado para exigir `VITE_INQUIRY_API_URL` y exportarlo en el paso `Build`.
   - Evidencia: `.github/workflows/ci-cd-ftps.yml` (`Validate inquiry API URL` + `Build.env.VITE_INQUIRY_API_URL`).
+  - Decision tomada (B-Vue): se evalua mantener navbar mobile como overlay absoluto vs volver a flujo push-down; se elige push-down con panel solido y scroll interno para evitar superposicion con hero/cards.
+  - Avance: `Navbar` mobile ajustado para panel en flujo normal (`position: static`), CTA dentro del panel sin posicion fija y contenedor `dmq-navpanel` con fondo solido.
+  - Evidencia: `src/ui/layout/Navbar.vue`, `src/styles/scss/sections/_navbar.scss`.
+  - Avance: hero badge mobile endurecido para wrapping seguro (`mw-100` + `text-wrap`) y evitar overflow en XS.
+  - Evidencia: `src/ui/sections/HeroSection.vue`.
+  - Avance: smoke E2E reforzado para mobile navbar (cerrado sin panel `show`, abierto visible, click en link cierra, Escape restaura foco).
+  - Evidencia: `tests/e2e/smoke.spec.ts`.
+  - Decision tomada (B): se evalua mantener mensajes WhatsApp por servicio vs unificar mensaje comercial solicitado; se elige unificar para asegurar consistencia con la instruccion de negocio actual.
+  - Avance: numero de WhatsApp actualizado a `5491156297160` y mensaje prellenado actualizado a `Hola vengo de la página web y quiero más información` en CTAs principales y flujo de decision.
+  - Evidencia: `src/infrastructure/content/content.ts`, `src/ui/sections/DecisionFlowSection.vue`.
+  - Mitigacion interna ejecutada: el primer ajuste E2E uso asercion fragil (`firstNavLink` invisible) y fallo por visibilidad residual del nodo; se reemplazo por validacion estructural robusta de cierre (`#main-navbar` sin clase `show`).
+  - Evidencia: `tests/e2e/smoke.spec.ts` (assert `not.toHaveClass(/show/)` despues de click en link).
+  - Evidencia: `npm run typecheck` en verde (2026-02-17 21:17 -03:00).
+  - Evidencia: `npm run lint:security` en verde (2026-02-17 21:17 -03:00).
+  - Evidencia: `npm run lint:test-coverage` en verde (2026-02-17 21:18 -03:00), cobertura global `lines=81.12`, `statements=80.40`, `functions=82.97`, `branches=69.92`.
+  - Evidencia: `npm run quality:merge` en verde (2026-02-17 21:20 -03:00), incluye `quality:gate` + `test:e2e:smoke` (`8 passed`) con caso mobile navbar.
   - Mitigacion interna ejecutada: `quality:merge` detecto solape FAB/banner en mobile (assert E2E `fabRect.bottom <= bannerRect.top`); se ajusto offset del FAB en estado `body.has-consent-banner` hasta eliminar interseccion.
   - Evidencia: `src/styles/scss/sections/_whatsapp-fab.scss` (offset con `max(..., 13rem) + 0.75rem`).
   - Evidencia: `npm run typecheck` en verde (2026-02-16 20:45 -03:00).

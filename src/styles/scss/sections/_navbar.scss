@@ -46,25 +46,30 @@
   }
 
   .c-navbar .c-navbar__collapse {
-    position: absolute;
-    top: calc(100% + 0.35rem);
-    left: 0.5rem;
-    right: 0.5rem;
-    z-index: 25;
-    border-radius: 0.9rem;
+    position: static;
+    width: 100%;
+    z-index: auto;
+    max-height: calc(100vh - 6.5rem);
+    overflow-y: auto;
+    overflow-x: hidden;
     border: 1px solid rgba(var(--dm-border-0-rgb), 0.75);
-    background: rgba(var(--dm-bg-1-rgb), 0.97);
+    background: rgba(var(--dm-bg-1-rgb), 0.985);
     box-shadow: 0 1rem 2rem rgba(var(--dm-shadow-rgb), 0.4);
     padding: 0.85rem;
   }
 
-  .c-navbar .navbar-nav {
+  .c-navbar .c-navbar__links {
     gap: 0.25rem;
+  }
+
+  .c-navbar .c-navbar__cta-item {
+    margin-top: 0.35rem;
   }
 
   .c-navbar .c-navbar__cta {
     width: 100%;
-    margin-top: 0.35rem;
+    margin-top: 0;
+    margin-left: 0 !important;
   }
 
   .c-navbar .navbar-toggler {
@@ -85,6 +90,11 @@
 
   .c-navbar .navbar-nav {
     gap: 0.25rem;
+  }
+
+  .c-navbar .dmq-navpanel {
+    margin-top: 0 !important;
+    padding: 0 !important;
   }
 
   .c-navbar {

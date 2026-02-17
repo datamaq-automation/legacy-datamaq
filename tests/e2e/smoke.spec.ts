@@ -157,13 +157,25 @@ test.describe('Smoke E2E', () => {
     await page.goto('/')
 
     const menuToggle = page.locator('button[aria-controls="main-navbar"]')
+    const firstNavLink = page.locator('#main-navbar .nav-link').first()
+
+    await expect(firstNavLink).not.toBeVisible()
 
     await menuToggle.click()
     await expect(menuToggle).toHaveAttribute('aria-expanded', 'true')
     await expect(page.locator('#main-navbar')).toBeVisible()
+    await expect(firstNavLink).toBeVisible()
     expect(await page.evaluate(() => document.body.classList.contains('has-open-menu'))).toBe(
       true
     )
+
+    await firstNavLink.click()
+    await expect(menuToggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(page.locator('#main-navbar')).not.toHaveClass(/show/)
+
+    await menuToggle.click()
+    await expect(menuToggle).toHaveAttribute('aria-expanded', 'true')
+    await expect(firstNavLink).toBeVisible()
 
     await page.keyboard.press('Escape')
 
