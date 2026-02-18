@@ -10,10 +10,15 @@ import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
 export const commercialConfig: CommercialConfig = {
-  baseOperativa: 'Garin (GBA Norte)',
+  baseOperativa: 'Garín (GBA Norte)',
   tarifaBaseDesdeARS: 380000,
   trasladoMinimoARS: 0,
   whatsappUrl: 'https://wa.me/5491156297160',
+
+  // Diagnóstico (publicado)
+  visitaDiagnosticoHasta2hARS: 260000,
+  diagnosticoHoraAdicionalARS: 130000,
+
   descuentos: {
     cooperativasPct: 0,
     pymeGraficaPct: 0
@@ -32,30 +37,28 @@ const formatARS = (value: number) =>
   }).format(value)
 
 const TARIFA_BASE = formatARS(commercialConfig.tarifaBaseDesdeARS)
+const VISITA_DIAG_2H = formatARS(commercialConfig.visitaDiagnosticoHasta2hARS)
+const DIAG_HORA_ADICIONAL = formatARS(commercialConfig.diagnosticoHoraAdicionalARS)
+
 const BASE = commercialConfig.baseOperativa
 const POWERMETER = commercialConfig.equipos.medidorNombre
 const AUTOMATE = commercialConfig.equipos.automateNombre
 const WHATSAPP_URL = commercialConfig.whatsappUrl
-const WHATSAPP_MESSAGE = 'Hola, vengo del sitio web y quiero más información'
 
 const HAS_TRASLADO_MIN = commercialConfig.trasladoMinimoARS > 0
 const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARS(commercialConfig.trasladoMinimoARS) : ''
-const TRASLADO_TEXT = HAS_TRASLADO_MIN ? ` (minimo ${TRASLADO_MIN})` : ''
-
-function buildWhatsAppHref(message: string): string {
-  return `${WHATSAPP_URL}?text=${encodeURIComponent(message)}`
-}
+const TRASLADO_TEXT = HAS_TRASLADO_MIN ? ` (mínimo ${TRASLADO_MIN})` : ''
 
 export const content: AppContent = {
   hero: {
-    badge: 'Tarifa base publicada · Respuesta en menos de 24 horas',
+    badge: 'Tarifa base publicada · Respuesta en menos de 24 horas hábiles (L–V 08 a 16)',
     title: 'Servicios industriales prolijos, seguros y documentados',
     subtitle: `Instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico industrial. Checklist previo, verificación final y cierre documentado en cada visita.`,
-    responseNote: `Te respondemos por WhatsApp en menos de 24 horas con tarifa base desde ${TARIFA_BASE}, alcance incluido y condiciones (distancia/urgencia) desde ${BASE}${TRASLADO_TEXT}.`,
+    responseNote: `Te respondemos por WhatsApp en menos de 24 horas hábiles (L–V 08 a 16) con tarifa base desde ${TARIFA_BASE}, alcance incluido y condiciones por distancia desde ${BASE}${TRASLADO_TEXT}. Cobertura: AMBA (prioridad GBA Norte).`,
     primaryCta: {
-      label: 'Pedí coordinación',
+      label: 'Coordinar por WhatsApp',
       action: 'whatsapp',
-      href: buildWhatsAppHref(WHATSAPP_MESSAGE)
+      href: WHATSAPP_URL
     },
     secondaryCta: {
       label: 'Ver servicios',
@@ -64,23 +67,23 @@ export const content: AppContent = {
     benefits: [
       {
         title: 'Tarifa base clara',
-        text: `Instalacion industrial desde ${TARIFA_BASE}, con alcance y condiciones explicitadas antes de intervenir.`,
+        text: `Instalación industrial de 1 equipo (${POWERMETER} o ${AUTOMATE}) desde ${TARIFA_BASE}, con alcance y condiciones explicitadas antes de intervenir.`,
         variant: 'success'
       },
       {
-        title: 'Implementacion documentada',
-        text: 'Checklist de trabajo, registro de cambios, verificacion de lectura de referencia y cierre tecnico con observaciones.',
+        title: 'Implementación documentada',
+        text: 'Checklist de trabajo, registro de cambios, verificación de lectura/función de referencia y cierre técnico con observaciones.',
         variant: 'primary'
       },
       {
-        title: 'Diagnóstico orientado a operación',
-        text: 'Metodo de medicion y descarte para identificar causa probable, priorizar seguridad y reducir reincidencia de fallas.',
+        title: 'Seguridad primero',
+        text: 'Si el tablero no permite intervenir con seguridad, se propone adecuación mínima con tablero desenergizado y se reprograma.',
         variant: 'warning'
       }
     ],
     image: {
       src: heroIllustration,
-      alt: 'Ilustracion de medicion industrial y diagnostico electrico',
+      alt: 'Ilustración de medición industrial y diagnóstico eléctrico',
       width: 420,
       height: 320
     }
@@ -91,116 +94,91 @@ export const content: AppContent = {
     cards: [
       {
         id: 'instalacion',
-        title: `Instalación industrial de 1 ${POWERMETER} (equipo provisto por el cliente)`,
-        description: `Relevamos el tablero, instalamos el ${POWERMETER} y dejamos la medición funcionando con verificación final.`,
+        title: `Instalación industrial de 1 equipo (${POWERMETER} o ${AUTOMATE}) (equipo provisto por el cliente)`,
+        description:
+          `Relevamos el tablero, instalamos el ${POWERMETER}/${AUTOMATE} y dejamos la medición/función operativa con verificación final y documentación.`,
         subtitle: 'Incluye',
         media: {
           src: installTools,
-          alt: 'Ilustracion de herramientas e instalacion tecnica',
+          alt: 'Ilustración de herramientas e instalación técnica',
           width: 140,
           height: 120
         },
         items: [
-          'Relevamiento del tablero: accesibilidad, punto de instalacion, protecciones y condiciones de seguridad.',
-          `Instalación del ${POWERMETER} y verificación de lectura de referencia.`,
-          'Registro y documentación: fotos del tablero y checklist técnico.',
-          'Tiempo tipico: media jornada (aprox. 4 horas), segun condiciones del tablero.'
+          'Relevamiento del tablero: accesibilidad, punto de instalación, protecciones y condiciones de seguridad.',
+          `Instalación del ${POWERMETER}/${AUTOMATE} + verificación de lectura/función de referencia.`,
+          'Registro y documentación: fotos del tablero/punto de instalación + checklist técnico.',
+          'Tiempo típico: media jornada (aprox. 4 horas) cuando hay acceso, tablero intervenible en condiciones seguras y ventana para desenergizar si aplica.'
         ],
         figure: {
           src: powermeter,
-          alt: `Ilustracion de medidor ${POWERMETER}`,
+          alt: `Ilustración de medidor ${POWERMETER}`,
           width: 220,
           height: 140,
-          caption: `Tarifa base desde ${TARIFA_BASE}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}.`
+          caption: `Tarifa base desde ${TARIFA_BASE} (1 equipo: ${POWERMETER} o ${AUTOMATE}). Traslado según distancia desde ${BASE}${TRASLADO_TEXT}. Equipo provisto por el cliente.`
         },
         cta: {
           label: 'Cotizar por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_MESSAGE),
+          href: WHATSAPP_URL,
           section: 'servicios-instalacion'
         }
       },
+
       {
         id: 'diagnostico',
-        title: 'Diagnóstico y reparación de fallas eléctricas/electrónicas (industria)',
+        title: 'Visita técnica de diagnóstico en planta (hasta 2 horas)',
         description:
-          'Diagnóstico en planta para fallas intermitentes o críticas con medición, prueba, aislamiento y propuesta de corrección.',
+          'Diagnóstico en campo para fallas intermitentes o críticas: medición, prueba, aislamiento del problema y propuesta de corrección.',
         subtitle: 'Resultado',
         media: {
           src: analyticsDashboard,
-          alt: 'Ilustracion de diagnostico tecnico y mediciones',
+          alt: 'Ilustración de diagnóstico técnico y mediciones',
           width: 160,
           height: 140
         },
         items: [
-          'Diagnóstico en campo con instrumental y método de descarte.',
+          'Diagnóstico con instrumental y método de descarte.',
           'Identificación de causa probable y plan de reparación inmediato o programado.',
-          'Recomendaciones para prevenir recurrencia y mejorar seguridad del tablero.'
+          'Registro de hallazgos y recomendaciones para prevenir recurrencia.'
         ],
-        note:
-          'Si el tablero no permite intervenir con seguridad, se propone adecuacion minima y se reprograma la reparacion.',
+        note: `Precio: ${VISITA_DIAG_2H} (hasta 2 horas). Excedente: ${DIAG_HORA_ADICIONAL}/h. ${VISITA_DIAG_2H} se descuenta del total si aprobás el presupuesto. Si el tablero no permite intervenir con seguridad, se propone adecuación mínima con tablero desenergizado y se reprograma.`,
         figure: {
           src: analyticsDashboard,
-          alt: 'Ilustracion de mediciones y checklist',
+          alt: 'Ilustración de mediciones y checklist',
           width: 160,
           height: 140,
-          caption: 'Servicio orientado a industria (GBA Norte prioritario).'
+          caption: `Cobertura AMBA (prioridad GBA Norte). Respuesta en <24h hábiles (L–V 08 a 16).`
         },
         cta: {
-          label: 'Cotizar por WhatsApp',
+          label: 'Coordinar visita por WhatsApp',
           action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_MESSAGE),
+          href: WHATSAPP_URL,
           section: 'servicios-diagnostico'
-        }
-      },
-      {
-        id: 'urgencias',
-        title: 'Urgencias industriales fuera de horario',
-        description:
-          'Atendemos casos urgentes en planta cuando hay criticidad operativa. Incluye disponibilidad extendida segun agenda.',
-        subtitle: 'Incluye',
-        media: {
-          src: analyticsDashboard,
-          alt: 'Ilustracion de atencion de urgencias y diagnostico en planta',
-          width: 160,
-          height: 140
-        },
-        items: [
-          'Priorizacion segun criticidad, seguridad y disponibilidad operativa.',
-          'Intervenciones fuera de horario y fines de semana con coordinación previa.',
-          'Relevamiento y plan de acción inmediato o programado según el caso.'
-        ],
-        note:
-          'Condiciones: no se interviene si el entorno no es seguro, se agenda por prioridad y puede aplicar recargo por urgencia.',
-        cta: {
-          label: 'Pedí coordinación urgente',
-          action: 'whatsapp',
-          href: buildWhatsAppHref(WHATSAPP_MESSAGE),
-          section: 'servicios-urgencias'
         }
       }
     ]
   },
 
   profile: {
-    title: 'Perfil tecnico',
+    title: 'Perfil técnico',
     bullets: [
       'Servicios industriales con foco en seguridad, trazabilidad y documentación.',
-      'Formacion: Tecnico Electronico - Tec. Univ. en Mantenimiento Industrial - Estudiante de Lic. en IA y Robotica.',
-      'Enfoque de trabajo: checklist, verificacion de funcionamiento, registro de cambios y handoff.'
+      'Formación: Técnico Electrónico · Téc. Univ. en Mantenimiento Industrial · Estudiante de Lic. en IA y Robótica.',
+      'Enfoque de trabajo: checklist, verificación de funcionamiento, registro de cambios y handoff.'
     ]
   },
 
   about: {
     title: 'Sobre DataMaq',
     paragraphs: [
-      'DataMaq brinda servicios técnicos para industria: instalación de medición, diagnóstico eléctrico y asistencia en campo con criterio operativo.',
-      `Base operativa: ${BASE}. Cobertura presencial prioritaria GBA Norte y AMBA según disponibilidad.`,
+      `DataMaq brinda servicios técnicos para industria: instalación de ${POWERMETER}/${AUTOMATE}, diagnóstico eléctrico y asistencia en campo con criterio operativo.`,
+      `Base operativa: ${BASE}. Cobertura: AMBA (prioridad GBA Norte). Fuera de AMBA: consultar.`,
       'Objetivo: decisiones técnicas con datos reales, intervenciones seguras y trabajo documentado.'
     ],
     image: {
       src: teamTraining,
-      alt: 'Ilustracion de formacion tecnica y equipo de trabajo',
+      alt: 'Ilustración de formación técnica y equipo de trabajo',
       width: 240,
       height: 180
     }
@@ -210,56 +188,36 @@ export const content: AppContent = {
     brand: 'DataMaq',
     brandAriaLabel: 'DataMaq, inicio',
     links: [
-      {
-        label: 'Servicios',
-        href: '#servicios'
-      },
-      {
-        label: 'Proceso',
-        href: '#proceso'
-      },
-      {
-        label: 'Tarifas',
-        href: '#tarifas'
-      },
-      {
-        label: 'Cobertura',
-        href: '#cobertura'
-      },
-      {
-        label: 'FAQ',
-        href: '#faq'
-      },
-      {
-        label: 'Contacto',
-        href: '#contacto'
-      }
+      { label: 'Servicios', href: '#servicios' },
+      { label: 'Perfil', href: '#perfil' },
+      { label: 'Contacto', href: '#contacto' }
     ],
-    contactLabel: 'Pedí coordinación'
+    contactLabel: 'WhatsApp'
   },
 
   footer: {
-    note: `Base: ${BASE} - Industria - Diagnóstico eléctrico - Instalación documentada`
+    note: `Base: ${BASE} · AMBA (prioridad GBA Norte) · Instalación ${POWERMETER}/${AUTOMATE} · Diagnóstico en planta · Documentación y handoff`
   },
 
   legal: {
-    text: `La tarifa base publicada para Powermeter corresponde a la instalación de 1 ${POWERMETER} (equipo provisto por el cliente) y una verificación de lectura de referencia al finalizar. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir. En casos particulares que requieran intervención o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
+    text: `La tarifa base publicada corresponde a la instalación de 1 equipo (${POWERMETER} o ${AUTOMATE}) provisto por el cliente, e incluye verificación de lectura/función de referencia al finalizar y cierre documentado. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. La visita técnica de diagnóstico en planta (hasta 2 horas) tiene un precio publicado de ${VISITA_DIAG_2H}; el excedente se cobra a ${DIAG_HORA_ADICIONAL}/h, y ${VISITA_DIAG_2H} se descuenta del total si aprobás el presupuesto (sin vencimiento). Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir (con ventana para desenergizar). En casos particulares que requieran intervención o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
   },
 
   contact: {
-    title: '¿Querés recibir una propuesta por correo?',
-    subtitle: `Dejanos tu correo y mensaje. Te respondemos con una propuesta para servicios industriales (instalación ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico).`,
+    title: 'Contacto',
+    subtitle:
+      'Por ahora el formulario registra tu consulta (no envía correo automático). Si necesitás respuesta rápida, escribinos por WhatsApp.',
     labels: {
       email: 'Correo electrónico',
       message: 'Mensaje'
     },
-    submitLabel: 'Enviar consulta por correo',
-    checkingMessage: 'Verificando la disponibilidad del servicio de correo electrónico...',
+    submitLabel: 'Registrar consulta',
+    checkingMessage: 'Registrando tu consulta...',
     unavailableMessage:
-      'El canal de correo electrónico está en mantenimiento. Escribinos por WhatsApp para coordinar una respuesta rápida.',
-    successMessage: 'Consulta enviada correctamente. Te responderemos a la brevedad.',
-    errorMessage: 'No se pudo enviar la consulta. Intenta nuevamente más tarde.',
-    unexpectedErrorMessage: 'Ocurrió un error inesperado. Intenta nuevamente más tarde.'
+      'El formulario está temporalmente en mantenimiento. Escribinos por WhatsApp para coordinar una respuesta rápida.',
+    successMessage: '¡Listo! Registramos tu consulta. Te vamos a responder a la brevedad (días hábiles).',
+    errorMessage: 'No se pudo registrar la consulta. Intentá nuevamente más tarde.',
+    unexpectedErrorMessage: 'Ocurrió un error inesperado. Intentá nuevamente más tarde.'
   },
 
   consent: {

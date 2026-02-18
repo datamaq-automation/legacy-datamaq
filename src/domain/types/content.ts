@@ -121,6 +121,10 @@ export interface CommercialConfig {
   trasladoMinimoARS: number
   whatsappUrl: string
 
+  // Diagnóstico (publicado)
+  visitaDiagnosticoHasta2hARS: number
+  diagnosticoHoraAdicionalARS: number
+
   descuentos: {
     cooperativasPct: number
     pymeGraficaPct: number
