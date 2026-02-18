@@ -45,3 +45,4 @@ __pycache__/
 # Playwright
 playwright-report/
 test-results/
+docs/modelo-negocios-canvas.md
