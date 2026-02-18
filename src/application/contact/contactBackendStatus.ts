@@ -2,11 +2,11 @@ import type { ConfigPort } from '../ports/Config'
 import type { RuntimeFlags } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
+import { evaluateContactEndpointPolicy } from './contactEndpointPolicy'
 
 export type ContactBackendStatus = 'unknown' | 'available' | 'unavailable'
 
 type StatusListener = (status: ContactBackendStatus) => void
-const CHATWOOT_PUBLIC_CONTACTS_PATTERN = /\/public\/api\/v1\/inboxes\/[^/]+\/contacts\/?$/i
 
 export class ContactBackendMonitor {
   private listeners = new Set<StatusListener>()
@@ -73,22 +73,14 @@ export class ContactBackendMonitor {
 
   private async probe(): Promise<ContactBackendStatus> {
     const apiUrl = this.config.inquiryApiUrl
-    if (!apiUrl || !this.runtime.isBrowser()) {
+    const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
+    if (!apiUrl || !endpointPolicy.allowed || !this.runtime.isBrowser()) {
       this.logger.debug('[contactBackendStatus] Probe omitida', {
         apiUrl: apiUrl ?? null,
-        isBrowser: this.runtime.isBrowser()
+        isBrowser: this.runtime.isBrowser(),
+        reason: endpointPolicy.reason ?? null
       })
       this.status = 'unavailable'
-      this.notify()
-      return this.status
-    }
-
-    if (isChatwootPublicContactsEndpoint(apiUrl)) {
-      this.logger.debug(
-        '[contactBackendStatus] Probe omitida para endpoint Chatwoot Public API',
-        { apiUrl }
-      )
-      this.status = 'available'
       this.notify()
       return this.status
     }
@@ -117,8 +109,4 @@ export class ContactBackendMonitor {
     this.notify()
     return this.status
   }
-}
-
-function isChatwootPublicContactsEndpoint(apiUrl: string): boolean {
-  return CHATWOOT_PUBLIC_CONTACTS_PATTERN.test(apiUrl.split(/[?#]/, 1)[0] ?? apiUrl)
 }

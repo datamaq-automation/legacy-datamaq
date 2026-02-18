@@ -72,3 +72,28 @@
 ## 5) Riesgos conocidos
 - Sin antispam/rate-limit: riesgo alto de inundación del inbox.
 - Si SMTP en Chatwoot no está OK: no se puede cerrar el DoD “responder como mail”.
+
+## 6) Avance turno 2026-02-18
+
+- Decision tomada (B-Arquitectura): endurecer contrato frontend backend-only con politica explicita de endpoint permitido y bloqueo de URL Chatwoot Public API en runtime (monitor + gateway) para reducir acoplamiento y falsos positivos de disponibilidad.
+- Avance: agregado modulo `src/application/contact/contactEndpointPolicy.ts` como regla unica reutilizable para validar endpoint de contacto.
+- Avance: `ContactBackendMonitor` ahora marca `unavailable` cuando `inquiryApiUrl` falta o apunta a Chatwoot Public API; no marca verde por bypass legacy.
+- Avance: `ContactApiGateway` rechaza endpoint no valido para backend-only y evita POST al canal Chatwoot Public API.
+- Avance: migracion de config preparada sin ruptura: `VITE_CONTACT_API_URL` queda como fuente preferida, `VITE_INQUIRY_API_URL` como fallback transitorio, y se incorpora `VITE_MAIL_API_URL` para el segundo formulario.
+- Avance: workflow de deploy FTPS valida `VITE_CONTACT_API_URL` (o fallback legacy) y exporta `VITE_CONTACT_API_URL` + `VITE_MAIL_API_URL` al build.
+- Evidencia: `src/application/contact/contactEndpointPolicy.ts`.
+- Evidencia: `src/application/contact/contactBackendStatus.ts`.
+- Evidencia: `src/infrastructure/contact/contactApiGateway.ts`.
+- Evidencia: `src/infrastructure/config/viteConfig.ts`, `src/infrastructure/config/publicConfig.ts`, `src/application/ports/Config.ts`, `src/env.d.ts`.
+- Evidencia: `.env.example`, `.env.e2e`, `.env.local`, `.github/workflows/ci-cd-ftps.yml`.
+- Evidencia: `tests/unit/application/contactBackendStatus.test.ts`, `tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/ui/defaultSeo.test.ts`.
+- Siguiente paso: ejecutar validaciones obligatorias (`lint:security`, `lint:test-coverage`, `quality:merge`, `lint:todo-sync:merge-ready`) y corregir cualquier desvio.
+- Siguiente accion interna ejecutable ahora: correr la bateria de calidad local y registrar resultados.
+- Evidencia: `npm run quality:merge` (2026-02-18) fallo inicial en `quality:gate` por TypeScript (`TS2345` en `src/application/contact/contactBackendStatus.ts` y `src/infrastructure/contact/contactApiGateway.ts`) al pasar `NullableString` a funciones que esperan `string`.
+- Mitigacion interna ejecutada: se reforzo narrowing en ambos puntos (`if (!apiUrl || !endpointPolicy.allowed)`) para mantener contrato tipado estricto y evitar llamadas con URL indefinida.
+- Evidencia: `npm run lint:todo-sync:merge-ready` (2026-02-18) fallo esperado antes de reintento por falta de evidencia explicita de merge-readiness; se registra en este turno y se reejecuta al cierre.
+- Evidencia: `npm run lint:security` OK (2026-02-18).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-18). Cobertura global: lines 82.16%, statements 81.51%, functions 82.11%, branches 72.05%.
+- Evidencia: `npm run lint:todo-sync` OK (2026-02-18).
+- Evidencia: `npm run quality:merge` OK (2026-02-18) tras mitigacion de type narrowing; `quality:gate`, `quality:responsive` y `quality:mobile` en verde.
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-18).

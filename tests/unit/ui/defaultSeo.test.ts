@@ -26,6 +26,7 @@ const location: LocationProvider = {
 function buildConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
   return {
     inquiryApiUrl: undefined,
+    mailApiUrl: undefined,
     contactEmail: undefined,
     analyticsEnabled: true,
     siteUrl: undefined,

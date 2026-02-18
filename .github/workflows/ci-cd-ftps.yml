@@ -109,20 +109,24 @@ jobs:
 
       - name: Validate inquiry API URL
         env:
+          VITE_CONTACT_API_URL: ${{ secrets.VITE_CONTACT_API_URL }}
           VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
         run: |
           set -euo pipefail
-          if [ -z "${VITE_INQUIRY_API_URL}" ]; then
-            echo "::error::Missing secret VITE_INQUIRY_API_URL"
+          CONTACT_ENDPOINT="${VITE_CONTACT_API_URL:-${VITE_INQUIRY_API_URL:-}}"
+          if [ -z "${CONTACT_ENDPOINT}" ]; then
+            echo "::error::Missing secret VITE_CONTACT_API_URL (or legacy VITE_INQUIRY_API_URL)"
             exit 1
           fi
-          if ! printf '%s' "${VITE_INQUIRY_API_URL}" | grep -Eq '^https://'; then
-            echo "::error::Invalid VITE_INQUIRY_API_URL. It must start with https:// and point to backend contact endpoint."
+          if ! printf '%s' "${CONTACT_ENDPOINT}" | grep -Eq '^https://'; then
+            echo "::error::Invalid contact API URL. It must start with https:// and point to backend /contact endpoint."
             exit 1
           fi
 
       - name: Build
         env:
+          VITE_CONTACT_API_URL: ${{ secrets.VITE_CONTACT_API_URL }}
+          VITE_MAIL_API_URL: ${{ secrets.VITE_MAIL_API_URL }}
           VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
         run: npm run build
 

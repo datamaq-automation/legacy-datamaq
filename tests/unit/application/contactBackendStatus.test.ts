@@ -16,6 +16,7 @@ function createHttpClient(status = 204): HttpClient {
 function createConfig(inquiryApiUrl?: string): ConfigPort {
   return {
     inquiryApiUrl,
+    mailApiUrl: undefined,
     contactEmail: undefined
   } as ConfigPort
 }
@@ -52,7 +53,7 @@ describe('ContactBackendMonitor', () => {
     expect(http.options).toHaveBeenCalledWith('https://api.example.com/contact')
   })
 
-  it('skips OPTIONS probe for Chatwoot Public contacts endpoint', async () => {
+  it('marks unavailable for Chatwoot Public contacts endpoint', async () => {
     const http = createHttpClient(404)
     const monitor = new ContactBackendMonitor(
       http,
@@ -63,7 +64,7 @@ describe('ContactBackendMonitor', () => {
 
     const status = await monitor.ensureStatus()
 
-    expect(status).toBe('available')
+    expect(status).toBe('unavailable')
     expect(http.options).not.toHaveBeenCalled()
   })
 })

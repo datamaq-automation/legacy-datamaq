@@ -21,7 +21,8 @@ function createPayload(overrides: Partial<ContactSubmitPayload> = {}): ContactSu
 
 function createConfig(inquiryApiUrl: string | undefined): ConfigPort {
   return {
-    inquiryApiUrl
+    inquiryApiUrl,
+    mailApiUrl: undefined
   } as ConfigPort
 }
 
@@ -69,7 +70,9 @@ describe('ContactApiGateway', () => {
     const result = await gateway.submit(createPayload())
 
     expect(result).toEqual({ ok: false, error: { type: 'Unavailable' } })
-    expect(logger.error).toHaveBeenCalledWith('INQUIRY_API_URL no esta configurada')
+    expect(logger.error).toHaveBeenCalledWith('INQUIRY_API_URL no es valida para backend-only', {
+      reason: 'missing'
+    })
     expect(http.postJson).not.toHaveBeenCalled()
   })
 
@@ -139,7 +142,7 @@ describe('ContactApiGateway', () => {
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 503 })
   })
 
-  it('treats Chatwoot Public API URL as backend endpoint and performs single POST', async () => {
+  it('blocks Chatwoot Public API URL and returns unavailable', async () => {
     const http = createHttpClient()
 
     const logger = createLogger()
@@ -152,16 +155,10 @@ describe('ContactApiGateway', () => {
 
     const result = await gateway.submit(createPayload())
 
-    expect(result).toEqual({ ok: true, data: undefined })
-    expect(http.postJson).toHaveBeenCalledTimes(1)
-    expect(http.postJson).toHaveBeenCalledWith(
-      'https://chatwoot.example.com/public/api/v1/inboxes/inbox_1/contacts',
-      expect.objectContaining({
-        email: 'juan@example.com',
-        name: 'juan',
-        message: 'Necesito una propuesta para mantenimiento electrico.'
-      }),
-      undefined
-    )
+    expect(result).toEqual({ ok: false, error: { type: 'Unavailable' } })
+    expect(logger.error).toHaveBeenCalledWith('INQUIRY_API_URL no es valida para backend-only', {
+      reason: 'chatwoot-public-api-disallowed'
+    })
+    expect(http.postJson).not.toHaveBeenCalled()
   })
 })

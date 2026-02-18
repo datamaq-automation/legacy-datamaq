@@ -2,6 +2,7 @@ type NullableString = string | undefined
 
 export interface ConfigPort {
   inquiryApiUrl: NullableString
+  mailApiUrl: NullableString
   contactEmail: NullableString
   analyticsEnabled: boolean | undefined
   siteUrl: NullableString

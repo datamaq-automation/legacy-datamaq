@@ -9,6 +9,7 @@ import type { StoragePort } from '@/application/ports/Storage'
 import { submitBackendContact } from './backendContactChannel'
 import { buildContactPayloadBundle } from './contactPayloadBuilder'
 import { mapSubmitResponseError } from './contactSubmissionErrors'
+import { evaluateContactEndpointPolicy } from '@/application/contact/contactEndpointPolicy'
 
 export class ContactApiGateway implements ContactGateway {
   constructor(
@@ -20,8 +21,11 @@ export class ContactApiGateway implements ContactGateway {
 
   async submit(payload: ContactSubmitPayload): Promise<Result<void, ContactError>> {
     const apiUrl = this.config.inquiryApiUrl
-    if (!apiUrl) {
-      this.logger.error('INQUIRY_API_URL no esta configurada')
+    const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
+    if (!apiUrl || !endpointPolicy.allowed) {
+      this.logger.error('INQUIRY_API_URL no es valida para backend-only', {
+        reason: endpointPolicy.reason ?? 'unknown'
+      })
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
