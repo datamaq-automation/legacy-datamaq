@@ -97,3 +97,10 @@
 - Evidencia: `npm run lint:todo-sync` OK (2026-02-18).
 - Evidencia: `npm run quality:merge` OK (2026-02-18) tras mitigacion de type narrowing; `quality:gate`, `quality:responsive` y `quality:mobile` en verde.
 - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-18).
+- Avance: creado documento operativo de credenciales generales con detalle por plataforma y checklist (`docs/dv-cred-01.md`).
+- Evidencia: `docs/dv-cred-01.md` (objetivo, inventario, procedimiento, anti-patrones, plantilla de solicitud).
+- Siguiente paso: validar/ajustar responsables reales y canal corporativo de secretos segun operacion actual.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para confirmar trazabilidad vigente.
+- Avance: creado documento solicitado en `docs/*.md` con prompts por etapas para Copilot Chat backend.
+- Evidencia: `docs/dv-copilot-prompts-backend.md`.
+- Siguiente accion interna ejecutable ahora: validar sincronia de tablero con `npm run lint:todo-sync`.
