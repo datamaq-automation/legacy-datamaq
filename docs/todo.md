@@ -11,6 +11,7 @@
   - Resumen: el frontend solo envia a backend propio (sin Chatwoot Public API en cliente) para asegurar ruteo al inbox Email y evitar falsos positivos; el cierre depende de backend productivo + evidencia SMTP/SendReplyJob.
   - Avance: cliente desacoplado de Chatwoot Public API; envio centralizado a endpoint backend de ingesta.
   - Avance: `ContentRepository.getNavbarContent()` normaliza anchors de decision flow para exponer `#servicios -> #proceso -> #tarifas -> #cobertura -> #faq -> #contacto` y mantener consistencia con `getContent().navbar`.
+  - Avance: smoke E2E de contacto endurecido para no depender de copy puntual del submit; el selector ahora acepta `Registrar consulta|Enviar consulta por correo` y valida visibilidad previa al click.
   - Decision tomada (B): preservar `content.ts` como fuente editable y aplicar normalizacion deterministicamente en el repositorio de infraestructura para garantizar orden/anchors esperados por contrato de UI.
   - Decision tomada (C): resolucion funcional completa depende del backend productivo que garantice ruteo al inbox Email en Chatwoot.
   - Tipo C: C2
@@ -28,7 +29,13 @@
     - `npm run lint:todo-sync` en verde tras sincronizar `docs/todo.md`.
     - `npm run quality:merge` en verde (incluye `quality:gate`, `quality:responsive` XS->SM->MD->LG y `quality:mobile`).
     - `npm run lint:todo-sync:merge-ready` en verde.
+    - `npm run test:e2e:smoke` en verde (8/8) con flujo `contact -> /gracias` estable.
+    - `npm run lint:security` en verde (revalidado tras cambios en `tests/e2e/`).
+    - `npm run lint:test-coverage` en verde (`[test-coverage] OK: lines=81.75 statements=81.11 functions=81.96 branches=71.66`).
+    - `npm run quality:responsive` en verde (secuencia estricta `XS -> SM -> MD -> LG`).
+    - `npm run quality:mobile` en verde (`quality:responsive` + `test:a11y` + `check:css`).
+    - `npm run quality:merge` ejecutado con fallo transitorio en `quality:gate` por `lint:todo-sync` previo a sincronizacion de este archivo.
   - Tareas externas (solo C2 y acciones fuera del repo): desplegar/validar servicio backend (`upsert contact + ensure ContactInbox Email + create/reuse conversation Email`) y cargar secreto correcto en `GitHub Environment production`.
-  - Siguiente paso: ejecutar smoke tecnico contra backend productivo al recibir URL canonica.
-  - Siguiente accion interna ejecutable ahora: condicionada a dato externo (backend_ingest_url_https disponible); ejecutar `npm run smoke:contact:backend -- <url>` y registrar evidencia en `docs/todo.md`.
+  - Siguiente paso: revalidar cierre merge-ready tras sincronizacion de `docs/todo.md`.
+  - Siguiente accion interna ejecutable ahora: ejecutar `npm run quality:merge` y `npm run lint:todo-sync:merge-ready`; luego continuar con `npm run smoke:contact:backend -- <url>` al recibir `backend_ingest_url_https`.
   - Anexo tecnico: `docs/dv-chatwoot.md`.

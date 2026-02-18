@@ -193,11 +193,16 @@ test.describe('Smoke E2E', () => {
 
   test('contact flow submits and navigates to thanks', async ({ page }) => {
     await page.goto('/')
+    await page.waitForLoadState('networkidle')
 
     await page.fill('#contacto-email', 'ada@example.com')
     await page.fill('#contacto-mensaje', 'Necesito una propuesta para mantenimiento industrial.')
 
-    await page.getByRole('button', { name: /Enviar consulta por correo/i }).click()
+    const submitButton = page.getByRole('button', {
+      name: /Registrar consulta|Enviar consulta por correo/i
+    })
+    await expect(submitButton).toBeVisible()
+    await submitButton.click()
 
     await expect(page).toHaveURL(/\/gracias$/)
     await expect(page.getByRole('heading', { level: 1, name: 'Gracias!' })).toBeVisible()
