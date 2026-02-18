@@ -34,11 +34,15 @@ export class ContentRepository
   private parsedContentCache: AppContent | undefined
 
   getContent(): AppContent {
-    return this.getParsedContent()
+    const parsedContent = this.getParsedContent()
+    return {
+      ...parsedContent,
+      navbar: this.getNormalizedNavbarContent(parsedContent.navbar)
+    }
   }
 
   getNavbarContent() {
-    return this.getParsedContent().navbar
+    return this.getNormalizedNavbarContent(this.getParsedContent().navbar)
   }
 
   getFooterContent() {
@@ -84,5 +88,21 @@ export class ContentRepository
     }
     this.parsedContentCache = parsed.data as AppContent
     return this.parsedContentCache
+  }
+
+  private getNormalizedNavbarContent(navbar: AppContent['navbar']): AppContent['navbar'] {
+    const labelsByHref = new Map(navbar.links.map((link) => [link.href, link.label]))
+
+    return {
+      ...navbar,
+      links: [
+        { href: '#servicios', label: labelsByHref.get('#servicios') ?? 'Servicios' },
+        { href: '#proceso', label: labelsByHref.get('#proceso') ?? 'Proceso' },
+        { href: '#tarifas', label: labelsByHref.get('#tarifas') ?? 'Tarifas' },
+        { href: '#cobertura', label: labelsByHref.get('#cobertura') ?? 'Cobertura' },
+        { href: '#faq', label: labelsByHref.get('#faq') ?? 'FAQ' },
+        { href: '#contacto', label: labelsByHref.get('#contacto') ?? 'Contacto' }
+      ]
+    }
   }
 }
