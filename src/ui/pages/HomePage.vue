@@ -2,6 +2,7 @@
 import Navbar from '@/ui/layout/Navbar.vue'
 import HeroSection from '@/ui/sections/HeroSection.vue'
 import ServiciosSection from '@/ui/sections/ServiciosSection.vue'
+import TecnicoACargo from '@/components/TecnicoACargo.vue'
 import DecisionFlowSection from '@/ui/sections/DecisionFlowSection.vue'
 import PerfilSection from '@/ui/sections/PerfilSection.vue'
 import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
@@ -30,6 +31,7 @@ const {
         :contactCtaEnabled="contactCtaEnabled"
         @contact="handleChat($event.section, $event.href)"
       />
+      <TecnicoACargo />
       <DecisionFlowSection />
       <ContactFormSection
         v-bind="contactEmail ? { contactEmail } : {}"

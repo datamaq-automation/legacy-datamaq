@@ -17,6 +17,11 @@ vi.mock('@/ui/controllers/contactBackendController', () => ({
 vi.mock('@/di/container', () => ({
   useContainer: () => ({
     content: {
+      getHeroContent: () => ({
+        primaryCta: {
+          href: 'https://wa.me/5491156297160'
+        }
+      }),
       getContactContent: () => ({
         title: 'Contacto',
         subtitle: 'Dejanos tu consulta y te contactamos.',

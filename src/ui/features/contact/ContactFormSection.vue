@@ -14,6 +14,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
               <p class="text-body mb-4 c-contact__subtitle">
                 {{ contact.subtitle }}
               </p>
+              <TecnicoACargo variant="embedded" heading-id="tecnico-a-cargo-contacto-title" />
               <form
                 ref="formRef"
                 class="row g-3"
@@ -99,6 +100,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
 </template>
 
 <script setup lang="ts">
+import TecnicoACargo from '@/components/TecnicoACargo.vue'
 import type { ContactFormProps } from './contactTypes'
 import { useContactFormSection } from './ContactFormSection'
 

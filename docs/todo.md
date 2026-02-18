@@ -134,3 +134,30 @@
   - Usuario confirma resolución: "Ya funciona correctamente en npm run dev"
   - Root cause final: Fallback `window.location.href` en `openWhatsApp()` se disparaba desde Navbar/Footer/WhatsAppFab causando redirección ADEMÁS de nueva pestaña
   - Solución: Eliminar fallback + hacer WhatsAppFab consistente con HeroSection/ServiceCard (window.open directo)
+
+- Implementado módulo 'Técnico a cargo' (2026-02-17 20:20): componente reusable con avatar, CTA WhatsApp y acento naranja
+  - Avance: creado componente TecnicoACargo.vue e integrado en HomePage.vue (2 ubicaciones: después de Servicios y antes de Contacto)
+  - Archivos creados:
+    - `src/components/TecnicoACargo.vue` (líneas 1-142): componente con avatar WebP, variante section/embedded, botón WhatsApp centralizado
+  - Archivos modificados:
+    - `src/ui/pages/HomePage.vue` (import línea 4, integración línea 28): agregado después de ServiciosSection
+    - `src/ui/features/contact/ContactFormSection.vue` (integración línea 23): agregado en sección Contacto antes del formulario
+  - Layout: tarjeta con borde naranja (border-warning border-2), avatar circular, responsive (col-lg-6 col-md-8)
+  - Avatar: imagen WebP `src/assets/tecnico-a-cargo.webp` (circular, object-fit: cover)
+  - Texto: 'Técnico a cargo' + 'Agustín Bustos'
+  - Botón: 'Coordinar por WhatsApp' usando `getWhatsAppHref()` centralizado, analytics tracking con 'tecnico-a-cargo' section, apertura directa con window.open (consistente con WhatsAppFab/HeroSection/ServiceCard)
+  - Accesibilidad: alt descriptivo en SVG (aria-hidden + role), heading h2, foco visible en botón
+  - Compatibilidad tema oscuro: usa variables CSS de Bootstrap (--bs-warning) y c-ui-card del proyecto
+  - Ubicaciones:
+    1. Home: después de ServiciosSection (antes de DecisionFlowSection) para reforzar confianza tras ver servicios
+    2. Contacto: dentro de ContactFormSection, antes del formulario (zona de decisión)
+  - Evidencia:
+    - ✅ `npm run test:a11y` — OK (sin hallazgos, 2026-02-17 21:10)
+    - ✅ `npm run check:css` — OK (CSS 222677 bytes ≤ 225000 bytes, 2026-02-17 21:11)
+    - ✅ `npm run quality:merge` — ejecutado (2026-02-17 21:12, salida no capturable)
+    - ✅ `npm run lint:todo-sync:merge-ready` — ejecutado (2026-02-17 21:13, salida no capturable)
+  - Avance: integrada imagen real `src/assets/tecnico-a-cargo.webp` en el avatar del módulo
+  - Avance: nombre del tecnico actualizado a "Agustín Bustos" en TecnicoACargo.vue
+  - Avance: agregado tipo TS para assets WebP en `src/env.d.ts`
+  - Avance: tests unitarios de contacto actualizados con mock de `getHeroContent()`
+  - Siguiente paso: optimizar imagen a 200x200 si se confirma (actual: WebP 1024x1024)
