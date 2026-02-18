@@ -1,41 +1,74 @@
-# Plan Tecnico Prioritario
+# Plan Tecnico Prioritario (informativo, no fuente de verdad)
 
-> Baseline operativo: `docs/dv-opsr-01.md`.
-> Archivo de tareas completadas: `docs/todo.done.2026-02.md`.
+> Este archivo es una **foto explicativa** para coordinar trabajo.  
+> La **fuente de verdad** es la evidencia (config real en VPS/Chatwoot/mailbox + logs + pruebas E2E) y el estado real del repo/deploy.
+>
+> Baseline operativo: `docs/dv-opsr-01.md`.  
+> Doc explicativo del flujo Chatwoot/email: `docs/dv-chatwoot.md`.  
+> Tareas completadas: `docs/todo.done.2026-02.md`.
 
-## Backlog activo
+## 0) Objetivo (decisión vigente)
 
-### P0
-- [>] (P0) Endurecer frontend a contrato backend-only para respuesta email en Chatwoot
-  - Contexto: el frontend ya opera en modo backend-only para evitar falsos positivos de entrega email al usar canal API directo de Chatwoot.
-  - Resumen: el frontend solo envia a backend propio (sin Chatwoot Public API en cliente) para asegurar ruteo al inbox Email y evitar falsos positivos; el cierre depende de backend productivo + evidencia SMTP/SendReplyJob.
-  - Avance: cliente desacoplado de Chatwoot Public API; envio centralizado a endpoint backend de ingesta.
-  - Avance: `ContentRepository.getNavbarContent()` normaliza anchors de decision flow para exponer `#servicios -> #proceso -> #tarifas -> #cobertura -> #faq -> #contacto` y mantener consistencia con `getContent().navbar`.
-  - Avance: smoke E2E de contacto endurecido para no depender de copy puntual del submit; el selector ahora acepta `Registrar consulta|Enviar consulta por correo` y valida visibilidad previa al click.
-  - Decision tomada (B): preservar `content.ts` como fuente editable y aplicar normalizacion deterministicamente en el repositorio de infraestructura para garantizar orden/anchors esperados por contrato de UI.
-  - Decision tomada (C): resolucion funcional completa depende del backend productivo que garantice ruteo al inbox Email en Chatwoot.
-  - Tipo C: C2
-  - Bloqueador residual: falta URL canonica productiva del backend y evidencia de ruteo real por inbox Email.
-  - Informacion faltante: `<backend_ingest_url_https>` + evidencia operativa (`SendReplyJob`/SMTP) asociada al inbox Email.
-  - Mitigacion interna ejecutada: deploy gate endurecido para exigir `VITE_INQUIRY_API_URL` con esquema `https://`; calidad CSS/scaffolding consolidada en turno 2026-02-17 (sin impacto en frontend funcional de contacto).
-  - Evidencia:
-    - Baseline turno anterior: `npm run quality:merge` en verde (2026-02-17 00:20 -03:00)
-    - Validacion turno actual: `npm run quality:merge` en verde (2026-02-17 14:00 -03:00; no hay cambios en frontend contacto, consolidacion de CSS/!important)
-    - `npm run lint:security` en verde (2026-02-17 14:01 -03:00)
-    - `npm run test -- tests/unit/infrastructure/contentRepository.test.ts` en verde (3/3)
-    - `npm run lint:test-coverage` en verde (`[test-coverage] OK: lines=81.75 statements=81.11 functions=81.96 branches=71.66`)
-    - `npm run lint:security` en verde (`lint:origin-verify` + `lint:client-secrets`)
-    - `npm run quality:merge` ejecutado: `quality:responsive` y `quality:mobile` en verde; fallo transitorio en `quality:gate` por `lint:todo-sync` antes de sincronizar `docs/todo.md`.
-    - `npm run lint:todo-sync` en verde tras sincronizar `docs/todo.md`.
-    - `npm run quality:merge` en verde (incluye `quality:gate`, `quality:responsive` XS->SM->MD->LG y `quality:mobile`).
-    - `npm run lint:todo-sync:merge-ready` en verde.
-    - `npm run test:e2e:smoke` en verde (8/8) con flujo `contact -> /gracias` estable.
-    - `npm run lint:security` en verde (revalidado tras cambios en `tests/e2e/`).
-    - `npm run lint:test-coverage` en verde (`[test-coverage] OK: lines=81.75 statements=81.11 functions=81.96 branches=71.66`).
-    - `npm run quality:responsive` en verde (secuencia estricta `XS -> SM -> MD -> LG`).
-    - `npm run quality:mobile` en verde (`quality:responsive` + `test:a11y` + `check:css`).
-    - `npm run quality:merge` ejecutado con fallo transitorio en `quality:gate` por `lint:todo-sync` previo a sincronizacion de este archivo.
-  - Tareas externas (solo C2 y acciones fuera del repo): desplegar/validar servicio backend (`upsert contact + ensure ContactInbox Email + create/reuse conversation Email`) y cargar secreto correcto en `GitHub Environment production`.
-  - Siguiente paso: revalidar cierre merge-ready tras sincronizacion de `docs/todo.md`.
-  - Siguiente accion interna ejecutable ahora: ejecutar `npm run quality:merge` y `npm run lint:todo-sync:merge-ready`; luego continuar con `npm run smoke:contact:backend -- <url>` al recibir `backend_ingest_url_https`.
-  - Anexo tecnico: `docs/dv-chatwoot.md`.
+- La web tendrá **dos formularios**:
+  1) **Contacto (lead / ingreso de contacto)**
+  2) **Enviar mail** (consulta tipo email)
+
+- Ambos deben terminar en **Inbox Email público** dentro de Chatwoot, para poder **responder como email**.
+
+## 1) Identidad de correos (decisión vigente)
+
+- `chatwoot@datamaq.com.ar`: **uso interno** (invitaciones, reset password, notificaciones de sistema Chatwoot).
+- `info@datamaq.com.ar`: **uso público** (figura en la web; respuestas a consultas; identidad del inbox email público).
+
+## 2) Estado actual (snapshot)
+
+- Frontend (Vue) hoy usa (legacy):
+  - `VITE_INQUIRY_API_URL=https://chatwoot.datamaq.com.ar/public/api/v1/inboxes/{INBOX_ID}/contacts`
+- Backend objetivo:
+  - FastAPI en `https://api.datamaq.com.ar` se escalará para recibir los submits y enviar email por SMTP.
+
+## 3) Definición de Hecho (DoD) mínima
+
+1) El submit desde la web crea una conversación en el **Inbox Email público** (info@).
+2) Reply desde Chatwoot llega al email del contacto.
+3) Reply del contacto vuelve a Chatwoot en el mismo hilo.
+4) Se registra evidencia: fecha/hora, headers básicos (Message-ID), y logs sin errores SMTP.
+
+## 4) Backlog activo
+
+### P0 — Habilitar Inbox Email público (info@) en Chatwoot
+- [ ] Crear o confirmar Inbox Email conectado a `info@datamaq.com.ar` (IMAP + SMTP).
+- [ ] Verificar envío SMTP: desde Chatwoot se envía un reply y llega (prueba real).
+- [ ] Verificar recepción IMAP: email entrante a info@ aparece en Inbox.
+- [ ] Guardar evidencia mínima (capturas + logs relevantes).
+
+### P0 — Backend FastAPI (SMTP simple) para los dos formularios
+- [ ] Implementar endpoints:
+  - `POST /contact`  (Contacto)
+  - `POST /mail`     (Enviar mail)
+- [ ] En ambos: validar payload, sanear input, loguear `request_id`, aplicar antispam.
+- [ ] Envío SMTP:
+  - `From: info@datamaq.com.ar`
+  - `To: info@datamaq.com.ar` (o alias que lea el Inbox Email público)
+  - `Reply-To: <email_del_cliente>`
+  - `Subject` con convención (incluye `request_id` + tipo de formulario).
+- [ ] CORS: permitir solo dominios de la web (prod) + localhost (dev).
+- [ ] Rate-limit (mínimo) + honeypot (mínimo).
+
+### P0 — Frontend: apuntar al backend (target)
+- [ ] Cambiar variables de entorno en producción:
+  - `VITE_CONTACT_API_URL=https://api.datamaq.com.ar/contact`
+  - `VITE_MAIL_API_URL=https://api.datamaq.com.ar/mail`
+- [ ] Mantener/actualizar smoke test existente para chequear backend real.
+- [ ] Asegurar que el “availability check” **no** marque verde cuando alguien apunta por error a Chatwoot Public API.
+
+### P1 — Limpieza de legacy Chatwoot Public API en cliente
+- [ ] Eliminar dependencia del cliente a:
+  - `https://chatwoot.datamaq.com.ar/public/api/v1/...`
+- [ ] (Solo si se necesita transición corta) refactor de config:
+  - Reemplazar URL embebida por `VITE_INBOX_ID={INBOX_ID}` + `VITE_CHATWOOT_BASE_URL=...`
+  - **Nota:** esto es transición; el target es que el cliente no conozca Inbox IDs.
+
+## 5) Riesgos conocidos
+- Sin antispam/rate-limit: riesgo alto de inundación del inbox.
+- Si SMTP en Chatwoot no está OK: no se puede cerrar el DoD “responder como mail”.
