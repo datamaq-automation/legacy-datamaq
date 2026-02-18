@@ -160,4 +160,5 @@
   - Avance: nombre del tecnico actualizado a "Agustín Bustos" en TecnicoACargo.vue
   - Avance: agregado tipo TS para assets WebP en `src/env.d.ts`
   - Avance: tests unitarios de contacto actualizados con mock de `getHeroContent()`
+  - Avance: agregado test unitario `tests/unit/ui/tecnicoACargo.test.ts` para CTA y fallback
   - Siguiente paso: optimizar imagen a 200x200 si se confirma (actual: WebP 1024x1024)
