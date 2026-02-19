@@ -2,7 +2,7 @@ import {
   getWhatsAppEnabled,
   getContactEmail,
   openWhatsApp,
-  submitContact
+  submitMail
 } from '@/ui/controllers/contactController'
 
 export function useMedicionConsumoEscobar() {
@@ -13,8 +13,8 @@ export function useMedicionConsumoEscobar() {
     openWhatsApp(section, href)
   }
 
-  function handleEmailSubmit(payload: Parameters<typeof submitContact>[1]) {
-    return submitContact('landing-escobar-contacto', payload)
+  function handleEmailSubmit(payload: Parameters<typeof submitMail>[1]) {
+    return submitMail('landing-escobar-contacto', payload)
   }
 
   return {

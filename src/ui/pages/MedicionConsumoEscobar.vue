@@ -97,6 +97,7 @@ const {
 
       <ContactFormSection
         v-bind="contactEmail ? { contactEmail } : {}"
+        backend-channel="mail"
         :on-submit="handleEmailSubmit"
       />
     </main>

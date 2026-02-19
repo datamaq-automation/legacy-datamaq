@@ -13,12 +13,13 @@ import { useContactValidation } from './useContactValidation'
 import { useRouter } from 'vue-router'
 
 export function useContactForm(props: ContactFormProps) {
+  const backendChannel = props.backendChannel ?? 'contact'
   const formRef = ref<HTMLFormElement | null>(null)
   const form = reactive({
     email: '',
     message: ''
   })
-  const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus())
+  const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus(backendChannel))
   const isBackendAvailable = computed(() => backendStatus.value === 'available')
   const isCheckingBackend = computed(() => backendStatus.value === 'unknown')
   const isChannelEnabled = computed(() => Boolean(props.contactEmail) && isBackendAvailable.value)
@@ -108,16 +109,18 @@ export function useContactForm(props: ContactFormProps) {
     unsubscribeFromStatus = subscribeToContactBackendStatus((status) => {
       console.log('[contact:debug] backend-status:update', { from: backendStatus.value, to: status })
       backendStatus.value = status
-    })
-    void ensureContactBackendStatus()
+    }, backendChannel)
+    void ensureContactBackendStatus(backendChannel)
       .then((status) => {
         console.log('[contact:debug] backend-status:ensure', { status })
         if (status === 'unavailable') {
           console.error('[contact:debug] backend-status:unavailable', {
             inquiryApiUrl: config.inquiryApiUrl ?? null,
+            mailApiUrl: config.mailApiUrl ?? null,
+            backendChannel,
             hasContactEmail: Boolean(props.contactEmail),
             hint:
-              'Verifica VITE_INQUIRY_API_URL en build y que el endpoint responda POST en produccion.'
+              'Verifica VITE_INQUIRY_API_URL/VITE_MAIL_API_URL y que el endpoint responda POST en produccion.'
           })
         }
       })

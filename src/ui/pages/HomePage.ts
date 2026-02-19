@@ -2,7 +2,7 @@ import {
   getWhatsAppEnabled,
   getContactEmail,
   openWhatsApp,
-  submitContact,
+  submitMail,
   trackSectionScroll
 } from '@/ui/controllers/contactController'
 import { onMounted, onUnmounted } from 'vue'
@@ -15,9 +15,9 @@ export function useHomePage() {
     openWhatsApp(section, href)
   }
 
-  function handleEmailSubmit(payload: Parameters<typeof submitContact>[1]) {
+  function handleEmailSubmit(payload: Parameters<typeof submitMail>[1]) {
     // El componente espera una promesa para feedback, asi que retornamos la llamada
-    return submitContact('contacto-formulario', payload)
+    return submitMail('contacto-formulario', payload)
   }
 
   function handleHashChange() {

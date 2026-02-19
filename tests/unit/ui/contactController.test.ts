@@ -4,6 +4,7 @@ import {
   getWhatsAppEnabled,
   getWhatsAppHref,
   openWhatsApp,
+  submitMail,
   submitContact,
   trackSectionScroll
 } from '@/ui/controllers/contactController'
@@ -12,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   trackChat: vi.fn(),
   trackSectionScroll: vi.fn(),
   submitContact: vi.fn(),
+  submitMail: vi.fn(),
   getHeroContent: vi.fn(),
   environment: {
     search: () => '' as string,
@@ -38,7 +40,8 @@ vi.mock('@/di/container', () => ({
 
 vi.mock('@/ui/features/contact/useContactFacade', () => ({
   useContactFacade: () => ({
-    submitContact: mocks.submitContact
+    submitContact: mocks.submitContact,
+    submitMail: mocks.submitMail
   })
 }))
 
@@ -47,6 +50,7 @@ describe('contactController', () => {
     mocks.trackChat.mockReset()
     mocks.trackSectionScroll.mockReset()
     mocks.submitContact.mockReset()
+    mocks.submitMail.mockReset()
     mocks.getHeroContent.mockReset()
     mocks.environment.search = () => ''
     mocks.environment.referrer = () => ''
@@ -111,5 +115,14 @@ describe('contactController', () => {
     await submitContact('contacto', payload)
 
     expect(mocks.submitContact).toHaveBeenCalledWith('contacto', payload)
+  })
+
+  it('submits mail via facade', async () => {
+    mocks.submitMail.mockResolvedValue({ ok: true, data: undefined })
+
+    const payload = { email: 'ana@example.com', message: 'Hola' }
+    await submitMail('contacto', payload)
+
+    expect(mocks.submitMail).toHaveBeenCalledWith('contacto', payload)
   })
 })

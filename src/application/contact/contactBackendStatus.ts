@@ -7,6 +7,7 @@ import { evaluateContactEndpointPolicy } from './contactEndpointPolicy'
 export type ContactBackendStatus = 'unknown' | 'available' | 'unavailable'
 
 type StatusListener = (status: ContactBackendStatus) => void
+type ApiUrlSelector = (config: ConfigPort) => string | undefined
 
 export class ContactBackendMonitor {
   private listeners = new Set<StatusListener>()
@@ -17,9 +18,11 @@ export class ContactBackendMonitor {
     private http: HttpClient,
     private config: ConfigPort,
     private runtime: RuntimeFlags,
-    private logger: LoggerPort
+    private logger: LoggerPort,
+    private selectApiUrl: ApiUrlSelector = (cfg) => cfg.inquiryApiUrl,
+    private monitorLabel: string = 'contactBackendStatus'
   ) {
-    this.status = config.inquiryApiUrl ? 'unknown' : 'unavailable'
+    this.status = this.selectApiUrl(config) ? 'unknown' : 'unavailable'
   }
 
   getStatus(): ContactBackendStatus {
@@ -72,10 +75,10 @@ export class ContactBackendMonitor {
   }
 
   private async probe(): Promise<ContactBackendStatus> {
-    const apiUrl = this.config.inquiryApiUrl
+    const apiUrl = this.selectApiUrl(this.config)
     const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
     if (!apiUrl || !endpointPolicy.allowed || !this.runtime.isBrowser()) {
-      this.logger.debug('[contactBackendStatus] Probe omitida', {
+      this.logger.debug(`[${this.monitorLabel}] Probe omitida`, {
         apiUrl: apiUrl ?? null,
         isBrowser: this.runtime.isBrowser(),
         reason: endpointPolicy.reason ?? null
@@ -86,7 +89,7 @@ export class ContactBackendMonitor {
     }
 
     try {
-      this.logger.debug('[contactBackendStatus] Probe start', { apiUrl })
+      this.logger.debug(`[${this.monitorLabel}] Probe start`, { apiUrl })
       const response = await this.http.options(apiUrl)
       if (
         response.ok ||
@@ -100,7 +103,7 @@ export class ContactBackendMonitor {
       }
     } catch (error) {
       this.logger.warn(
-        '[contactBackendStatus] Error al verificar disponibilidad del backend:',
+        `[${this.monitorLabel}] Error al verificar disponibilidad del backend:`,
         { apiUrl, error }
       )
       this.status = 'unavailable'

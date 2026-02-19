@@ -104,3 +104,24 @@
 - Avance: creado documento solicitado en `docs/*.md` con prompts por etapas para Copilot Chat backend.
 - Evidencia: `docs/dv-copilot-prompts-backend.md`.
 - Siguiente accion interna ejecutable ahora: validar sincronia de tablero con `npm run lint:todo-sync`.
+- Decision tomada (B-Arquitectura): desacoplar el formulario de mail del flujo legacy de contacto creando canal dedicado `mail` (gateway + monitor + caso de uso) para respetar `VITE_MAIL_API_URL` sin romper el formulario existente.
+- Avance: `ContactApiGateway` ahora soporta canal configurable (`contact|mail`) y selecciona `inquiryApiUrl` o `mailApiUrl` segun corresponda.
+- Avance: `ContactBackendMonitor` se refactorizo para aceptar selector de endpoint y etiqueta de monitor; se instancia `mailBackend` en DI.
+- Avance: agregado `submitMail` en fachada/controlador y cableado en paginas `HomePage` y `MedicionConsumoEscobar` para que `handleEmailSubmit` use flujo mail.
+- Avance: `ContactFormSection` ahora acepta `backendChannel` y las vistas de formulario lo fijan en `mail` para chequeo de disponibilidad consistente con el endpoint real.
+- Evidencia: `src/infrastructure/contact/contactApiGateway.ts`, `src/application/contact/contactBackendStatus.ts`, `src/di/container.ts`.
+- Evidencia: `src/ui/controllers/contactController.ts`, `src/ui/controllers/contactBackendController.ts`, `src/ui/features/contact/contactTypes.ts`, `src/ui/features/contact/contactHooks.ts`.
+- Evidencia: `src/ui/pages/HomePage.ts`, `src/ui/pages/HomePage.vue`, `src/ui/pages/MedicionConsumoEscobar.ts`, `src/ui/pages/MedicionConsumoEscobar.vue`.
+- Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/ui/contactController.test.ts`.
+- Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/ui/contactController.test.ts tests/unit/application/contactBackendStatus.test.ts` OK (2026-02-19).
+- Evidencia: `npm run lint:security` OK (2026-02-19).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-19). Cobertura global: lines 82.18%, statements 81.55%, functions 82.00%, branches 72.06%.
+- Evidencia: `npm run lint:layers` OK (2026-02-19).
+- Evidencia: `npm run test:a11y` OK (2026-02-19).
+- Evidencia: `npm run check:css` OK (2026-02-19).
+- Evidencia: `npm run quality:responsive` OK (2026-02-19). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-19).
+- Evidencia: `npm run quality:merge` OK (2026-02-19).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-19).
+- Siguiente paso: validar el flujo real de formulario mail contra backend productivo (`POST /mail`) para confirmar disponibilidad fuera de mocks locales.
+- Siguiente accion interna ejecutable ahora: en cuanto se disponga endpoint productivo operativo de mail, correr smoke tecnico sobre `/mail` y registrar resultado con timestamp.

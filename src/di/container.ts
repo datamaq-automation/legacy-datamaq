@@ -45,7 +45,16 @@ const consentManager = createConsentManager(storage, logger)
 const leadTracking = new LeadTracking(sessionStorage, tracking, config, environment)
 const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
-const contactGateway = new ContactApiGateway(http, config, storage, logger)
+const contactGateway = new ContactApiGateway(http, config, storage, logger, 'contact')
+const mailGateway = new ContactApiGateway(http, config, storage, logger, 'mail')
+const mailBackend = new ContactBackendMonitor(
+  http,
+  config,
+  environment,
+  logger,
+  (cfg) => cfg.mailApiUrl,
+  'mailBackendStatus'
+)
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
 const contentRepository = new ContentRepository()
 
@@ -53,6 +62,17 @@ const submitContact = new SubmitContactUseCase(
   contactService,
   contactGateway,
   contactBackend,
+  environment,
+  environment,
+  eventBus,
+  leadTracking,
+  logger,
+  environment
+)
+const submitMail = new SubmitContactUseCase(
+  contactService,
+  mailGateway,
+  mailBackend,
   environment,
   environment,
   eventBus,
@@ -72,13 +92,15 @@ export const container = {
   consentManager,
   consentPort,
   contactBackend,
+  mailBackend,
   content: contentRepository,
   engagementTracker,
   eventBus,
   leadTracking,
   storage,
   useCases: {
-    submitContact
+    submitContact,
+    submitMail
   }
 } as const
 

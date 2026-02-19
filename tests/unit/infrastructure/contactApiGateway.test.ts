@@ -161,4 +161,28 @@ describe('ContactApiGateway', () => {
     })
     expect(http.postJson).not.toHaveBeenCalled()
   })
+
+  it('routes mail channel through MAIL_API_URL', async () => {
+    const http = createHttpClient()
+    const logger = createLogger()
+    const gateway = new ContactApiGateway(
+      http,
+      {
+        ...createConfig('https://api.example.com/contact'),
+        mailApiUrl: 'https://api.example.com/mail'
+      } as ConfigPort,
+      createStorage(),
+      logger,
+      'mail'
+    )
+
+    const result = await gateway.submit(createPayload())
+
+    expect(result).toEqual({ ok: true, data: undefined })
+    expect(http.postJson).toHaveBeenCalledWith(
+      'https://api.example.com/mail',
+      expect.any(Object),
+      undefined
+    )
+  })
 })

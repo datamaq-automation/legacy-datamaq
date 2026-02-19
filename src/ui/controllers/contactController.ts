@@ -45,6 +45,10 @@ export function submitContact(section: string, payload: EmailContactPayload) {
   return useContactFacade().submitContact(section, payload)
 }
 
+export function submitMail(section: string, payload: EmailContactPayload) {
+  return useContactFacade().submitMail(section, payload)
+}
+
 function getTrafficSource(location: { search(): string; referrer(): string }): string {
   const params = new URLSearchParams(location.search())
   const utmSource = params.get('utm_source')

@@ -11,19 +11,22 @@ import { buildContactPayloadBundle } from './contactPayloadBuilder'
 import { mapSubmitResponseError } from './contactSubmissionErrors'
 import { evaluateContactEndpointPolicy } from '@/application/contact/contactEndpointPolicy'
 
+type GatewayChannel = 'contact' | 'mail'
+
 export class ContactApiGateway implements ContactGateway {
   constructor(
     private http: HttpClient,
     private config: ConfigPort,
     private storage: StoragePort,
-    private logger: LoggerPort
+    private logger: LoggerPort,
+    private channel: GatewayChannel = 'contact'
   ) {}
 
   async submit(payload: ContactSubmitPayload): Promise<Result<void, ContactError>> {
-    const apiUrl = this.config.inquiryApiUrl
+    const apiUrl = this.channel === 'mail' ? this.config.mailApiUrl : this.config.inquiryApiUrl
     const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
     if (!apiUrl || !endpointPolicy.allowed) {
-      this.logger.error('INQUIRY_API_URL no es valida para backend-only', {
+      this.logger.error(`${this.resolveChannelLabel()} no es valida para backend-only`, {
         reason: endpointPolicy.reason ?? 'unknown'
       })
       return { ok: false, error: { type: 'Unavailable' } }
@@ -43,5 +46,9 @@ export class ContactApiGateway implements ContactGateway {
     }
 
     return { ok: true, data: undefined }
+  }
+
+  private resolveChannelLabel(): string {
+    return this.channel === 'mail' ? 'MAIL_API_URL' : 'INQUIRY_API_URL'
   }
 }
