@@ -99,9 +99,6 @@ jobs:
     outputs:
       contact_endpoint: ${{ steps.prepare.outputs.contact_endpoint }}
       mail_endpoint: ${{ steps.prepare.outputs.mail_endpoint }}
-      server_host: ${{ steps.prepare.outputs.server_host }}
-      port: ${{ steps.prepare.outputs.port }}
-      remote_dir: ${{ steps.prepare.outputs.remote_dir }}
 
     steps:
       - name: Validate deploy inputs
@@ -197,10 +194,6 @@ jobs:
 
           echo "contact_endpoint=${CONTACT_ENDPOINT}" >> "${GITHUB_OUTPUT}"
           echo "mail_endpoint=${MAIL_ENDPOINT}" >> "${GITHUB_OUTPUT}"
-          echo "server_host=${SERVER_HOST}" >> "${GITHUB_OUTPUT}"
-          echo "port=${PORT}" >> "${GITHUB_OUTPUT}"
-          echo "remote_dir=${REMOTE_DIR}" >> "${GITHUB_OUTPUT}"
-
           echo "::notice::Deploy target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
 
   deploy-build:
@@ -226,9 +219,9 @@ jobs:
 
       - name: Build
         env:
-          VITE_CONTACT_API_URL: ${{ needs.deploy-prepare.outputs.contact_endpoint }}
-          VITE_INQUIRY_API_URL: ${{ needs.deploy-prepare.outputs.contact_endpoint }}
-          VITE_MAIL_API_URL: ${{ needs.deploy-prepare.outputs.mail_endpoint }}
+          VITE_CONTACT_API_URL: ${{ secrets.VITE_CONTACT_API_URL }}
+          VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
+          VITE_MAIL_API_URL: ${{ secrets.VITE_MAIL_API_URL }}
         run: npm run build
 
       - name: Upload dist artifact
@@ -257,13 +250,31 @@ jobs:
 
       - name: Validate DNS and remote dir access
         env:
+          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
+          FTPS_PORT: ${{ secrets.FTPS_PORT }}
           FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
           FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
-          SERVER_HOST: ${{ needs.deploy-prepare.outputs.server_host }}
-          PORT: ${{ needs.deploy-prepare.outputs.port }}
-          REMOTE_DIR: ${{ needs.deploy-prepare.outputs.remote_dir }}
+          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
         run: |
           set -euo pipefail
+          RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
+          RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
+          SERVER="${RAW_SERVER#ftp://}"
+          SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER%%/*}"
+
+          SERVER_HOST="${SERVER%%:*}"
+          SERVER_PORT_FROM_HOST=""
+          if [ "${SERVER_HOST}" != "${SERVER}" ]; then
+            SERVER_PORT_FROM_HOST="${SERVER##*:}"
+          fi
+
+          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+          REMOTE_DIR="${RAW_REMOTE_DIR}"
+
+          if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
+            REMOTE_DIR="/${REMOTE_DIR}"
+          fi
 
           if ! getent hosts "${SERVER_HOST}" >/dev/null; then
             echo "::error::FTPS_SERVER is not resolvable by DNS. Check secret FTPS_SERVER."
@@ -312,13 +323,31 @@ jobs:
 
       - name: Deploy dist via FTPS
         env:
+          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
+          FTPS_PORT: ${{ secrets.FTPS_PORT }}
           FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
           FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
-          SERVER_HOST: ${{ needs.deploy-prepare.outputs.server_host }}
-          PORT: ${{ needs.deploy-prepare.outputs.port }}
-          REMOTE_DIR: ${{ needs.deploy-prepare.outputs.remote_dir }}
+          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
         run: |
           set -euo pipefail
+          RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
+          RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
+          SERVER="${RAW_SERVER#ftp://}"
+          SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER%%/*}"
+
+          SERVER_HOST="${SERVER%%:*}"
+          SERVER_PORT_FROM_HOST=""
+          if [ "${SERVER_HOST}" != "${SERVER}" ]; then
+            SERVER_PORT_FROM_HOST="${SERVER##*:}"
+          fi
+
+          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+          REMOTE_DIR="${RAW_REMOTE_DIR}"
+
+          if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
+            REMOTE_DIR="/${REMOTE_DIR}"
+          fi
 
           timeout 900 lftp <<EOF
           set cmd:fail-exit true

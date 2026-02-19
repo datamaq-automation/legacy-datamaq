@@ -134,3 +134,11 @@
 - Evidencia: `.github/workflows/ci-cd-ftps.yml` (jobs `build-*` y `deploy-*`, outputs, artifact dist, preflight dedicado y upload dedicado).
 - Siguiente paso: endurecer smoke E2E para mockear de forma explicita `**/api/mail` y remover el override transitorio de `VITE_MAIL_API_URL` en workflow.
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:security` y `npm run lint:todo-sync` para validar compliance del cambio en workflow y trazabilidad del tablero.
+- Mitigacion interna ejecutada: incidente CI en `Deploy / FTPS Preflight` por `SERVER_HOST/PORT/REMOTE_DIR` vacios al usar outputs derivados de secretos entre jobs.
+- Decision tomada (B-Deploy): eliminar propagacion cross-job de valores FTPS sensibles (`server_host`, `port`, `remote_dir`) y recalcular normalizacion en cada job de deploy para evitar outputs vaciados por proteccion de secretos.
+- Avance: `deploy-ftps-preflight` y `deploy-ftps-upload` ahora leen `FTPS_SERVER/FTPS_PORT/FTPS_REMOTE_DIR` directo desde `secrets` y resuelven `SERVER_HOST/PORT/REMOTE_DIR` localmente antes de `lftp`.
+- Avance: `deploy-build` vuelve a consumir endpoints build directamente desde `secrets` para evitar dependencia de outputs sensibles.
+- Evidencia: `.github/workflows/ci-cd-ftps.yml` (se eliminan outputs sensibles de `deploy-prepare`; normalizacion FTPS local en jobs `deploy-ftps-preflight` y `deploy-ftps-upload`).
+- Evidencia: fallo reportado (2026-02-19) en preflight con env vacio (`SERVER_HOST=`, `PORT=`, `REMOTE_DIR=`) mitigado por rediseño sin outputs sensibles.
+- Siguiente paso: ejecutar corrida remota del workflow para confirmar que preflight resuelve DNS correctamente con secretos reales.
+- Siguiente accion interna ejecutable ahora: lanzar `workflow_dispatch` y verificar logs de `Deploy / FTPS Preflight` y `Deploy / FTPS Upload`.
