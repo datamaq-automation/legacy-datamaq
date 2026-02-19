@@ -125,3 +125,12 @@
 - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-19).
 - Siguiente paso: validar el flujo real de formulario mail contra backend productivo (`POST /mail`) para confirmar disponibilidad fuera de mocks locales.
 - Siguiente accion interna ejecutable ahora: en cuanto se disponga endpoint productivo operativo de mail, correr smoke tecnico sobre `/mail` y registrar resultado con timestamp.
+- Decision tomada (B-Deploy): dividir `ci-cd-ftps.yml` en bloques operativos explicitos (`Build` y `Deploy`) con sub-bloques trazables para separar validacion de codigo, empaquetado y publicacion FTPS.
+- Avance: auditoria de workflow actual detecto acoplamiento alto en `deploy-production` (validacion + build + preflight + upload en un solo job) y bajo aislamiento para diagnosticar fallos.
+- Avance: bloque `Build` refactorizado en jobs `build-todo-sync` -> (`build-quality-gate` || `build-smoke-e2e`) para paralelizar controles independientes despues de sync.
+- Avance: bloque `Deploy` refactorizado en jobs en serie `deploy-prepare` -> `deploy-build` -> `deploy-ftps-preflight` -> `deploy-ftps-upload`, con outputs tipados (endpoints, host, port, remote_dir) para trazabilidad por etapa.
+- Avance: `deploy-build` publica artifact `dist-ftps`; `deploy-ftps-upload` consume artifact para evitar recompilar en etapa de transferencia.
+- Avance: mitigacion CI para fallo E2E reportado (`contact flow submits and navigates to thanks`): en `build-smoke-e2e` se inyecta `VITE_MAIL_API_URL` al endpoint mockeado (`/api/contact`) para evitar falso negativo mientras el stub E2E se generaliza a `/api/mail`.
+- Evidencia: `.github/workflows/ci-cd-ftps.yml` (jobs `build-*` y `deploy-*`, outputs, artifact dist, preflight dedicado y upload dedicado).
+- Siguiente paso: endurecer smoke E2E para mockear de forma explicita `**/api/mail` y remover el override transitorio de `VITE_MAIL_API_URL` en workflow.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:security` y `npm run lint:todo-sync` para validar compliance del cambio en workflow y trazabilidad del tablero.

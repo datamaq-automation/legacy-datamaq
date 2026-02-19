@@ -17,8 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  todo-sync:
-    name: Todo Sync
+  build-todo-sync:
+    name: Build / Todo Sync
     runs-on: ubuntu-latest
 
     steps:
@@ -35,11 +35,11 @@ jobs:
       - name: Validate todo sync compliance
         run: node scripts/check-todo-sync.mjs --require-evidence --require-open-p0
 
-  quality-gate:
-    name: Quality Gate
+  build-quality-gate:
+    name: Build / Quality Gate
     runs-on: ubuntu-latest
     needs:
-      - todo-sync
+      - build-todo-sync
 
     steps:
       - name: Checkout
@@ -59,11 +59,11 @@ jobs:
       - name: Run quality gate
         run: npm run quality:gate
 
-  smoke-e2e:
-    name: Smoke E2E
+  build-smoke-e2e:
+    name: Build / Smoke E2E
     runs-on: ubuntu-latest
     needs:
-      - todo-sync
+      - build-todo-sync
 
     steps:
       - name: Checkout
@@ -82,38 +82,45 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run smoke e2e
+        env:
+          VITE_CONTACT_API_URL: http://127.0.0.1:4173/api/contact
+          VITE_INQUIRY_API_URL: http://127.0.0.1:4173/api/contact
+          VITE_MAIL_API_URL: http://127.0.0.1:4173/api/contact
         run: npm run test:e2e:smoke
 
-  deploy-production:
-    name: Deploy Production (FTPS)
+  deploy-prepare:
+    name: Deploy / Prepare
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     needs:
-      - quality-gate
-      - smoke-e2e
+      - build-quality-gate
+      - build-smoke-e2e
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     environment: production
+    outputs:
+      contact_endpoint: ${{ steps.prepare.outputs.contact_endpoint }}
+      mail_endpoint: ${{ steps.prepare.outputs.mail_endpoint }}
+      server_host: ${{ steps.prepare.outputs.server_host }}
+      port: ${{ steps.prepare.outputs.port }}
+      remote_dir: ${{ steps.prepare.outputs.remote_dir }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Validate inquiry API URL
+      - name: Validate deploy inputs
+        id: prepare
         env:
           VITE_CONTACT_API_URL: ${{ secrets.VITE_CONTACT_API_URL }}
+          VITE_MAIL_API_URL: ${{ secrets.VITE_MAIL_API_URL }}
           VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
+          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
+          FTPS_PORT: ${{ secrets.FTPS_PORT }}
+          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
+          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
+          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
         run: |
           set -euo pipefail
+
           CONTACT_ENDPOINT="${VITE_CONTACT_API_URL:-${VITE_INQUIRY_API_URL:-}}"
+          MAIL_ENDPOINT="${VITE_MAIL_API_URL:-}"
+
           if [ -z "${CONTACT_ENDPOINT}" ]; then
             echo "::error::Missing secret VITE_CONTACT_API_URL (or legacy VITE_INQUIRY_API_URL)"
             exit 1
@@ -123,26 +130,14 @@ jobs:
             exit 1
           fi
 
-      - name: Build
-        env:
-          VITE_CONTACT_API_URL: ${{ secrets.VITE_CONTACT_API_URL }}
-          VITE_MAIL_API_URL: ${{ secrets.VITE_MAIL_API_URL }}
-          VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
-        run: npm run build
-
-      - name: Install lftp client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y lftp
-
-      - name: Validate required secrets
-        env:
-          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
-          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
-          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
-          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
-        run: |
-          set -euo pipefail
+          if [ -z "${MAIL_ENDPOINT}" ]; then
+            echo "::error::Missing secret VITE_MAIL_API_URL"
+            exit 1
+          fi
+          if ! printf '%s' "${MAIL_ENDPOINT}" | grep -Eq '^https://'; then
+            echo "::error::Invalid mail API URL. It must start with https:// and point to backend /mail endpoint."
+            exit 1
+          fi
 
           if [ -z "${FTPS_SERVER}" ]; then
             echo "::error::Missing secret FTPS_SERVER"
@@ -160,16 +155,6 @@ jobs:
             echo "::error::Missing secret FTPS_REMOTE_DIR"
             exit 1
           fi
-
-      - name: Deploy dist via FTPS
-        env:
-          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
-          FTPS_PORT: ${{ secrets.FTPS_PORT }}
-          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
-          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
-          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
-        run: |
-          set -euo pipefail
 
           RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
           RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
@@ -201,11 +186,6 @@ jobs:
             exit 1
           fi
 
-          if ! getent hosts "${SERVER_HOST}" >/dev/null; then
-            echo "::error::FTPS_SERVER is not resolvable by DNS. Check secret FTPS_SERVER."
-            exit 1
-          fi
-
           if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
             REMOTE_DIR="/${REMOTE_DIR}"
           fi
@@ -215,9 +195,82 @@ jobs:
             exit 1
           fi
 
-          echo "::notice::FTPS deploy target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
+          echo "contact_endpoint=${CONTACT_ENDPOINT}" >> "${GITHUB_OUTPUT}"
+          echo "mail_endpoint=${MAIL_ENDPOINT}" >> "${GITHUB_OUTPUT}"
+          echo "server_host=${SERVER_HOST}" >> "${GITHUB_OUTPUT}"
+          echo "port=${PORT}" >> "${GITHUB_OUTPUT}"
+          echo "remote_dir=${REMOTE_DIR}" >> "${GITHUB_OUTPUT}"
 
-          if ! timeout 180 lftp <<EOF
+          echo "::notice::Deploy target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
+
+  deploy-build:
+    name: Deploy / Build Dist
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-prepare
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          VITE_CONTACT_API_URL: ${{ needs.deploy-prepare.outputs.contact_endpoint }}
+          VITE_INQUIRY_API_URL: ${{ needs.deploy-prepare.outputs.contact_endpoint }}
+          VITE_MAIL_API_URL: ${{ needs.deploy-prepare.outputs.mail_endpoint }}
+        run: npm run build
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-ftps
+          path: dist
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy-ftps-preflight:
+    name: Deploy / FTPS Preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs:
+      - deploy-prepare
+      - deploy-build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Install lftp client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Validate DNS and remote dir access
+        env:
+          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
+          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
+          SERVER_HOST: ${{ needs.deploy-prepare.outputs.server_host }}
+          PORT: ${{ needs.deploy-prepare.outputs.port }}
+          REMOTE_DIR: ${{ needs.deploy-prepare.outputs.remote_dir }}
+        run: |
+          set -euo pipefail
+
+          if ! getent hosts "${SERVER_HOST}" >/dev/null; then
+            echo "::error::FTPS_SERVER is not resolvable by DNS. Check secret FTPS_SERVER."
+            exit 1
+          fi
+
+          timeout 180 lftp <<EOF
           set cmd:fail-exit true
           set net:timeout 20
           set net:max-retries 2
@@ -234,10 +287,38 @@ jobs:
           pwd
           bye
           EOF
-          then
-            echo "::error::FTPS preflight failed while creating/accessing remote dir (${REMOTE_DIR}). Check permissions and FTPS_REMOTE_DIR."
-            exit 1
-          fi
+
+  deploy-ftps-upload:
+    name: Deploy / FTPS Upload
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs:
+      - deploy-prepare
+      - deploy-ftps-preflight
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-ftps
+          path: dist
+
+      - name: Install lftp client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Deploy dist via FTPS
+        env:
+          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
+          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
+          SERVER_HOST: ${{ needs.deploy-prepare.outputs.server_host }}
+          PORT: ${{ needs.deploy-prepare.outputs.port }}
+          REMOTE_DIR: ${{ needs.deploy-prepare.outputs.remote_dir }}
+        run: |
+          set -euo pipefail
 
           timeout 900 lftp <<EOF
           set cmd:fail-exit true
