@@ -16,6 +16,10 @@ vi.mock('@/ui/controllers/contactBackendController', () => ({
 
 vi.mock('@/di/container', () => ({
   useContainer: () => ({
+    config: {
+      inquiryApiUrl: undefined,
+      mailApiUrl: undefined
+    },
     content: {
       getHeroContent: () => ({
         primaryCta: {

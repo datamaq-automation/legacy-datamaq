@@ -48,28 +48,38 @@ export function useContactForm(props: ContactFormProps) {
   const router = useRouter()
 
   async function handleSubmit(): Promise<void> {
+    const startedAtMs = Date.now()
     const formElement = formRef.value
     feedback.message = ''
     feedback.success = false
 
-    contactClientLogger.debug('submit:start', {
+    contactClientLogger.info('submit_clicked', {
       sectionId,
       backendChannel,
       isChannelEnabled: isChannelEnabled.value,
-      backendStatus: backendStatus.value
+      backendStatus: backendStatus.value,
+      endpointConfigured: hasConfiguredEndpoint(config, backendChannel)
     })
 
     if (!isChannelEnabled.value) {
-      contactClientLogger.warnOnce(`${backendChannel}:${sectionId}:channel-disabled`, 'submit:blocked-channel-disabled', {
+      contactClientLogger.warnOnce(
+        `${backendChannel}:${sectionId}:channel-disabled`,
+        'submit_blocked_channel_disabled',
+        {
         backendStatus: backendStatus.value,
         backendChannel,
         sectionId,
-        hasContactEmail: Boolean(props.contactEmail)
-      })
+        hasContactEmail: Boolean(props.contactEmail),
+        endpointConfigured: hasConfiguredEndpoint(config, backendChannel)
+      }
+      )
       return
     }
     if (formElement && !formElement.reportValidity()) {
-      contactClientLogger.warn('submit:blocked-invalid-form', { sectionId, backendChannel })
+      contactClientLogger.warn('submit_blocked_html_validation', {
+        sectionId,
+        backendChannel
+      })
       return
     }
     isSubmitting.value = true
@@ -78,26 +88,40 @@ export function useContactForm(props: ContactFormProps) {
         email: form.email,
         message: form.message
       }
+      const payloadMeta = extractPayloadMeta(payload)
       const parsed = validate(payload)
       if (!parsed.ok) {
-        contactClientLogger.warn('submit:validation-failed', { sectionId, backendChannel })
+        contactClientLogger.warn('submit_blocked_domain_validation', {
+          sectionId,
+          backendChannel,
+          ...payloadMeta
+        })
         await announceFeedback(contact.errorMessage, false)
         return
       }
+      contactClientLogger.info('submit_request_started', {
+        sectionId,
+        backendChannel,
+        ...payloadMeta
+      })
       const result = await props.onSubmit(parsed.data)
       if (result?.ok === true) {
-        contactClientLogger.info('submit:success-redirecting', {
+        contactClientLogger.info('submit_response_ok', {
           sectionId,
           backendChannel,
-          route: 'thanks'
+          route: 'thanks',
+          latencyMs: Date.now() - startedAtMs
         })
         void router.push({ name: 'thanks' })
         return
       } else {
-        contactClientLogger.warn('submit:failed-no-redirect', {
+        contactClientLogger.warn('submit_response_error', {
           sectionId,
           backendChannel,
-          errorType: result?.error?.type
+          errorType: result?.error?.type,
+          statusCode:
+            result?.error?.type === 'BackendError' ? result.error.status : undefined,
+          latencyMs: Date.now() - startedAtMs
         })
         await announceFeedback(
           mapContactError(result?.error, {
@@ -108,15 +132,16 @@ export function useContactForm(props: ContactFormProps) {
         )
       }
     } catch (error) {
-      contactClientLogger.error('submit:exception', {
+      contactClientLogger.error('submit_exception', {
         sectionId,
         backendChannel,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
+        latencyMs: Date.now() - startedAtMs
       })
       await announceFeedback(contact.unexpectedErrorMessage, false)
     } finally {
       isSubmitting.value = false
-      contactClientLogger.debug('submit:end', { sectionId, backendChannel })
+      contactClientLogger.debug('submit_end', { sectionId, backendChannel })
     }
   }
 
@@ -187,8 +212,8 @@ export function useContactForm(props: ContactFormProps) {
 }
 
 function resolveUnavailableReason(input: {
-  inquiryApiUrl: string | undefined
-  mailApiUrl: string | undefined
+  inquiryApiUrl: string | null | undefined
+  mailApiUrl: string | null | undefined
   backendChannel: 'contact' | 'mail'
 }): string {
   if (!input.inquiryApiUrl && !input.mailApiUrl) {
@@ -204,6 +229,30 @@ function resolveUnavailableReason(input: {
   }
 
   return `channel-${input.backendChannel}-unavailable`
+}
+
+function hasConfiguredEndpoint(
+  config: {
+    inquiryApiUrl: string | null | undefined
+    mailApiUrl: string | null | undefined
+  },
+  channel: 'contact' | 'mail'
+): boolean {
+  return channel === 'mail' ? Boolean(config.mailApiUrl) : Boolean(config.inquiryApiUrl)
+}
+
+function extractPayloadMeta(payload: EmailContactPayload): {
+  hasEmail: boolean
+  emailDomain: string | null
+  messageLength: number
+} {
+  const email = payload.email.trim().toLowerCase()
+  const emailDomain = email.includes('@') ? email.split('@')[1] ?? null : null
+  return {
+    hasEmail: email.length > 0,
+    emailDomain,
+    messageLength: payload.message.trim().length
+  }
 }
 
 function mapContactError(

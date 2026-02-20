@@ -2,6 +2,7 @@ import {
   getWhatsAppEnabled,
   getContactEmail,
   openWhatsApp,
+  submitContact,
   submitMail
 } from '@/ui/controllers/contactController'
 
@@ -17,10 +18,15 @@ export function useMedicionConsumoEscobar() {
     return submitMail('landing-escobar-contacto', payload)
   }
 
+  function handleContactSubmit(payload: Parameters<typeof submitContact>[1]) {
+    return submitContact('landing-escobar-lead', payload)
+  }
+
   return {
     contactCtaEnabled,
     contactEmail,
     handleChat,
+    handleContactSubmit,
     handleEmailSubmit
   }
 }

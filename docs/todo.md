@@ -201,3 +201,22 @@
 - Evidencia: `docs/dv-backend-contact-mail-handoff.md`, `.env.example`.
 - Siguiente paso: validar implementacion backend real de `request_id`, `Reply-To` y rate-limit para ejecutar smoke contra entorno productivo.
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para confirmar trazabilidad vigente.
+- Decision tomada (B-Arquitectura): consolidar observabilidad del submit en un logger/transport dedicado para desacoplar `contactHooks` de `console.*` y permitir diagnostico backend con eventos estructurados.
+- Avance: creado reporte de auditoria tecnica y plan ejecutado para contacto/mail + logging en `docs/dv-audit-contact-mail-logging-2026-02.md`.
+- Avance: incorporado transporte de logs cliente a backend opcional por env (`VITE_CLIENT_LOG_INGEST_URL`) con `sendBeacon/fetch keepalive`.
+- Avance: estandarizada semantica de eventos de submit para ambos canales (`submit_clicked`, `submit_request_started`, `submit_response_ok|error`, bloqueos y excepciones), con metadata util (`channel`, `sectionId`, `statusCode`, `errorType`, `latencyMs`) y sin PII cruda.
+- Avance: landing `MedicionConsumoEscobar` alineada a Home con ambos formularios visibles (`contact` y `mail`) y misma semantica de logging.
+- Evidencia: `src/ui/logging/contactLogTransport.ts`, `src/ui/logging/contactClientLogger.ts`, `src/ui/features/contact/contactHooks.ts`.
+- Evidencia: `src/ui/pages/MedicionConsumoEscobar.ts`, `src/ui/pages/MedicionConsumoEscobar.vue`, `src/env.d.ts`, `.env.example`.
+- Evidencia: `docs/dv-audit-contact-mail-logging-2026-02.md`.
+- Siguiente paso: ejecutar validacion integral local y registrar merge-readiness del turno.
+- Siguiente accion interna ejecutable ahora: correr `npm run quality:merge` y `npm run lint:todo-sync:merge-ready`.
+- Mitigacion interna ejecutada: `quality:merge` fallo por TypeScript estricto (`TS2379`, `TS4111`) en logging/contact hooks; se corrigieron tipos de endpoint nullable y acceso por index signature en sanitizacion de payload.
+- Evidencia: `src/ui/features/contact/contactHooks.ts`, `src/ui/logging/contactClientLogger.ts`.
+- Evidencia: `npm run quality:responsive` OK (2026-02-20). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-20).
+- Evidencia: `npm run quality:merge` OK (2026-02-20) tras mitigacion de tipado estricto.
+- Evidencia: `npm run lint:security` OK (2026-02-20).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-20). Cobertura global: lines 81.00%, statements 80.44%, functions 81.27%, branches 68.82%.
+- Siguiente paso: ejecutar checks finales de trazabilidad y merge-readiness para cerrar el turno.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync:merge-ready` y `npm run lint:todo-sync`.

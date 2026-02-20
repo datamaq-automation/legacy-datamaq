@@ -12,6 +12,7 @@ const {
   contactCtaEnabled,
   contactEmail,
   handleChat,
+  handleContactSubmit,
   handleEmailSubmit
 } = useMedicionConsumoEscobar()
 </script>
@@ -97,6 +98,19 @@ const {
 
       <ContactFormSection
         v-bind="contactEmail ? { contactEmail } : {}"
+        section-id="landing-escobar-lead"
+        title="Ingreso de contacto"
+        subtitle="Dejanos tus datos y te contactamos para coordinar la mejor alternativa."
+        submit-label="Registrar contacto"
+        backend-channel="contact"
+        :on-submit="handleContactSubmit"
+      />
+      <ContactFormSection
+        v-bind="contactEmail ? { contactEmail } : {}"
+        section-id="landing-escobar-mail"
+        title="Enviar e-mail"
+        subtitle="Enviá tu consulta por correo y respondemos por ese canal."
+        submit-label="Enviar consulta por correo"
         backend-channel="mail"
         :on-submit="handleEmailSubmit"
       />

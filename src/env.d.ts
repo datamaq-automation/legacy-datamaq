@@ -4,6 +4,7 @@ interface ImportMetaEnv {
   readonly VITE_MAIL_API_URL?: string
   readonly VITE_INQUIRY_API_URL?: string
   readonly VITE_CLIENT_LOG_LEVEL?: 'debug' | 'info' | 'warn' | 'error'
+  readonly VITE_CLIENT_LOG_INGEST_URL?: string
   readonly DEV: boolean
 }
 
