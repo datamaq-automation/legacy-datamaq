@@ -88,10 +88,7 @@ describe('ContactApiGateway', () => {
 
     const result = await gateway.submit(createPayload())
 
-    expect(result).toEqual({
-      ok: true,
-      data: { requestId: undefined, errorCode: undefined, backendMessage: undefined }
-    })
+    expect(result).toEqual({ ok: true, data: {} })
     expect(http.postJson).toHaveBeenCalledTimes(1)
     expect(http.postJson).toHaveBeenCalledWith(
       'https://api.example.com/contact',
@@ -127,10 +124,7 @@ describe('ContactApiGateway', () => {
     expect(result).toEqual({
       ok: false,
       error: {
-        type: 'NetworkError',
-        requestId: undefined,
-        errorCode: undefined,
-        backendMessage: undefined
+        type: 'NetworkError'
       }
     })
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
@@ -158,10 +152,7 @@ describe('ContactApiGateway', () => {
       ok: false,
       error: {
         type: 'BackendError',
-        status: 503,
-        requestId: undefined,
-        errorCode: undefined,
-        backendMessage: undefined
+        status: 503
       }
     })
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
@@ -208,10 +199,7 @@ describe('ContactApiGateway', () => {
 
     const result = await gateway.submit(createPayload())
 
-    expect(result).toEqual({
-      ok: true,
-      data: { requestId: undefined, errorCode: undefined, backendMessage: undefined }
-    })
+    expect(result).toEqual({ ok: true, data: {} })
     expect(http.postJson).toHaveBeenCalledWith(
       'https://api.example.com/mail',
       expect.any(Object),
@@ -238,7 +226,7 @@ describe('ContactApiGateway', () => {
 
     expect(result).toEqual({
       ok: true,
-      data: { requestId: 'req_body_123', errorCode: undefined, backendMessage: undefined }
+      data: { requestId: 'req_body_123' }
     })
   })
 

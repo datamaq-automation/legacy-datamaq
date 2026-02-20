@@ -28,12 +28,22 @@ export function extractContactSubmitFeedback(response: HttpResponse): ContactSub
   const record = asRecord(response.data)
   const requestIdFromBody = extractByPaths(record, REQUEST_ID_PATHS)
   const requestIdFromHeaders = extractHeader(response.headers, REQUEST_ID_HEADER_KEYS)
+  const requestId = requestIdFromHeaders ?? requestIdFromBody
+  const errorCode = extractByPaths(record, ERROR_CODE_PATHS)
+  const backendMessage = resolveBackendMessage(record, response.text)
 
-  return {
-    requestId: requestIdFromHeaders ?? requestIdFromBody,
-    errorCode: extractByPaths(record, ERROR_CODE_PATHS),
-    backendMessage: resolveBackendMessage(record, response.text)
+  const feedback: ContactSubmitFeedback = {}
+  if (requestId) {
+    feedback.requestId = requestId
   }
+  if (errorCode) {
+    feedback.errorCode = errorCode
+  }
+  if (backendMessage) {
+    feedback.backendMessage = backendMessage
+  }
+
+  return feedback
 }
 
 function resolveBackendMessage(

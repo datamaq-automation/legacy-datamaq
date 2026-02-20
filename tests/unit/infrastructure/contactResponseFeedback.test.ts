@@ -36,8 +36,7 @@ describe('extractContactSubmitFeedback', () => {
 
     expect(extractContactSubmitFeedback(response)).toEqual({
       requestId: 'req_header_2',
-      errorCode: 'RATE_LIMITED',
-      backendMessage: undefined
+      errorCode: 'RATE_LIMITED'
     })
   })
 
@@ -49,8 +48,6 @@ describe('extractContactSubmitFeedback', () => {
     }
 
     expect(extractContactSubmitFeedback(response)).toEqual({
-      requestId: undefined,
-      errorCode: undefined,
       backendMessage: 'smtp timeout while sending'
     })
   })

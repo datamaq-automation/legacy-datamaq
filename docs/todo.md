@@ -242,3 +242,11 @@
 - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/infrastructure/contactResponseFeedback.test.ts tests/unit/application/submitContact.test.ts tests/unit/ui/contactFormSection.test.ts tests/unit/ui/contactSubmitThanksFlow.test.ts tests/unit/ui/contactController.test.ts` OK (2026-02-20).
 - Siguiente paso: ejecutar bateria obligatoria completa (`lint:security`, `lint:test-coverage`, `lint:layers`, `test:a11y`, `check:css`, `quality:responsive`, `quality:mobile`, `quality:merge`, `lint:todo-sync:merge-ready`).
 - Siguiente accion interna ejecutable ahora: correr comandos de compliance/merge-readiness y registrar evidencia consolidada del turno.
+- Mitigacion interna ejecutada: `quality:merge` detecto fallo de TypeScript por `exactOptionalPropertyTypes` al propagar props opcionales con valor `undefined`; se corrigio retornando metadata opcional solo cuando existe valor real.
+- Evidencia: `src/infrastructure/contact/contactResponseFeedback.ts` ahora construye `ContactSubmitFeedback` incremental (sin keys opcionales en `undefined`).
+- Evidencia: `src/infrastructure/contact/contactSubmissionErrors.ts` ahora aplica `buildFeedbackMeta` para inyectar `requestId/errorCode/backendMessage` solo cuando vienen definidos.
+- Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/infrastructure/contactResponseFeedback.test.ts` ajustados al nuevo contrato exacto de opcionales.
+- Evidencia: `npm run typecheck` OK (2026-02-20) tras mitigacion de opcionales.
+- Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/infrastructure/contactResponseFeedback.test.ts` OK (2026-02-20) tras mitigacion.
+- Evidencia: `npm run quality:merge` (2026-02-20) fallo en `quality:gate` por `lint:todo-sync` al detectar cambios nuevos en `src/` y `tests/` sin trazabilidad de turno.
+- Mitigacion interna ejecutable ahora: registrar evidencias del fix en `docs/todo.md` y reintentar `quality:merge` + `lint:todo-sync:merge-ready`.
