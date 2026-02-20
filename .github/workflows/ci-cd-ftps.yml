@@ -85,7 +85,7 @@ jobs:
         env:
           VITE_CONTACT_API_URL: http://127.0.0.1:4173/api/contact
           VITE_INQUIRY_API_URL: http://127.0.0.1:4173/api/contact
-          VITE_MAIL_API_URL: http://127.0.0.1:4173/api/contact
+          VITE_MAIL_API_URL: http://127.0.0.1:4173/api/mail
         run: npm run test:e2e:smoke
 
   deploy-prepare:

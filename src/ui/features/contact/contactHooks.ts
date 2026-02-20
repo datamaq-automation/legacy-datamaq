@@ -11,9 +11,15 @@ import type { EmailContactPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 import { useContactValidation } from './useContactValidation'
 import { useRouter } from 'vue-router'
+import { contactClientLogger } from '@/ui/logging/contactClientLogger'
 
 export function useContactForm(props: ContactFormProps) {
   const backendChannel = props.backendChannel ?? 'contact'
+  const sectionId = props.sectionId?.trim() || 'contacto'
+  const titleId = `${sectionId}-title`
+  const emailId = `${sectionId}-email`
+  const messageId = `${sectionId}-mensaje`
+  const tecnicoHeadingId = `tecnico-a-cargo-${sectionId}-title`
   const formRef = ref<HTMLFormElement | null>(null)
   const form = reactive({
     email: '',
@@ -46,20 +52,24 @@ export function useContactForm(props: ContactFormProps) {
     feedback.message = ''
     feedback.success = false
 
-    console.log('[contact:debug] submit:start', {
+    contactClientLogger.debug('submit:start', {
+      sectionId,
+      backendChannel,
       isChannelEnabled: isChannelEnabled.value,
       backendStatus: backendStatus.value
     })
 
     if (!isChannelEnabled.value) {
-      console.warn('[contact:debug] submit:blocked-channel-disabled', {
+      contactClientLogger.warnOnce(`${backendChannel}:${sectionId}:channel-disabled`, 'submit:blocked-channel-disabled', {
         backendStatus: backendStatus.value,
+        backendChannel,
+        sectionId,
         hasContactEmail: Boolean(props.contactEmail)
       })
       return
     }
     if (formElement && !formElement.reportValidity()) {
-      console.warn('[contact:debug] submit:blocked-invalid-form')
+      contactClientLogger.warn('submit:blocked-invalid-form', { sectionId, backendChannel })
       return
     }
     isSubmitting.value = true
@@ -68,26 +78,27 @@ export function useContactForm(props: ContactFormProps) {
         email: form.email,
         message: form.message
       }
-      console.log('[contact:debug] submit:payload-collected', {
-        email: payload.email,
-        messageLength: payload.message.length
-      })
-
       const parsed = validate(payload)
       if (!parsed.ok) {
-        console.warn('[contact:debug] submit:validation-failed')
+        contactClientLogger.warn('submit:validation-failed', { sectionId, backendChannel })
         await announceFeedback(contact.errorMessage, false)
         return
       }
-      console.log('[contact:debug] submit:validation-ok')
       const result = await props.onSubmit(parsed.data)
-      console.log('[contact:debug] submit:result', result)
       if (result?.ok === true) {
-        console.log('[contact:debug] submit:success-redirecting', { route: 'thanks' })
+        contactClientLogger.info('submit:success-redirecting', {
+          sectionId,
+          backendChannel,
+          route: 'thanks'
+        })
         void router.push({ name: 'thanks' })
         return
       } else {
-        console.warn('[contact:debug] submit:failed-no-redirect', result)
+        contactClientLogger.warn('submit:failed-no-redirect', {
+          sectionId,
+          backendChannel,
+          errorType: result?.error?.type
+        })
         await announceFeedback(
           mapContactError(result?.error, {
             unavailable: contact.unavailableMessage,
@@ -97,27 +108,47 @@ export function useContactForm(props: ContactFormProps) {
         )
       }
     } catch (error) {
-      console.error('[contact:debug] submit:exception', error)
+      contactClientLogger.error('submit:exception', {
+        sectionId,
+        backendChannel,
+        error: error instanceof Error ? error.message : String(error)
+      })
       await announceFeedback(contact.unexpectedErrorMessage, false)
     } finally {
       isSubmitting.value = false
-      console.log('[contact:debug] submit:end')
+      contactClientLogger.debug('submit:end', { sectionId, backendChannel })
     }
   }
 
   onMounted(() => {
     unsubscribeFromStatus = subscribeToContactBackendStatus((status) => {
-      console.log('[contact:debug] backend-status:update', { from: backendStatus.value, to: status })
+      contactClientLogger.debug('backend-status:update', {
+        sectionId,
+        backendChannel,
+        from: backendStatus.value,
+        to: status
+      })
       backendStatus.value = status
     }, backendChannel)
     void ensureContactBackendStatus(backendChannel)
       .then((status) => {
-        console.log('[contact:debug] backend-status:ensure', { status })
+        contactClientLogger.debug('backend-status:ensure', {
+          sectionId,
+          backendChannel,
+          status
+        })
         if (status === 'unavailable') {
-          console.error('[contact:debug] backend-status:unavailable', {
+          const unavailableReason = resolveUnavailableReason({
+            inquiryApiUrl: config.inquiryApiUrl,
+            mailApiUrl: config.mailApiUrl,
+            backendChannel
+          })
+          contactClientLogger.warnOnce(`backend-unavailable:${unavailableReason}`, 'backend-status:unavailable', {
             inquiryApiUrl: config.inquiryApiUrl ?? null,
             mailApiUrl: config.mailApiUrl ?? null,
             backendChannel,
+            sectionId,
+            reason: unavailableReason,
             hasContactEmail: Boolean(props.contactEmail),
             hint:
               'Verifica VITE_INQUIRY_API_URL/VITE_MAIL_API_URL y que el endpoint responda POST en produccion.'
@@ -125,7 +156,11 @@ export function useContactForm(props: ContactFormProps) {
         }
       })
       .catch((error) => {
-        console.error('[contact:debug] backend-status:error', error)
+        contactClientLogger.errorOnce(`${backendChannel}:backend-status-error`, 'backend-status:error', {
+          sectionId,
+          backendChannel,
+          error: error instanceof Error ? error.message : String(error)
+        })
       })
   })
 
@@ -136,6 +171,11 @@ export function useContactForm(props: ContactFormProps) {
   return {
     formRef,
     form,
+    sectionId,
+    titleId,
+    emailId,
+    messageId,
+    tecnicoHeadingId,
     isBackendAvailable,
     isCheckingBackend,
     isChannelEnabled,
@@ -144,6 +184,26 @@ export function useContactForm(props: ContactFormProps) {
     feedbackMessageRef,
     handleSubmit
   }
+}
+
+function resolveUnavailableReason(input: {
+  inquiryApiUrl: string | undefined
+  mailApiUrl: string | undefined
+  backendChannel: 'contact' | 'mail'
+}): string {
+  if (!input.inquiryApiUrl && !input.mailApiUrl) {
+    return 'missing-both-api-urls'
+  }
+
+  if (input.backendChannel === 'mail' && !input.mailApiUrl) {
+    return 'missing-mail-api-url'
+  }
+
+  if (input.backendChannel === 'contact' && !input.inquiryApiUrl) {
+    return 'missing-contact-api-url'
+  }
+
+  return `channel-${input.backendChannel}-unavailable`
 }
 
 function mapContactError(

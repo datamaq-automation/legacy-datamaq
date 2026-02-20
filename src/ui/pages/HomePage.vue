@@ -17,6 +17,7 @@ const {
   contactCtaEnabled,
   contactEmail,
   handleChat,
+  handleContactSubmit,
   handleEmailSubmit
 } = useHomePage()
 </script>
@@ -35,6 +36,19 @@ const {
       <DecisionFlowSection />
       <ContactFormSection
         v-bind="contactEmail ? { contactEmail } : {}"
+        section-id="contacto-lead"
+        title="Ingreso de contacto"
+        subtitle="Dejanos tus datos y te contactamos por el canal más adecuado."
+        submit-label="Registrar contacto"
+        backend-channel="contact"
+        :on-submit="handleContactSubmit"
+      />
+      <ContactFormSection
+        v-bind="contactEmail ? { contactEmail } : {}"
+        section-id="contacto-mail"
+        title="Enviar e-mail"
+        subtitle="Enviá tu consulta por correo y te respondemos por email."
+        submit-label="Enviar consulta por correo"
         backend-channel="mail"
         :on-submit="handleEmailSubmit"
       />

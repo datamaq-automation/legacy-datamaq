@@ -142,3 +142,53 @@
 - Evidencia: fallo reportado (2026-02-19) en preflight con env vacio (`SERVER_HOST=`, `PORT=`, `REMOTE_DIR=`) mitigado por rediseño sin outputs sensibles.
 - Siguiente paso: ejecutar corrida remota del workflow para confirmar que preflight resuelve DNS correctamente con secretos reales.
 - Siguiente accion interna ejecutable ahora: lanzar `workflow_dispatch` y verificar logs de `Deploy / FTPS Preflight` y `Deploy / FTPS Upload`.
+- Decision tomada (B-Vue): para exponer dos formularios sin duplicar logica se reutiliza `ContactFormSection` con props tipadas de variante (`sectionId`, `title`, `subtitle`, `submitLabel`, `backendChannel`) en lugar de clonar componentes.
+- Avance: Home ahora renderiza dos formularios explicitos:
+  - `Ingreso de contacto` -> canal `contact` -> `submitContact`.
+  - `Enviar e-mail` -> canal `mail` -> `submitMail`.
+- Avance: `ContactFormSection` parametrizado para IDs unicos por formulario y copy especifico por variante, evitando colision de `id` en DOM.
+- Avance: smoke E2E actualizado para mockear ambos endpoints (`/api/contact` y `/api/mail`) y validar ambos flujos de submit hacia `/gracias`.
+- Avance: removido workaround temporal en CI (`VITE_MAIL_API_URL` vuelve a `/api/mail` en `Build / Smoke E2E`).
+- Evidencia: `src/ui/pages/HomePage.vue`, `src/ui/pages/HomePage.ts`.
+- Evidencia: `src/ui/features/contact/contactTypes.ts`, `src/ui/features/contact/contactHooks.ts`, `src/ui/features/contact/ContactFormSection.ts`, `src/ui/features/contact/ContactFormSection.vue`.
+- Evidencia: `tests/e2e/smoke.spec.ts`.
+- Evidencia: `.github/workflows/ci-cd-ftps.yml` (`Build / Smoke E2E` env `VITE_MAIL_API_URL=http://127.0.0.1:4173/api/mail`).
+- Evidencia: `npm run quality:responsive` OK (2026-02-19). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-19).
+- Evidencia: `npm run quality:merge` OK (2026-02-19).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-19).
+- Siguiente paso: validar corrida remota de CI para confirmar smoke E2E estable en GitHub Actions con mocks `/api/contact` y `/api/mail`.
+- Siguiente accion interna ejecutable ahora: disparar `workflow_dispatch` sobre `main` y revisar job `Build / Smoke E2E`.
+- Decision tomada (B-Testing): para reducir fragilidad y ruido del formulario se prioriza un logger cliente dedicado con deduplicacion por clave (`warnOnce`/`errorOnce`) y eventos estructurados sobre `console.*` directo en hooks.
+- Avance: auditoria de arquitectura/formularios confirma separacion de canales en DI (`submitContact`/`submitMail`) y detecta deuda de observabilidad en `contactHooks` por logs duplicados por instancia de formulario.
+- Avance: incorporado modulo `src/ui/logging/contactClientLogger.ts` con niveles (`debug|info|warn|error`), control por `VITE_CLIENT_LOG_LEVEL` y deduplicacion de eventos recurrentes.
+- Avance: `contactHooks` migro de `console.*` ad-hoc a logging estructurado (`[contact-ui] event`) con contexto (`sectionId`, `backendChannel`, estado) y reduccion de ruido (se elimina payload/result redundante, errores criticos con `errorOnce`).
+- Avance: tipado de entorno ampliado para logging en cliente (`VITE_CLIENT_LOG_LEVEL`) en `src/env.d.ts`.
+- Avance: cobertura de regresion para deduplicacion de logging (`tests/unit/ui/contactClientLogger.test.ts`).
+- Evidencia: `src/ui/logging/contactClientLogger.ts`, `src/ui/features/contact/contactHooks.ts`, `src/env.d.ts`, `tests/unit/ui/contactClientLogger.test.ts`.
+- Evidencia: `npm run test -- tests/unit/ui/contactClientLogger.test.ts tests/unit/ui/contactFormSection.test.ts tests/unit/ui/contactSubmitThanksFlow.test.ts tests/e2e/smoke.spec.ts` OK (2026-02-19).
+- Evidencia: `npm run quality:responsive` OK (2026-02-19). Etapas en verde: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-19).
+- Evidencia: `npm run quality:merge` OK (2026-02-19).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-19).
+- Siguiente paso: evaluar nivel por defecto de logging en desarrollo (`debug` vs `info`) segun necesidad del equipo para minimizar salida en consola local.
+- Siguiente accion interna ejecutable ahora: si se busca menos ruido en dev, definir `VITE_CLIENT_LOG_LEVEL=info` en `.env.local` y revalidar smoke manual.
+- Avance: segunda iteracion de logging aplicada para reducir ruido observado en consola con dos formularios montados (`contacto-lead` y `contacto-mail`).
+- Decision tomada (B-Vue): degradar `backend-status:unavailable` de `error` a `warn` cuando es estado esperado de configuracion faltante, preservando `error` solo para excepciones reales.
+- Avance: `contactClientLogger` cambia nivel por defecto a `info` (debug solo por opt-in con `VITE_CLIENT_LOG_LEVEL=debug`) para evitar trazas de estado repetitivas en desarrollo normal.
+- Avance: `contactHooks` ahora deduplica warning de indisponibilidad entre formularios por causa (`missing-both-api-urls`, `missing-mail-api-url`, `missing-contact-api-url`) mediante `warnOnce`.
+- Avance: `.env.example` documenta `VITE_CLIENT_LOG_LEVEL` para controlar verbosidad sin cambios de codigo.
+- Evidencia: `src/ui/logging/contactClientLogger.ts`, `src/ui/features/contact/contactHooks.ts`, `.env.example`.
+- Evidencia: `npm run quality:responsive` OK (2026-02-19). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-19).
+- Evidencia: `npm run quality:merge` OK (2026-02-19).
+- Evidencia: `npm run lint:security` OK (2026-02-19).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-19). Cobertura global: lines 81.40%, statements 80.82%, functions 81.22%, branches 70.15%.
+- Siguiente paso: validar manualmente en navegador local el comportamiento de consola esperado:
+  - 1 warning deduplicado por causa de indisponibilidad.
+  - sin spam de `backend-status:ensure` salvo que se fuerce `VITE_CLIENT_LOG_LEVEL=debug`.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync:merge-ready` y preparar push para validacion remota de CI.
+- Avance: generado informe de handoff para backend con certezas verificadas, contrato minimo sugerido y dudas abiertas para cierre funcional (`docs/dv-backend-contact-mail-handoff.md`).
+- Evidencia: `docs/dv-backend-contact-mail-handoff.md`.
+- Siguiente paso: cerrar definiciones backend sobre paths canonicos, contrato de respuesta y anti-spam para alinear frontend y despliegue.
+- Siguiente accion interna ejecutable ahora: validar sincronia del tablero con `npm run lint:todo-sync`.

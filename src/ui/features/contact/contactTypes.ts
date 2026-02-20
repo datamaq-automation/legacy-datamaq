@@ -11,4 +11,8 @@ export interface ContactFormProps {
   contactEmail?: string | undefined
   onSubmit: ContactFormSubmit
   backendChannel?: ContactBackendChannel
+  sectionId?: string
+  title?: string
+  subtitle?: string
+  submitLabel?: string
 }

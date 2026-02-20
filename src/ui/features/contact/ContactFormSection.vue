@@ -2,19 +2,23 @@
 Path: src/ui/features/contact/ContactFormSection.vue
 -->
 <template>
-  <section id="contacto" class="section-mobile py-5 bg-dark text-white c-contact" aria-labelledby="contacto-title">
+  <section
+    :id="sectionId"
+    class="section-mobile py-5 bg-dark text-white c-contact"
+    :aria-labelledby="titleId"
+  >
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8">
           <div class="card c-ui-card c-ui-card--elevated border-0 shadow-lg bg-body text-body c-contact__card">
             <div class="card-body p-4 p-md-5">
-              <h2 id="contacto-title" class="h3 c-contact__title mb-3">
+              <h2 :id="titleId" class="h3 c-contact__title mb-3">
                 {{ contact.title }}
               </h2>
               <p class="text-body mb-4 c-contact__subtitle">
                 {{ contact.subtitle }}
               </p>
-              <TecnicoACargo variant="embedded" heading-id="tecnico-a-cargo-contacto-title" />
+              <TecnicoACargo variant="embedded" :heading-id="tecnicoHeadingId" />
               <form
                 ref="formRef"
                 class="row g-3"
@@ -22,9 +26,9 @@ Path: src/ui/features/contact/ContactFormSection.vue
                 @submit.prevent="handleSubmit"
               >
                 <div class="col-12">
-                  <label class="form-label" for="contacto-email">{{ contact.labels.email }}</label>
+                  <label class="form-label" :for="emailId">{{ contact.labels.email }}</label>
                   <input
-                    id="contacto-email"
+                    :id="emailId"
                     v-model="form.email"
                     type="email"
                     class="form-control"
@@ -37,9 +41,9 @@ Path: src/ui/features/contact/ContactFormSection.vue
                   />
                 </div>
                 <div class="col-12">
-                  <label class="form-label" for="contacto-mensaje">{{ contact.labels.message }}</label>
+                  <label class="form-label" :for="messageId">{{ contact.labels.message }}</label>
                   <textarea
-                    id="contacto-mensaje"
+                    :id="messageId"
                     v-model="form.message"
                     class="form-control"
                     name="message"
@@ -110,6 +114,11 @@ const {
   contact,
   formRef,
   form,
+  sectionId,
+  titleId,
+  emailId,
+  messageId,
+  tecnicoHeadingId,
   isBackendAvailable,
   isCheckingBackend,
   isChannelEnabled,

@@ -2,6 +2,7 @@ import {
   getWhatsAppEnabled,
   getContactEmail,
   openWhatsApp,
+  submitContact,
   submitMail,
   trackSectionScroll
 } from '@/ui/controllers/contactController'
@@ -18,6 +19,10 @@ export function useHomePage() {
   function handleEmailSubmit(payload: Parameters<typeof submitMail>[1]) {
     // El componente espera una promesa para feedback, asi que retornamos la llamada
     return submitMail('contacto-formulario', payload)
+  }
+
+  function handleContactSubmit(payload: Parameters<typeof submitContact>[1]) {
+    return submitContact('contacto-lead-formulario', payload)
   }
 
   function handleHashChange() {
@@ -48,6 +53,7 @@ export function useHomePage() {
     contactCtaEnabled,
     contactEmail,
     handleChat,
+    handleContactSubmit,
     handleEmailSubmit
   }
 }

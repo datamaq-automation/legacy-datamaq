@@ -19,7 +19,7 @@ function getWhatsAppFab(page: Page) {
 
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/contact', async (route) => {
+    const fulfillApi = async (route: any) => {
       const method = route.request().method()
       if (method === 'OPTIONS') {
         await route.fulfill({
@@ -43,7 +43,10 @@ test.describe('Smoke E2E', () => {
       }
 
       await route.continue()
-    })
+    }
+
+    await page.route('**/api/contact', fulfillApi)
+    await page.route('**/api/mail', fulfillApi)
   })
 
   test('home renders hero and services', async ({ page }) => {
@@ -191,16 +194,29 @@ test.describe('Smoke E2E', () => {
     expect(await hasHorizontalOverflow(page)).toBe(false)
   })
 
-  test('contact flow submits and navigates to thanks', async ({ page }) => {
+  test('contact lead flow submits and navigates to thanks', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    await page.fill('#contacto-email', 'ada@example.com')
-    await page.fill('#contacto-mensaje', 'Necesito una propuesta para mantenimiento industrial.')
+    await page.fill('#contacto-lead-email', 'ada@example.com')
+    await page.fill('#contacto-lead-mensaje', 'Necesito una propuesta para mantenimiento industrial.')
 
-    const submitButton = page.getByRole('button', {
-      name: /Registrar consulta|Enviar consulta por correo/i
-    })
+    const submitButton = page.getByRole('button', { name: /Registrar contacto/i })
+    await expect(submitButton).toBeVisible()
+    await submitButton.click()
+
+    await expect(page).toHaveURL(/\/gracias$/)
+    await expect(page.getByRole('heading', { level: 1, name: 'Gracias!' })).toBeVisible()
+  })
+
+  test('mail flow submits and navigates to thanks', async ({ page }) => {
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+
+    await page.fill('#contacto-mail-email', 'ada@example.com')
+    await page.fill('#contacto-mail-mensaje', 'Necesito enviar una consulta por correo.')
+
+    const submitButton = page.getByRole('button', { name: /Enviar consulta por correo/i })
     await expect(submitButton).toBeVisible()
     await submitButton.click()
 
