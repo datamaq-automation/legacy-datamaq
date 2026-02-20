@@ -1,5 +1,5 @@
 import type { ContactGateway } from '@/application/contact/ports/ContactGateway'
-import type { ContactSubmitPayload } from '@/application/dto/contact'
+import type { ContactSubmitPayload, ContactSubmitSuccess } from '@/application/dto/contact'
 import type { Result } from '@/domain/shared/result'
 import type { ContactError } from '@/application/types/errors'
 import type { HttpClient } from '@/application/ports/HttpClient'
@@ -10,6 +10,7 @@ import { submitBackendContact } from './backendContactChannel'
 import { buildContactPayloadBundle } from './contactPayloadBuilder'
 import { mapSubmitResponseError } from './contactSubmissionErrors'
 import { evaluateContactEndpointPolicy } from '@/application/contact/contactEndpointPolicy'
+import { extractContactSubmitFeedback } from './contactResponseFeedback'
 
 type GatewayChannel = 'contact' | 'mail'
 
@@ -22,7 +23,7 @@ export class ContactApiGateway implements ContactGateway {
     private channel: GatewayChannel = 'contact'
   ) {}
 
-  async submit(payload: ContactSubmitPayload): Promise<Result<void, ContactError>> {
+  async submit(payload: ContactSubmitPayload): Promise<Result<ContactSubmitSuccess, ContactError>> {
     const apiUrl = this.channel === 'mail' ? this.config.mailApiUrl : this.config.inquiryApiUrl
     const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
     if (!apiUrl || !endpointPolicy.allowed) {
@@ -34,18 +35,25 @@ export class ContactApiGateway implements ContactGateway {
 
     const payloads = buildContactPayloadBundle(payload, this.storage)
     const response = await submitBackendContact(this.http, apiUrl, payloads)
+    const feedback = extractContactSubmitFeedback(response)
 
     if (!response.ok) {
       this.logger.warn('[contactApiGateway] response no OK', {
-        status: response.status
+        status: response.status,
+        requestId: feedback.requestId ?? null,
+        errorCode: feedback.errorCode ?? null,
+        backendMessage: feedback.backendMessage ?? null
       })
       return {
         ok: false,
-        error: mapSubmitResponseError(response.status)
+        error: mapSubmitResponseError(response.status, feedback)
       }
     }
 
-    return { ok: true, data: undefined }
+    return {
+      ok: true,
+      data: feedback
+    }
   }
 
   private resolveChannelLabel(): string {

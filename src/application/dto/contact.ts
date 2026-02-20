@@ -18,3 +18,11 @@ export interface ContactSubmitPayload extends EmailContactPayload {
     gclid?: string
   }
 }
+
+export interface ContactSubmitFeedback {
+  requestId?: string
+  errorCode?: string
+  backendMessage?: string
+}
+
+export type ContactSubmitSuccess = ContactSubmitFeedback

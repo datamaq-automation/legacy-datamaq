@@ -4,7 +4,7 @@ import type { LoggerPort } from '../ports/Logger'
 import type { Clock, LocationProvider, NavigatorProvider } from '../ports/Environment'
 import type { ContactError } from '../types/errors'
 import type { Result } from '@/domain/shared/result'
-import type { EmailContactPayload } from '../dto/contact'
+import type { ContactSubmitSuccess, EmailContactPayload } from '../dto/contact'
 import { ContactService } from '@/domain/contact/services/ContactService'
 import { ContactSubmitted } from '@/application/contact/events/ContactSubmitted'
 import type { EventBus } from '../ports/EventBus'
@@ -27,7 +27,7 @@ export class SubmitContactUseCase {
   async execute(
     section: string,
     payload: EmailContactPayload
-  ): Promise<Result<void, ContactError>> {
+  ): Promise<Result<ContactSubmitSuccess, ContactError>> {
     const fullName = inferContactNameFromEmail(payload.email)
     const contactInput: {
       id: string
@@ -76,7 +76,7 @@ export class SubmitContactUseCase {
     this.contactBackend.markAvailable()
     this.leadTracking.registerLeadForThanksPage()
     this.eventBus.publish(new ContactSubmitted(contactResult.data.id))
-    return { ok: true, data: undefined }
+    return { ok: true, data: submitResult.data }
   }
 }
 

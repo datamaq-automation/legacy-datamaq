@@ -3,6 +3,7 @@ export interface HttpResponse<T = unknown> {
   status: number
   text?: string
   data?: T
+  headers?: Record<string, string>
 }
 
 export interface HttpClient {

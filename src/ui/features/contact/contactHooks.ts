@@ -109,6 +109,7 @@ export function useContactForm(props: ContactFormProps) {
         contactClientLogger.info('submit_response_ok', {
           sectionId,
           backendChannel,
+          requestId: result.data.requestId ?? null,
           route: 'thanks',
           latencyMs: Date.now() - startedAtMs
         })
@@ -121,6 +122,18 @@ export function useContactForm(props: ContactFormProps) {
           errorType: result?.error?.type,
           statusCode:
             result?.error?.type === 'BackendError' ? result.error.status : undefined,
+          requestId:
+            result?.error?.type === 'BackendError' || result?.error?.type === 'NetworkError'
+              ? result.error.requestId ?? null
+              : null,
+          errorCode:
+            result?.error?.type === 'BackendError' || result?.error?.type === 'NetworkError'
+              ? result.error.errorCode ?? null
+              : null,
+          backendMessage:
+            result?.error?.type === 'BackendError' || result?.error?.type === 'NetworkError'
+              ? result.error.backendMessage ?? null
+              : null,
           latencyMs: Date.now() - startedAtMs
         })
         await announceFeedback(
@@ -266,15 +279,28 @@ function mapContactError(
     case 'Unavailable':
       return messages.unavailable
     case 'NetworkError':
-      return messages.error
+      return appendTrackingId(messages.error, error.requestId)
     case 'BackendError':
       if (error.status === 429) {
-        return 'Demasiadas solicitudes. Intenta nuevamente en unos minutos.'
+        return appendTrackingId(
+          'Demasiadas solicitudes. Intenta nuevamente en unos minutos.',
+          error.requestId
+        )
       }
-      return 'No se pudo enviar la consulta. Verifica los datos e intenta nuevamente.'
+      return appendTrackingId(
+        'No se pudo enviar la consulta. Verifica los datos e intenta nuevamente.',
+        error.requestId
+      )
     case 'ValidationError':
       return messages.error
     default:
       return messages.error
   }
+}
+
+function appendTrackingId(message: string, requestId: string | undefined): string {
+  if (!requestId) {
+    return message
+  }
+  return `${message} Codigo de seguimiento: ${requestId}.`
 }

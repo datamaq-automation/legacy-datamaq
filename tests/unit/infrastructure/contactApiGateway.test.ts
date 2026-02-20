@@ -88,7 +88,10 @@ describe('ContactApiGateway', () => {
 
     const result = await gateway.submit(createPayload())
 
-    expect(result).toEqual({ ok: true, data: undefined })
+    expect(result).toEqual({
+      ok: true,
+      data: { requestId: undefined, errorCode: undefined, backendMessage: undefined }
+    })
     expect(http.postJson).toHaveBeenCalledTimes(1)
     expect(http.postJson).toHaveBeenCalledWith(
       'https://api.example.com/contact',
@@ -121,8 +124,21 @@ describe('ContactApiGateway', () => {
 
     const result = await gateway.submit(createPayload())
 
-    expect(result).toEqual({ ok: false, error: { type: 'NetworkError' } })
-    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 0 })
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        type: 'NetworkError',
+        requestId: undefined,
+        errorCode: undefined,
+        backendMessage: undefined
+      }
+    })
+    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
+      status: 0,
+      requestId: null,
+      errorCode: null,
+      backendMessage: null
+    })
   })
 
   it('maps non-zero status to backend error', async () => {
@@ -138,8 +154,22 @@ describe('ContactApiGateway', () => {
 
     const result = await gateway.submit(createPayload())
 
-    expect(result).toEqual({ ok: false, error: { type: 'BackendError', status: 503 } })
-    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', { status: 503 })
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        type: 'BackendError',
+        status: 503,
+        requestId: undefined,
+        errorCode: undefined,
+        backendMessage: undefined
+      }
+    })
+    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
+      status: 503,
+      requestId: null,
+      errorCode: null,
+      backendMessage: null
+    })
   })
 
   it('blocks Chatwoot Public API URL and returns unavailable', async () => {
@@ -178,11 +208,79 @@ describe('ContactApiGateway', () => {
 
     const result = await gateway.submit(createPayload())
 
-    expect(result).toEqual({ ok: true, data: undefined })
+    expect(result).toEqual({
+      ok: true,
+      data: { requestId: undefined, errorCode: undefined, backendMessage: undefined }
+    })
     expect(http.postJson).toHaveBeenCalledWith(
       'https://api.example.com/mail',
       expect.any(Object),
       undefined
     )
+  })
+
+  it('extracts request_id from success body and returns it to the UI flow', async () => {
+    const http = createHttpClient()
+    vi.mocked(http.postJson).mockResolvedValueOnce({
+      ok: true,
+      status: 202,
+      data: { request_id: 'req_body_123' }
+    })
+    const logger = createLogger()
+    const gateway = new ContactApiGateway(
+      http,
+      createConfig('https://api.example.com/contact'),
+      createStorage(),
+      logger
+    )
+
+    const result = await gateway.submit(createPayload())
+
+    expect(result).toEqual({
+      ok: true,
+      data: { requestId: 'req_body_123', errorCode: undefined, backendMessage: undefined }
+    })
+  })
+
+  it('maps request_id and error_code from backend error response', async () => {
+    const http = createHttpClient()
+    vi.mocked(http.postJson).mockResolvedValueOnce({
+      ok: false,
+      status: 429,
+      data: {
+        request_id: 'req_err_429',
+        error_code: 'RATE_LIMITED',
+        detail: 'Too many requests'
+      },
+      headers: {
+        'x-request-id': 'req_hdr_429'
+      }
+    })
+    const logger = createLogger()
+    const gateway = new ContactApiGateway(
+      http,
+      createConfig('https://api.example.com/contact'),
+      createStorage(),
+      logger
+    )
+
+    const result = await gateway.submit(createPayload())
+
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        type: 'BackendError',
+        status: 429,
+        requestId: 'req_hdr_429',
+        errorCode: 'RATE_LIMITED',
+        backendMessage: 'Too many requests'
+      }
+    })
+    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
+      status: 429,
+      requestId: 'req_hdr_429',
+      errorCode: 'RATE_LIMITED',
+      backendMessage: 'Too many requests'
+    })
   })
 })

@@ -27,6 +27,7 @@ export class FetchHttpClient implements HttpClient {
       const rawText = await response.text().catch(() => undefined)
       const data = parseJson<T>(rawText)
       const text = normalizeErrorText(rawText)
+      const responseHeaders = extractResponseHeaders(response.headers)
       this.logger.debug('[http] POST JSON response', {
         url,
         status: response.status,
@@ -43,6 +44,7 @@ export class FetchHttpClient implements HttpClient {
       return {
         ok: response.ok,
         status: response.status,
+        headers: responseHeaders,
         ...(text ? { text } : {}),
         ...(typeof data !== 'undefined' ? { data } : {})
       }
@@ -77,6 +79,7 @@ export class FetchHttpClient implements HttpClient {
       const rawText = await response.text().catch(() => undefined)
       const data = parseJson<T>(rawText)
       const text = normalizeErrorText(rawText)
+      const responseHeaders = extractResponseHeaders(response.headers)
       this.logger.debug('[http] PATCH JSON response', {
         url,
         status: response.status,
@@ -93,6 +96,7 @@ export class FetchHttpClient implements HttpClient {
       return {
         ok: response.ok,
         status: response.status,
+        headers: responseHeaders,
         ...(text ? { text } : {}),
         ...(typeof data !== 'undefined' ? { data } : {})
       }
@@ -121,7 +125,8 @@ export class FetchHttpClient implements HttpClient {
 
       return {
         ok: response.ok,
-        status: response.status
+        status: response.status,
+        headers: extractResponseHeaders(response.headers)
       }
     } catch (error) {
       this.logger.warn('[http] Error en OPTIONS:', { url, error })
@@ -159,4 +164,9 @@ function normalizeErrorText(rawText: string | undefined): string | undefined {
   }
 
   return rawText
+}
+
+function extractResponseHeaders(headers: Headers): Record<string, string> {
+  const entries = Array.from(headers.entries()).map(([key, value]) => [key.toLowerCase(), value] as const)
+  return Object.fromEntries(entries)
 }

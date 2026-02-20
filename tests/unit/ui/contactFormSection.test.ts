@@ -69,7 +69,7 @@ describe('ContactFormSection', () => {
   })
 
   it('submits a valid payload when channel is enabled', async () => {
-    const onSubmit = vi.fn(async () => ({ ok: true as const, data: undefined }))
+    const onSubmit = vi.fn(async () => ({ ok: true as const, data: {} }))
     const router = createTestRouter()
     await router.push('/')
     await router.isReady()
@@ -102,7 +102,7 @@ describe('ContactFormSection', () => {
   })
 
   it('keeps submit disabled when contact email is not configured', async () => {
-    const onSubmit = vi.fn(async () => ({ ok: true as const, data: undefined }))
+    const onSubmit = vi.fn(async () => ({ ok: true as const, data: {} }))
     const router = createTestRouter()
     await router.push('/')
     await router.isReady()

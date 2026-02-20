@@ -109,7 +109,7 @@ describe('contactController', () => {
   })
 
   it('submits contact via facade', async () => {
-    mocks.submitContact.mockResolvedValue({ ok: true, data: undefined })
+    mocks.submitContact.mockResolvedValue({ ok: true, data: {} })
 
     const payload = { email: 'ana@example.com', message: 'Hola' }
     await submitContact('contacto', payload)
@@ -118,7 +118,7 @@ describe('contactController', () => {
   })
 
   it('submits mail via facade', async () => {
-    mocks.submitMail.mockResolvedValue({ ok: true, data: undefined })
+    mocks.submitMail.mockResolvedValue({ ok: true, data: {} })
 
     const payload = { email: 'ana@example.com', message: 'Hola' }
     await submitMail('contacto', payload)

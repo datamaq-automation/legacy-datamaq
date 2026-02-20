@@ -60,7 +60,7 @@ describe('Contact submit and thanks flow', () => {
   })
 
   it('navigates to thanks route after successful submit', async () => {
-    const onSubmit = vi.fn(async () => ({ ok: true as const, data: undefined }))
+    const onSubmit = vi.fn(async () => ({ ok: true as const, data: {} }))
 
     const HomeRoute = defineComponent({
       components: { ContactFormSection },

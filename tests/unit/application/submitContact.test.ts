@@ -12,7 +12,7 @@ describe('SubmitContactUseCase', () => {
   it('submits, registers lead, and publishes event on success', async () => {
     const contactService = new ContactService()
     const contactGateway: ContactGateway = {
-      submit: vi.fn().mockResolvedValue({ ok: true, data: undefined })
+      submit: vi.fn().mockResolvedValue({ ok: true, data: {} })
     }
     const contactBackend: ContactBackendMonitor = {
       ensureStatus: vi.fn().mockResolvedValue('available'),

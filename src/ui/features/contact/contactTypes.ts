@@ -1,11 +1,11 @@
-import type { EmailContactPayload } from '@/application/dto/contact'
+import type { ContactSubmitSuccess, EmailContactPayload } from '@/application/dto/contact'
 import type { ContactError } from '@/application/types/errors'
 import type { Result } from '@/domain/shared/result'
 import type { ContactBackendChannel } from '@/ui/controllers/contactBackendController'
 
 export type ContactFormSubmit = (
   payload: EmailContactPayload
-) => Promise<Result<void, ContactError>>
+) => Promise<Result<ContactSubmitSuccess, ContactError>>
 
 export interface ContactFormProps {
   contactEmail?: string | undefined

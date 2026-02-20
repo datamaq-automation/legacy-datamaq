@@ -220,3 +220,25 @@
 - Evidencia: `npm run lint:test-coverage` OK (2026-02-20). Cobertura global: lines 81.00%, statements 80.44%, functions 81.27%, branches 68.82%.
 - Siguiente paso: ejecutar checks finales de trazabilidad y merge-readiness para cerrar el turno.
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync:merge-ready` y `npm run lint:todo-sync`.
+- Avance: generado informe tecnico para backend sobre fallo de preflight CORS (`OPTIONS 405`) en `/api/contact` y `/api/mail`, con contrato esperado, plan de fix y checklist de verificacion.
+- Evidencia: `docs/dv-backend-cors-preflight-2026-02.md`.
+- Siguiente paso: ejecutar validacion conjunta backend+frontend luego del fix CORS para confirmar estado `available` en ambos canales.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para validar trazabilidad del tablero.
+- Avance: validacion manual local del formulario `Enviar e-mail` en `contacto-mail` con Vite en caliente y backend reportado como `available`; secuencia de eventos observada: `submit_clicked` -> `submit_request_started` -> `submit_response_ok`.
+- Evidencia: consola navegador (2026-02-20) muestra `route: thanks`, `latencyMs: 324`, `backendChannel: mail`, `endpointConfigured: true`.
+- Avance: segunda validacion manual local del formulario `Enviar e-mail` en build cliente (`ContactFormSection.vue_vue_type_script_setup_true_lang-*.js`) mantiene flujo estable de submit sin regresion funcional.
+- Evidencia: consola navegador (2026-02-20) muestra nuevamente `submit_clicked` -> `submit_request_started` -> `submit_response_ok` con `route: thanks`, `latencyMs: 186`, `backendChannel: mail`, `sectionId: contacto-mail`.
+- Siguiente paso: repetir validacion manual del canal `contact` bajo el mismo criterio de eventos estructurados para cerrar paridad entre formularios.
+- Siguiente accion interna ejecutable ahora: ejecutar submit real desde `contacto-lead` y confirmar en consola `submit_response_ok` con navegacion a `thanks`.
+- Decision tomada (B-Arquitectura): ampliar el contrato frontend de submit para propagar feedback backend estructurado (`request_id`, `error_code`, `backend_message`) desde infraestructura hacia UI sin acoplar reglas de negocio al componente.
+- Avance: `ContactGateway` deja de retornar `Result<void, ContactError>` y retorna `Result<ContactSubmitSuccess, ContactError>` para habilitar correlacion en flujo de exito/error.
+- Avance: `FetchHttpClient` ahora expone headers normalizados en `HttpResponse` y `ContactApiGateway` extrae feedback desde body + headers (`x-request-id`) para logs y trazabilidad.
+- Avance: `contactHooks` incorpora metadata backend en eventos `submit_response_ok`/`submit_response_error` y agrega `Codigo de seguimiento: <request_id>` al mensaje de error cuando backend lo provee.
+- Avance: agregada cobertura unitaria para parser de feedback backend (`tests/unit/infrastructure/contactResponseFeedback.test.ts`) y ampliada cobertura de gateway para `request_id/error_code`.
+- Evidencia: `src/application/dto/contact.ts`, `src/application/types/errors.ts`, `src/application/contact/ports/ContactGateway.ts`, `src/application/ports/HttpClient.ts`.
+- Evidencia: `src/infrastructure/http/fetchHttpClient.ts`, `src/infrastructure/contact/contactApiGateway.ts`, `src/infrastructure/contact/contactSubmissionErrors.ts`, `src/infrastructure/contact/contactResponseFeedback.ts`.
+- Evidencia: `src/ui/features/contact/contactHooks.ts`, `src/ui/features/contact/contactTypes.ts`, `src/ui/features/contact/useContactFacade.ts`, `src/application/use-cases/submitContact.ts`.
+- Evidencia: `tests/unit/infrastructure/contactApiGateway.test.ts`, `tests/unit/infrastructure/contactResponseFeedback.test.ts`, `tests/unit/application/submitContact.test.ts`, `tests/unit/ui/contactFormSection.test.ts`, `tests/unit/ui/contactSubmitThanksFlow.test.ts`, `tests/unit/ui/contactController.test.ts`.
+- Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/infrastructure/contactResponseFeedback.test.ts tests/unit/application/submitContact.test.ts tests/unit/ui/contactFormSection.test.ts tests/unit/ui/contactSubmitThanksFlow.test.ts tests/unit/ui/contactController.test.ts` OK (2026-02-20).
+- Siguiente paso: ejecutar bateria obligatoria completa (`lint:security`, `lint:test-coverage`, `lint:layers`, `test:a11y`, `check:css`, `quality:responsive`, `quality:mobile`, `quality:merge`, `lint:todo-sync:merge-ready`).
+- Siguiente accion interna ejecutable ahora: correr comandos de compliance/merge-readiness y registrar evidencia consolidada del turno.
