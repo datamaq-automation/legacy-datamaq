@@ -58,22 +58,22 @@ Alcance: frontend Vue + contrato esperado hacia backend custom.
 
 ## 4) Dudas abiertas para cerrar backend/frontend
 
-1. Canonical path definitivo:
-   - ¿`/contact` y `/mail`?
-   - ¿`/api/contact` y `/api/mail`?
-2. Contrato de respuesta:
-   - ¿JSON de éxito estándar por ambos endpoints?
-   - ¿se incluirá `request_id` en respuesta?
-3. Estrategia anti-spam server-side:
-   - rate-limit por IP/email
-   - honeypot/captcha
-4. Reglas de validación diferenciadas:
-   - ¿`contact` y `mail` comparten exactamente las mismas reglas?
-5. Integración Chatwoot/SMTP en backend:
-   - mapping de subject por flujo
-   - `Reply-To` obligatorio con email del cliente
-6. CORS productivo:
+1. CORS productivo:
    - dominios permitidos definitivos (`www` + variantes)
+
+## 4.1) Decisiones cerradas (producto/operacion)
+
+1. Path canónico backend confirmado:
+   - `POST /api/contact`
+   - `POST /api/mail`
+2. `request_id` en respuesta:
+   - Recomendación adoptada: **Sí, incluir `request_id`** en éxito y error.
+3. Validaciones entre `contact` y `mail`:
+   - Recomendación adoptada: **núcleo común + reglas específicas mínimas por canal**.
+4. Anti-spam:
+   - Recomendación adoptada: **rate-limit por IP + honeypot** (captcha opcional según abuso observado).
+5. SMTP/Chatwoot:
+   - Recomendación adoptada: **`Reply-To` obligatorio** con email de cliente validado.
 
 ## 5) Evidencia de código fuente
 

@@ -190,5 +190,14 @@
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync:merge-ready` y preparar push para validacion remota de CI.
 - Avance: generado informe de handoff para backend con certezas verificadas, contrato minimo sugerido y dudas abiertas para cierre funcional (`docs/dv-backend-contact-mail-handoff.md`).
 - Evidencia: `docs/dv-backend-contact-mail-handoff.md`.
-- Siguiente paso: cerrar definiciones backend sobre paths canonicos, contrato de respuesta y anti-spam para alinear frontend y despliegue.
-- Siguiente accion interna ejecutable ahora: validar sincronia del tablero con `npm run lint:todo-sync`.
+- Decision tomada (B-Deploy): path canonico backend confirmado en este turno: `POST /api/contact` y `POST /api/mail`.
+- Decision tomada (B-Arquitectura): recomendaciones de cierre backend adoptadas para handoff:
+  - incluir `request_id` en respuesta (exito/error),
+  - validacion comun + diferencias minimas por canal,
+  - `rate-limit` por IP + honeypot,
+  - `Reply-To` obligatorio validado.
+- Avance: informe backend actualizado con decisiones cerradas y backlog residual reducido a CORS productivo.
+- Avance: `.env.example` alineado a ejemplos productivos canonicos `/api/contact` y `/api/mail`.
+- Evidencia: `docs/dv-backend-contact-mail-handoff.md`, `.env.example`.
+- Siguiente paso: validar implementacion backend real de `request_id`, `Reply-To` y rate-limit para ejecutar smoke contra entorno productivo.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para confirmar trazabilidad vigente.
