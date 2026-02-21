@@ -6,63 +6,71 @@ Path: src/ui/sections/HeroSection.vue
   <section class="section-mobile py-5 text-body c-hero" aria-labelledby="hero-title">
     <div class="container">
       <div class="row align-items-center gy-4">
-        <div class="col-12 col-lg-6 order-1 text-center text-lg-start c-hero__content">
-          <div
-            class="c-ui-chip c-ui-chip--success text-uppercase d-inline-block mw-100 text-wrap"
-          >
-            {{ hero.badge }}
-          </div>
-          <h1 id="hero-title" class="display-5 fw-bold text-body-emphasis mt-3 mb-3">
-            {{ hero.title }}
-          </h1>
-          <p class="fs-5 text-secondary mb-3 c-hero__subtitle">
-            {{ hero.subtitle }}
-          </p>
-          <div
-            class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-3 c-hero__actions c-cta-stack"
-          >
-            <div class="c-cta-stack__item">
-              <button
-                type="button"
-                class="btn c-ui-btn c-ui-btn--primary btn-lg px-4 c-hero__primary-cta w-100"
-                @click="handleWhatsAppClick(hero.primaryCta.href)"
-              >
-                {{ hero.primaryCta.label }}
-              </button>
+        <div class="col-12 col-md-6 col-lg-6 order-1 text-center text-lg-start c-hero__content">
+          <div class="c-hero__content-panel">
+            <div
+              class="c-ui-chip c-ui-chip--success text-uppercase d-inline-block mw-100 text-wrap"
+            >
+              {{ hero.badge }}
             </div>
-            <div class="c-cta-stack__item">
-              <a
-                class="btn btn-outline-light btn-lg px-4 c-hero__secondary-cta w-100"
-                :href="hero.secondaryCta.href"
-              >
-                {{ hero.secondaryCta.label }}
-              </a>
+            <h1 id="hero-title" class="display-5 fw-bold text-body-emphasis mt-3 mb-3 c-hero__title">
+              {{ hero.title }}
+            </h1>
+            <p class="fs-5 text-secondary mb-3 c-hero__subtitle">
+              {{ hero.subtitle }}
+            </p>
+            <div
+              class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center align-items-lg-start mb-3 c-hero__actions c-cta-stack"
+            >
+              <div class="c-cta-stack__item">
+                <button
+                  type="button"
+                  class="btn c-ui-btn c-ui-btn--primary btn-lg px-4 c-hero__primary-cta w-100"
+                  @click="handleWhatsAppClick(hero.primaryCta.href)"
+                >
+                  {{ hero.primaryCta.label }}
+                </button>
+              </div>
+              <div class="c-cta-stack__item">
+                <a
+                  class="btn btn-outline-light btn-lg px-4 c-hero__secondary-cta w-100"
+                  :href="hero.secondaryCta.href"
+                >
+                  {{ hero.secondaryCta.label }}
+                </a>
+              </div>
             </div>
+            <p class="small text-secondary c-hero__microcopy mb-3">
+              Sin compromiso · Respuesta en menos de 24 h
+            </p>
+            <ul
+              class="list-unstyled d-flex flex-wrap gap-2 mb-4 c-hero__chips"
+              aria-label="Condiciones operativas"
+            >
+              <li v-for="chip in heroChips" :key="chip">
+                <span class="c-ui-chip">
+                  {{ chip }}
+                </span>
+              </li>
+            </ul>
+            <section class="c-hero__conditions" aria-labelledby="hero-conditions-title">
+              <h2 id="hero-conditions-title" class="c-hero__conditions-title h6 mb-2">Condiciones</h2>
+              <ul class="list-unstyled mb-0 c-hero__conditions-list">
+                <li v-for="condition in heroConditions" :key="condition">
+                  {{ condition }}
+                </li>
+              </ul>
+            </section>
           </div>
-          <p class="small text-secondary c-hero__microcopy mb-3">
-            Respuesta en menos de 24 h  ·  Tarifa base publicada  ·  Cobertura GBA Norte / AMBA
-          </p>
-          <ul
-            class="list-unstyled d-flex flex-wrap gap-2 mb-4 c-hero__chips"
-            aria-label="Condiciones operativas"
-          >
-            <li v-for="chip in heroChips" :key="chip">
-              <span class="c-ui-chip">
-                {{ chip }}
-              </span>
-            </li>
-          </ul>
-          <p class="text-secondary small mb-2 c-hero__response-note">
-            {{ hero.responseNote }}
-          </p>
         </div>
-        <div class="col-12 col-lg-6 order-2 text-center c-hero__media">
+        <div class="col-12 col-md-6 col-lg-6 order-2 text-center c-hero__media">
           <div class="position-relative mx-auto c-hero__illustration">
             <div
-              class="bg-primary rounded-circle position-absolute opacity-25 c-hero__halo"
+              class="bg-primary rounded-circle position-absolute c-hero__halo"
               aria-hidden="true"
             ></div>
-            <picture class="d-inline-block position-relative">
+            <!-- Espacio preparado para reemplazar luego la ilustracion por foto real -->
+            <picture class="d-inline-block position-relative c-hero__media-slot">
               <img
                 :src="hero.image.src"
                 :alt="hero.image.alt"
@@ -88,7 +96,7 @@ import { useHeroSection } from './HeroSection'
 const props = defineProps<HeroSectionProps>()
 const emit = defineEmits<HeroSectionEmits>()
 
-const { hero, heroChips } = useHeroSection(props)
+const { hero, heroChips, heroConditions } = useHeroSection(props)
 
 defineOptions({
   name: 'HeroSection'

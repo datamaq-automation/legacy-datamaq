@@ -54,9 +54,9 @@ export const content: AppContent = {
     badge: 'Tarifa base publicada · Respuesta en menos de 24 horas hábiles (L–V 08 a 16)',
     title: 'Servicios industriales prolijos, seguros y documentados',
     subtitle: `Instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico industrial. Checklist previo, verificación final y cierre documentado en cada visita.`,
-    responseNote: `Te respondemos por WhatsApp en menos de 24 horas hábiles (L–V 08 a 16) con tarifa base desde ${TARIFA_BASE}, alcance incluido y condiciones por distancia desde ${BASE}${TRASLADO_TEXT}. Cobertura: AMBA (prioridad GBA Norte).`,
+    responseNote: `Respuesta en menos de 24 horas hábiles (L–V 08 a 16) · Tarifa base desde ${TARIFA_BASE} con alcance incluido · Condiciones por distancia desde ${BASE}${TRASLADO_TEXT} · Cobertura AMBA (prioridad GBA Norte)`,
     primaryCta: {
-      label: 'Coordinar por WhatsApp',
+      label: 'Coordinar diagnóstico por WhatsApp',
       action: 'whatsapp',
       href: WHATSAPP_URL
     },
