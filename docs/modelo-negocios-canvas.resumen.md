@@ -16,6 +16,14 @@ Los **recursos clave** incluyen tu capacidad técnica, instrumental, plantillas/
 
 Las **actividades clave** incorporan gestión de partners (onboarding, reglas de derivación, entregables, reporting) además del flujo técnico habitual de calificación, coordinación de ventana segura, intervención y cierre documentado, y ahora también el **flujo post-instalación** (baseline, hallazgos, recomendaciones y revisión). Como soporte del B2B directo, se incorporan actividades de marketing operativo: campañas Google Ads, calificación de leads, y secuencias de seguimiento por email (nutrición y conversión).
 
-En **socios clave**, Powermeter SAS y otros intermediarios pasan a ser socios estructurales (canal + cliente pagador), junto con infraestructura (hosting/VPS, Meta/WhatsApp) y profesionales matriculados cuando corresponda. El canal directo agrega dependencias menores (plataforma de ads y herramienta de email marketing), manteniendo el foco en operación simple.
+En **socios clave**, Powermeter SAS y otros intermediarios pasan a ser socios estructurales (canal + cliente pagador), junto con infraestructura (hosting/VPS, Meta/WhatsApp) y profesionales matriculados cuando corresponda. Dado que el modelo depende de coordinación y trazabilidad, se define como prioridad cerrar un **acuerdo marco por escrito** con Powermeter (y partners similares) para establecer: **regla de canal/atribución** ([DEFINIR: 90/180 días + condiciones de renovación]), condiciones de pago, entregables estándar (handoff), límites de soporte y escalamiento.
 
 La **estructura de costos** sigue dominada por movilidad, herramientas, hosting/VPS, ads y tiempo no facturable, pero ahora agrega peso de administración/compliance por el modelo vía intermediarios (más coordinación y potenciales plazos de pago) y el costo de ejecución del post-instalación (tiempo de análisis, reporting y revisiones). En el canal directo se agregan costos de adquisición (Ads) y costos de soporte comercial (herramienta de email, contenido y seguimiento).
+
+---
+
+### Principios operativos (Misión / Visión / Valores)
+
+**Misión (DataMaq):** ejecutar servicios eléctricos/electrónicos industriales **seguros, prolijos y documentados**, instalando y poniendo en marcha Powermeter/Automate y resolviendo fallas con método, para habilitar decisiones operativas basadas en datos reales.  
+**Visión (DataMaq):** ser referente en AMBA en implementación y mejora continua basada en datos en entornos industriales, con diferencial en **industria gráfica**.  
+**Valores (DataMaq):** seguridad primero · trazabilidad/evidencia · método · claridad de alcance · respeto por la operación · mejora continua.

@@ -391,3 +391,7 @@
 - Evidencia: `public/w`; `C:/AppServ/Apache2.4/logs/error.log` confirma causa del 500 por `RewriteEngine` no disponible.
 - Siguiente paso: reemplazar `TODO_REEMPLAZAR` en links de `public/w` y en config SPA de WhatsApp QR para usar telefono real.
 - Siguiente accion interna ejecutable ahora: verificar manualmente `http://localhost/w` y validar apertura de wa.me.
+- Mitigacion interna ejecutada: fix para Apache local cuando `/w` se descargaba como archivo; se agrega `public/.htaccess` con `ForceType text/html` aplicado solo al archivo `w`, sin depender de `mod_rewrite`.
+- Evidencia: `public/.htaccess`, `public/w`.
+- Siguiente paso: validar manualmente `http://localhost/w` y confirmar render + redirect/fallback en lugar de descarga.
+- Siguiente accion interna ejecutable ahora: reiniciar Apache/AppServ y reintentar `/w`.
