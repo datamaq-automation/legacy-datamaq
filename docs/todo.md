@@ -1,5 +1,15 @@
 # Tablero activo
 
+- [>] (P0) Auditoria de arquitectura limpia + SOLID + TS con mejoras de bajo riesgo
+  - Decision tomada (B-Arquitectura): Se removio dependencia no utilizada (`LoggerPort`) del caso de uso `SubmitContactUseCase` para reducir acoplamiento y responsabilidades ajenas al caso de uso.
+  - Decision tomada (B-Testing): Ante fallo de `lint:test-coverage` por aserciones desalineadas en pricing visible, se priorizo correccion funcional minima en `src/infrastructure/content/Appcontent.ts` para mantener politica publica de "Consultar al WhatsApp" sin tocar logs de consola.
+  - Avance: `SubmitContactUseCase` ahora depende solo de puertos funcionales necesarios; se actualizo composicion en `src/di/container.ts` y test unitario asociado.
+  - Avance: Se mantuvo el dato dinamico `visitaDiagnosticoHasta2hARS` en memoria/config pero se elimino su render de copy publico en `Appcontent` (sin montos visibles en texto comercial).
+  - Evidencia: cambios en `src/application/use-cases/submitContact.ts`, `src/di/container.ts`, `src/infrastructure/content/Appcontent.ts`, `tests/unit/application/submitContact.test.ts`.
+  - Evidencia: `npm run typecheck` (OK), `npm run lint:layers` (OK), `npm run lint:security` (OK), `npm run lint:test-coverage` (FAIL inicial -> mitigado), `npx vitest run tests/unit/infrastructure/contentRepository.test.ts` (OK), `npm run lint:test-coverage` (OK), `npm run build` (OK), `npm run quality:merge` (FAIL inicial por `docs/todo.md` desactualizado; mitigacion aplicada), `npm run quality:merge` (OK), `npm run lint:todo-sync:merge-ready` (OK).
+  - Siguiente paso: Consolidar la propuesta de mejora de consola (F12) separando ruido informativo de errores accionables.
+  - Siguiente accion interna ejecutable ahora: Preparar plan de cambios no disruptivos para logging backend (`pricing/contact/mail`) sin alterar contratos.
+
 - [>] (P0) Verificar contrato de backend y diagnostico fail-fast FTPS
   - Decision tomada (B-Deploy): Se priorizo confirmar primero estado real del workflow para no introducir cambios redundantes ni riesgo operativo en deploy.
   - Avance: Se verifico que `VITE_ALLOW_INSECURE_BACKEND` ya esta documentado en `docs/dv-api-01.contrato-pricing-health.md` con alcance exacto (solo loopback HTTP fuera de DEV cuando vale `true`; en cualquier otro caso se exige `https://`).

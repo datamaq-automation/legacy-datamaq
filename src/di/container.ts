@@ -66,7 +66,6 @@ const submitContact = new SubmitContactUseCase(
   environment,
   eventBus,
   leadTracking,
-  logger,
   environment
 )
 const submitMail = new SubmitContactUseCase(
@@ -77,7 +76,6 @@ const submitMail = new SubmitContactUseCase(
   environment,
   eventBus,
   leadTracking,
-  logger,
   environment
 )
 

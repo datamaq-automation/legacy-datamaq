@@ -4,7 +4,6 @@ import type { ContactGateway } from '@/application/contact/ports/ContactGateway'
 import type { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
 import type { Clock, LocationProvider, NavigatorProvider } from '@/application/ports/Environment'
 import type { EventBus } from '@/application/ports/EventBus'
-import type { LoggerPort } from '@/application/ports/Logger'
 import type { LeadTracking } from '@/application/analytics/leadTracking'
 import { ContactService } from '@/domain/contact/services/ContactService'
 
@@ -37,11 +36,6 @@ describe('SubmitContactUseCase', () => {
       registerLeadForThanksPage: vi.fn().mockReturnValue('lead_1'),
       trackGenerateLeadOnce: vi.fn()
     }
-    const logger: LoggerPort = {
-      debug: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn()
-    }
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
@@ -52,7 +46,6 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger,
       clock
     )
 
@@ -100,11 +93,6 @@ describe('SubmitContactUseCase', () => {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
     }
-    const logger: LoggerPort = {
-      debug: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn()
-    }
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
@@ -115,7 +103,6 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger,
       clock
     )
 
@@ -161,11 +148,6 @@ describe('SubmitContactUseCase', () => {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
     }
-    const logger: LoggerPort = {
-      debug: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn()
-    }
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
@@ -176,7 +158,6 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger,
       clock
     )
 
@@ -225,11 +206,6 @@ describe('SubmitContactUseCase', () => {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
     }
-    const logger: LoggerPort = {
-      debug: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn()
-    }
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
@@ -240,7 +216,6 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger,
       clock
     )
 
@@ -286,11 +261,6 @@ describe('SubmitContactUseCase', () => {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
     }
-    const logger: LoggerPort = {
-      debug: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn()
-    }
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
@@ -301,7 +271,6 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger,
       clock
     )
 
@@ -347,11 +316,6 @@ describe('SubmitContactUseCase', () => {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
     }
-    const logger: LoggerPort = {
-      debug: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn()
-    }
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
@@ -362,7 +326,6 @@ describe('SubmitContactUseCase', () => {
       navigator,
       eventBus,
       leadTracking,
-      logger,
       clock
     )
 

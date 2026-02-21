@@ -47,8 +47,8 @@ export function buildAppContent(config: CommercialConfig): AppContent {
   const WHATSAPP_URL = config.whatsappUrl
 
   // Pricing display policy
-  const LISTA_DIAG_2H = formatARSWithFallback(config.visitaDiagnosticoHasta2hARS) // único precio público (desde backend)
   const CONSULTAR = PRICE_FALLBACK_LABEL
+  const LISTA_DIAG_2H = CONSULTAR
 
   // Copy rules
   const TRASLADO_TEXT = ` (${CONSULTAR})`
@@ -234,15 +234,4 @@ export function buildAppContent(config: CommercialConfig): AppContent {
       rejectLabel: 'Rechazar'
     }
   }
-}
-
-function formatARSWithFallback(value: number | null): string {
-  if (value == null || Number.isNaN(value) || value < 0) return PRICE_FALLBACK_LABEL
-  return formatARS(value)
-}
-
-function formatARS(value: number): string {
-  const rounded = Math.round(value)
-  const withThousands = String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-  return `ARS ${withThousands}`
 }

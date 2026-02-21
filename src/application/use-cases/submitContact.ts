@@ -1,6 +1,5 @@
 import type { ContactGateway } from '../contact/ports/ContactGateway'
 import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
-import type { LoggerPort } from '../ports/Logger'
 import type { Clock, LocationProvider, NavigatorProvider } from '../ports/Environment'
 import type { ContactError } from '../types/errors'
 import type { Result } from '@/domain/shared/result'
@@ -20,7 +19,6 @@ export class SubmitContactUseCase {
     private navigator: NavigatorProvider,
     private eventBus: EventBus,
     private leadTracking: LeadTracking,
-    private logger: LoggerPort,
     private clock: Clock
   ) {}
 
@@ -56,10 +54,10 @@ export class SubmitContactUseCase {
       mapContactRequestToSubmitPayload(
         contactResult.data,
         {
-        pageLocation: this.location.href(),
-        trafficSource: getTrafficSource(this.location),
-        userAgent: this.navigator.userAgent(),
-        createdAt: new Date(this.clock.now()).toISOString()
+          pageLocation: this.location.href(),
+          trafficSource: getTrafficSource(this.location),
+          userAgent: this.navigator.userAgent(),
+          createdAt: new Date(this.clock.now()).toISOString()
         }
       )
     )
@@ -88,7 +86,9 @@ function inferContactNameFromEmail(email: string): string {
 }
 
 function buildContactId(now: number): string {
-  return `contact_${now}_${Math.random().toString(36).slice(2, 8)}`
+  const randomPart = globalThis.crypto?.randomUUID?.().replace(/-/g, '').slice(0, 12)
+  const fallbackRandomPart = Math.random().toString(36).slice(2, 14)
+  return `contact_${now}_${randomPart ?? fallbackRandomPart}`
 }
 
 function getTrafficSource(location: LocationProvider): string {
