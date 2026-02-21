@@ -6,7 +6,6 @@ interface ImportMetaEnv {
   readonly VITE_CONTACT_FORM_ACTIVE?: 'true' | 'false'
   readonly VITE_EMAIL_FORM_ACTIVE?: 'true' | 'false'
   readonly VITE_CLIENT_LOG_LEVEL?: 'debug' | 'info' | 'warn' | 'error'
-  readonly VITE_CLIENT_LOG_INGEST_URL?: string
   readonly DEV: boolean
 }
 

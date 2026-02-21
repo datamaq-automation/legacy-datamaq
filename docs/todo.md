@@ -301,3 +301,9 @@
 - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
 - Siguiente paso: mantener `lint:test-coverage` fuera de paralelizacion con otros jobs locales para evitar race condition de archivos temporales de cobertura.
 - Siguiente accion interna ejecutable ahora: conservar orden secuencial de checks al preparar commits de frontend con cobertura.
+- Decision tomada (B-Arquitectura): eliminar la funcionalidad de ingesta remota de logs cliente por complejidad innecesaria y mantener logging solo local en consola con deduplicacion existente.
+- Avance: removido transporte `sendBeacon/fetch keepalive` y eliminada dependencia de `contactClientLogger` al modulo de ingesta remota.
+- Avance: eliminado tipado/env de `VITE_CLIENT_LOG_INGEST_URL` para evitar configuracion muerta y reducir superficie de mantenimiento.
+- Evidencia: `src/ui/logging/contactClientLogger.ts`, `src/ui/logging/contactLogTransport.ts` (eliminado), `src/env.d.ts`, `.env.example`.
+- Siguiente paso: ejecutar bateria obligatoria de validacion y registrar merge-readiness del turno.
+- Siguiente accion interna ejecutable ahora: correr en secuencia `npm run lint:security`, `npm run test:a11y`, `npm run check:css`, `npm run quality:responsive`, `npm run quality:mobile`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.

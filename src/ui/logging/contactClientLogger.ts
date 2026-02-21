@@ -1,5 +1,4 @@
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
-import { sendContactLogToBackend } from '@/ui/logging/contactLogTransport'
 
 const LEVEL_PRIORITY: Record<LogLevel, number> = {
   debug: 10,
@@ -58,12 +57,6 @@ function isEnabled(level: LogLevel): boolean {
 
 function log(level: LogLevel, event: string, data?: Record<string, unknown>): void {
   const payload = sanitizePayload(data ?? {})
-  sendContactLogToBackend({
-    event,
-    level,
-    timestamp: new Date().toISOString(),
-    payload
-  })
 
   if (!isEnabled(level)) {
     return
