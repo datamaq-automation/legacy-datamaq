@@ -48,8 +48,7 @@
   - `src/ui/pages/MedicionConsumoEscobar.vue` (alineado en este turno)
 
 ## E) Configuracion recomendada
-- `VITE_CONTACT_API_URL=https://api.datamaq.com.ar/api/contact`
-- `VITE_MAIL_API_URL=https://api.datamaq.com.ar/api/mail`
+- `VITE_BACKEND_BASE_URL=https://api.datamaq.com.ar` (el frontend deriva `/api/contact` y `/api/mail`)
 - `VITE_CLIENT_LOG_LEVEL=info`
 - `VITE_CLIENT_LOG_INGEST_URL=https://api.datamaq.com.ar/api/client-logs` (opcional)
 

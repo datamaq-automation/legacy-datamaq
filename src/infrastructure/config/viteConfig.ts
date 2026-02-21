@@ -32,25 +32,22 @@ export class ViteConfig implements ConfigPort {
 
   constructor() {
     this.contactEmail = normalize(publicConfig.contactEmail) ?? CONTACT_EMAIL_FALLBACK
-    this.inquiryApiUrl = ensureApiUrl(
-      normalize(import.meta.env.VITE_CONTACT_API_URL) ??
-        normalize(publicConfig.inquiryApiUrl),
-      'inquiryApiUrl'
+    const backendBaseUrl = ensureApiBaseUrl(
+      normalize(import.meta.env.VITE_BACKEND_BASE_URL) ??
+        normalize(publicConfig.backendBaseUrl),
+      'VITE_BACKEND_BASE_URL'
     )
-    this.mailApiUrl = ensureApiUrl(
-      normalize(import.meta.env.VITE_MAIL_API_URL) ??
-        normalize(publicConfig.mailApiUrl),
-      'mailApiUrl'
-    )
+    this.inquiryApiUrl = buildEndpointUrl(backendBaseUrl, '/api/contact')
+    this.mailApiUrl = buildEndpointUrl(backendBaseUrl, '/api/mail')
     this.contactFormActive = normalizeBoolean(
-      import.meta.env.VITE_CONTACT_FORM_ACTIVE,
+      import.meta.env.VITE_IS_CONTACT_FORM_ACTIVE,
       publicConfig.contactFormActive,
-      'VITE_CONTACT_FORM_ACTIVE'
+      'VITE_IS_CONTACT_FORM_ACTIVE'
     )
     this.emailFormActive = normalizeBoolean(
-      import.meta.env.VITE_EMAIL_FORM_ACTIVE,
+      import.meta.env.VITE_IS_EMAIL_FORM_ACTIVE,
       publicConfig.emailFormActive,
-      'VITE_EMAIL_FORM_ACTIVE'
+      'VITE_IS_EMAIL_FORM_ACTIVE'
     )
     this.analyticsEnabled = publicConfig.analyticsEnabled
     this.siteUrl = normalize(publicConfig.siteUrl)
@@ -78,7 +75,7 @@ function normalize(value: string | undefined): NullableString {
   return trimmed ? trimmed : undefined
 }
 
-function ensureApiUrl(value: NullableString, envKey: string): NullableString {
+function ensureApiBaseUrl(value: NullableString, envKey: string): NullableString {
   if (!value) {
     return undefined
   }
@@ -100,6 +97,13 @@ function ensureApiUrl(value: NullableString, envKey: string): NullableString {
     return undefined
   }
   return value
+}
+
+function buildEndpointUrl(baseUrl: NullableString, path: string): NullableString {
+  if (!baseUrl) {
+    return undefined
+  }
+  return `${baseUrl.replace(/\/+$/, '')}${path}`
 }
 
 function normalizeBoolean(

@@ -283,12 +283,12 @@
 - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
 - Siguiente paso: decidir fuente de verdad de activacion de formularios para reemplazar flags locales hardcoded y alinear UX cuando un formulario quede inactivo.
 - Siguiente accion interna ejecutable ahora: al definir la estrategia de flags, moverlos a config central y cubrir escenario de formulario oculto/deshabilitado con pruebas unitarias/E2E.
-- Decision tomada (B-Arquitectura): centralizar activacion de formularios en `ConfigPort` con override por env (`VITE_CONTACT_FORM_ACTIVE`, `VITE_EMAIL_FORM_ACTIVE`) y fallback en `publicConfig` para evitar flags hardcoded por pagina.
+- Decision tomada (B-Arquitectura): centralizar activacion de formularios en `ConfigPort` con override por env (`VITE_IS_CONTACT_FORM_ACTIVE`, `VITE_IS_EMAIL_FORM_ACTIVE`) y fallback en `publicConfig` para evitar flags hardcoded por pagina.
 - Avance: `contactController` expone getters (`getContactFormActive`, `getEmailFormActive`) y `HomePage`/`MedicionConsumoEscobar` consumen config central para render condicional de formularios.
 - Avance: `ViteConfig` incorpora parseo robusto de booleanos (`true|false`) con warning y fallback seguro.
 - Evidencia: `src/application/ports/Config.ts`, `src/infrastructure/config/publicConfig.ts`, `src/infrastructure/config/viteConfig.ts`, `src/env.d.ts`, `.env.example`.
 - Evidencia: `src/ui/controllers/contactController.ts`, `src/ui/pages/HomePage.ts`, `src/ui/pages/MedicionConsumoEscobar.ts`.
-- Siguiente paso: validar por entorno (dev/qa/prod) valores efectivos de `VITE_CONTACT_FORM_ACTIVE` y `VITE_EMAIL_FORM_ACTIVE` para coordinar habilitacion gradual.
+- Siguiente paso: validar por entorno (dev/qa/prod) valores efectivos de `VITE_IS_CONTACT_FORM_ACTIVE` y `VITE_IS_EMAIL_FORM_ACTIVE` para coordinar habilitacion gradual.
 - Siguiente accion interna ejecutable ahora: correr bateria obligatoria de calidad y merge-readiness con trazabilidad del turno.
 - Mitigacion interna ejecutada: al correr `lint:test-coverage` en paralelo con otras tareas pesadas reaparecio colision intermitente de cobertura (`ENOENT coverage/.tmp/coverage-12.json`); se estandariza ejecucion secuencial para el check de cobertura en este repo.
 - Evidencia: `npm run lint:security` OK (2026-02-21).
@@ -352,3 +352,21 @@
 - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
 - Siguiente paso: completar limpieza documental residual donde se menciona `VITE_INQUIRY_API_URL` como referencia historica si se busca consistencia total de nomenclatura.
 - Siguiente accion interna ejecutable ahora: continuar con las tareas P0 abiertas de backend/operacion en tablero.
+- Decision tomada (B-Arquitectura): unificar endpoints de formularios en una sola variable `VITE_BACKEND_BASE_URL` y derivar rutas `/api/contact` y `/api/mail` dentro de configuracion frontend.
+- Avance: `ViteConfig` ahora construye `inquiryApiUrl`/`mailApiUrl` desde `VITE_BACKEND_BASE_URL` (normalizando slash final) y elimina dependencia de `VITE_CONTACT_API_URL`/`VITE_MAIL_API_URL`.
+- Avance: CI/CD FTPS actualizado para validar y exportar solo `VITE_BACKEND_BASE_URL`, derivando endpoints de contacto/mail en el job de preparacion.
+- Avance: tipado/env/documentacion operativa alineados al nuevo contrato unico de backend base URL.
+- Evidencia: `src/infrastructure/config/viteConfig.ts`, `src/infrastructure/config/publicConfig.ts`, `src/env.d.ts`, `.env.example`, `.env.e2e`, `.env.local`, `.github/workflows/ci-cd-ftps.yml`, `docs/dv-backend-contact-mail-handoff.md`, `docs/dv-cred-01.md`, `docs/dv-audit-contact-mail-logging-2026-02.md`.
+- Siguiente paso: ejecutar bateria obligatoria completa y confirmar merge-readiness local.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:security`, `npm run test:a11y`, `npm run check:css`, `npm run quality:responsive`, `npm run quality:mobile`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.
+- Evidencia: `npm run lint:security` OK (2026-02-21).
+- Evidencia: `npm run test:a11y` OK (2026-02-21).
+- Evidencia: `npm run check:css` OK (2026-02-21).
+- Evidencia: `npm run quality:responsive` OK (2026-02-21). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-21).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-21). Cobertura global: lines 83.00%, statements 82.39%, functions 81.60%, branches 74.03%.
+- Evidencia: `npm run quality:merge` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
+- Evidencia deploy/operacion: workflow `.github/workflows/ci-cd-ftps.yml` migra secretos/env de build a `VITE_BACKEND_BASE_URL` unico y deriva `/api/contact` + `/api/mail` en `deploy-prepare`; impacto esperado en produccion: reducir desalineacion de endpoints por variable duplicada.
+- Siguiente paso: alinear secretos de GitHub Actions en entorno `production` para usar solo `VITE_BACKEND_BASE_URL` antes del proximo deploy remoto.
+- Siguiente accion interna ejecutable ahora: mantener validaciones locales en verde y continuar con P0 operativos de backend/Chatwoot.

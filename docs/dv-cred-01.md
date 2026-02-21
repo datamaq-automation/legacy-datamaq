@@ -16,8 +16,7 @@ Estandarizar como pedir, generar, validar y guardar credenciales necesarias para
 ### 3.1 GitHub (CI/CD)
 - Uso: deploy FTPS, variables de build, checks operativos.
 - Secrets esperados:
-  - `VITE_CONTACT_API_URL`
-  - `VITE_MAIL_API_URL`
+  - `VITE_BACKEND_BASE_URL`
   - `FTPS_SERVER`
   - `FTPS_PORT`
   - `FTPS_USERNAME`
@@ -73,7 +72,7 @@ Estandarizar como pedir, generar, validar y guardar credenciales necesarias para
 ### 5.1 GitHub Environment secrets (repo)
 1. Ir a `GitHub -> Repo -> Settings -> Environments -> production`.
 2. Abrir `Environment secrets`.
-3. Crear/actualizar secretos requeridos (`VITE_CONTACT_API_URL`, etc.).
+3. Crear/actualizar secretos requeridos (`VITE_BACKEND_BASE_URL`, etc.).
 4. Validar:
    - ejecutar workflow `CI/CD FTPS`.
    - confirmar paso `Validate inquiry API URL` en verde.

@@ -18,11 +18,10 @@ Alcance: frontend Vue + contrato esperado hacia backend custom.
    - `pageLocation`, `trafficSource`, `userAgent`, `createdAt`
    - datos de attribution cuando existen (utm/gclid)
 5. El frontend espera endpoints HTTP configurables por env:
-   - `VITE_CONTACT_API_URL` (canonico)
-   - `VITE_MAIL_API_URL`
+   - `VITE_BACKEND_BASE_URL` (canonico)
 6. El canal se resuelve en infraestructura:
-   - `contact` -> `inquiryApiUrl`
-   - `mail` -> `mailApiUrl`
+   - `contact` -> `${VITE_BACKEND_BASE_URL}/api/contact`
+   - `mail` -> `${VITE_BACKEND_BASE_URL}/api/mail`
 7. El estado de disponibilidad de backend se chequea con `OPTIONS`:
    - `200/2xx`, `400`, `404`, `405` se consideran canal disponible para no bloquear por CORS/probe.
 8. El flujo UI de éxito navega a `/gracias` para ambos formularios.

@@ -83,9 +83,7 @@ jobs:
 
       - name: Run smoke e2e
         env:
-          VITE_CONTACT_API_URL: http://127.0.0.1:4173/api/contact
-          VITE_INQUIRY_API_URL: http://127.0.0.1:4173/api/contact
-          VITE_MAIL_API_URL: http://127.0.0.1:4173/api/mail
+          VITE_BACKEND_BASE_URL: http://127.0.0.1:4173
         run: npm run test:e2e:smoke
 
   deploy-prepare:
@@ -104,9 +102,7 @@ jobs:
       - name: Validate deploy inputs
         id: prepare
         env:
-          VITE_CONTACT_API_URL: ${{ secrets.VITE_CONTACT_API_URL }}
-          VITE_MAIL_API_URL: ${{ secrets.VITE_MAIL_API_URL }}
-          VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
+          VITE_BACKEND_BASE_URL: ${{ secrets.VITE_BACKEND_BASE_URL }}
           FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
           FTPS_PORT: ${{ secrets.FTPS_PORT }}
           FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
@@ -115,26 +111,19 @@ jobs:
         run: |
           set -euo pipefail
 
-          CONTACT_ENDPOINT="${VITE_CONTACT_API_URL:-${VITE_INQUIRY_API_URL:-}}"
-          MAIL_ENDPOINT="${VITE_MAIL_API_URL:-}"
+          BACKEND_BASE_URL="${VITE_BACKEND_BASE_URL:-}"
 
-          if [ -z "${CONTACT_ENDPOINT}" ]; then
-            echo "::error::Missing secret VITE_CONTACT_API_URL (or legacy VITE_INQUIRY_API_URL)"
+          if [ -z "${BACKEND_BASE_URL}" ]; then
+            echo "::error::Missing secret VITE_BACKEND_BASE_URL"
             exit 1
           fi
-          if ! printf '%s' "${CONTACT_ENDPOINT}" | grep -Eq '^https://'; then
-            echo "::error::Invalid contact API URL. It must start with https:// and point to backend /contact endpoint."
+          if ! printf '%s' "${BACKEND_BASE_URL}" | grep -Eq '^https://'; then
+            echo "::error::Invalid backend base URL. It must start with https://."
             exit 1
           fi
 
-          if [ -z "${MAIL_ENDPOINT}" ]; then
-            echo "::error::Missing secret VITE_MAIL_API_URL"
-            exit 1
-          fi
-          if ! printf '%s' "${MAIL_ENDPOINT}" | grep -Eq '^https://'; then
-            echo "::error::Invalid mail API URL. It must start with https:// and point to backend /mail endpoint."
-            exit 1
-          fi
+          CONTACT_ENDPOINT="${BACKEND_BASE_URL%/}/api/contact"
+          MAIL_ENDPOINT="${BACKEND_BASE_URL%/}/api/mail"
 
           if [ -z "${FTPS_SERVER}" ]; then
             echo "::error::Missing secret FTPS_SERVER"
@@ -219,9 +208,7 @@ jobs:
 
       - name: Build
         env:
-          VITE_CONTACT_API_URL: ${{ secrets.VITE_CONTACT_API_URL }}
-          VITE_INQUIRY_API_URL: ${{ secrets.VITE_INQUIRY_API_URL }}
-          VITE_MAIL_API_URL: ${{ secrets.VITE_MAIL_API_URL }}
+          VITE_BACKEND_BASE_URL: ${{ secrets.VITE_BACKEND_BASE_URL }}
         run: npm run build
 
       - name: Upload dist artifact

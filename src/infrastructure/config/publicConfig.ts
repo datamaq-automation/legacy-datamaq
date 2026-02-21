@@ -27,6 +27,5 @@ export const publicConfig = {
   contactEmail: 'contacto@datamaq.com.ar',
   contactFormActive: true,
   emailFormActive: true,
-  inquiryApiUrl: undefined,
-  mailApiUrl: undefined
+  backendBaseUrl: undefined
 } as const
