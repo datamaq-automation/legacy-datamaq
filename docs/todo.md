@@ -307,3 +307,31 @@
 - Evidencia: `src/ui/logging/contactClientLogger.ts`, `src/ui/logging/contactLogTransport.ts` (eliminado), `src/env.d.ts`, `.env.example`.
 - Siguiente paso: ejecutar bateria obligatoria de validacion y registrar merge-readiness del turno.
 - Siguiente accion interna ejecutable ahora: correr en secuencia `npm run lint:security`, `npm run test:a11y`, `npm run check:css`, `npm run quality:responsive`, `npm run quality:mobile`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.
+- Evidencia: `npm run lint:security` OK (2026-02-21).
+- Evidencia: `npm run test:a11y` OK (2026-02-21).
+- Evidencia: `npm run check:css` OK (2026-02-21).
+- Evidencia: `npm run quality:responsive` OK (2026-02-21). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-21).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-21). Cobertura global: lines 81.90%, statements 81.34%, functions 81.09%, branches 69.67%.
+- Evidencia: `npm run quality:merge` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync` OK (2026-02-21).
+- Siguiente paso: mantener logging cliente enfocado en consola local y evitar reintroducir transporte remoto salvo necesidad operativa demostrada.
+- Siguiente accion interna ejecutable ahora: continuar con las tareas P0 abiertas de integracion backend/Chatwoot segun prioridad del tablero.
+- Decision tomada (B-Arquitectura): eliminar completamente la capa de logging cliente configurable (`VITE_CLIENT_LOG_LEVEL` + logger dedicado) para reducir complejidad y configuracion no esencial.
+- Avance: `contactHooks` removio todas las invocaciones de logging estructurado sin alterar el flujo funcional de submit/contacto.
+- Avance: eliminado modulo `src/ui/logging/contactClientLogger.ts` y su prueba unitaria asociada.
+- Avance: eliminado `VITE_CLIENT_LOG_LEVEL` de tipado de entorno y plantilla `.env.example`.
+- Evidencia: `src/ui/features/contact/contactHooks.ts`, `src/ui/logging/contactClientLogger.ts` (eliminado), `tests/unit/ui/contactClientLogger.test.ts` (eliminado), `src/env.d.ts`, `.env.example`.
+- Siguiente paso: ejecutar bateria obligatoria secuencial y validar merge-readiness.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:security`, `npm run test:a11y`, `npm run check:css`, `npm run quality:responsive`, `npm run quality:mobile`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.
+- Evidencia: `npm run lint:security` OK (2026-02-21).
+- Evidencia: `npm run test:a11y` OK (2026-02-21).
+- Evidencia: `npm run check:css` OK (2026-02-21).
+- Evidencia: `npm run quality:responsive` OK (2026-02-21). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-21).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-21). Cobertura global: lines 83.00%, statements 82.39%, functions 81.60%, branches 74.03%.
+- Evidencia: `npm run quality:merge` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
+- Siguiente paso: mantener flujo de contacto sin capa de logging cliente dedicada salvo requerimiento operativo nuevo.
+- Siguiente accion interna ejecutable ahora: continuar con tareas P0 abiertas de backend/operacion segun tablero.
