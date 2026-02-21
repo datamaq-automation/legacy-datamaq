@@ -317,7 +317,7 @@ jobs:
 
           until [ "${ATTEMPT}" -gt "${MAX_ATTEMPTS}" ]; do
             echo "::notice::FTPS upload attempt ${ATTEMPT}/${MAX_ATTEMPTS}"
-            if timeout 900 lftp -e "set cmd:fail-exit true; set net:timeout 30; set net:max-retries 5; set net:persist-retries 1; set net:reconnect-interval-base 5; set net:reconnect-interval-max 30; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; mirror -R --continue --delete --verbose dist \"${REMOTE_DIR}\"; bye"
+            if timeout 900 lftp -e "set cmd:fail-exit true; set net:timeout 30; set net:max-retries 5; set net:persist-retries 1; set net:reconnect-interval-base 5; set net:reconnect-interval-max 30; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; set cmd:fail-exit false; rm -f \"${REMOTE_DIR}/w\"; set cmd:fail-exit true; mirror -R --continue --delete --verbose dist \"${REMOTE_DIR}\"; bye"
             then
               echo "::notice::FTPS upload completed on attempt ${ATTEMPT}"
               exit 0

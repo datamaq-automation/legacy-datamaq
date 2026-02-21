@@ -428,3 +428,8 @@
 - Evidencia tecnica de causa raiz `/w`: antes del fix, `build` dejaba `C:/AppServ/www/w` como archivo (PSIsContainer=False) por generacion SSG de ruta `/w`; despues del fix, `C:/AppServ/www/w` queda como directorio (PSIsContainer=True) y existe `C:/AppServ/www/w/index.html`.
 - Siguiente paso: desplegar artefacto actualizado y validar en produccion `https://datamaq.com/w` (debe renderizar/redirect, no descargar archivo).
 - Siguiente accion interna ejecutable ahora: mantener `/w` como pagina estatica en `public/w/index.html` y evitar reintroducir ruta SSG homonima en `src/router/routes.ts`.
+- Mitigacion interna ejecutada: deploy FTPS bloqueado por colision de path legado (`w` archivo remoto vs `w/` directorio nuevo). Se agrega pre-limpieza no fatal en upload: `rm -f "${REMOTE_DIR}/w"` antes de `mirror -R` para permitir migracion de archivo a directorio.
+- Decision tomada (B-Deploy): mantener deploy idempotente sin pasos manuales en servidor, resolviendo conflicto de tipo de nodo remoto dentro del mismo job.
+- Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` (step `Deploy dist via FTPS`, comando `lftp -e ...`).
+- Siguiente paso: re-ejecutar workflow y validar que `w` se cree como directorio remoto en el primer intento.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para confirmar trazabilidad.
