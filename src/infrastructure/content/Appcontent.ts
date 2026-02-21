@@ -1,5 +1,5 @@
 /*
-Path: src/infrastructure/content/content.ts
+Path: src/infrastructure/content/Appcontent.ts
 */
 
 import type { AppContent, CommercialConfig } from '@/domain/types/content'
@@ -11,13 +11,20 @@ import teamTraining from '@/assets/team-training.svg'
 
 export const PRICE_FALLBACK_LABEL = 'Consultar al WhatsApp'
 
+// CEO rule:
+// - Publicamos 1 solo precio (Diagnóstico) como filtro fuerte.
+// - Ese precio SIEMPRE viene del backend.
+// - Fallback universal: "Consultar al WhatsApp".
 export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garín (GBA Norte)',
+
+  // No publicamos "desde" ni tarifas base en web
   tarifaBaseDesdeARS: null,
   trasladoMinimoARS: null,
+
   whatsappUrl: 'https://wa.me/5491156297160',
 
-  // Diagnóstico (publicado)
+  // Diagnóstico (único precio público) — SIEMPRE desde backend
   visitaDiagnosticoHasta2hARS: null,
   diagnosticoHoraAdicionalARS: null,
 
@@ -34,24 +41,27 @@ export const commercialConfig: CommercialConfig = {
 export const content: AppContent = buildAppContent(commercialConfig)
 
 export function buildAppContent(config: CommercialConfig): AppContent {
-  const TARIFA_BASE = formatARSWithFallback(config.tarifaBaseDesdeARS)
-  const VISITA_DIAG_2H = formatARSWithFallback(config.visitaDiagnosticoHasta2hARS)
-
   const BASE = config.baseOperativa
   const POWERMETER = config.equipos.medidorNombre
   const AUTOMATE = config.equipos.automateNombre
   const WHATSAPP_URL = config.whatsappUrl
 
-  const TRASLADO_TEXT = ` (${PRICE_FALLBACK_LABEL})`
-  const DIAG_HORA_ADICIONAL_TEXT = PRICE_FALLBACK_LABEL
-  const DIAG_DISCOUNT_NOTE = `${PRICE_FALLBACK_LABEL}: se descuenta del total si aprobás el presupuesto.`
+  // Pricing display policy
+  const LISTA_DIAG_2H = formatARSWithFallback(config.visitaDiagnosticoHasta2hARS) // único precio público (desde backend)
+  const CONSULTAR = PRICE_FALLBACK_LABEL
+
+  // Copy rules
+  const TRASLADO_TEXT = ` (${CONSULTAR})`
+  const DIAG_EXCEDENTE_TEXT = 'Excedentes y trabajos de intervención: se cotizan según alcance y condiciones.'
+  const DIAG_COTIZADOR_NOTE =
+    'Precio de lista. El cotizador puede aplicar descuentos si se cumplen condiciones operativas (turno programado, acceso listo, baja burocracia, ventana segura confirmada).'
 
   return {
     hero: {
-      badge: 'Tarifa base publicada · Respuesta en menos de 24 horas hábiles (L–V 08 a 16)',
-      title: 'Servicios industriales prolijos, seguros y documentados',
-      subtitle: `Instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico industrial. Checklist previo, verificación final y cierre documentado en cada visita.`,
-      responseNote: `Respuesta en menos de 24 horas hábiles (L–V 08 a 16) · Tarifa base desde ${TARIFA_BASE} con alcance incluido · Condiciones por distancia desde ${BASE}${TRASLADO_TEXT} · Cobertura AMBA (prioridad GBA Norte)`,
+      badge: 'Criterio técnico · Seguridad primero · Cierre documentado',
+      title: 'Diagnóstico y control industrial, sin improvisación',
+      subtitle: `Instalación de ${POWERMETER}/${AUTOMATE} y diagnóstico eléctrico industrial con método: checklist, verificación final y handoff documentado en cada visita.`,
+      responseNote: `Modelo de trabajo: primero diagnóstico en planta → luego intervención con alcance claro. Base: ${BASE}${TRASLADO_TEXT}. Cobertura AMBA (prioridad GBA Norte).`,
       primaryCta: {
         label: 'Coordinar diagnóstico por WhatsApp',
         action: 'whatsapp',
@@ -63,18 +73,18 @@ export function buildAppContent(config: CommercialConfig): AppContent {
       },
       benefits: [
         {
-          title: 'Tarifa base clara',
-          text: `Instalación industrial de 1 equipo (${POWERMETER} o ${AUTOMATE}) desde ${TARIFA_BASE}, con alcance y condiciones explicitadas antes de intervenir.`,
+          title: 'Diagnóstico como primer paso',
+          text: `Diagnóstico técnico en planta (hasta 2 horas): ${LISTA_DIAG_2H}. Incluye registro e informe breve con hallazgos y próximos pasos.`,
           variant: 'success'
         },
         {
-          title: 'Implementación documentada',
-          text: 'Checklist de trabajo, registro de cambios, verificación de lectura/función de referencia y cierre técnico con observaciones.',
+          title: 'Ejecución presentable para terceros (B2B2B)',
+          text: 'Trabajo prolijo y documentado, ideal para proveedores e integradores que necesitan evidencias, checklist y cierre técnico claro.',
           variant: 'primary'
         },
         {
           title: 'Seguridad primero',
-          text: 'Si el tablero no permite intervenir con seguridad, se propone adecuación mínima con tablero desenergizado y se reprograma.',
+          text: 'Si no hay condiciones para intervenir con seguridad, se documenta, se propone adecuación mínima con tablero desenergizado y se reprograma.',
           variant: 'warning'
         }
       ],
@@ -92,8 +102,7 @@ export function buildAppContent(config: CommercialConfig): AppContent {
         {
           id: 'instalacion',
           title: `Instalación industrial de 1 equipo (${POWERMETER} o ${AUTOMATE}) (equipo provisto por el cliente)`,
-          description:
-            `Relevamos el tablero, instalamos el ${POWERMETER}/${AUTOMATE} y dejamos la medición/función operativa con verificación final y documentación.`,
+          description: `Relevamos el tablero, instalamos el ${POWERMETER}/${AUTOMATE} y dejamos la medición/función operativa con verificación final y documentación.`,
           subtitle: 'Incluye',
           media: {
             src: installTools,
@@ -112,10 +121,10 @@ export function buildAppContent(config: CommercialConfig): AppContent {
             alt: `Ilustración de medidor ${POWERMETER}`,
             width: 220,
             height: 140,
-            caption: `Tarifa base desde ${TARIFA_BASE} (1 equipo: ${POWERMETER} o ${AUTOMATE}). Traslado según distancia desde ${BASE}${TRASLADO_TEXT}. Equipo provisto por el cliente.`
+            caption: `Precio: ${CONSULTAR}. Traslado según distancia desde ${BASE}${TRASLADO_TEXT}. Equipo provisto por el cliente.`
           },
           cta: {
-            label: 'Cotizar por WhatsApp',
+            label: 'Consultar por WhatsApp',
             action: 'whatsapp',
             href: WHATSAPP_URL,
             section: 'servicios-instalacion'
@@ -124,7 +133,7 @@ export function buildAppContent(config: CommercialConfig): AppContent {
 
         {
           id: 'diagnostico',
-          title: 'Visita técnica de diagnóstico en planta (hasta 2 horas)',
+          title: 'Diagnóstico técnico en planta (hasta 2 horas)',
           description:
             'Diagnóstico en campo para fallas intermitentes o críticas: medición, prueba, aislamiento del problema y propuesta de corrección.',
           subtitle: 'Resultado',
@@ -136,19 +145,19 @@ export function buildAppContent(config: CommercialConfig): AppContent {
           },
           items: [
             'Diagnóstico con instrumental y método de descarte.',
-            'Identificación de causa probable y plan de reparación inmediato o programado.',
-            'Registro de hallazgos y recomendaciones para prevenir recurrencia.'
+            'Identificación de causa probable y plan de corrección (inmediato o programado).',
+            'Registro de hallazgos + recomendaciones para prevenir recurrencia.'
           ],
-          note: `Precio: ${VISITA_DIAG_2H} (hasta 2 horas). Excedente: ${DIAG_HORA_ADICIONAL_TEXT}. ${DIAG_DISCOUNT_NOTE} Si el tablero no permite intervenir con seguridad, se propone adecuación mínima con tablero desenergizado y se reprograma.`,
+          note: `Precio de lista: ${LISTA_DIAG_2H} (hasta 2 horas). ${DIAG_EXCEDENTE_TEXT} ${DIAG_COTIZADOR_NOTE} Seguridad primero: si el tablero no permite intervenir con seguridad, se documenta y se reprograma.`,
           figure: {
             src: analyticsDashboard,
             alt: 'Ilustración de mediciones y checklist',
             width: 160,
             height: 140,
-            caption: 'Cobertura AMBA (prioridad GBA Norte). Respuesta en <24h hábiles (L–V 08 a 16).'
+            caption: 'Cobertura AMBA (prioridad GBA Norte). Coordinación por WhatsApp.'
           },
           cta: {
-            label: 'Coordinar visita por WhatsApp',
+            label: 'Coordinar diagnóstico por WhatsApp',
             action: 'whatsapp',
             href: WHATSAPP_URL,
             section: 'servicios-diagnostico'
@@ -169,7 +178,7 @@ export function buildAppContent(config: CommercialConfig): AppContent {
     about: {
       title: 'Sobre DataMaq',
       paragraphs: [
-        `DataMaq brinda servicios técnicos para industria: instalación de ${POWERMETER}/${AUTOMATE}, diagnóstico eléctrico y asistencia en campo con criterio operativo.`,
+        `DataMaq brinda servicios técnicos para industria: diagnóstico eléctrico, instalación de ${POWERMETER}/${AUTOMATE} y asistencia en campo con criterio operativo.`,
         `Base operativa: ${BASE}. Cobertura: AMBA (prioridad GBA Norte). Fuera de AMBA: consultar.`,
         'Oferta ampliada para industria gráfica: mantenimiento y reparación de maquinaria en alcance eléctrico/electrónico y control (sin mecánica), con decisiones técnicas basadas en datos reales.'
       ],
@@ -193,11 +202,11 @@ export function buildAppContent(config: CommercialConfig): AppContent {
     },
 
     footer: {
-      note: `Base: ${BASE} · AMBA (prioridad GBA Norte) · Instalación ${POWERMETER}/${AUTOMATE} · Diagnóstico en planta · Documentación y handoff`
+      note: `Base: ${BASE} · AMBA (prioridad GBA Norte) · Diagnóstico en planta · Instalación ${POWERMETER}/${AUTOMATE} · Documentación y handoff`
     },
 
     legal: {
-      text: `La tarifa base publicada corresponde a la instalación de 1 equipo (${POWERMETER} o ${AUTOMATE}) provisto por el cliente, e incluye verificación de lectura/función de referencia al finalizar y cierre documentado. El traslado se cotiza según distancia desde ${BASE}${TRASLADO_TEXT}. La visita técnica de diagnóstico en planta (hasta 2 horas) tiene un precio publicado de ${VISITA_DIAG_2H}; el excedente se cobra a ${DIAG_HORA_ADICIONAL_TEXT}, y ${DIAG_DISCOUNT_NOTE} Si el tablero/instalación requiere adecuaciones mínimas de seguridad, se informa y presupuesta antes de intervenir (con ventana para desenergizar). En casos particulares que requieran intervención o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
+      text: `DataMaq compite por criterio técnico: primero se realiza un diagnóstico en planta para definir alcance, riesgos y próximos pasos. El único precio publicado es el Diagnóstico técnico en planta (hasta 2 horas): ${LISTA_DIAG_2H}. Si el backend no está disponible, el sitio mostrará "${CONSULTAR}". El precio mostrado es de lista y el cotizador puede aplicar descuentos si se cumplen condiciones operativas (por ejemplo: turno programado, acceso listo, baja burocracia, ventana segura confirmada). Excedentes y trabajos de intervención se cotizan según alcance. Seguridad primero: si al llegar no están dadas las condiciones seguras (acceso, permisos, ventana, desenergización cuando aplica), se documenta el estado y se reprograma. El traslado se coordina según distancia desde ${BASE}${TRASLADO_TEXT}. En casos particulares que requieran intervención o firmas habilitantes, se coordina con profesional matriculado. Las cookies de analítica (GA4 y Clarity) se habilitan únicamente tras tu consentimiento explícito.`
     },
 
     contact: {
@@ -227,6 +236,13 @@ export function buildAppContent(config: CommercialConfig): AppContent {
   }
 }
 
-function formatARSWithFallback(_value: number | null): string {
-  return PRICE_FALLBACK_LABEL
+function formatARSWithFallback(value: number | null): string {
+  if (value == null || Number.isNaN(value) || value < 0) return PRICE_FALLBACK_LABEL
+  return formatARS(value)
+}
+
+function formatARS(value: number): string {
+  const rounded = Math.round(value)
+  const withThousands = String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  return `ARS ${withThousands}`
 }
