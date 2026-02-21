@@ -94,9 +94,6 @@ jobs:
       - build-smoke-e2e
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     environment: production
-    outputs:
-      contact_endpoint: ${{ steps.prepare.outputs.contact_endpoint }}
-      mail_endpoint: ${{ steps.prepare.outputs.mail_endpoint }}
 
     steps:
       - name: Validate deploy inputs
@@ -121,9 +118,6 @@ jobs:
             echo "::error::Invalid backend base URL. It must start with https://."
             exit 1
           fi
-
-          CONTACT_ENDPOINT="${BACKEND_BASE_URL%/}/api/contact"
-          MAIL_ENDPOINT="${BACKEND_BASE_URL%/}/api/mail"
 
           if [ -z "${FTPS_SERVER}" ]; then
             echo "::error::Missing secret FTPS_SERVER"
@@ -181,8 +175,6 @@ jobs:
             exit 1
           fi
 
-          echo "contact_endpoint=${CONTACT_ENDPOINT}" >> "${GITHUB_OUTPUT}"
-          echo "mail_endpoint=${MAIL_ENDPOINT}" >> "${GITHUB_OUTPUT}"
           echo "::notice::Deploy target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
 
   deploy-build:
@@ -280,7 +272,6 @@ jobs:
           set ssl:verify-certificate true
           set ssl:check-hostname true
           open -u "${FTPS_USERNAME}","${FTPS_PASSWORD}" -p "${PORT}" "${SERVER_HOST}"
-          mkdir -p "${REMOTE_DIR}"
           cd "${REMOTE_DIR}"
           pwd
           bye
