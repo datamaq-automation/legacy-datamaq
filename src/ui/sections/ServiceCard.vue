@@ -22,15 +22,38 @@ Path: src/ui/sections/ServiceCard.vue
           <p class="text-secondary mb-3 c-services__card-text">
             {{ card.description }}
           </p>
-          <h4 class="h6 text-uppercase text-secondary fw-semibold mb-2 c-services__subtitle">{{ card.subtitle }}</h4>
-          <ul class="small mb-3 ps-3 c-services__list">
-            <li v-for="(item, index) in card.items" :key="`${card.id}-item-${index}`" class="mb-2 c-services__list-item">
-              <span class="text-body-secondary c-services__list-text">{{ item }}</span>
-            </li>
-          </ul>
-          <p v-if="card.note" class="small text-secondary mb-3 c-services__note">
-            {{ card.note }}
-          </p>
+          <section
+            class="c-services__scope mb-3"
+            :id="detailsId"
+            :class="{ 'c-services__scope--collapsed': !detailsExpanded }"
+            :aria-label="`${card.subtitle}: detalle del alcance`"
+          >
+            <h4 class="h6 text-uppercase text-secondary fw-semibold mb-2 c-services__subtitle">
+              {{ card.subtitle }}
+            </h4>
+            <ul class="small mb-3 ps-3 c-services__list">
+              <li
+                v-for="(item, index) in card.items"
+                :key="`${card.id}-item-${index}`"
+                class="mb-2 c-services__list-item"
+              >
+                <span class="text-body-secondary c-services__list-text">{{ item }}</span>
+              </li>
+            </ul>
+            <p v-if="card.note" class="small text-secondary mb-0 c-services__note">
+              {{ card.note }}
+            </p>
+          </section>
+          <button
+            v-if="isCollapsible"
+            type="button"
+            class="btn btn-outline-light c-services__details-toggle d-md-none mb-3"
+            :aria-expanded="detailsExpanded ? 'true' : 'false'"
+            :aria-controls="detailsId"
+            @click="toggleDetails"
+          >
+            {{ detailsExpanded ? 'Ocultar detalle' : 'Ver detalle' }}
+          </button>
           <div class="mt-auto c-cta-stack c-services__cta">
             <div class="c-cta-stack__item">
               <button
@@ -60,7 +83,7 @@ Path: src/ui/sections/ServiceCard.vue
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { ServiceCardContent } from '@/domain/types/content'
 
 const props = defineProps<{
@@ -77,11 +100,17 @@ const installationChips = [
   'Equipo provisto por el cliente',
   'Instalacion tipica ~4h'
 ]
+const detailsExpanded = ref(false)
 const showChips = computed(() => props.card.id === 'instalacion')
+const isCollapsible = computed(() => props.card.items.length > 2 || Boolean(props.card.note))
+const detailsId = computed(() => `service-card-details-${props.card.id}`)
 
 function handleWhatsAppClick(href: string, section: string) {
   // Abrir directamente sin emit para evitar openWhatsApp fallback
   window.open(href, '_blank')
 }
-</script>
 
+function toggleDetails() {
+  detailsExpanded.value = !detailsExpanded.value
+}
+</script>

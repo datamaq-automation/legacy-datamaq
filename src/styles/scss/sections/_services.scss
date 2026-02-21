@@ -1,93 +1,65 @@
 .c-services {
   scroll-margin-top: var(--sticky-header-offset, 5rem);
+  padding-top: 4.4rem;
+  border-top: 1px solid rgba(var(--dm-border-0-rgb), 0.48);
 
   &__title {
     letter-spacing: var(--ui-letter-spacing-sm);
+    font-size: clamp(1.95rem, 1.35rem + 1.7vw, 2.7rem);
+    line-height: 1.1;
   }
 
-  &__panel {
-    border: 1px solid rgba(var(--dm-border-0-rgb), 0.28);
-    border-radius: 1rem;
-    background: rgba(var(--dm-bg-1-rgb), 0.88);
-    box-shadow: 0 1rem 2rem rgba(var(--dm-shadow-rgb), 0.2);
+  &__intro {
+    max-width: 62ch;
+    line-height: 1.6;
+    color: rgba(var(--dm-text-0-rgb), 0.82);
   }
 
-  &__media {
-    flex-shrink: 0;
-  }
-
-  &__media-image {
-    display: block;
-    max-height: 140px;
-    width: auto;
-    margin-inline: auto;
-    object-fit: contain;
+  &__scope {
+    border-top: 1px solid rgba(var(--dm-border-0-rgb), 0.44);
+    padding-top: 0.78rem;
   }
 
   &__note {
-    line-height: 1.55;
-  }
-
-  &__alert {
-    margin-top: 1rem;
-  }
-
-  &__card-title {
-    letter-spacing: var(--ui-letter-spacing-sm);
-  }
-
-  &__card-text {
-    color: var(--mobile-card-text);
-  }
-
-  &__subtitle {
-    letter-spacing: var(--ui-letter-spacing-sm);
-  }
-
-  &__list-text {
-    line-height: 1.5;
+    line-height: 1.54;
+    border-top: 1px dashed rgba(var(--dm-border-0-rgb), 0.58);
+    padding-top: 0.64rem;
   }
 
   &__cta-button {
     letter-spacing: var(--ui-letter-spacing-sm);
-    min-height: 2.75rem;
+    min-height: 2.9rem;
   }
 
-  &__chips .c-ui-chip {
-    font-weight: 600;
-  }
 }
 
 @media (max-width: 767.98px) {
   .c-services {
     scroll-margin-top: calc(var(--sticky-header-offset, 5rem) + 0.5rem);
+    padding-top: calc(var(--section-mobile-padding) + 0.7rem);
   }
 
   .c-services__title {
-    margin-bottom: 1.9rem;
+    margin-bottom: 0.9rem;
+    font-size: clamp(1.62rem, 7vw, 2rem);
   }
 
-  .c-services__panel-body {
-    padding: 1.1rem;
-  }
-
-  .c-services__card-title {
-    font-size: 1.04rem;
-    line-height: 1.35;
-  }
-
-  .c-services__card-text {
+  .c-services__intro {
+    margin-bottom: 1.72rem;
+    max-width: 35ch;
     font-size: 0.96rem;
-    line-height: 1.5;
+    line-height: 1.58;
+  }
+
+  .c-services__scope--collapsed .c-services__list-item:nth-child(n + 3) {
+    display: none;
+  }
+
+  .c-services__scope--collapsed .c-services__note {
+    display: none;
   }
 
   .c-services__cta-button {
     min-height: 3rem;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .c-services__chips li:nth-child(n + 3) {
-    display: none;
   }
 }

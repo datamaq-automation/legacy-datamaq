@@ -84,3 +84,23 @@
   - Evidencia: npm run lint:todo-sync:merge-ready OK (2026-02-21) cierre merge-ready del turno.
   - Siguiente paso: entregar diff PR-ready con resumen de cambios UX/UI y accesibilidad en Hero/FAB.
   - Siguiente accion interna ejecutable ahora: compartir resultados para revision final.
+  - Decision tomada (B-Vue): para mejorar escaneabilidad sin librerias nuevas, los detalles largos de cada card se colapsan solo en mobile mediante toggle accesible en `ServiceCard.vue`.
+  - Avance: `src/ui/sections/ServiciosSection.vue` refuerza jerarquia con subtitulo breve bajo `H2` y mantiene semantica (unico `H1` permanece en Hero).
+  - Avance: `src/styles/scss/sections/_services.scss` incrementa separacion Hero->Servicios, agrega separador visual sutil, mejora ritmo tipografico y reduce densidad de cards.
+  - Avance: `src/styles/scss/sections/_whatsapp-fab.scss` ajusta tamano desktop y transiciones suaves, preservando safe-area y comportamiento mobile.
+  - Siguiente paso: ejecutar validaciones obligatorias de seguridad, a11y, CSS budget, responsive, mobile, cobertura y merge.
+  - Siguiente accion interna ejecutable ahora: correr npm run lint:security.
+  - Mitigacion interna ejecutada: check:css excedio presupuesto en iteraciones intermedias durante el refinamiento de Servicios/FAB; se compactaron reglas no criticas hasta recuperar budget.
+  - Evidencia: npm run lint:security OK (2026-02-21).
+  - Evidencia: npm run test:a11y OK (2026-02-21) sobre estado final de Servicios/FAB.
+  - Evidencia: npm run check:css OK (2026-02-21). CSS budget: 224986 bytes <= 225000 bytes.
+  - Evidencia: npm run quality:responsive OK (2026-02-21). Etapas en verde: XS -> SM -> MD -> LG.
+  - Evidencia: npm run quality:mobile OK (2026-02-21).
+  - Evidencia: npm run lint:test-coverage OK (2026-02-21). Cobertura global: lines 83.03%, statements 82.43%, functions 81.64%, branches 73.84%.
+  - Evidencia: npm run quality:merge OK (2026-02-21) con quality:gate + quality:responsive + quality:mobile en verde.
+  - Siguiente paso: cerrar compliance final del turno con npm run lint:todo-sync y npm run lint:todo-sync:merge-ready.
+  - Siguiente accion interna ejecutable ahora: correr npm run lint:todo-sync:merge-ready.
+  - Evidencia: npm run lint:todo-sync OK (2026-02-21) cierre de trazabilidad del turno.
+  - Evidencia: npm run lint:todo-sync:merge-ready OK (2026-02-21) cierre merge-ready del turno.
+  - Siguiente paso: entregar diff PR-ready con resumen de mejoras en Servicios y FAB.
+  - Siguiente accion interna ejecutable ahora: compartir resultados para revision final.
