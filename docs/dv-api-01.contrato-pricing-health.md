@@ -6,6 +6,8 @@
 - Validacion en frontend:
   - En desarrollo (`DEV`): acepta `http://` o `https://`
   - En produccion: exige `https://`
+  - Bypass local controlado: en no-DEV, `VITE_ALLOW_INSECURE_BACKEND=true` solo habilita `http://localhost`, `http://127.0.0.1` o `http://[::1]`
+  - Si `VITE_ALLOW_INSECURE_BACKEND` no esta definido o vale `false`, se mantiene validacion estricta (`https://`) fuera de `DEV`
 - Endpoints de este contrato:
   - `GET ${VITE_BACKEND_BASE_URL}/v1/public/pricing`
   - `GET ${VITE_BACKEND_BASE_URL}/v1/health`
