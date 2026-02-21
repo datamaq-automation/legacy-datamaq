@@ -13,10 +13,5 @@
     "name": "medicion-consumo-escobar",
     "path": "/medicion-consumo-electrico-escobar",
     "indexable": true
-  },
-  {
-    "name": "whatsapp-redirect",
-    "path": "/w",
-    "indexable": false
   }
 ]

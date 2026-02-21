@@ -411,3 +411,20 @@
 - Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` actualizado en steps `Validate DNS and remote dir access` y `Deploy dist via FTPS`.
 - Siguiente paso: re-ejecutar workflow remoto y verificar que el step de upload pase parseo de shell y avance a transferencia.
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para validar trazabilidad del tablero.
+- Avance: segundo ajuste incremental de alineacion canvas en `src/infrastructure/content/content.ts` (un solo cambio): `contact.subtitle` ahora explicita captura de email para seguimiento comercial + WhatsApp para coordinacion rapida, coherente con canal directo web/email del modelo de negocio.
+- Evidencia: `src/infrastructure/content/content.ts`.
+- Siguiente paso: mantener alineacion incremental en proximos cambios (uno por turno) sin ampliar alcance.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:security`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.
+- Mitigacion interna ejecutada: identificado y corregido conflicto de artefactos en build para `/w`. La ruta SPA/SSG `/w` generaba archivo estatico `w` (sin extension) y sobrescribia el fallback `public/w/index.html`, provocando descarga en hosting segun MIME.
+- Decision tomada (B-Arquitectura): para robustez multi-hosting sin depender de reglas server-side, se quita `/w` del router SSG y se mantiene ruta corta via recurso estatico `public/w/index.html`.
+- Avance: removida ruta `whatsapp-redirect` de `src/router/routes.ts` y metadata asociada en `src/seo/routes.json`.
+- Evidencia: `src/router/routes.ts`, `src/seo/routes.json`, `public/w/index.html`.
+- Siguiente paso: validar build generado en salida deploy para confirmar que `w` es directorio (`w/index.html`) y no archivo plano.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:security`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.
+- Evidencia: `npm run lint:security` OK (2026-02-21).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-21). Cobertura global: lines 83.04%, statements 82.43%, functions 81.74%, branches 74.03%.
+- Evidencia: `npm run quality:merge` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
+- Evidencia tecnica de causa raiz `/w`: antes del fix, `build` dejaba `C:/AppServ/www/w` como archivo (PSIsContainer=False) por generacion SSG de ruta `/w`; despues del fix, `C:/AppServ/www/w` queda como directorio (PSIsContainer=True) y existe `C:/AppServ/www/w/index.html`.
+- Siguiente paso: desplegar artefacto actualizado y validar en produccion `https://datamaq.com/w` (debe renderizar/redirect, no descargar archivo).
+- Siguiente accion interna ejecutable ahora: mantener `/w` como pagina estatica en `public/w/index.html` y evitar reintroducir ruta SSG homonima en `src/router/routes.ts`.

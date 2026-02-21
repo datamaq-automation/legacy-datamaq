@@ -206,7 +206,7 @@ export const content: AppContent = {
   contact: {
     title: 'Contacto',
     subtitle:
-      'Por ahora el formulario registra tu consulta (no envía correo automático). Si necesitás respuesta rápida, escribinos por WhatsApp.',
+      'Dejanos tu email y consulta para seguimiento comercial, o escribinos por WhatsApp si necesitás coordinación rápida.',
     labels: {
       email: 'Correo electrónico',
       message: 'Mensaje'

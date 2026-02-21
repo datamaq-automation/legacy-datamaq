@@ -6,7 +6,6 @@ const metadataByName = new Map(routeMetadata.map((route) => [route.name, route])
 const homeMeta = metadataByName.get('home')
 const thanksMeta = metadataByName.get('thanks')
 const medicionEscobarMeta = metadataByName.get('medicion-consumo-escobar')
-const whatsappRedirectMeta = metadataByName.get('whatsapp-redirect')
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -34,15 +33,6 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       indexable: medicionEscobarMeta?.indexable ?? true,
       name: medicionEscobarMeta?.name
-    }
-  },
-  {
-    path: whatsappRedirectMeta?.path ?? '/w',
-    name: 'whatsapp-redirect',
-    component: () => import('@/ui/views/WhatsAppRedirectView.vue'),
-    meta: {
-      indexable: whatsappRedirectMeta?.indexable ?? false,
-      name: whatsappRedirectMeta?.name
     }
   }
 ]
