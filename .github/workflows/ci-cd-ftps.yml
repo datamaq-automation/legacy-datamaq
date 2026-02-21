@@ -214,7 +214,7 @@ jobs:
   deploy-ftps-preflight:
     name: Deploy / FTPS Preflight
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 4
     needs:
       - deploy-prepare
       - deploy-build
@@ -260,12 +260,12 @@ jobs:
             exit 1
           fi
 
-          timeout 180 lftp -e "set cmd:fail-exit true; set net:timeout 30; set net:max-retries 5; set net:reconnect-interval-base 5; set net:reconnect-interval-max 30; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv false; set ftp:fix-pasv-address true; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; pwd; bye"
+          timeout 90 lftp -e "set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set net:reconnect-interval-base 3; set net:reconnect-interval-max 5; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv false; set ftp:fix-pasv-address true; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; pwd; bye"
 
   deploy-ftps-upload:
     name: Deploy / FTPS Upload
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 6
     needs:
       - deploy-prepare
       - deploy-ftps-preflight
@@ -312,24 +312,44 @@ jobs:
             REMOTE_DIR="/${REMOTE_DIR}"
           fi
 
-          ATTEMPT=1
-          MAX_ATTEMPTS=5
+          echo "::notice::FTPS upload attempt 1/1 (fail-fast mode)"
+          LOG_FILE="$(mktemp)"
+          LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set net:reconnect-interval-base 3; set net:reconnect-interval-max 5; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv false; set ftp:fix-pasv-address true; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; set cmd:fail-exit false; rm -f \"${REMOTE_DIR}/w\"; set cmd:fail-exit true; mirror -R --continue --delete --verbose dist \"${REMOTE_DIR}\"; bye"
 
-          until [ "${ATTEMPT}" -gt "${MAX_ATTEMPTS}" ]; do
-            echo "::notice::FTPS upload attempt ${ATTEMPT}/${MAX_ATTEMPTS}"
-            if timeout 1200 lftp -e "set cmd:fail-exit true; set net:timeout 45; set net:max-retries 10; set net:persist-retries 1; set net:reconnect-interval-base 5; set net:reconnect-interval-max 60; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv false; set ftp:fix-pasv-address true; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; set cmd:fail-exit false; rm -f \"${REMOTE_DIR}/w\"; set cmd:fail-exit true; mirror -R --continue --delete --verbose dist \"${REMOTE_DIR}\"; bye"
-            then
-              echo "::notice::FTPS upload completed on attempt ${ATTEMPT}"
-              exit 0
-            fi
+          set +e
+          timeout 180 lftp -e "${LFTP_COMMAND}" >"${LOG_FILE}" 2>&1
+          UPLOAD_STATUS=$?
+          set -e
 
-            if [ "${ATTEMPT}" -eq "${MAX_ATTEMPTS}" ]; then
-              echo "::error::FTPS upload failed after ${MAX_ATTEMPTS} attempts."
-              exit 1
-            fi
+          cat "${LOG_FILE}"
 
-            ATTEMPT=$((ATTEMPT + 1))
-            BACKOFF_SECONDS=$((15 * (ATTEMPT - 1)))
-            echo "::warning::FTPS upload attempt failed. Retrying in ${BACKOFF_SECONDS} seconds..."
-            sleep "${BACKOFF_SECONDS}"
-          done
+          if [ "${UPLOAD_STATUS}" -eq 0 ]; then
+            echo "::notice::FTPS upload completed in single-attempt mode."
+            exit 0
+          fi
+
+          if [ "${UPLOAD_STATUS}" -eq 124 ]; then
+            echo "::error::FTPS upload timed out after 180 seconds."
+          fi
+
+          if grep -Eqi 'Login failed|530[[:space:]]' "${LOG_FILE}"; then
+            echo "::error::FTPS authentication failed. Validate FTPS_USERNAME/FTPS_PASSWORD."
+          fi
+          if grep -Eqi 'Name or service not known|Temporary failure in name resolution|Could not resolve host' "${LOG_FILE}"; then
+            echo "::error::FTPS server DNS resolution failed. Validate FTPS_SERVER."
+          fi
+          if grep -Eqi 'certificate|TLS|SSL|handshake|hostname does not match' "${LOG_FILE}"; then
+            echo "::error::FTPS TLS validation failed. Validate certificate and hostname."
+          fi
+          if grep -Eqi 'cd: Access failed|550[[:space:]].*No such file|No such file or directory|Permission denied' "${LOG_FILE}"; then
+            echo "::error::FTPS remote path access failed. Validate FTPS_REMOTE_DIR and user permissions."
+          fi
+          if grep -Eqi '425[[:space:]]|Connection refused|Network is unreachable|Connection reset|timed out|max-retries exceeded' "${LOG_FILE}"; then
+            echo "::error::FTPS network/data channel failure. Validate passive mode, firewall or hosting stability."
+          fi
+
+          echo "::group::FTPS failure tail (last 40 lines)"
+          tail -n 40 "${LOG_FILE}" || true
+          echo "::endgroup::"
+          echo "::error::FTPS upload failed in single-attempt mode. Review the diagnostic errors above."
+          exit 1

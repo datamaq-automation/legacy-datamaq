@@ -439,3 +439,11 @@
 - Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` (jobs `deploy-ftps-preflight` y `deploy-ftps-upload`).
 - Siguiente paso: relanzar workflow y observar si upload converge dentro de 5 intentos con backoff.
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync`.
+- Mitigacion interna ejecutada: deploy FTPS ajustado a modo fail-fast para reducir espera operativa y aislar causa de error en el primer fallo.
+- Decision tomada (B-Deploy): ejecutar un unico intento de upload (`1/1`) con timeout corto y sin backoff, priorizando tiempo de feedback y trazabilidad de causa raiz sobre resiliencia por reintentos automaticos.
+- Avance: `Deploy / FTPS Preflight` reduce timeout de job a 4 minutos y timeout de comando a 90s (`net:timeout 20`, `net:max-retries 1`) para cortar rapido cuando hay DNS/auth/path no validos.
+- Avance: `Deploy / FTPS Upload` reduce timeout de job a 6 minutos y timeout de transferencia a 180s, elimina bucle de `MAX_ATTEMPTS` y mantiene un solo intento.
+- Avance: se agrega diagnostico estructurado post-fallo en upload con clasificacion de errores por categoria (`auth`, `DNS`, `TLS/cert`, `remote_dir/permisos`, `canal de datos/red`) y tail dedicado de logs para investigacion inmediata.
+- Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` (jobs `deploy-ftps-preflight` y `deploy-ftps-upload`, step `Deploy dist via FTPS`). Impacto esperado en produccion: fallo visible en menos tiempo y mensaje accionable para corregir secreto/red/directorio sin esperar reintentos largos.
+- Siguiente paso: validar corrida remota para confirmar que el nuevo modo fail-fast reduce latencia de error y muestra categoria correcta ante falla real.
+- Siguiente accion interna ejecutable ahora: disparar `workflow_dispatch` en `main` y revisar anotaciones `::error::` del job `Deploy / FTPS Upload`.
