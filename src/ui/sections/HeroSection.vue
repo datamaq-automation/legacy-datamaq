@@ -34,7 +34,8 @@ Path: src/ui/sections/HeroSection.vue
               <div class="c-cta-stack__item">
                 <a
                   class="btn btn-outline-light btn-lg px-4 c-hero__secondary-cta w-100"
-                  :href="hero.secondaryCta.href"
+                  :href="servicesAnchorHref"
+                  aria-label="Ver servicios y desplazarse a la sección de servicios"
                 >
                   {{ hero.secondaryCta.label }}
                 </a>
@@ -54,8 +55,23 @@ Path: src/ui/sections/HeroSection.vue
               </li>
             </ul>
             <section class="c-hero__conditions" aria-labelledby="hero-conditions-title">
-              <h2 id="hero-conditions-title" class="c-hero__conditions-title h6 mb-2">Condiciones</h2>
-              <ul class="list-unstyled mb-0 c-hero__conditions-list">
+              <div class="d-flex align-items-center justify-content-between gap-2 mb-2 c-hero__conditions-header">
+                <h2 id="hero-conditions-title" class="c-hero__conditions-title h6 mb-0">Condiciones</h2>
+                <button
+                  type="button"
+                  class="btn btn-outline-light c-hero__conditions-toggle"
+                  :aria-expanded="conditionsExpanded ? 'true' : 'false'"
+                  aria-controls="hero-conditions-list"
+                  @click="toggleConditions"
+                >
+                  {{ conditionsExpanded ? 'Ocultar' : 'Ver' }}
+                </button>
+              </div>
+              <ul
+                id="hero-conditions-list"
+                class="list-unstyled mb-0 c-hero__conditions-list"
+                :class="{ 'c-hero__conditions-list--collapsed': !conditionsExpanded }"
+              >
                 <li v-for="condition in heroConditions" :key="condition">
                   {{ condition }}
                 </li>
@@ -90,6 +106,7 @@ Path: src/ui/sections/HeroSection.vue
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { HeroSectionEmits, HeroSectionProps } from '@/ui/types/sections'
 import { useHeroSection } from './HeroSection'
 
@@ -97,6 +114,10 @@ const props = defineProps<HeroSectionProps>()
 const emit = defineEmits<HeroSectionEmits>()
 
 const { hero, heroChips, heroConditions } = useHeroSection(props)
+const conditionsExpanded = ref(false)
+const servicesAnchorHref = hero.secondaryCta.href.startsWith('#')
+  ? hero.secondaryCta.href
+  : '#servicios'
 
 defineOptions({
   name: 'HeroSection'
@@ -105,5 +126,9 @@ defineOptions({
 function handleWhatsAppClick(href: string) {
   // Abrir directamente sin emit para evitar openWhatsApp fallback
   window.open(href, '_blank')
+}
+
+function toggleConditions() {
+  conditionsExpanded.value = !conditionsExpanded.value
 }
 </script>

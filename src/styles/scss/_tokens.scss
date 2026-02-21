@@ -61,7 +61,8 @@
   --ui-skip-link-z: 1000;
   --fab-offset: 1.5rem;
   --fab-safe-gap: 2.5rem;
-  --floating-cta-height: 0;
+  --floating-cta-height: 3.5rem;
+  --sticky-header-offset: clamp(4.25rem, 7vw, 5.25rem);
 }
 
 $ui-color-map: (
@@ -87,5 +88,6 @@ $ui-spacing-map: (
   floating-safe-area: 0,
   cookie-banner-height: 0,
   fab-offset: 1.5rem,
-  fab-safe-gap: 2.5rem
+  fab-safe-gap: 2.5rem,
+  floating-cta-height: 3.5rem
 );

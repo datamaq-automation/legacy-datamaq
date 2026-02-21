@@ -1,4 +1,6 @@
 .c-services {
+  scroll-margin-top: var(--sticky-header-offset, 5rem);
+
   &__title {
     letter-spacing: var(--ui-letter-spacing-sm);
   }
@@ -57,6 +59,10 @@
 }
 
 @media (max-width: 767.98px) {
+  .c-services {
+    scroll-margin-top: calc(var(--sticky-header-offset, 5rem) + 0.5rem);
+  }
+
   .c-services__title {
     margin-bottom: 1.9rem;
   }

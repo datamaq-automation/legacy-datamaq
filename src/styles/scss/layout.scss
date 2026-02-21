@@ -22,7 +22,9 @@
 
 @media (max-width: 767.98px) {
   body {
-    --floating-safe-area: 6.5rem;
+    --floating-safe-area: calc(
+      var(--floating-cta-height, 3.5rem) + var(--fab-safe-gap, 2.5rem) + env(safe-area-inset-bottom, 0px)
+    );
   }
 
   .section-mobile {

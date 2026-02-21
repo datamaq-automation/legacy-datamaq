@@ -4,6 +4,7 @@ import type { HeroSectionProps } from '@/ui/types/sections'
 export function useHeroSection(_props: HeroSectionProps) {
   const { content } = useContainer()
   const hero = content.getHeroContent()
+  const conditionSeparator = /\s+(?:\u00B7|\u00C2\u00B7)\s+/
   const heroChips = [
     'Respuesta en menos de 24 horas',
     'Checklist + verificacion final',
@@ -11,7 +12,7 @@ export function useHeroSection(_props: HeroSectionProps) {
     'Cobertura GBA Norte / AMBA'
   ]
   const heroConditions = hero.responseNote
-    .split(/\s+[·]\s+/)
+    .split(conditionSeparator)
     .map((condition) => condition.trim())
     .filter((condition) => condition.length > 0)
 

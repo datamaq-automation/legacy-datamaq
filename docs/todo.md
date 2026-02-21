@@ -41,3 +41,46 @@
   - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21) tras consolidar evidencia final.
   - Siguiente paso: entregar diff PR-ready del Hero con resumen de cambios visuales y criterios cumplidos.
   - Siguiente accion interna ejecutable ahora: compartir resultados y archivos modificados para revision final.
+  - Decision tomada (B-Vue): para no degradar CTA above-the-fold en mobile, las `Condiciones` quedan colapsables por defecto con toggle accesible (`aria-expanded`) y sin alterar estructura principal del Hero.
+  - Mitigacion interna ejecutada: `npm run check:css` fallo inicial por presupuesto (`225422 > 225000`) tras refinamiento visual; se compactaron reglas no criticas del Hero y se mantuvo la jerarquia/contraste requerida.
+  - Mitigacion interna ejecutada: `npm run quality:merge` fallo por `lint:todo-sync` al detectar cambios en `src/` sin trazabilidad del turno; se registra evidencia completa en este bloque para restituir compliance.
+  - Avance: Hero refinado en `src/ui/sections/HeroSection.vue` con toggle mobile de condiciones, microcopy legible y CTA secundario con mayor affordance.
+  - Avance: `src/ui/sections/HeroSection.ts` normaliza parseo de condiciones con separador robusto (`\u00B7` / mojibake legacy) para mantener escaneabilidad del bloque sin romper contenido.
+  - Avance: `src/styles/scss/sections/_hero.scss` ajusta blueprint, overlay/card, jerarquia tipografica, focus visible en CTAs, chips y safe-bottom mobile frente al FAB.
+  - Evidencia: `npm run lint:security` OK (2026-02-21).
+  - Evidencia: `npm run lint:layers` OK (2026-02-21).
+  - Evidencia: `npm run test:a11y` OK (2026-02-21).
+  - Evidencia: `npm run check:css` OK (2026-02-21). CSS budget: 224927 bytes <= 225000 bytes.
+  - Evidencia: `npm run quality:responsive` OK (2026-02-21). Etapas en verde: XS -> SM -> MD -> LG.
+  - Evidencia: `npm run quality:mobile` OK (2026-02-21).
+  - Evidencia: `npm run lint:test-coverage` OK (2026-02-21). Cobertura global: lines 83.02%, statements 82.41%, functions 81.64%, branches 73.91%.
+  - Siguiente paso: re-ejecutar `npm run quality:merge` con tablero sincronizado y cerrar con `npm run lint:todo-sync:merge-ready`.
+  - Siguiente accion interna ejecutable ahora: correr `npm run quality:merge`.
+  - Evidencia: `npm run quality:merge` OK (2026-02-21) tras registrar trazabilidad del turno y ajustar presupuesto CSS del Hero.
+  - Evidencia: `npm run quality:gate` OK (2026-02-21) dentro de `quality:merge`.
+  - Evidencia: `npm run quality:responsive` OK (2026-02-21) dentro de `quality:merge`. Etapas: XS -> SM -> MD -> LG.
+  - Evidencia: `npm run quality:mobile` OK (2026-02-21) dentro de `quality:merge`.
+  - Siguiente paso: cerrar compliance final con `npm run lint:todo-sync` y `npm run lint:todo-sync:merge-ready`.
+  - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync:merge-ready`.
+  - Evidencia: `npm run lint:todo-sync` OK (2026-02-21) cierre final del turno.
+  - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21) cierre final del turno.
+  - Siguiente paso: entregar diff PR-ready con resumen de criterios UX/UI cumplidos en Hero.
+  - Siguiente accion interna ejecutable ahora: compartir resultados para revision.
+  - Decision tomada (B-Vue): para evitar que el FAB tape chips/contenido en mobile se usa reserva de espacio con tokens existentes (--floating-cta-height, --fab-safe-gap, env(safe-area-inset-bottom)), sin introducir JS ni dependencias.
+  - Avance: src/ui/sections/HeroSection.vue asegura Ver servicios como anchor interno con fallback a #servicios y aria-label descriptivo.
+  - Avance: src/styles/scss/sections/_hero.scss ajusta contraste blueprint/card, ritmo tipografico y padding-bottom mobile vinculado al safe-area del FAB.
+  - Avance: src/styles/scss/layout.scss, src/styles/scss/_tokens.scss, src/styles/scss/sections/_whatsapp-fab.scss, src/styles/scss/sections/_services.scss y src/styles/scss/base/global.scss incorporan offset seguro del FAB, smooth scroll y scroll-margin-top para #servicios.
+  - Mitigacion interna ejecutada: npm run check:css fallo inicial por presupuesto (225885 > 225000, luego 225494 > 225000); se simplificaron reglas redundantes del Hero y se recupero budget sin perder criterios UX.
+  - Evidencia: npm run lint:security OK (2026-02-21).
+  - Evidencia: npm run test:a11y OK (2026-02-21).
+  - Evidencia: npm run check:css OK (2026-02-21). CSS budget: 224974 bytes <= 225000 bytes.
+  - Evidencia: npm run quality:responsive OK (2026-02-21). Etapas en verde: XS -> SM -> MD -> LG.
+  - Evidencia: npm run quality:mobile OK (2026-02-21).
+  - Evidencia: npm run lint:test-coverage OK (2026-02-21). Cobertura global: lines 83.03%, statements 82.43%, functions 81.64%, branches 73.84%.
+  - Siguiente paso: ejecutar npm run quality:merge y cerrar con npm run lint:todo-sync + npm run lint:todo-sync:merge-ready.
+  - Siguiente accion interna ejecutable ahora: correr npm run quality:merge.
+  - Evidencia: npm run quality:merge OK (2026-02-21) con quality:gate + quality:responsive + quality:mobile en verde.
+  - Evidencia: npm run lint:todo-sync OK (2026-02-21) cierre de trazabilidad del turno.
+  - Evidencia: npm run lint:todo-sync:merge-ready OK (2026-02-21) cierre merge-ready del turno.
+  - Siguiente paso: entregar diff PR-ready con resumen de cambios UX/UI y accesibilidad en Hero/FAB.
+  - Siguiente accion interna ejecutable ahora: compartir resultados para revision final.

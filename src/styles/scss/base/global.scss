@@ -6,6 +6,10 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html.dmq-offcanvas-open,
 body.dmq-offcanvas-open {
   overflow: hidden;

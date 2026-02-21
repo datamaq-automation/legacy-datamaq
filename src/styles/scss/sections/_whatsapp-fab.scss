@@ -1,5 +1,5 @@
 .c-whatsapp-fab {
-  bottom: calc(1rem + env(safe-area-inset-bottom));
+  bottom: calc(var(--fab-offset, 1rem) + env(safe-area-inset-bottom, 0px));
   width: 3.5rem;
   height: 3.5rem;
   background-color: var(--dm-whatsapp-green);
@@ -27,7 +27,8 @@
 
 body.has-consent-banner .whatsapp-fab {
   bottom: calc(
-    1rem + env(safe-area-inset-bottom) + max(var(--cookie-banner-height, 6rem), 13rem) + 0.75rem
+    var(--fab-offset, 1rem) + env(safe-area-inset-bottom, 0px) +
+      max(var(--cookie-banner-height, 6rem), 13rem) + 0.75rem
   );
 }
 
