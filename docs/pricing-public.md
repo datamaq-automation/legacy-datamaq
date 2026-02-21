@@ -59,7 +59,3 @@ Headers:
 
 - Configurar via variable de entorno backend:
   - `ALLOWED_ORIGINS=https://www.datamaq.com.ar,https://datamaq.com.ar`
-
-## Alias legacy
-
-- `GET /mock.php` debe responder lo mismo que `GET /v1/public/pricing`.

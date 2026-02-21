@@ -26,9 +26,7 @@ if allowed_origins:
     )
 
 
-@app.get("/v1/public/pricing")
-def get_public_pricing(response: Response) -> dict[str, int | str]:
-    response.headers["Cache-Control"] = "max-age=60"
+def build_pricing_payload() -> dict[str, int | str]:
     visita_diagnostico = int(os.getenv("VISITA_DIAGNOSTICO_HASTA_2H_ARS", "275000"))
     updated_at = os.getenv("PRICING_UPDATED_AT", "2026-02-21T00:00:00Z")
     return {
@@ -36,6 +34,11 @@ def get_public_pricing(response: Response) -> dict[str, int | str]:
         "updated_at": updated_at,
     }
 
+
+@app.get("/v1/public/pricing")
+def get_public_pricing(response: Response) -> dict[str, int | str]:
+    response.headers["Cache-Control"] = "max-age=60"
+    return build_pricing_payload()
 
 @app.get("/v1/health")
 def get_health(response: Response) -> dict[str, str]:

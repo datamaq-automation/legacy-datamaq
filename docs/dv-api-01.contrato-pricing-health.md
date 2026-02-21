@@ -9,15 +9,11 @@
 - Endpoints de este contrato:
   - `GET ${VITE_BACKEND_BASE_URL}/v1/public/pricing`
   - `GET ${VITE_BACKEND_BASE_URL}/v1/health`
-- Alias legacy de compatibilidad:
-  - `GET ${VITE_BACKEND_BASE_URL}/mock.php` -> misma respuesta que `/v1/public/pricing`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
 - `src/infrastructure/content/contentRepository.ts`
 - `backend/fastapi/main.py`
-- `v1/public/pricing/index.php`
-- `v1/health/index.php`
 
 ## 2) Endpoint de precios publicos
 
