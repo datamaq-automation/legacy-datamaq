@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataMaq</title>
+    <meta http-equiv="refresh" content="0;url=https://wa.me/5491156297160?text=Hola%2C%20te%20contacto%20por%20la%20tarjeta%20de%20DataMaq.%20%C2%BFPodemos%20coordinar%3F%0A%0AOrigen%3A%20qr_card">
+    <style>
+      :root { color-scheme: dark; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #0b2766;
+        color: #e2e9f3;
+      }
+      main {
+        width: min(92vw, 560px);
+        border: 1px solid rgba(226, 233, 243, 0.18);
+        background: rgba(12, 9, 47, 0.92);
+        padding: 1.25rem;
+      }
+      h1 { margin: 0 0 0.75rem; font-size: 1.5rem; }
+      p { margin: 0 0 1rem; }
+      a.btn {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 700;
+        background: #ff6a00;
+        color: #0c092f;
+        padding: 0.9rem 1rem;
+      }
+      small { display: block; margin-top: 0.75rem; word-break: break-word; opacity: 0.8; }
+    </style>
+    <script>
+      (function () {
+        var href = 'https://wa.me/5491156297160?text=Hola%2C%20te%20contacto%20por%20la%20tarjeta%20de%20DataMaq.%20%C2%BFPodemos%20coordinar%3F%0A%0AOrigen%3A%20qr_card';
+        window.location.replace(href);
+      })();
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>DataMaq</h1>
+      <p>Si no se abrió WhatsApp automáticamente, tocá el botón.</p>
+      <a
+        class="btn"
+        href="https://wa.me/5491156297160?text=Hola%2C%20te%20contacto%20por%20la%20tarjeta%20de%20DataMaq.%20%C2%BFPodemos%20coordinar%3F%0A%0AOrigen%3A%20qr_card"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Abrir WhatsApp
+      </a>
+      <small>https://wa.me/5491156297160?text=Hola%2C%20te%20contacto%20por%20la%20tarjeta%20de%20DataMaq.%20%C2%BFPodemos%20coordinar%3F%0A%0AOrigen%3A%20qr_card</small>
+    </main>
+  </body>
+</html>

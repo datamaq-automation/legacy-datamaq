@@ -382,3 +382,12 @@
 - Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` actualizado en jobs `deploy-prepare` y `deploy-ftps-preflight`; impacto esperado en produccion: preflight menos fragil y diagnostico mas claro sobre conectividad/permisos reales del directorio FTPS.
 - Siguiente paso: disparar `workflow_dispatch` y confirmar que `Deploy / FTPS Preflight` valida `cd` sobre `FTPS_REMOTE_DIR` sin error de `mkdir`.
 - Siguiente accion interna ejecutable ahora: ejecutar `npm run lint:todo-sync` para verificar trazabilidad del tablero con el ajuste de deploy.
+- Mitigacion interna ejecutada: agregado `public/.htaccess` con fallback SPA para Apache/AppServ, permitiendo resolver rutas cliente (`/w`, `/gracias`, etc.) hacia `index.html` cuando no existen archivos fisicos.
+- Evidencia: `public/.htaccess`.
+- Siguiente paso: validar en servidor Apache local que `http://localhost/w` cargue la SPA y ejecute el redirect de WhatsApp.
+- Siguiente accion interna ejecutable ahora: reconstruir artefactos y confirmar presencia de `.htaccess` en salida deploy (`C:/AppServ/www`).
+- Mitigacion interna ejecutada: rollback de fallback `.htaccess` por incompatibilidad de Apache local sin `mod_rewrite` (error `Invalid command RewriteEngine`).
+- Avance: agregado recurso fisico exacto `public/w` (sin extension) para resolver `http://localhost/w` sin depender de rewrite del servidor.
+- Evidencia: `public/w`; `C:/AppServ/Apache2.4/logs/error.log` confirma causa del 500 por `RewriteEngine` no disponible.
+- Siguiente paso: reemplazar `TODO_REEMPLAZAR` en links de `public/w` y en config SPA de WhatsApp QR para usar telefono real.
+- Siguiente accion interna ejecutable ahora: verificar manualmente `http://localhost/w` y validar apertura de wa.me.
