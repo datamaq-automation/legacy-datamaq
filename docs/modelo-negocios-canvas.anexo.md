@@ -51,9 +51,9 @@ Además del flujo técnico (calificación, ventana segura, intervención, verifi
 **Powermeter SAS (proveedor/intermediario) — socio estructural**  
 Powermeter SAS (y otros proveedores/integradores) se consolida como socio estructural en el modelo B2B2B: funciona como **canal** (derivación) y, en muchos casos, como **cliente pagador** (OTs / subcontratación), mientras la planta queda como usuario final.  
 Desde su posicionamiento público, Powermeter declara:  
-- **Misión:** “Desarrollamos soluciones de medición para hacer más eficiente el uso de la energía eléctrica.” :contentReference[oaicite:0]{index=0}  
-- **Visión:** “Ser el aliado estratégico del usuario desarrollando soluciones innovadoras para el uso eficiente de la energía.” :contentReference[oaicite:1]{index=1}  
-Además, explicitan que sus soluciones incluyen **almacenamiento y procesamiento de datos en la nube (Powermate)**, lo cual conecta directamente con la propuesta de **post-instalación** (interpretación como entregable técnico). :contentReference[oaicite:2]{index=2}  
+- **Misión:** “Desarrollamos soluciones de medición para hacer más eficiente el uso de la energía eléctrica.”
+- **Visión:** “Ser el aliado estratégico del usuario desarrollando soluciones innovadoras para el uso eficiente de la energía.”
+Además, explicitan que sus soluciones incluyen **almacenamiento y procesamiento de datos en la nube (Powermate)**, lo cual conecta directamente con la propuesta de **post-instalación** (interpretación como entregable técnico).
 
 **Alineación de principios (DataMaq ↔ Powermeter)**  
 - DataMaq complementa el “qué” (medición/solución) con el “cómo” en planta: ejecución segura, verificación, documentación (handoff) y mejora operativa post-instalación (cuando aplica, especialmente en industria gráfica).  

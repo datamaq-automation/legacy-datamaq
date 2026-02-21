@@ -395,3 +395,9 @@
 - Evidencia: `public/.htaccess`, `public/w`.
 - Siguiente paso: validar manualmente `http://localhost/w` y confirmar render + redirect/fallback en lugar de descarga.
 - Siguiente accion interna ejecutable ahora: reiniciar Apache/AppServ y reintentar `/w`.
+- Mitigacion interna ejecutada: endurecido `Deploy / FTPS Upload` ante fallos intermitentes `mirror: Fatal error: max-retries exceeded`.
+- Decision tomada (B-Deploy): mantener FTPS estricto (SSL verify + hostname check) y agregar resiliencia operativa con reintentos de sesion (`3` intentos) + `net:max-retries 5` + `net:persist-retries 1` + `mirror -R --continue --delete`.
+- Avance: el job ahora reporta intento `n/m`, espera 15s entre reintentos y falla explicitamente solo despues del ultimo intento.
+- Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` (job `deploy-ftps-upload`, step `Deploy dist via FTPS`).
+- Siguiente paso: ejecutar `workflow_dispatch` para validar estabilidad del upload FTPS bajo red real.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para verificar trazabilidad del tablero.
