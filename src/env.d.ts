@@ -2,7 +2,6 @@
 interface ImportMetaEnv {
   readonly VITE_CONTACT_API_URL?: string
   readonly VITE_MAIL_API_URL?: string
-  readonly VITE_INQUIRY_API_URL?: string
   readonly VITE_CONTACT_FORM_ACTIVE?: 'true' | 'false'
   readonly VITE_EMAIL_FORM_ACTIVE?: 'true' | 'false'
   readonly DEV: boolean

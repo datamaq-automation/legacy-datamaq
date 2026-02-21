@@ -18,7 +18,6 @@ Estandarizar como pedir, generar, validar y guardar credenciales necesarias para
 - Secrets esperados:
   - `VITE_CONTACT_API_URL`
   - `VITE_MAIL_API_URL`
-  - `VITE_INQUIRY_API_URL` (legacy/fallback transitorio)
   - `FTPS_SERVER`
   - `FTPS_PORT`
   - `FTPS_USERNAME`

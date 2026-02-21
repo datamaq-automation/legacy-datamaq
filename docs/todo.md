@@ -335,3 +335,20 @@
 - Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
 - Siguiente paso: mantener flujo de contacto sin capa de logging cliente dedicada salvo requerimiento operativo nuevo.
 - Siguiente accion interna ejecutable ahora: continuar con tareas P0 abiertas de backend/operacion segun tablero.
+- Decision tomada (B-Arquitectura): eliminar `VITE_INQUIRY_API_URL` del runtime/configuracion activa y consolidar `VITE_CONTACT_API_URL` + `VITE_MAIL_API_URL` como contrato unico de endpoints.
+- Avance: `ViteConfig` deja de leer fallback `VITE_INQUIRY_API_URL`; `inquiryApiUrl` ahora deriva solo de `VITE_CONTACT_API_URL` (o `publicConfig` como fallback interno).
+- Avance: eliminado tipado de `VITE_INQUIRY_API_URL` en `src/env.d.ts` y removida la variable de `.env.example`, `.env.e2e` y `.env.local`.
+- Avance: documentacion de handoff/credenciales alineada al contrato canonico sin fallback legacy.
+- Evidencia: `src/infrastructure/config/viteConfig.ts`, `src/env.d.ts`, `.env.example`, `.env.e2e`, `.env.local`, `docs/dv-backend-contact-mail-handoff.md`, `docs/dv-cred-01.md`.
+- Siguiente paso: ejecutar validaciones obligatorias y registrar merge-readiness.
+- Siguiente accion interna ejecutable ahora: correr en secuencia `npm run lint:security`, `npm run test:a11y`, `npm run check:css`, `npm run quality:responsive`, `npm run quality:mobile`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.
+- Evidencia: `npm run lint:security` OK (2026-02-21).
+- Evidencia: `npm run test:a11y` OK (2026-02-21).
+- Evidencia: `npm run check:css` OK (2026-02-21).
+- Evidencia: `npm run quality:responsive` OK (2026-02-21). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-21).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-21). Cobertura global: lines 83.00%, statements 82.39%, functions 81.60%, branches 74.03%.
+- Evidencia: `npm run quality:merge` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
+- Siguiente paso: completar limpieza documental residual donde se menciona `VITE_INQUIRY_API_URL` como referencia historica si se busca consistencia total de nomenclatura.
+- Siguiente accion interna ejecutable ahora: continuar con las tareas P0 abiertas de backend/operacion en tablero.

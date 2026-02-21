@@ -18,7 +18,7 @@ Alcance: frontend Vue + contrato esperado hacia backend custom.
    - `pageLocation`, `trafficSource`, `userAgent`, `createdAt`
    - datos de attribution cuando existen (utm/gclid)
 5. El frontend espera endpoints HTTP configurables por env:
-   - `VITE_CONTACT_API_URL` (preferido; fallback `VITE_INQUIRY_API_URL`)
+   - `VITE_CONTACT_API_URL` (canonico)
    - `VITE_MAIL_API_URL`
 6. El canal se resuelve en infraestructura:
    - `contact` -> `inquiryApiUrl`

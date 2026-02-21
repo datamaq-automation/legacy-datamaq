@@ -34,7 +34,6 @@ export class ViteConfig implements ConfigPort {
     this.contactEmail = normalize(publicConfig.contactEmail) ?? CONTACT_EMAIL_FALLBACK
     this.inquiryApiUrl = ensureApiUrl(
       normalize(import.meta.env.VITE_CONTACT_API_URL) ??
-        normalize(import.meta.env.VITE_INQUIRY_API_URL) ??
         normalize(publicConfig.inquiryApiUrl),
       'inquiryApiUrl'
     )
