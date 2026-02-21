@@ -1,9 +1,12 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+﻿import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { LoggerPort } from '@/application/ports/Logger'
 import { AppContentSchema } from '@/domain/schemas/contentSchema'
+import { commercialConfig } from '@/infrastructure/content/Appcontent'
 import { ContentRepository } from '@/infrastructure/content/contentRepository'
 
 describe('ContentRepository', () => {
   afterEach(() => {
+    resetCommercialConfig()
     vi.restoreAllMocks()
   })
 
@@ -50,4 +53,146 @@ describe('ContentRepository', () => {
       '#contacto'
     ])
   })
+
+  it('hydrates prices from backend JSON and updates previously captured references in place', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            tarifa_base_desde_ars: '410000',
+            traslado_minimo_ars: '15000',
+            visita_diagnostico_2h_ars: '275000',
+            diagnostico_hora_adicional_ars: '130000'
+          }
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    )
+
+    const repository = new ContentRepository(
+      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      logger
+    )
+
+    const heroRef = repository.getHeroContent()
+    const servicesRef = repository.getServicesContent()
+
+    expect(heroRef.responseNote).toContain('Consultar')
+
+    await flushRuntimePricing()
+
+    expect(heroRef.responseNote).toContain('410.000')
+    expect(servicesRef.cards[0].figure?.caption).toContain('mÃ­nimo')
+    expect(servicesRef.cards[0].figure?.caption).toContain('15.000')
+    expect(servicesRef.cards[1].note).toContain('275.000')
+    expect(servicesRef.cards[1].note).toContain('130.000')
+    expect(logger.debug).toHaveBeenCalled()
+  })
+
+  it('supports plain-text payloads and currency-like decimals from backend', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        'tarifa_base_desde_ars=380.000,00 visita_diagnostico_2h_ars=260.000,00 diagnostico_hora_adicional_ars=130.000,00',
+        {
+          status: 200,
+          headers: { 'Content-Type': 'text/plain' }
+        }
+      )
+    )
+
+    const repository = new ContentRepository(
+      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      logger
+    )
+
+    await flushRuntimePricing()
+
+    expect(repository.getHeroContent().responseNote).toContain('380.000')
+    expect(repository.getServicesContent().cards[1].note).toContain('260.000')
+    expect(repository.getServicesContent().cards[1].note).toContain('130.000')
+    expect(logger.debug).toHaveBeenCalled()
+  })
+
+  it('keeps fallback "Consultar" when backend responds with non-ok status', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('backend-down', {
+        status: 503
+      })
+    )
+
+    const repository = new ContentRepository(
+      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      logger
+    )
+    const heroRef = repository.getHeroContent()
+
+    await flushRuntimePricing()
+
+    expect(heroRef.responseNote).toContain('Consultar')
+    expect(logger.warn).toHaveBeenCalled()
+  })
+
+  it('keeps fallback "Consultar" when payload has no recognized pricing keys', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ ok: true, data: { foo: 'bar' } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    )
+
+    const repository = new ContentRepository(
+      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      logger
+    )
+
+    await flushRuntimePricing()
+
+    expect(repository.getHeroContent().responseNote).toContain('Consultar')
+    expect(logger.warn).toHaveBeenCalled()
+  })
+
+  it('does not call fetch when pricing endpoint is missing', async () => {
+    const logger = createLoggerSpy()
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+    new ContentRepository({ pricingApiUrl: '   ' }, logger)
+
+    await flushRuntimePricing()
+
+    expect(fetchSpy).not.toHaveBeenCalled()
+    expect(logger.warn).toHaveBeenCalled()
+  })
 })
+
+function createLoggerSpy(): LoggerPort & {
+  debug: ReturnType<typeof vi.fn>
+  warn: ReturnType<typeof vi.fn>
+  error: ReturnType<typeof vi.fn>
+} {
+  return {
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn()
+  }
+}
+
+async function flushRuntimePricing(): Promise<void> {
+  await Promise.resolve()
+  await Promise.resolve()
+  await new Promise((resolve) => setTimeout(resolve, 0))
+}
+
+function resetCommercialConfig(): void {
+  commercialConfig.tarifaBaseDesdeARS = null
+  commercialConfig.trasladoMinimoARS = null
+  commercialConfig.visitaDiagnosticoHasta2hARS = null
+  commercialConfig.diagnosticoHoraAdicionalARS = null
+}
+

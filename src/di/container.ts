@@ -56,7 +56,7 @@ const mailBackend = new ContactBackendMonitor(
   'mailBackendStatus'
 )
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
-const contentRepository = new ContentRepository()
+const contentRepository = new ContentRepository(config, logger)
 
 const submitContact = new SubmitContactUseCase(
   contactService,

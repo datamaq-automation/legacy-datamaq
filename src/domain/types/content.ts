@@ -117,13 +117,13 @@ export interface AppContent {
 
 export interface CommercialConfig {
   baseOperativa: string
-  tarifaBaseDesdeARS: number
-  trasladoMinimoARS: number
+  tarifaBaseDesdeARS: number | null
+  trasladoMinimoARS: number | null
   whatsappUrl: string
 
   // Diagnóstico (publicado)
-  visitaDiagnosticoHasta2hARS: number
-  diagnosticoHoraAdicionalARS: number
+  visitaDiagnosticoHasta2hARS: number | null
+  diagnosticoHoraAdicionalARS: number | null
 
   descuentos: {
     cooperativasPct: number

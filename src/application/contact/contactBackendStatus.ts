@@ -83,6 +83,15 @@ export class ContactBackendMonitor {
         isBrowser: this.runtime.isBrowser(),
         reason: endpointPolicy.reason ?? null
       })
+      if (this.runtime.isBrowser()) {
+        console.warn(
+          `[backend:${this.monitorLabel}] sin conexion disponible`,
+          {
+            endpoint: apiUrl ?? null,
+            reason: endpointPolicy.reason ?? (!this.runtime.isBrowser() ? 'not-browser' : 'missing')
+          }
+        )
+      }
       this.status = 'unavailable'
       this.notify()
       return this.status
@@ -98,14 +107,26 @@ export class ContactBackendMonitor {
         response.status === 404
       ) {
         this.status = 'available'
+        console.info(`[backend:${this.monitorLabel}] conexion OK`, {
+          endpoint: apiUrl,
+          status: response.status
+        })
       } else {
         this.status = 'unavailable'
+        console.warn(`[backend:${this.monitorLabel}] sin conexion`, {
+          endpoint: apiUrl,
+          status: response.status
+        })
       }
     } catch (error) {
       this.logger.warn(
         `[${this.monitorLabel}] Error al verificar disponibilidad del backend:`,
         { apiUrl, error }
       )
+      console.warn(`[backend:${this.monitorLabel}] sin conexion`, {
+        endpoint: apiUrl,
+        reason: 'network-error'
+      })
       this.status = 'unavailable'
     }
 

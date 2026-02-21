@@ -8,6 +8,7 @@ const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
 export class ViteConfig implements ConfigPort {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
+  pricingApiUrl: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
   emailFormActive: boolean
@@ -37,8 +38,9 @@ export class ViteConfig implements ConfigPort {
         normalize(publicConfig.backendBaseUrl),
       'VITE_BACKEND_BASE_URL'
     )
-    this.inquiryApiUrl = buildEndpointUrl(backendBaseUrl, '/api/contact')
-    this.mailApiUrl = buildEndpointUrl(backendBaseUrl, '/api/mail')
+    this.inquiryApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/contact')
+    this.mailApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/mail')
+    this.pricingApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/public/pricing')
     this.contactFormActive = normalizeBoolean(
       import.meta.env.VITE_IS_CONTACT_FORM_ACTIVE,
       publicConfig.contactFormActive,

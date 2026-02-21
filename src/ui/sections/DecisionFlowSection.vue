@@ -24,7 +24,7 @@
         Tarifa base y alcance
       </h2>
       <p class="mb-4 text-secondary c-decision-flow__summary">
-        Tarifa base desde ARS 180.000 para instalacion industrial de 1 Powermeter (equipo provisto por el cliente) con verificacion final de lectura.
+        {{ pricingSummary }}
       </p>
       <div class="row g-3">
         <article class="col-12 col-lg-4">
@@ -116,6 +116,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useContainer } from '@/di/container'
+
 interface ProcessStep {
   order: number
   title: string
@@ -126,6 +129,18 @@ interface FaqItem {
   question: string
   answer: string
 }
+
+const { content } = useContainer()
+const pricingSummary = computed(() => {
+  const installationCard = content
+    .getServicesContent()
+    .cards.find((card) => card.id === 'instalacion')
+
+  return (
+    installationCard?.figure?.caption ??
+    'Tarifa base y alcance sujetos a diagnóstico, distancia y condiciones de seguridad.'
+  )
+})
 
 const processSteps: ProcessStep[] = [
   {
