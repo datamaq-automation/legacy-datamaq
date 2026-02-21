@@ -433,3 +433,9 @@
 - Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` (step `Deploy dist via FTPS`, comando `lftp -e ...`).
 - Siguiente paso: re-ejecutar workflow y validar que `w` se cree como directorio remoto en el primer intento.
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para confirmar trazabilidad.
+- Mitigacion interna ejecutada: nuevo hardening FTPS por falla intermitente `mirror: Fatal error: max-retries exceeded` durante upload.
+- Decision tomada (B-Deploy): mantener TLS estricto y aumentar resiliencia operativa: `MAX_ATTEMPTS` 5, backoff incremental (15/30/45/60s), `timeout` 1200, `net:max-retries` 10, `net:timeout` 45, `net:reconnect-interval-max` 60.
+- Decision tomada (B-Deploy): agregar compatibilidad FTPS de borde (`ftp:prefer-epsv false`, `ftp:fix-pasv-address true`) en preflight y upload para reducir errores de canal de datos/pasv en hostings compartidos.
+- Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` (jobs `deploy-ftps-preflight` y `deploy-ftps-upload`).
+- Siguiente paso: relanzar workflow y observar si upload converge dentro de 5 intentos con backoff.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync`.
