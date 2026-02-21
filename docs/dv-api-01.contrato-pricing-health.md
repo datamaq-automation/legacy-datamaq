@@ -6,69 +6,66 @@
 - Validacion en frontend:
   - En desarrollo (`DEV`): acepta `http://` o `https://`
   - En produccion: exige `https://`
-- Convencion productiva: versionado `/v1` y recursos semanticos.
-- Endpoints documentados en este archivo:
+- Endpoints de este contrato:
   - `GET ${VITE_BACKEND_BASE_URL}/v1/public/pricing`
   - `GET ${VITE_BACKEND_BASE_URL}/v1/health`
-- Alias legacy temporal:
+- Alias legacy de compatibilidad:
   - `GET ${VITE_BACKEND_BASE_URL}/mock.php` -> misma respuesta que `/v1/public/pricing`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
 - `src/infrastructure/content/contentRepository.ts`
-- `src/application/contact/contactBackendStatus.ts`
+- `backend/fastapi/main.py`
+- `v1/public/pricing/index.php`
+- `v1/health/index.php`
 
-## 2) Endpoint de precios dinamicos
+## 2) Endpoint de precios publicos
 
 ### 2.1 `GET /v1/public/pricing`
 
 Uso:
-- El frontend consulta en runtime (solo cliente) para hidratar precios comerciales.
-- Si falla o no reconoce campos, mantiene fallback visual: `Consultar`.
+- El frontend consulta este endpoint en runtime.
+- El frontend no publica montos en la web: muestra `Consultar al WhatsApp`.
+- El frontend solo conserva en memoria `visita_diagnostico_hasta_2h_ars` para logica interna futura.
 
-Headers de request:
-- `Accept: application/json, text/plain;q=0.9, */*;q=0.8`
+Headers recomendados de response:
+- `Content-Type: application/json`
+- `Cache-Control: max-age=60`
 
-### Campos de precio reconocidos (canonicos)
-
-- `tarifaBaseDesdeARS`
-- `trasladoMinimoARS`
-- `visitaDiagnosticoHasta2hARS`
-- `diagnosticoHoraAdicionalARS`
-
-Alias aceptados por parser:
-- `tarifa_base_desde_ars`, `tarifa_base_desde`, `tarifa_base_ars`, `tarifa_base`
-- `traslado_minimo_ars`, `traslado_minimo`, `traslado_ars`
-- `visita_diagnostico_hasta2h_ars`, `visita_diagnostico_hasta_2h_ars`, `visita_diagnostico_2h_ars`, `visita_diagnostico_2h`, `visita_diagnostico_ars`
-- `diagnostico_hora_adicional_ars`, `diagnostico_hora_adicional`, `hora_adicional_diagnostico_ars`, `hora_adicional_diagnostico`
-
-Tipos aceptados:
-- Numero (`number`)
-- String numerico con separadores (`"410000"`, `"410.000"`, `"410.000,00"`)
-
-Restriccion:
-- Valores negativos se descartan.
-
-Ejemplo recomendado:
+Payload canonico:
 ```json
 {
-  "tarifa_base_desde_ars": 410000,
-  "traslado_minimo_ars": 15000,
-  "visita_diagnostico_2h_ars": 275000,
-  "diagnostico_hora_adicional_ars": 130000,
+  "visita_diagnostico_hasta_2h_ars": 275000,
   "updated_at": "2026-02-21T00:00:00Z"
 }
 ```
+
+Alias aceptados por parser frontend para el mismo dato:
+- `visita_diagnostico_hasta2h_ars`
+- `visita_diagnostico_hasta_2h_ars`
+- `visita_diagnostico_2h_ars`
+- `visita_diagnostico_2h`
+- `visita_diagnostico_ars`
+- `visitaDiagnosticoHasta2hARS`
+
+Validacion frontend:
+- acepta `number` o `string` numerico
+- descarta valores negativos
+- si no hay valor usable, mantiene fallback visual `Consultar al WhatsApp`
 
 ## 3) Endpoint de salud
 
 ### 3.1 `GET /v1/health`
 
 Uso recomendado:
-- Monitoreo de disponibilidad de API y edge.
-- Diagnostico rapido de conectividad en frontends, CI y uptime checks.
+- monitoreo de disponibilidad de API y edge
+- chequeos de conectividad en frontend, CI y uptime checks
 
-Respuesta sugerida:
+Headers recomendados de response:
+- `Content-Type: application/json`
+- `Cache-Control: no-store`
+
+Response sugerida:
 ```json
 {
   "status": "ok",
@@ -78,18 +75,13 @@ Respuesta sugerida:
 }
 ```
 
-## 4) Requisitos backend para estos endpoints
+## 4) Requisitos backend
 
-- Habilitar CORS para origen/es del frontend.
-- Responder `Content-Type` consistente (`application/json` recomendado).
-- Garantizar TLS en produccion (`https://`).
-- Evitar exponer secretos en respuestas publicas.
-- Mantener cache-control acorde al recurso:
-  - `health`: `no-store`
-  - `pricing`: `max-age` corto o `ETag`, segun SLA.
+- Habilitar CORS para origen/es del frontend (en FastAPI via `ALLOWED_ORIGINS`).
+- Mantener TLS en produccion (`https://`).
+- No exponer secretos en endpoints publicos.
 
-## 5) Compatibilidad y versionado
+## 5) Compatibilidad
 
-- Este contrato corresponde al estado actual del frontend (fecha: 2026-02-21).
-- Cambios breaking deben versionarse (por ejemplo `/v2/...`) o mantener alias de campos para compatibilidad.
-- En este repo se mantiene `mock.php` como alias de transicion para entornos legacy.
+- Contrato vigente para frontend (fecha: 2026-02-21).
+- Cambios breaking deben versionarse (`/v2/...`) o mantener compatibilidad temporal.

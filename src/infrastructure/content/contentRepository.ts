@@ -23,22 +23,11 @@ import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import { reactive } from 'vue'
 
 type CommercialPriceKey =
-  | 'tarifaBaseDesdeARS'
-  | 'trasladoMinimoARS'
   | 'visitaDiagnosticoHasta2hARS'
-  | 'diagnosticoHoraAdicionalARS'
 
 type CommercialPricingSnapshot = Partial<Pick<CommercialConfig, CommercialPriceKey>>
 
 const PRICE_KEY_ALIASES: Record<CommercialPriceKey, string[]> = {
-  tarifaBaseDesdeARS: [
-    'tarifaBaseDesdeARS',
-    'tarifa_base_desde_ars',
-    'tarifa_base_desde',
-    'tarifa_base_ars',
-    'tarifa_base'
-  ],
-  trasladoMinimoARS: ['trasladoMinimoARS', 'traslado_minimo_ars', 'traslado_minimo', 'traslado_ars'],
   visitaDiagnosticoHasta2hARS: [
     'visitaDiagnosticoHasta2hARS',
     'visita_diagnostico_hasta2h_ars',
@@ -46,13 +35,6 @@ const PRICE_KEY_ALIASES: Record<CommercialPriceKey, string[]> = {
     'visita_diagnostico_2h_ars',
     'visita_diagnostico_2h',
     'visita_diagnostico_ars'
-  ],
-  diagnosticoHoraAdicionalARS: [
-    'diagnosticoHoraAdicionalARS',
-    'diagnostico_hora_adicional_ars',
-    'diagnostico_hora_adicional',
-    'hora_adicional_diagnostico_ars',
-    'hora_adicional_diagnostico'
   ]
 }
 
@@ -148,7 +130,7 @@ export class ContentRepository
 
     const pricingApiUrl = normalizeUrl(this.config?.pricingApiUrl)
     if (!pricingApiUrl) {
-      this.logger.warn('[content] pricingApiUrl no configurada; se mantiene fallback "Consultar".')
+      this.logger.warn('[content] pricingApiUrl no configurada; se mantiene fallback "Consultar al WhatsApp".')
       return
     }
 

@@ -54,7 +54,7 @@ describe('ContentRepository', () => {
     ])
   })
 
-  it('hydrates prices from backend JSON and updates previously captured references in place', async () => {
+  it('hydrates only visit pricing from backend JSON and keeps public copy without amounts', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
@@ -62,7 +62,7 @@ describe('ContentRepository', () => {
           data: {
             tarifa_base_desde_ars: '410000',
             traslado_minimo_ars: '15000',
-            visita_diagnostico_2h_ars: '275000',
+            visita_diagnostico_hasta_2h_ars: '275000',
             diagnostico_hora_adicional_ars: '130000'
           }
         }),
@@ -81,23 +81,25 @@ describe('ContentRepository', () => {
     const heroRef = repository.getHeroContent()
     const servicesRef = repository.getServicesContent()
 
-    expect(heroRef.responseNote).toContain('Consultar')
+    expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
 
     await flushRuntimePricing()
 
-    expect(heroRef.responseNote).toContain('410.000')
-    expect(servicesRef.cards[0].figure?.caption ?? '').toMatch(/m[ií]nimo/i)
-    expect(servicesRef.cards[0].figure?.caption).toContain('15.000')
-    expect(servicesRef.cards[1].note).toContain('275.000')
-    expect(servicesRef.cards[1].note).toContain('130.000')
+    expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
+    expect(servicesRef.cards[0].figure?.caption).toContain('Consultar al WhatsApp')
+    expect(servicesRef.cards[1].note).toContain('Consultar al WhatsApp')
+    expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(275000)
+    expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
+    expect(commercialConfig.trasladoMinimoARS).toBeNull()
+    expect(commercialConfig.diagnosticoHoraAdicionalARS).toBeNull()
     expect(logger.debug).toHaveBeenCalled()
   })
 
-  it('supports plain-text payloads and currency-like decimals from backend', async () => {
+  it('supports plain-text payloads for the unique accepted field', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
-        'tarifa_base_desde_ars=380.000,00 visita_diagnostico_2h_ars=260.000,00 diagnostico_hora_adicional_ars=130.000,00',
+        'tarifa_base_desde_ars=380.000,00 visita_diagnostico_hasta_2h_ars=260.000,00 diagnostico_hora_adicional_ars=130.000,00',
         {
           status: 200,
           headers: { 'Content-Type': 'text/plain' }
@@ -112,13 +114,16 @@ describe('ContentRepository', () => {
 
     await flushRuntimePricing()
 
-    expect(repository.getHeroContent().responseNote).toContain('380.000')
-    expect(repository.getServicesContent().cards[1].note).toContain('260.000')
-    expect(repository.getServicesContent().cards[1].note).toContain('130.000')
+    expect(repository.getHeroContent().responseNote).toContain('Consultar al WhatsApp')
+    expect(repository.getServicesContent().cards[1].note).toContain('Consultar al WhatsApp')
+    expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(260000)
+    expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
+    expect(commercialConfig.trasladoMinimoARS).toBeNull()
+    expect(commercialConfig.diagnosticoHoraAdicionalARS).toBeNull()
     expect(logger.debug).toHaveBeenCalled()
   })
 
-  it('keeps fallback "Consultar" when backend responds with non-ok status', async () => {
+  it('keeps fallback "Consultar al WhatsApp" when backend responds with non-ok status', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response('backend-down', {
@@ -134,11 +139,11 @@ describe('ContentRepository', () => {
 
     await flushRuntimePricing()
 
-    expect(heroRef.responseNote).toContain('Consultar')
+    expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
     expect(logger.warn).toHaveBeenCalled()
   })
 
-  it('keeps fallback "Consultar" when payload has no recognized pricing keys', async () => {
+  it('keeps fallback "Consultar al WhatsApp" when payload has no recognized pricing keys', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ ok: true, data: { foo: 'bar' } }), {
@@ -154,7 +159,7 @@ describe('ContentRepository', () => {
 
     await flushRuntimePricing()
 
-    expect(repository.getHeroContent().responseNote).toContain('Consultar')
+    expect(repository.getHeroContent().responseNote).toContain('Consultar al WhatsApp')
     expect(logger.warn).toHaveBeenCalled()
   })
 

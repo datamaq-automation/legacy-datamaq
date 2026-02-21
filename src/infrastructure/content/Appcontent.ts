@@ -9,7 +9,7 @@ import installTools from '@/assets/install-tools.svg'
 import powermeter from '@/assets/powermeter.svg'
 import teamTraining from '@/assets/team-training.svg'
 
-export const PRICE_FALLBACK_LABEL = 'Consultar'
+export const PRICE_FALLBACK_LABEL = 'Consultar al WhatsApp'
 
 export const commercialConfig: CommercialConfig = {
   baseOperativa: 'Garín (GBA Norte)',
@@ -36,23 +36,15 @@ export const content: AppContent = buildAppContent(commercialConfig)
 export function buildAppContent(config: CommercialConfig): AppContent {
   const TARIFA_BASE = formatARSWithFallback(config.tarifaBaseDesdeARS)
   const VISITA_DIAG_2H = formatARSWithFallback(config.visitaDiagnosticoHasta2hARS)
-  const DIAG_HORA_ADICIONAL = formatARSWithFallback(config.diagnosticoHoraAdicionalARS)
 
   const BASE = config.baseOperativa
   const POWERMETER = config.equipos.medidorNombre
   const AUTOMATE = config.equipos.automateNombre
   const WHATSAPP_URL = config.whatsappUrl
 
-  const HAS_TRASLADO_MIN = isKnownPositiveAmount(config.trasladoMinimoARS)
-  const TRASLADO_MIN = HAS_TRASLADO_MIN ? formatARSWithFallback(config.trasladoMinimoARS) : ''
-  const TRASLADO_TEXT = HAS_TRASLADO_MIN ? ` (mínimo ${TRASLADO_MIN})` : ''
-
-  const DIAG_HORA_ADICIONAL_TEXT = isKnownAmount(config.diagnosticoHoraAdicionalARS)
-    ? `${DIAG_HORA_ADICIONAL}/h`
-    : PRICE_FALLBACK_LABEL
-  const DIAG_DISCOUNT_NOTE = isKnownAmount(config.visitaDiagnosticoHasta2hARS)
-    ? `${VISITA_DIAG_2H} se descuenta del total si aprobás el presupuesto.`
-    : 'Consultá el valor actualizado: se descuenta del total si aprobás el presupuesto.'
+  const TRASLADO_TEXT = ` (${PRICE_FALLBACK_LABEL})`
+  const DIAG_HORA_ADICIONAL_TEXT = PRICE_FALLBACK_LABEL
+  const DIAG_DISCOUNT_NOTE = `${PRICE_FALLBACK_LABEL}: se descuenta del total si aprobás el presupuesto.`
 
   return {
     hero: {
@@ -235,22 +227,6 @@ export function buildAppContent(config: CommercialConfig): AppContent {
   }
 }
 
-function formatARSWithFallback(value: number | null): string {
-  if (!isKnownAmount(value)) {
-    return PRICE_FALLBACK_LABEL
-  }
-
-  return new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0
-  }).format(value)
-}
-
-function isKnownAmount(value: number | null): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
-}
-
-function isKnownPositiveAmount(value: number | null): value is number {
-  return isKnownAmount(value) && value > 0
+function formatARSWithFallback(_value: number | null): string {
+  return PRICE_FALLBACK_LABEL
 }
