@@ -4,6 +4,8 @@ export interface ConfigPort {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   contactEmail: NullableString
+  contactFormActive: boolean
+  emailFormActive: boolean
   analyticsEnabled: boolean | undefined
   siteUrl: NullableString
   siteName: NullableString

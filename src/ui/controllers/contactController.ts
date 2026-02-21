@@ -15,6 +15,14 @@ export function getContactEmail(): string | undefined {
   return value?.trim() ? value : undefined
 }
 
+export function getContactFormActive(): boolean {
+  return useContainer().config.contactFormActive
+}
+
+export function getEmailFormActive(): boolean {
+  return useContainer().config.emailFormActive
+}
+
 export function openWhatsApp(section: string = 'whatsapp', href?: string): void {
   const whatsappUrl = normalizeHref(href) ?? resolveWhatsAppUrl()
   if (!whatsappUrl) {

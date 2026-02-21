@@ -1,6 +1,8 @@
 import {
   getWhatsAppEnabled,
   getContactEmail,
+  getContactFormActive,
+  getEmailFormActive,
   openWhatsApp,
   submitContact,
   submitMail,
@@ -11,6 +13,8 @@ import { onMounted, onUnmounted } from 'vue'
 export function useHomePage() {
   const contactCtaEnabled = getWhatsAppEnabled()
   const contactEmail = getContactEmail()
+  const isContactFormActive = getContactFormActive()
+  const isEmailFormActive = getEmailFormActive()
 
   function handleChat(section: string, href?: string) {
     openWhatsApp(section, href)
@@ -52,6 +56,8 @@ export function useHomePage() {
   return {
     contactCtaEnabled,
     contactEmail,
+    isContactFormActive,
+    isEmailFormActive,
     handleChat,
     handleContactSubmit,
     handleEmailSubmit

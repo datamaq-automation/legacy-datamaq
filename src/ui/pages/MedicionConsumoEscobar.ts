@@ -1,6 +1,8 @@
 import {
   getWhatsAppEnabled,
   getContactEmail,
+  getContactFormActive,
+  getEmailFormActive,
   openWhatsApp,
   submitContact,
   submitMail
@@ -9,6 +11,8 @@ import {
 export function useMedicionConsumoEscobar() {
   const contactCtaEnabled = getWhatsAppEnabled()
   const contactEmail = getContactEmail()
+  const isContactFormActive = getContactFormActive()
+  const isEmailFormActive = getEmailFormActive()
 
   function handleChat(section: string, href?: string) {
     openWhatsApp(section, href)
@@ -25,6 +29,8 @@ export function useMedicionConsumoEscobar() {
   return {
     contactCtaEnabled,
     contactEmail,
+    isContactFormActive,
+    isEmailFormActive,
     handleChat,
     handleContactSubmit,
     handleEmailSubmit

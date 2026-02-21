@@ -9,6 +9,8 @@ export class ViteConfig implements ConfigPort {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   contactEmail: NullableString
+  contactFormActive: boolean
+  emailFormActive: boolean
   analyticsEnabled: boolean | undefined
   siteUrl: NullableString
   siteName: NullableString
@@ -40,6 +42,16 @@ export class ViteConfig implements ConfigPort {
       normalize(import.meta.env.VITE_MAIL_API_URL) ??
         normalize(publicConfig.mailApiUrl),
       'mailApiUrl'
+    )
+    this.contactFormActive = normalizeBoolean(
+      import.meta.env.VITE_CONTACT_FORM_ACTIVE,
+      publicConfig.contactFormActive,
+      'VITE_CONTACT_FORM_ACTIVE'
+    )
+    this.emailFormActive = normalizeBoolean(
+      import.meta.env.VITE_EMAIL_FORM_ACTIVE,
+      publicConfig.emailFormActive,
+      'VITE_EMAIL_FORM_ACTIVE'
     )
     this.analyticsEnabled = publicConfig.analyticsEnabled
     this.siteUrl = normalize(publicConfig.siteUrl)
@@ -89,4 +101,27 @@ function ensureApiUrl(value: NullableString, envKey: string): NullableString {
     return undefined
   }
   return value
+}
+
+function normalizeBoolean(
+  rawValue: string | undefined,
+  fallback: boolean,
+  envKey: string
+): boolean {
+  if (rawValue === undefined) {
+    return fallback
+  }
+
+  const normalized = rawValue.trim().toLowerCase()
+  if (normalized === 'true') {
+    return true
+  }
+  if (normalized === 'false') {
+    return false
+  }
+
+  console.warn(
+    `[config] La variable ${envKey} debe ser "true" o "false". Valor recibido: ${rawValue}`
+  )
+  return fallback
 }

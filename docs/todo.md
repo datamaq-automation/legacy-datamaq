@@ -250,3 +250,54 @@
 - Evidencia: `npm run test -- tests/unit/infrastructure/contactApiGateway.test.ts tests/unit/infrastructure/contactResponseFeedback.test.ts` OK (2026-02-20) tras mitigacion.
 - Evidencia: `npm run quality:merge` (2026-02-20) fallo en `quality:gate` por `lint:todo-sync` al detectar cambios nuevos en `src/` y `tests/` sin trazabilidad de turno.
 - Mitigacion interna ejecutable ahora: registrar evidencias del fix en `docs/todo.md` y reintentar `quality:merge` + `lint:todo-sync:merge-ready`.
+- Evidencia: `npm run lint:security` OK (2026-02-20).
+- Evidencia: `npm run lint:layers` OK (2026-02-20).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-20). Cobertura global: lines 81.53%, statements 80.98%, functions 81.52%, branches 68.64%.
+- Evidencia: `npm run test:a11y` OK (2026-02-20).
+- Evidencia: `npm run check:css` OK (2026-02-20).
+- Evidencia: `npm run quality:responsive` OK (2026-02-20). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-20).
+- Evidencia: `npm run quality:merge` OK (2026-02-20) tras mitigacion de `exactOptionalPropertyTypes` y sincronizacion de trazabilidad en tablero.
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-20).
+- Avance: generado informe tecnico detallado para backend sobre correlacion frontend/backend (`request_id`, `error_code`, headers CORS expuestos, contrato de errores y checklist operativo).
+- Evidencia: `docs/dv-backend-feedback-correlation-2026-02.md`.
+- Avance: validacion manual local del canal `mail` confirma feedback backend correlacionable en exito con `requestId` propagado a UI (`submit_response_ok`) y navegacion a `thanks`.
+- Evidencia: consola navegador (2026-02-20) en `contacto-mail`: `submit_clicked` -> `submit_request_started` -> `submit_response_ok` con `requestId: 6a1fc529-1b14-4d1f-a282-bda10d32ffd1`, `latencyMs: 169`, `backendStatus: available`.
+- Avance: nueva corrida manual de `contacto-mail` mantiene estabilidad del flujo y confirma emision repetible de `requestId` en exito.
+- Evidencia: consola navegador (2026-02-20) en `contacto-mail`: `submit_clicked` -> `submit_request_started` -> `submit_response_ok` con `requestId: 7a796417-137e-4afa-8e34-47918d84b81c`, `latencyMs: 169`, `backendStatus: available`.
+- Siguiente paso: validar en entorno backend real que `X-Request-Id` se exponga en `/api/contact` y `/api/mail` y quede reflejado en eventos `submit_response_ok/error` del frontend.
+- Siguiente accion interna ejecutable ahora: ejecutar prueba manual contra backend productivo/QA con DevTools (Network + Console) y confirmar correlacion `request_id` extremo a extremo.
+- Decision tomada (B-Vue): agregar flags booleanos en ingles por formulario (`isContactFormActive`, `isEmailFormActive`) en los page controllers para habilitar render condicional con `v-if` sin alterar el contrato de submit ni la logica de backend availability.
+- Avance: `HomePage` y `MedicionConsumoEscobar` ahora exponen ambos flags y renderizan cada `ContactFormSection` de forma condicional segun su bandera.
+- Evidencia: `src/ui/pages/HomePage.ts`, `src/ui/pages/HomePage.vue`, `src/ui/pages/MedicionConsumoEscobar.ts`, `src/ui/pages/MedicionConsumoEscobar.vue`.
+- Siguiente paso: definir fuente de verdad de flags (config/env/CMS) y comportamiento UX cuando un formulario esta inactivo (ocultar vs deshabilitar con mensaje).
+- Siguiente accion interna ejecutable ahora: correr bateria obligatoria (`lint:security`, `test:a11y`, `check:css`, `quality:responsive`, `quality:mobile`, `lint:test-coverage`, `quality:merge`, `lint:todo-sync:merge-ready`).
+- Mitigacion interna ejecutada: corrida inicial de validaciones en paralelo genero colision de cobertura (`ENOENT coverage/.tmp/coverage-13.json`) y timeout en `quality:merge`; se re-ejecutaron checks en secuencia para eliminar interferencia entre procesos.
+- Evidencia: `npm run lint:security` OK (2026-02-21).
+- Evidencia: `npm run test:a11y` OK (2026-02-21).
+- Evidencia: `npm run check:css` OK (2026-02-21).
+- Evidencia: `npm run quality:responsive` OK (2026-02-21). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-21).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-21). Cobertura global: lines 81.53%, statements 80.98%, functions 81.52%, branches 68.64%.
+- Evidencia: `npm run quality:merge` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
+- Siguiente paso: decidir fuente de verdad de activacion de formularios para reemplazar flags locales hardcoded y alinear UX cuando un formulario quede inactivo.
+- Siguiente accion interna ejecutable ahora: al definir la estrategia de flags, moverlos a config central y cubrir escenario de formulario oculto/deshabilitado con pruebas unitarias/E2E.
+- Decision tomada (B-Arquitectura): centralizar activacion de formularios en `ConfigPort` con override por env (`VITE_CONTACT_FORM_ACTIVE`, `VITE_EMAIL_FORM_ACTIVE`) y fallback en `publicConfig` para evitar flags hardcoded por pagina.
+- Avance: `contactController` expone getters (`getContactFormActive`, `getEmailFormActive`) y `HomePage`/`MedicionConsumoEscobar` consumen config central para render condicional de formularios.
+- Avance: `ViteConfig` incorpora parseo robusto de booleanos (`true|false`) con warning y fallback seguro.
+- Evidencia: `src/application/ports/Config.ts`, `src/infrastructure/config/publicConfig.ts`, `src/infrastructure/config/viteConfig.ts`, `src/env.d.ts`, `.env.example`.
+- Evidencia: `src/ui/controllers/contactController.ts`, `src/ui/pages/HomePage.ts`, `src/ui/pages/MedicionConsumoEscobar.ts`.
+- Siguiente paso: validar por entorno (dev/qa/prod) valores efectivos de `VITE_CONTACT_FORM_ACTIVE` y `VITE_EMAIL_FORM_ACTIVE` para coordinar habilitacion gradual.
+- Siguiente accion interna ejecutable ahora: correr bateria obligatoria de calidad y merge-readiness con trazabilidad del turno.
+- Mitigacion interna ejecutada: al correr `lint:test-coverage` en paralelo con otras tareas pesadas reaparecio colision intermitente de cobertura (`ENOENT coverage/.tmp/coverage-12.json`); se estandariza ejecucion secuencial para el check de cobertura en este repo.
+- Evidencia: `npm run lint:security` OK (2026-02-21).
+- Evidencia: `npm run test:a11y` OK (2026-02-21).
+- Evidencia: `npm run check:css` OK (2026-02-21).
+- Evidencia: `npm run quality:responsive` OK (2026-02-21). Etapas en verde y secuencia bloqueante cumplida: XS -> SM -> MD -> LG.
+- Evidencia: `npm run quality:mobile` OK (2026-02-21).
+- Evidencia: `npm run lint:test-coverage` OK (2026-02-21) en ejecucion secuencial. Cobertura global: lines 81.40%, statements 80.86%, functions 80.93%, branches 68.64%.
+- Evidencia: `npm run quality:merge` OK (2026-02-21).
+- Evidencia: `npm run lint:todo-sync:merge-ready` OK (2026-02-21).
+- Siguiente paso: mantener `lint:test-coverage` fuera de paralelizacion con otros jobs locales para evitar race condition de archivos temporales de cobertura.
+- Siguiente accion interna ejecutable ahora: conservar orden secuencial de checks al preparar commits de frontend con cobertura.

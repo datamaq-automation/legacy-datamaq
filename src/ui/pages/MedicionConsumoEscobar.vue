@@ -11,6 +11,8 @@ const content = landingPages.medicionConsumoEscobar
 const {
   contactCtaEnabled,
   contactEmail,
+  isContactFormActive,
+  isEmailFormActive,
   handleChat,
   handleContactSubmit,
   handleEmailSubmit
@@ -97,6 +99,7 @@ const {
       </section>
 
       <ContactFormSection
+        v-if="isContactFormActive"
         v-bind="contactEmail ? { contactEmail } : {}"
         section-id="landing-escobar-lead"
         title="Ingreso de contacto"
@@ -106,6 +109,7 @@ const {
         :on-submit="handleContactSubmit"
       />
       <ContactFormSection
+        v-if="isEmailFormActive"
         v-bind="contactEmail ? { contactEmail } : {}"
         section-id="landing-escobar-mail"
         title="Enviar e-mail"

@@ -16,6 +16,8 @@ import { useHomePage } from './HomePage'
 const {
   contactCtaEnabled,
   contactEmail,
+  isContactFormActive,
+  isEmailFormActive,
   handleChat,
   handleContactSubmit,
   handleEmailSubmit
@@ -35,6 +37,7 @@ const {
       <TecnicoACargo />
       <DecisionFlowSection />
       <ContactFormSection
+        v-if="isContactFormActive"
         v-bind="contactEmail ? { contactEmail } : {}"
         section-id="contacto-lead"
         title="Ingreso de contacto"
@@ -44,6 +47,7 @@ const {
         :on-submit="handleContactSubmit"
       />
       <ContactFormSection
+        v-if="isEmailFormActive"
         v-bind="contactEmail ? { contactEmail } : {}"
         section-id="contacto-mail"
         title="Enviar e-mail"
