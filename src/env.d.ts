@@ -1,6 +1,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_BACKEND_BASE_URL?: string
+  readonly VITE_ALLOW_INSECURE_BACKEND?: 'true' | 'false'
   readonly VITE_IS_CONTACT_FORM_ACTIVE?: 'true' | 'false'
   readonly VITE_IS_EMAIL_FORM_ACTIVE?: 'true' | 'false'
   readonly DEV: boolean

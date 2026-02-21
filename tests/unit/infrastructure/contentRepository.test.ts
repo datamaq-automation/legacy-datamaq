@@ -86,7 +86,7 @@ describe('ContentRepository', () => {
     await flushRuntimePricing()
 
     expect(heroRef.responseNote).toContain('410.000')
-    expect(servicesRef.cards[0].figure?.caption).toContain('mÃ­nimo')
+    expect(servicesRef.cards[0].figure?.caption ?? '').toMatch(/m[ií]nimo/i)
     expect(servicesRef.cards[0].figure?.caption).toContain('15.000')
     expect(servicesRef.cards[1].note).toContain('275.000')
     expect(servicesRef.cards[1].note).toContain('130.000')

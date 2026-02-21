@@ -4,6 +4,7 @@ import { publicConfig } from '@/infrastructure/config/publicConfig'
 type NullableString = string | undefined
 
 const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
+const ALLOW_INSECURE_BACKEND_FLAG = 'VITE_ALLOW_INSECURE_BACKEND'
 
 export class ViteConfig implements ConfigPort {
   inquiryApiUrl: NullableString
@@ -93,6 +94,25 @@ function ensureApiBaseUrl(value: NullableString, envKey: string): NullableString
   }
 
   if (!value.startsWith('https://')) {
+    const allowInsecureBackend =
+      import.meta.env.VITE_ALLOW_INSECURE_BACKEND?.trim().toLowerCase() === 'true'
+    if (allowInsecureBackend) {
+      try {
+        const parsedUrl = new URL(value)
+        const normalizedHost = parsedUrl.hostname.trim().toLowerCase()
+        const isLoopbackHost =
+          normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
+
+        if (parsedUrl.protocol === 'http:' && isLoopbackHost) {
+          console.warn(
+            `[config] Se habilito bypass local para ${envKey} via ${ALLOW_INSECURE_BACKEND_FLAG}=true. Valor recibido: ${value}`
+          )
+          return value
+        }
+      } catch {
+        // No-op: si URL no parsea, cae en validacion estricta de produccion.
+      }
+    }
     console.warn(
       `[config] La variable ${envKey} debe comenzar con "https://" en produccion. Valor recibido: ${value}`
     )
