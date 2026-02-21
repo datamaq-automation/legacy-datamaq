@@ -16,7 +16,7 @@ import type {
 } from '@/application/ports/Content'
 import type { AppContent } from '@/domain/types/content'
 import { AppContentSchema } from '@/domain/schemas/contentSchema'
-import { content } from '@/infrastructure/content/content'
+import { content } from '@/infrastructure/content/Appcontent'
 
 export class ContentRepository
   implements
