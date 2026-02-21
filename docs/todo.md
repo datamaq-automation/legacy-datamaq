@@ -401,3 +401,13 @@
 - Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` (job `deploy-ftps-upload`, step `Deploy dist via FTPS`).
 - Siguiente paso: ejecutar `workflow_dispatch` para validar estabilidad del upload FTPS bajo red real.
 - Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para verificar trazabilidad del tablero.
+- Decision tomada (B): primer ajuste incremental de alineacion canvas, priorizando un cambio de copy de alta certeza y bajo riesgo en contenido estatico.
+- Avance: `src/infrastructure/content/content.ts` ahora explicita en `about.paragraphs` la oferta ampliada para industria grafica: mantenimiento/reparacion solo electrico/electronico y control (sin mecanica), alineado con `docs/modelo-negocios-canvas.resumen.md` y `docs/modelo-negocios-canvas.anexo.md`.
+- Evidencia: `src/infrastructure/content/content.ts`.
+- Siguiente paso: ejecutar bateria obligatoria de validacion por cambio en `src/` y confirmar merge-readiness.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:security`, `npm run lint:test-coverage`, `npm run quality:merge`, `npm run lint:todo-sync:merge-ready`.
+- Mitigacion interna ejecutada: fix de sintaxis bash en workflow FTPS. Se elimina uso de heredoc en `deploy-ftps-preflight` y `deploy-ftps-upload` por error `here-document ... wanted EOF` / `syntax error: unexpected end of file` reportado en CI.
+- Decision tomada (B-Deploy): migrar comandos `lftp` a `lftp -e "..."` con misma configuracion SSL/reintentos para evitar fragilidad de delimitadores heredoc en YAML.
+- Evidencia deploy/operacion: `.github/workflows/ci-cd-ftps.yml` actualizado en steps `Validate DNS and remote dir access` y `Deploy dist via FTPS`.
+- Siguiente paso: re-ejecutar workflow remoto y verificar que el step de upload pase parseo de shell y avance a transferencia.
+- Siguiente accion interna ejecutable ahora: correr `npm run lint:todo-sync` para validar trazabilidad del tablero.

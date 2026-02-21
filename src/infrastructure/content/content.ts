@@ -174,7 +174,7 @@ export const content: AppContent = {
     paragraphs: [
       `DataMaq brinda servicios técnicos para industria: instalación de ${POWERMETER}/${AUTOMATE}, diagnóstico eléctrico y asistencia en campo con criterio operativo.`,
       `Base operativa: ${BASE}. Cobertura: AMBA (prioridad GBA Norte). Fuera de AMBA: consultar.`,
-      'Objetivo: decisiones técnicas con datos reales, intervenciones seguras y trabajo documentado.'
+      'Oferta ampliada para industria gráfica: mantenimiento y reparación de maquinaria en alcance eléctrico/electrónico y control (sin mecánica), con decisiones técnicas basadas en datos reales.'
     ],
     image: {
       src: teamTraining,

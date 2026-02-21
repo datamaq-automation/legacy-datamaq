@@ -32,8 +32,22 @@ Ingresos por:
 - Instalación desde ARS 380.000 (1 equipo: Powermeter o Automate).
 - Diagnóstico hasta 2 horas ARS 260.000; excedente ARS 130.000/h; descontable si se aprueba presupuesto.
 
-Facturación: (a) directa a planta; (b) a intermediarios por órdenes de trabajo, según el origen del proyecto.  
-**Solo industria gráfica:** ingresos adicionales por (i) mantenimiento/reparación eléctrico/electrónico y control; (ii) post-instalación Automate/Powermeter (entregable o pack acotado con revisiones). Se recomienda paquetizar para proteger margen y limitar alcance.
+Facturación: (a) directa a planta; (b) a intermediarios por órdenes de trabajo, según el origen del proyecto.
+
+**Solo industria gráfica:** ingresos adicionales por:
+1) **Mantenimiento/reparación eléctrico/electrónico y control** de maquinaria gráfica (no incluye mecánica): **[DEFINIR: modalidad de cobro por visita / por hora / pack]**.
+2) **Post-instalación Automate (default publicado): “Informe + intervención en una máquina”.**  
+   - **Informe:** baseline + hallazgos + recomendaciones (orientadas a decisión operativa).  
+   - **Intervención:** una corrección/ajuste puntual en una máquina objetivo (eléctrico/electrónico y control), bajo condiciones seguras, con verificación y cierre documentado.  
+   - **Alcance del paquete:** **[DEFINIR: tiempo incluido / si incluye traslado / si incluye repuestos / ventana de trabajo]**.  
+   - **Precio publicado:** **[DEFINIR: ARS ____]**.  
+   - **Excedentes / fuera de alcance:** **[DEFINIR: ARS ____/h o regla]**.
+
+Opcional (no publicado por defecto, pero disponible):
+- Post-instalación extendido (pack 30 días con revisiones) **[PLACEHOLDER: condiciones y precio]**.
+- Abono mensual (seguimiento) **[PLACEHOLDER: condiciones y precio]**.
+
+Se recomienda paquetizar para proteger margen, limitar soporte y mantener el post-instalación como entregable técnico post-intervención (no como servicio genérico de “procesamiento de datos”).
 
 ## 6. Recursos clave
 Capacidad técnica, instrumental, EPP y protocolos; activos de documentación (checklists, plantillas, formato de handoff); movilidad; stack digital (WhatsApp + Chatwoot; Rasa futuro).  
