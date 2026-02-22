@@ -7,8 +7,9 @@ export interface DiagnosticQuoteRequest {
   scheduled: boolean
   access_ready: boolean
   safe_window_confirmed: boolean
-  bureaucracy: QuoteBureaucracyLevel
+  bureaucracy?: QuoteBureaucracyLevel
   email?: string
+  phone?: string
   notes?: string
 }
 
@@ -22,6 +23,8 @@ export interface DiagnosticQuoteResponse {
   quote_id: string
   list_price_ars: number
   discounts: QuoteDiscount[]
+  discount_pct: number
+  discount_total_ars: number
   final_price_ars: number
   deposit_pct: number
   deposit_ars: number

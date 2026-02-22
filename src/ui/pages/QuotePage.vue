@@ -9,10 +9,25 @@ import type {
   DiagnosticQuoteResponse,
   QuoteBureaucracyLevel
 } from '@/application/dto/quote'
+import { QuoteApiError, type QuoteValidationIssue } from '@/application/quote/quoteApiError'
 import { getWhatsAppEnabled, getWhatsAppHref } from '@/ui/controllers/contactController'
 import { createDiagnosticQuote, fetchQuotePdf } from '@/ui/controllers/quoteController'
 
 type BinaryChoice = boolean | null
+const QUOTE_FORM_FIELDS = [
+  'company',
+  'contact_name',
+  'locality',
+  'scheduled',
+  'access_ready',
+  'safe_window_confirmed',
+  'bureaucracy',
+  'email',
+  'phone',
+  'notes'
+] as const
+type QuoteFormField = (typeof QUOTE_FORM_FIELDS)[number]
+const QUOTE_FORM_FIELDS_SET = new Set<string>(QUOTE_FORM_FIELDS)
 
 interface QuoteFormState {
   company: string
@@ -21,19 +36,13 @@ interface QuoteFormState {
   scheduled: BinaryChoice
   access_ready: BinaryChoice
   safe_window_confirmed: BinaryChoice
-  bureaucracy: QuoteBureaucracyLevel
+  bureaucracy: QuoteBureaucracyLevel | ''
   email: string
+  phone: string
   notes: string
 }
 
-interface QuoteFormErrors {
-  company?: string
-  contact_name?: string
-  locality?: string
-  scheduled?: string
-  access_ready?: string
-  safe_window_confirmed?: string
-}
+type QuoteFormErrors = Partial<Record<QuoteFormField, string>>
 
 interface QuoteDiscountView {
   key: string
@@ -59,6 +68,7 @@ const form = reactive<QuoteFormState>({
   safe_window_confirmed: null,
   bureaucracy: 'medium',
   email: '',
+  phone: '',
   notes: ''
 })
 
@@ -92,14 +102,21 @@ async function handleGenerateQuote() {
       locality: form.locality.trim(),
       scheduled: Boolean(form.scheduled),
       access_ready: Boolean(form.access_ready),
-      safe_window_confirmed: Boolean(form.safe_window_confirmed),
-      bureaucracy: form.bureaucracy
+      safe_window_confirmed: Boolean(form.safe_window_confirmed)
+    }
+
+    if (form.bureaucracy) {
+      payload.bureaucracy = form.bureaucracy
     }
 
     const normalizedEmail = form.email.trim()
+    const normalizedPhone = form.phone.trim()
     const normalizedNotes = form.notes.trim()
     if (normalizedEmail) {
       payload.email = normalizedEmail
+    }
+    if (normalizedPhone) {
+      payload.phone = normalizedPhone
     }
     if (normalizedNotes) {
       payload.notes = normalizedNotes
@@ -111,8 +128,7 @@ async function handleGenerateQuote() {
       console.warn('[cotizador] error al generar propuesta', error)
     }
     quote.value = undefined
-    errorMessage.value =
-      'No pudimos generar la propuesta en este momento. Podes continuar por WhatsApp.'
+    errorMessage.value = buildQuoteCreationErrorMessage(error)
   } finally {
     loading.value = false
   }
@@ -134,7 +150,7 @@ async function handleDownloadPdf() {
     if (import.meta.env.DEV) {
       console.warn('[cotizador] error al descargar PDF', { quoteId, error })
     }
-    errorMessage.value = 'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
+    errorMessage.value = buildQuotePdfErrorMessage(error)
   } finally {
     pdfLoading.value = false
   }
@@ -180,12 +196,113 @@ function validateForm(): boolean {
 }
 
 function clearErrors(): void {
-  delete errors.company
-  delete errors.contact_name
-  delete errors.locality
-  delete errors.scheduled
-  delete errors.access_ready
-  delete errors.safe_window_confirmed
+  QUOTE_FORM_FIELDS.forEach((field) => {
+    delete errors[field]
+  })
+}
+
+function buildQuoteCreationErrorMessage(error: unknown): string {
+  if (!QuoteApiError.is(error)) {
+    return 'No pudimos generar la propuesta en este momento. Podes continuar por WhatsApp.'
+  }
+
+  if (error.status === 422) {
+    const hasFieldErrors = applyBackendValidationErrors(error.validationIssues)
+    if (hasFieldErrors) {
+      return 'Revisa los campos marcados e intenta nuevamente.'
+    }
+    return normalizeText(error.detail) ?? 'No pudimos validar los datos enviados. Revisa el formulario.'
+  }
+
+  if (error.status === 429) {
+    return buildRateLimitMessage(error.retryAfterSeconds, 'generar la propuesta')
+  }
+
+  return (
+    normalizeText(error.detail) ??
+    normalizeText(error.message) ??
+    'No pudimos generar la propuesta en este momento. Podes continuar por WhatsApp.'
+  )
+}
+
+function buildQuotePdfErrorMessage(error: unknown): string {
+  if (!QuoteApiError.is(error)) {
+    return 'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
+  }
+
+  if (error.status === 422) {
+    return 'El identificador de la cotizacion no es valido.'
+  }
+
+  if (error.status === 404) {
+    return 'La cotizacion no esta disponible para descarga.'
+  }
+
+  if (error.status === 429) {
+    return buildRateLimitMessage(error.retryAfterSeconds, 'descargar el PDF')
+  }
+
+  return (
+    normalizeText(error.detail) ??
+    normalizeText(error.message) ??
+    'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
+  )
+}
+
+function applyBackendValidationErrors(validationIssues: QuoteValidationIssue[]): boolean {
+  let hasFieldErrors = false
+
+  validationIssues.forEach((issue) => {
+    const field = resolveQuoteFormField(issue)
+    if (!field) {
+      return
+    }
+    errors[field] = issue.message
+    hasFieldErrors = true
+  })
+
+  return hasFieldErrors
+}
+
+function resolveQuoteFormField(issue: QuoteValidationIssue): QuoteFormField | undefined {
+  if (issue.field && isQuoteFormField(issue.field)) {
+    return issue.field
+  }
+
+  for (let index = issue.loc.length - 1; index >= 0; index -= 1) {
+    const segment = issue.loc[index]
+    if (isQuoteFormField(segment)) {
+      return segment
+    }
+  }
+
+  return undefined
+}
+
+function isQuoteFormField(value: string): value is QuoteFormField {
+  return QUOTE_FORM_FIELDS_SET.has(value)
+}
+
+function buildRateLimitMessage(retryAfterSeconds: number | undefined, action: string): string {
+  if (typeof retryAfterSeconds !== 'number') {
+    return `Demasiadas solicitudes. Espera un momento y volve a intentar ${action}.`
+  }
+
+  const normalizedWait = Math.max(Math.ceil(retryAfterSeconds), 0)
+  if (normalizedWait === 0) {
+    return `Demasiadas solicitudes. Volve a intentar ${action} ahora.`
+  }
+
+  const unit = normalizedWait === 1 ? 'segundo' : 'segundos'
+  return `Demasiadas solicitudes. Espera ${normalizedWait} ${unit} y volve a intentar ${action}.`
+}
+
+function normalizeText(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+  const trimmed = value.trim()
+  return trimmed ? trimmed : undefined
 }
 
 function setBinaryChoice(field: 'scheduled' | 'access_ready' | 'safe_window_confirmed', value: boolean) {
@@ -357,16 +474,25 @@ function triggerFileDownload(blob: Blob, filename: string): void {
                     <option value="medium">Media</option>
                     <option value="high">Alta</option>
                   </select>
+                  <small v-if="errors.bureaucracy" class="text-danger">{{ errors.bureaucracy }}</small>
                 </div>
 
                 <div>
                   <label class="form-label fw-semibold" for="quote-email">Email (opcional)</label>
                   <input id="quote-email" v-model="form.email" class="form-control" type="email" />
+                  <small v-if="errors.email" class="text-danger">{{ errors.email }}</small>
+                </div>
+
+                <div>
+                  <label class="form-label fw-semibold" for="quote-phone">Telefono (opcional)</label>
+                  <input id="quote-phone" v-model="form.phone" class="form-control" type="tel" />
+                  <small v-if="errors.phone" class="text-danger">{{ errors.phone }}</small>
                 </div>
 
                 <div>
                   <label class="form-label fw-semibold" for="quote-notes">Notas (opcional)</label>
                   <textarea id="quote-notes" v-model="form.notes" class="form-control" rows="3"></textarea>
+                  <small v-if="errors.notes" class="text-danger">{{ errors.notes }}</small>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 pt-2">
@@ -389,6 +515,10 @@ function triggerFileDownload(blob: Blob, filename: string): void {
               <template v-else>
                 <p class="mb-1"><strong>ID:</strong> {{ quote.quote_id }}</p>
                 <p class="mb-1"><strong>Lista:</strong> {{ formatArs(quote.list_price_ars) }}</p>
+                <p class="mb-1">
+                  <strong>Descuentos ({{ quote.discount_pct }}%):</strong>
+                  -{{ formatArs(quote.discount_total_ars) }}
+                </p>
                 <p class="mb-1"><strong>Final:</strong> {{ formatArs(quote.final_price_ars) }}</p>
                 <p class="mb-1"><strong>Sena ({{ quote.deposit_pct }}%):</strong> {{ formatArs(quote.deposit_ars) }}</p>
                 <p class="mb-3"><strong>Valida hasta:</strong> {{ formatDateTime(quote.valid_until) }}</p>
