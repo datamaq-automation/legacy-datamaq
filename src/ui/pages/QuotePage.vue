@@ -248,7 +248,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta py-5">
       <div class="container">
         <section class="quote-hero mb-4 mb-lg-5">
-          <p class="quote-eyebrow mb-2">Cotizador publico</p>
+          <p class="text-uppercase fw-bold small mb-2">Cotizador publico</p>
           <h1 class="display-6 fw-bold mb-3">Propuesta tecnica en minutos</h1>
           <p class="lead text-white-50 mb-0">
             Completa los datos minimos y generamos una propuesta premium con reserva y envio por WhatsApp.
@@ -257,7 +257,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
 
         <div class="row g-4 align-items-start">
           <section class="col-lg-7" aria-labelledby="cotizador-form-title">
-            <div class="quote-card">
+            <div class="bg-dark border border-secondary-subtle rounded-4 p-4">
               <h2 id="cotizador-form-title" class="h4 fw-semibold mb-3">Datos del servicio</h2>
 
               <form class="d-flex flex-column gap-3" @submit.prevent="handleGenerateQuote">
@@ -379,7 +379,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
           </section>
 
           <aside class="col-lg-5" aria-live="polite">
-            <div class="quote-card quote-card--summary">
+            <div class="bg-dark border border-secondary-subtle rounded-4 p-4 position-lg-sticky top-0">
               <h2 class="h4 fw-semibold mb-3">Propuesta generada</h2>
 
               <p v-if="!quote" class="text-white-50 mb-0">
@@ -432,7 +432,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
 
               <hr class="my-4 border-secondary-subtle" />
 
-              <ul class="quote-copy mb-0 ps-3">
+              <ul class="mb-0 ps-3 text-white-50">
                 <li>Sena 50% para reservar agenda</li>
                 <li>1 reprogramacion sin costo con 24h</li>
                 <li>No-show: sena se pierde / Seguridad primero</li>
@@ -448,36 +448,3 @@ function triggerFileDownload(blob: Blob, filename: string): void {
     <WhatsAppFab />
   </div>
 </template>
-
-<style scoped>
-.quote-eyebrow {
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--dm-line-blueprint);
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.quote-card {
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(17, 24, 39, 0.95));
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  backdrop-filter: blur(2px);
-}
-
-.quote-card--summary {
-  position: sticky;
-  top: 6rem;
-}
-
-.quote-copy {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-@media (max-width: 991.98px) {
-  .quote-card--summary {
-    position: static;
-  }
-}
-</style>

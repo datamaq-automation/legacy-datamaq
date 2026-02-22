@@ -39,6 +39,7 @@
   - Avance: Se corrigio lint de colores en `QuotePage` reemplazando HEX directo (`#7dd3fc`) por token de diseno (`var(--dm-line-blueprint)`), cumpliendo regla anti-HEX fuera de `_dm.tokens.scss`.
   - Avance: Se corrigio boundary `ui -> infrastructure` en cotizador: `QuotePage` ahora usa `src/ui/controllers/quoteController.ts`; el acceso a infraestructura queda encapsulado en DI via `quoteGateway` (`container`) y puerto `QuoteGateway`.
   - Avance: Se reforzo robustez de template en `QuotePage` con cierre explicito de `textarea` (`</textarea>`) para compatibilidad de parseo en auditorias estaticas.
+  - Avance: Se redujo CSS de cotizador eliminando estilos `scoped` de `QuotePage` y migrando a utilidades (`bg-dark`, `border`, `rounded-4`, `p-4`, `text-white-50`) para cumplir budget de CSS en CI.
   - Avance: Se agregaron tests unitarios del cotizador para recuperar cobertura de funciones por encima del umbral CI (`quoteApiGateway` + `quoteController`), incluyendo escenarios de exito, red, non-ok, parseo de filename y errores de configuracion.
   - Evidencia: cambios en `src/ui/pages/QuotePage.vue`, `src/infrastructure/quote/quoteApiGateway.ts`.
   - Evidencia: cambios en `src/ui/controllers/quoteController.ts`, `src/application/quote/ports/QuoteGateway.ts`, `src/di/container.ts`.
