@@ -36,6 +36,7 @@
   - Avance: Se ajusto `QuotePage` para consumir `whatsapp_url` de backend, mantener validacion minima requerida y normalizar descuentos para evitar `NaN` en UI.
   - Avance: Se renombro el metodo de gateway a `fetchQuotePdf(quoteId)` para alinear API frontend con el requerimiento funcional de descarga PDF.
   - Avance: Se corrigio compatibilidad con `exactOptionalPropertyTypes` en limpieza de errores del formulario, reemplazando asignaciones a `undefined` por `delete`.
+  - Avance: Se corrigio lint de colores en `QuotePage` reemplazando HEX directo (`#7dd3fc`) por token de diseno (`var(--dm-line-blueprint)`), cumpliendo regla anti-HEX fuera de `_dm.tokens.scss`.
   - Evidencia: cambios en `src/ui/pages/QuotePage.vue`, `src/infrastructure/quote/quoteApiGateway.ts`.
   - Evidencia: `npm test` (OK), `npm run build` (OK).
   - Evidencia: smoke real contra `https://api.datamaq.com.ar` con `POST /v1/public/quote/diagnostic` (quote_id emitido) + `GET /v1/public/quote/{quote_id}/pdf` (HTTP 200, `Content-Type: application/pdf`, `content-disposition` con filename).
