@@ -275,7 +275,81 @@ jobs:
             exit 1
           fi
 
-          timeout 90 lftp -e "set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set net:reconnect-interval-base 1; set net:reconnect-interval-max 2; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv false; set ftp:fix-pasv-address true; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; cls -1; pwd; bye"
+          echo "::notice::FTPS preflight target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
+          echo "::notice::lftp version: $(lftp --version | head -n 1)"
+
+          LAST_LOG_FILE=""
+          LAST_STATUS=1
+
+          run_preflight_attempt() {
+            ATTEMPT="$1"
+            TOTAL="$2"
+            PREFER_EPSV="$3"
+            FIX_PASV_ADDRESS="$4"
+            PASSIVE_MODE="$5"
+            LOG_FILE="$(mktemp)"
+            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set net:reconnect-interval-base 1; set net:reconnect-interval-max 2; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode ${PASSIVE_MODE}; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; cls -1; pwd; bye"
+
+            echo "::notice::FTPS preflight attempt ${ATTEMPT}/${TOTAL} (passive-mode=${PASSIVE_MODE}, prefer-epsv=${PREFER_EPSV}, fix-pasv-address=${FIX_PASV_ADDRESS})"
+            set +e
+            timeout 90 lftp -e "${LFTP_COMMAND}" >"${LOG_FILE}" 2>&1
+            STATUS=$?
+            set -e
+
+            cat "${LOG_FILE}"
+            LAST_LOG_FILE="${LOG_FILE}"
+            LAST_STATUS="${STATUS}"
+
+            if [ "${STATUS}" -eq 0 ]; then
+              echo "::notice::FTPS preflight succeeded on attempt ${ATTEMPT}/${TOTAL}."
+              return 0
+            fi
+
+            if [ "${STATUS}" -eq 124 ]; then
+              echo "::error::FTPS preflight timed out after 90 seconds."
+            fi
+
+            if grep -Eqi 'Login failed|530[[:space:]]' "${LOG_FILE}"; then
+              echo "::error::FTPS authentication failed in preflight."
+            fi
+            if grep -Eqi 'Name or service not known|Temporary failure in name resolution|Could not resolve host' "${LOG_FILE}"; then
+              echo "::error::FTPS DNS resolution failed in preflight."
+            fi
+            if grep -Eqi 'certificate|TLS|SSL|handshake|hostname does not match' "${LOG_FILE}"; then
+              echo "::error::FTPS TLS validation failed in preflight."
+            fi
+            if grep -Eqi 'cd: Access failed|550[[:space:]].*No such file|No such file or directory|Permission denied' "${LOG_FILE}"; then
+              echo "::error::FTPS remote path access failed in preflight."
+            fi
+            if grep -Eqi 'max-retries exceeded' "${LOG_FILE}"; then
+              echo "::error::FTPS reached lftp retry limit in preflight (max-retries exceeded)."
+            fi
+            if grep -Eqi '425[[:space:]]|Connection refused|Network is unreachable|Connection reset|timed out|max-retries exceeded' "${LOG_FILE}"; then
+              echo "::error::FTPS network/data channel failure in preflight."
+            fi
+
+            echo "::group::FTPS preflight diagnostic matches (attempt ${ATTEMPT}/${TOTAL})"
+            grep -Ein 'Fatal|error|421|425|426|530|TLS|SSL|handshake|certificate|hostname|timed out|timeout|refused|reset|max-retries|passive|epsv|pasv' "${LOG_FILE}" | tail -n 40 || true
+            echo "::endgroup::"
+            echo "::group::FTPS preflight failure tail (attempt ${ATTEMPT}/${TOTAL}, last 40 lines)"
+            tail -n 40 "${LOG_FILE}" || true
+            echo "::endgroup::"
+            return 1
+          }
+
+          ATTEMPTS=3
+          if run_preflight_attempt 1 "${ATTEMPTS}" false true true; then
+            exit 0
+          fi
+          if run_preflight_attempt 2 "${ATTEMPTS}" true false true; then
+            exit 0
+          fi
+          if run_preflight_attempt 3 "${ATTEMPTS}" false false false; then
+            exit 0
+          fi
+
+          echo "::error::FTPS preflight failed after bounded fallback attempts."
+          exit "${LAST_STATUS}"
 
   deploy-ftps-upload:
     name: Deploy / FTPS Upload
