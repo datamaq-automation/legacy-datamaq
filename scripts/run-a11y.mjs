@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join, resolve, relative, extname } from 'node:path'
 import { spawn } from 'node:child_process'
 import { parse } from '@vue/compiler-dom'
+import { parse as parseSfc } from '@vue/compiler-sfc'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -24,7 +25,7 @@ async function ensureBuild() {
         if (code === 0) {
           resolvePromise()
         } else {
-          rejectPromise(new Error(`"npm run build" finaliz√≥ con c√≥digo ${code}`))
+          rejectPromise(new Error(`"npm run build" finalizÛ con cÛdigo ${code}`))
         }
       })
 
@@ -53,11 +54,12 @@ async function listVueFiles(dir) {
 }
 
 function extractTemplate(source, filePath) {
-  const match = source.match(/<template[^>]*>([\s\S]*?)<\/template>/i)
-  if (!match) {
-    throw new Error(`No se encontr√≥ bloque <template> en ${filePath}`)
+  const parsed = parseSfc(source, { filename: filePath })
+  const content = parsed.descriptor.template?.content
+  if (!content) {
+    throw new Error(`No se encontrÛ bloque <template> en ${filePath}`)
   }
-  return match[1]
+  return content
 }
 
 function getStaticAttribute(node, name) {
@@ -73,7 +75,7 @@ function getStaticAttribute(node, name) {
 }
 
 function hasTextDescendant(node) {
-  if (!('children' in node) || !Array.isArray(node.children)) {
+  if (!("children" in node) || !Array.isArray(node.children)) {
     return false
   }
 
@@ -114,7 +116,7 @@ function collectAccessibilityIssues(ast, filePath) {
         if (alt === undefined) {
           issues.push({ filePath, message: '<img> sin atributo alt' })
         } else if (alt !== '{dynamic}' && alt.trim().length === 0) {
-          issues.push({ filePath, message: '<img> con atributo alt vac√≠o' })
+          issues.push({ filePath, message: '<img> con atributo alt vacÌo' })
         }
       }
 
@@ -142,7 +144,7 @@ function collectAccessibilityIssues(ast, filePath) {
           getStaticAttribute(node, 'aria-labelledby') ||
           node.children?.some((child) => child.type === 1 && /^h[1-6]$/i.test(child.tag))
         if (!labelled) {
-          issues.push({ filePath, message: '<section> sin t√≠tulo o etiqueta accesible' })
+          issues.push({ filePath, message: '<section> sin tÌtulo o etiqueta accesible' })
         }
       }
     }
@@ -195,6 +197,6 @@ async function runAccessibilityAudit() {
 }
 
 runAccessibilityAudit().catch((error) => {
-  console.error('Error al ejecutar la auditor√≠a de accesibilidad:', error)
+  console.error('Error al ejecutar la auditorÌa de accesibilidad:', error)
   process.exit(1)
 })

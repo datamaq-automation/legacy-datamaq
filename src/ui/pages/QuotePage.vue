@@ -366,7 +366,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
 
                 <div>
                   <label class="form-label fw-semibold" for="quote-notes">Notas (opcional)</label>
-                  <textarea id="quote-notes" v-model="form.notes" class="form-control" rows="3" />
+                  <textarea id="quote-notes" v-model="form.notes" class="form-control" rows="3"></textarea>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 pt-2">
