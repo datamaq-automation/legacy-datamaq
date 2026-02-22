@@ -37,7 +37,10 @@
   - Avance: Se renombro el metodo de gateway a `fetchQuotePdf(quoteId)` para alinear API frontend con el requerimiento funcional de descarga PDF.
   - Avance: Se corrigio compatibilidad con `exactOptionalPropertyTypes` en limpieza de errores del formulario, reemplazando asignaciones a `undefined` por `delete`.
   - Avance: Se corrigio lint de colores en `QuotePage` reemplazando HEX directo (`#7dd3fc`) por token de diseno (`var(--dm-line-blueprint)`), cumpliendo regla anti-HEX fuera de `_dm.tokens.scss`.
+  - Avance: Se corrigio boundary `ui -> infrastructure` en cotizador: `QuotePage` ahora usa `src/ui/controllers/quoteController.ts`; el acceso a infraestructura queda encapsulado en DI via `quoteGateway` (`container`) y puerto `QuoteGateway`.
   - Evidencia: cambios en `src/ui/pages/QuotePage.vue`, `src/infrastructure/quote/quoteApiGateway.ts`.
+  - Evidencia: cambios en `src/ui/controllers/quoteController.ts`, `src/application/quote/ports/QuoteGateway.ts`, `src/di/container.ts`.
+  - Evidencia: `npm run lint:layers` (OK), `npm run build` (OK).
   - Evidencia: `npm test` (OK), `npm run build` (OK).
   - Evidencia: smoke real contra `https://api.datamaq.com.ar` con `POST /v1/public/quote/diagnostic` (quote_id emitido) + `GET /v1/public/quote/{quote_id}/pdf` (HTTP 200, `Content-Type: application/pdf`, `content-disposition` con filename).
   - Siguiente paso: Recolectar feedback de uso real del PDF (minimo 5 envios) para decidir si se itera branding/layout o se prioriza cobro de seña.

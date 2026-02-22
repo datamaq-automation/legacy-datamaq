@@ -9,8 +9,8 @@ import type {
   DiagnosticQuoteResponse,
   QuoteBureaucracyLevel
 } from '@/application/dto/quote'
-import { createDiagnosticQuote, fetchQuotePdf } from '@/infrastructure/quote/quoteApiGateway'
 import { getWhatsAppEnabled, getWhatsAppHref } from '@/ui/controllers/contactController'
+import { createDiagnosticQuote, fetchQuotePdf } from '@/ui/controllers/quoteController'
 
 type BinaryChoice = boolean | null
 
