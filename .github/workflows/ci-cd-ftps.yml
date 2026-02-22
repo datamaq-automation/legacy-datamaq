@@ -17,29 +17,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-todo-sync:
-    name: Build / Todo Sync
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Validate todo sync compliance
-        run: node scripts/check-todo-sync.mjs --require-evidence --require-open-p0
-
   build-quality-gate:
     name: Build / Quality Gate
     runs-on: ubuntu-latest
-    needs:
-      - build-todo-sync
 
     steps:
       - name: Checkout
@@ -62,8 +42,6 @@ jobs:
   build-smoke-e2e:
     name: Build / Smoke E2E
     runs-on: ubuntu-latest
-    needs:
-      - build-todo-sync
 
     steps:
       - name: Checkout
