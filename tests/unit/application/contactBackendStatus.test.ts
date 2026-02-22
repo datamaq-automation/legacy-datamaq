@@ -67,4 +67,20 @@ describe('ContactBackendMonitor', () => {
     expect(status).toBe('unavailable')
     expect(http.options).not.toHaveBeenCalled()
   })
+
+  it('marks unavailable when backend endpoint responds 404', async () => {
+    const http = createHttpClient(404)
+    const monitor = new ContactBackendMonitor(
+      http,
+      createConfig('https://api.example.com/contact'),
+      createRuntime(true),
+      createLogger()
+    )
+
+    const status = await monitor.ensureStatus()
+
+    expect(status).toBe('unavailable')
+    expect(http.options).toHaveBeenCalledTimes(1)
+    expect(http.options).toHaveBeenCalledWith('https://api.example.com/contact')
+  })
 })

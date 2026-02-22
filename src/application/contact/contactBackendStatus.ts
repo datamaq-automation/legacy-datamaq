@@ -9,6 +9,9 @@ export type ContactBackendStatus = 'unknown' | 'available' | 'unavailable'
 type StatusListener = (status: ContactBackendStatus) => void
 type ApiUrlSelector = (config: ConfigPort) => string | undefined
 
+const backendConsoleWarnCache = new Set<string>()
+const isDevRuntime = Boolean(import.meta.env?.DEV)
+
 export class ContactBackendMonitor {
   private listeners = new Set<StatusListener>()
   private status: ContactBackendStatus
@@ -84,13 +87,10 @@ export class ContactBackendMonitor {
         reason: endpointPolicy.reason ?? null
       })
       if (this.runtime.isBrowser()) {
-        console.warn(
-          `[backend:${this.monitorLabel}] sin conexion disponible`,
-          {
-            endpoint: apiUrl ?? null,
-            reason: endpointPolicy.reason ?? (!this.runtime.isBrowser() ? 'not-browser' : 'missing')
-          }
-        )
+        logContactBackendWarnOnce(this.monitorLabel, {
+          endpoint: apiUrl ?? null,
+          reason: endpointPolicy.reason ?? (!this.runtime.isBrowser() ? 'not-browser' : 'missing')
+        })
       }
       this.status = 'unavailable'
       this.notify()
@@ -100,20 +100,24 @@ export class ContactBackendMonitor {
     try {
       this.logger.debug(`[${this.monitorLabel}] Probe start`, { apiUrl })
       const response = await this.http.options(apiUrl)
-      if (
-        response.ok ||
-        response.status === 405 ||
-        response.status === 400 ||
-        response.status === 404
-      ) {
+      if (response.ok || response.status === 405 || response.status === 400) {
         this.status = 'available'
-        console.info(`[backend:${this.monitorLabel}] conexion OK`, {
+        if (isDevRuntime) {
+          console.info(`[backend:${this.monitorLabel}] conexion OK`, {
+            endpoint: apiUrl,
+            status: response.status
+          })
+        }
+      } else if (response.status === 404) {
+        this.status = 'unavailable'
+        logContactBackendWarnOnce(this.monitorLabel, {
           endpoint: apiUrl,
-          status: response.status
+          status: response.status,
+          reason: 'endpoint-not-found'
         })
       } else {
         this.status = 'unavailable'
-        console.warn(`[backend:${this.monitorLabel}] sin conexion`, {
+        logContactBackendWarnOnce(this.monitorLabel, {
           endpoint: apiUrl,
           status: response.status
         })
@@ -123,7 +127,7 @@ export class ContactBackendMonitor {
         `[${this.monitorLabel}] Error al verificar disponibilidad del backend:`,
         { apiUrl, error }
       )
-      console.warn(`[backend:${this.monitorLabel}] sin conexion`, {
+      logContactBackendWarnOnce(this.monitorLabel, {
         endpoint: apiUrl,
         reason: 'network-error'
       })
@@ -133,4 +137,20 @@ export class ContactBackendMonitor {
     this.notify()
     return this.status
   }
+}
+
+function logContactBackendWarnOnce(
+  monitorLabel: string,
+  payload: {
+    endpoint: string | null
+    status?: number
+    reason?: string
+  }
+): void {
+  const dedupeKey = `${monitorLabel}|${payload.endpoint ?? 'null'}|${payload.status ?? 'na'}|${payload.reason ?? 'na'}`
+  if (backendConsoleWarnCache.has(dedupeKey)) {
+    return
+  }
+  backendConsoleWarnCache.add(dedupeKey)
+  console.warn(`[backend:${monitorLabel}] sin conexion`, payload)
 }

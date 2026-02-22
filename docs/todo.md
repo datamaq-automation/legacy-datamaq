@@ -6,9 +6,15 @@
   - Avance: `SubmitContactUseCase` ahora depende solo de puertos funcionales necesarios; se actualizo composicion en `src/di/container.ts` y test unitario asociado.
   - Avance: Se mantuvo el dato dinamico `visitaDiagnosticoHasta2hARS` en memoria/config pero se elimino su render de copy publico en `Appcontent` (sin montos visibles en texto comercial).
   - Evidencia: cambios en `src/application/use-cases/submitContact.ts`, `src/di/container.ts`, `src/infrastructure/content/Appcontent.ts`, `tests/unit/application/submitContact.test.ts`.
+  - Decision tomada (B-Vue): Para reducir ruido en F12 sin cambiar contrato funcional, se aplico logging de backend con criterio: `info` solo en `DEV`, warnings deduplicados por endpoint/causa y 404 de probe tratado como `unavailable`.
+  - Avance: Se ajusto `ContactBackendMonitor` para no reportar 404 como "conexion OK"; ahora marca `unavailable` y emite warning accionable deduplicado.
+  - Avance: Se ajusto `ContentRepository` para evitar spam de logs repetidos y mover `conexion OK` de pricing a modo `DEV`.
+  - Evidencia: cambios en `src/application/contact/contactBackendStatus.ts`, `src/infrastructure/content/contentRepository.ts`, `tests/unit/application/contactBackendStatus.test.ts`.
+  - Evidencia: `npx vitest run tests/unit/application/contactBackendStatus.test.ts` (OK), `npx vitest run tests/unit/infrastructure/contentRepository.test.ts` (OK).
+  - Evidencia: `npm run lint:security` (OK), `npm run lint:test-coverage` (OK), `npm run quality:merge` (OK, incluye `quality:gate` + `quality:responsive` + `quality:mobile`).
   - Evidencia: `npm run typecheck` (OK), `npm run lint:layers` (OK), `npm run lint:security` (OK), `npm run lint:test-coverage` (FAIL inicial -> mitigado), `npx vitest run tests/unit/infrastructure/contentRepository.test.ts` (OK), `npm run lint:test-coverage` (OK), `npm run build` (OK), `npm run quality:merge` (FAIL inicial por `docs/todo.md` desactualizado; mitigacion aplicada), `npm run quality:merge` (OK), `npm run lint:todo-sync:merge-ready` (OK).
-  - Siguiente paso: Consolidar la propuesta de mejora de consola (F12) separando ruido informativo de errores accionables.
-  - Siguiente accion interna ejecutable ahora: Preparar plan de cambios no disruptivos para logging backend (`pricing/contact/mail`) sin alterar contratos.
+  - Siguiente paso: Correr gate completo (`quality:merge`) con los ajustes de consola ya aplicados y consolidar dudas residuales para decision de producto.
+  - Siguiente accion interna ejecutable ahora: Ejecutar validacion merge-ready final y preparar resumen de certezas/dudas sobre estrategia de probe (`OPTIONS` vs `/v1/health`).
 
 - [>] (P0) Verificar contrato de backend y diagnostico fail-fast FTPS
   - Decision tomada (B-Deploy): Se priorizo confirmar primero estado real del workflow para no introducir cambios redundantes ni riesgo operativo en deploy.

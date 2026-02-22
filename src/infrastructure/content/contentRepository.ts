@@ -27,6 +27,9 @@ type CommercialPriceKey =
 
 type CommercialPricingSnapshot = Partial<Pick<CommercialConfig, CommercialPriceKey>>
 
+const pricingConsoleWarnCache = new Set<string>()
+const isDevRuntime = Boolean(import.meta.env?.DEV)
+
 const PRICE_KEY_ALIASES: Record<CommercialPriceKey, string[]> = {
   visitaDiagnosticoHasta2hARS: [
     'visitaDiagnosticoHasta2hARS',
@@ -152,7 +155,7 @@ export class ContentRepository
           pricingApiUrl,
           status: response.status
         })
-        console.warn('[backend:pricing] sin conexion', {
+        logPricingWarnOnce({
           endpoint: pricingApiUrl,
           status: response.status
         })
@@ -163,7 +166,7 @@ export class ContentRepository
       const pricingSnapshot = extractCommercialPricingSnapshot(payload)
       if (!pricingSnapshot) {
         this.logger.warn('[content] payload de precios sin campos reconocibles; se mantiene fallback.')
-        console.warn('[backend:pricing] conexion sin datos utilizables', {
+        logPricingWarnOnce({
           endpoint: pricingApiUrl
         })
         return
@@ -171,15 +174,17 @@ export class ContentRepository
 
       this.applyCommercialPricingSnapshot(pricingSnapshot)
       this.logger.debug('[content] precios dinamicos aplicados', pricingSnapshot)
-      console.info('[backend:pricing] conexion OK', {
-        endpoint: pricingApiUrl
-      })
+      if (isDevRuntime) {
+        console.info('[backend:pricing] conexion OK', {
+          endpoint: pricingApiUrl
+        })
+      }
     } catch (error) {
       this.logger.warn('[content] error consultando precios dinamicos; se mantiene fallback.', {
         pricingApiUrl,
         error
       })
-      console.warn('[backend:pricing] sin conexion', {
+      logPricingWarnOnce({
         endpoint: pricingApiUrl,
         reason: 'network-error'
       })
@@ -409,4 +414,22 @@ function normalizeAliasKey(value: string): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function logPricingWarnOnce(payload: {
+  endpoint: string
+  status?: number
+  reason?: string
+}): void {
+  const dedupeKey = `${payload.endpoint}|${payload.status ?? 'na'}|${payload.reason ?? 'na'}`
+  if (pricingConsoleWarnCache.has(dedupeKey)) {
+    return
+  }
+  pricingConsoleWarnCache.add(dedupeKey)
+
+  if (payload.status === undefined && payload.reason === undefined) {
+    console.warn('[backend:pricing] conexion sin datos utilizables', payload)
+    return
+  }
+  console.warn('[backend:pricing] sin conexion', payload)
 }
