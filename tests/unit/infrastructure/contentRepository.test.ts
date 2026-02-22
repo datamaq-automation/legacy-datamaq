@@ -54,7 +54,7 @@ describe('ContentRepository', () => {
     ])
   })
 
-  it('hydrates only visit pricing from backend JSON and keeps public copy without amounts', async () => {
+  it('hydrates diagnostic list pricing from backend JSON and renders ARS amount', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
@@ -62,7 +62,7 @@ describe('ContentRepository', () => {
           data: {
             tarifa_base_desde_ars: '410000',
             traslado_minimo_ars: '15000',
-            visita_diagnostico_hasta_2h_ars: '275000',
+            diagnostico_lista_2h_ars: '275000',
             diagnostico_hora_adicional_ars: '130000'
           }
         }),
@@ -87,7 +87,7 @@ describe('ContentRepository', () => {
 
     expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
     expect(servicesRef.cards[0].figure?.caption).toContain('Consultar al WhatsApp')
-    expect(servicesRef.cards[1].note).toContain('Consultar al WhatsApp')
+    expect(servicesRef.cards[1].note).toContain('ARS 275.000')
     expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(275000)
     expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
     expect(commercialConfig.trasladoMinimoARS).toBeNull()
@@ -95,11 +95,11 @@ describe('ContentRepository', () => {
     expect(logger.debug).toHaveBeenCalled()
   })
 
-  it('supports plain-text payloads for the unique accepted field', async () => {
+  it('supports plain-text payloads for diagnostic list field aliases', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
-        'tarifa_base_desde_ars=380.000,00 visita_diagnostico_hasta_2h_ars=260.000,00 diagnostico_hora_adicional_ars=130.000,00',
+        'tarifa_base_desde_ars=380.000,00 diagnostico_lista_2h_ars=260.000,00 diagnostico_hora_adicional_ars=130.000,00',
         {
           status: 200,
           headers: { 'Content-Type': 'text/plain' }
@@ -115,7 +115,7 @@ describe('ContentRepository', () => {
     await flushRuntimePricing()
 
     expect(repository.getHeroContent().responseNote).toContain('Consultar al WhatsApp')
-    expect(repository.getServicesContent().cards[1].note).toContain('Consultar al WhatsApp')
+    expect(repository.getServicesContent().cards[1].note).toContain('ARS 260.000')
     expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(260000)
     expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
     expect(commercialConfig.trasladoMinimoARS).toBeNull()

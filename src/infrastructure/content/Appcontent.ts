@@ -40,6 +40,14 @@ export const commercialConfig: CommercialConfig = {
 
 export const content: AppContent = buildAppContent(commercialConfig)
 
+function formatArsAmount(value: number | null): string {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+    return PRICE_FALLBACK_LABEL
+  }
+
+  return `ARS ${new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 }).format(Math.round(value))}`
+}
+
 export function buildAppContent(config: CommercialConfig): AppContent {
   const BASE = config.baseOperativa
   const POWERMETER = config.equipos.medidorNombre
@@ -48,7 +56,7 @@ export function buildAppContent(config: CommercialConfig): AppContent {
 
   // Pricing display policy
   const CONSULTAR = PRICE_FALLBACK_LABEL
-  const LISTA_DIAG_2H = CONSULTAR
+  const LISTA_DIAG_2H = formatArsAmount(config.visitaDiagnosticoHasta2hARS)
 
   // Copy rules
   const TRASLADO_TEXT = ` (${CONSULTAR})`

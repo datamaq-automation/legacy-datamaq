@@ -32,6 +32,7 @@ const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 const PRICE_KEY_ALIASES: Record<CommercialPriceKey, string[]> = {
   visitaDiagnosticoHasta2hARS: [
+    'diagnostico_lista_2h_ars',
     'visitaDiagnosticoHasta2hARS',
     'visita_diagnostico_hasta2h_ars',
     'visita_diagnostico_hasta_2h_ars',
