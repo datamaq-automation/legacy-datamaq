@@ -1,112 +1,189 @@
 # Anexo
 
 ## 1. Segmentos de clientes
-DataMaq atiende industria en AMBA (prioridad GBA Norte) con dos “clientes” diferenciados: el **pagador/intermediario** (proveedor, institución, integrador) y el **usuario final** (planta/fábrica). Se prioriza el crecimiento por intermediarios como vía de acceso a plantas donde la facturación directa es más difícil por proceso administrativo o compras.  
-Dentro del universo industrial, se define un **sub-segmento prioritario**: **industria gráfica**, donde DataMaq ofrece un alcance ampliado (mantenimiento eléctrico/electrónico + control + post-instalación).  
-Se incorpora explícitamente el segmento **B2B directo** (plantas que contratan sin intermediario) capturado por Google Ads y nutrido por email marketing.
+
+DataMaq atiende industria en AMBA (prioridad GBA Norte) con dos “clientes” diferenciados:
+
+* **Pagador/intermediario** (proveedor, institución, integrador).
+* **Usuario final** (planta/fábrica).
+
+Se prioriza el crecimiento por intermediarios como vía estructural de acceso a plantas donde la facturación directa presenta fricción administrativa.
+
+Dentro del universo industrial se define un **sub-segmento prioritario**: **industria gráfica**, donde DataMaq ofrece un alcance ampliado (mantenimiento eléctrico/electrónico + control + post-instalación con cierre técnico acotado).
+
+Se consolida además el segmento **B2B directo**, capturado por Google Ads → web → WhatsApp → cotizador público → propuesta PDF.
+
+---
 
 ## 2. Propuesta de valor
-**Oferta base (todas las industrias):**
-- Instalación segura y documentada de Powermeter/Automate (equipo provisto por el cliente), con verificación final y handoff.
-- Diagnóstico eléctrico/electrónico con método y recomendaciones accionables, bajo “seguridad primero”.
 
-**Oferta ampliada (solo industria gráfica):**
-- Mantenimiento y reparación de maquinaria gráfica **solo eléctrico/electrónico y control** (sensores, variadores, tableros, PLC/HMI, interlocks, lógica de seguridad). **Se excluye lo mecánico.**
-- Post-instalación focalizado en Automate (y eventualmente Powermeter): interpretación de datos para decisiones operativas (baseline + hallazgos + recomendaciones + revisiones acotadas).
+### Producto ancla (todas las industrias)
 
-Para el intermediario: ejecución en campo confiable, consistente y documentada, que reduce fricción de soporte, protege su relación comercial y permite trazabilidad (evidencia, checklist, cierre + entregables post cuando aplique).  
-Para el canal directo: claridad de alcance, respuesta rápida y metodología “presentable” que construye confianza (checklist + handoff + seguridad primero).
+* **Diagnóstico técnico en planta (hasta 2 horas)**.
+* Metodología formal: medición, hipótesis, descarte, documentación.
+* Identificación de riesgos.
+* Informe técnico breve y accionable.
+* Seguridad primero (no intervención energizada sin condiciones adecuadas).
+
+**El diagnóstico es obligatorio antes de cualquier intervención.**
+
+Es el **único precio publicado** en la web y se gestiona desde backend (fuente única de verdad).
+
+---
+
+### Servicios posteriores (cotizados por alcance)
+
+* Instalación segura y documentada de Powermeter/Automate.
+* Intervenciones eléctricas/electrónicas posteriores al diagnóstico.
+* Adecuaciones mínimas de seguridad.
+
+No se publican precios de instalación, traslado ni horas adicionales.
+
+---
+
+### Oferta ampliada (solo industria gráfica)
+
+* Mantenimiento y reparación de maquinaria gráfica **exclusivamente en lo eléctrico/electrónico y control**.
+* Se excluye expresamente lo mecánico.
+* Post-instalación Automate como entregable técnico acotado:
+
+#### Paquete estándar:
+
+**“Informe + intervención en una máquina”**
+
+Incluye:
+
+* Baseline.
+* Hallazgos.
+* Recomendaciones.
+* Una intervención puntual sobre una máquina objetivo.
+* Verificación y cierre documentado.
+
+No incluye soporte indefinido ni acompañamiento abierto.
+
+---
 
 ## 3. Canales
-Canal primario: derivaciones B2B2B (proveedor/institución/integrador → DataMaq → planta).  
-Canal directo complementario: Google Ads → web → WhatsApp (captura de demanda con intención) + captura de email (formulario/lead magnet simple) → email marketing (seguimiento, casos, método, conversión).  
-Para industria gráfica, canal natural adicional: **referencias dentro del ecosistema gráfico** (proveedores de máquinas/servicios, integradores, mantenimiento tercerizado).
+
+### Canal estructural
+
+B2B2B (proveedor/institución/integrador → DataMaq → planta).
+
+### Canal directo complementario
+
+Google Ads → Web → WhatsApp → Cotizador → PDF → Seña → Agenda.
+
+Se incorpora generación de propuesta comercial PDF desde backend FastAPI.
+
+---
 
 ## 4. Relación con clientes
-Relación dual: account/operación con el intermediario (coordinación, estándares, reporting) y relación operativa en planta (seguridad, ventana de trabajo, acceso). Se mantiene respuesta en <24 horas hábiles (L–V 08 a 16) y se refuerza con automatizaciones internas (WhatsApp + Chatwoot) para consistencia y seguimiento.  
-Para canal directo: secuencias simples de seguimiento (WhatsApp + email) para no perder leads no urgentes.  
-Para industria gráfica, la relación puede extenderse a un ciclo “post”: **entregable + revisión/es programadas** (acotadas), evitando soporte indefinido.
+
+Modelo dual:
+
+* Coordinación con intermediario (estándares y reporting).
+* Ejecución operativa en planta (seguridad, ventana, trazabilidad).
+
+Compromiso de respuesta < 24 horas hábiles (L–V 08 a 16).
+
+### Política comercial estricta (Diagnóstico)
+
+* 50% de seña obligatoria para reservar agenda.
+* 1 reprogramación sin costo (≥ 24h).
+* No-show implica pérdida de seña.
+* Si no existen condiciones seguras, se documenta y reprograma.
+* No se negocia precio por WhatsApp.
+* Descuentos solo vía cotizador y bajo condiciones objetivas.
+
+---
 
 ## 5. Fuentes de ingresos
-Ingresos por:
-- Instalación desde ARS 380.000 (1 equipo: Powermeter o Automate).
-- Diagnóstico hasta 2 horas ARS 260.000; excedente ARS 130.000/h; descontable si se aprueba presupuesto.
 
-Facturación: (a) directa a planta; (b) a intermediarios por órdenes de trabajo, según el origen del proyecto.
+### Ingreso principal visible
 
-**Solo industria gráfica:** ingresos adicionales por:
-1) **Mantenimiento/reparación eléctrico/electrónico y control** de maquinaria gráfica (no incluye mecánica): **[DEFINIR: modalidad de cobro por visita / por hora / pack]**.
-2) **Post-instalación Automate (default publicado): “Informe + intervención en una máquina”.**  
-   - **Informe:** baseline + hallazgos + recomendaciones (orientadas a decisión operativa).  
-   - **Intervención:** una corrección/ajuste puntual en una máquina objetivo (eléctrico/electrónico y control), bajo condiciones seguras, con verificación y cierre documentado.  
-   - **Alcance del paquete:** **[DEFINIR: tiempo incluido / si incluye traslado / si incluye repuestos / ventana de trabajo]**.  
-   - **Precio publicado:** **[DEFINIR: ARS ____]**.  
-   - **Excedentes / fuera de alcance:** **[DEFINIR: ARS ____/h o regla]**.
+* Diagnóstico técnico en planta (precio público gestionado por backend).
 
-Opcional (no publicado por defecto, pero disponible):
-- Post-instalación extendido (pack 30 días con revisiones) **[PLACEHOLDER: condiciones y precio]**.
-- Abono mensual (seguimiento) **[PLACEHOLDER: condiciones y precio]**.
+### Ingresos posteriores
 
-Se recomienda paquetizar para proteger margen, limitar soporte y mantener el post-instalación como entregable técnico post-intervención (no como servicio genérico de “procesamiento de datos”).
+* Instalaciones industriales (cotizadas).
+* Intervenciones correctivas.
+* Mantenimiento eléctrico/electrónico en gráfica.
+* Post-instalación “Informe + intervención”.
+
+No se publican valores secundarios.
+
+La lógica comercial es:
+
+* Precio de lista único.
+* Seña 50%.
+* Descuentos estructurados solo vía cotizador.
+* Sin descuentos automáticos ni política abierta.
+
+---
 
 ## 6. Recursos clave
-Capacidad técnica, instrumental, EPP y protocolos; activos de documentación (checklists, plantillas, formato de handoff); movilidad; stack digital (WhatsApp + Chatwoot; Rasa futuro).  
-Nuevo recurso explícito: competencia específica en industria gráfica + capacidad de traducir registros (Automate/Powermeter) a acciones operativas mediante entregables técnicos post-instalación.  
-Recursos de canal directo: landing/activos de contenido, tracking mínimo y base de contactos (email).
+
+* Capacidad técnica y criterio en campo.
+* Instrumental y protocolos.
+* Plantillas y checklists.
+* Backend FastAPI (pricing + cotizador + PDF).
+* Frontend Vue como interfaz comercial.
+* WhatsApp como canal operativo.
+* Conocimiento específico en industria gráfica.
+
+---
 
 ## 7. Actividades clave
-Además del flujo técnico (calificación, ventana segura, intervención, verificación, documentación, cierre), se incorpora:
-- Gestión de partners: onboarding de intermediarios, definición de alcance/estándar de entrega, coordinación operativa y acuerdo marco para reducir fricción y riesgo.
-- Para industria gráfica: actividades de mantenimiento eléctrico/electrónico y control (sin mecánica) y flujo post-instalación (baseline, análisis, informe y revisiones acotadas).
-- Para canal directo: operación liviana de adquisición y conversión (Ads, calificación, seguimiento y email marketing).
+
+* Calificación estricta de demanda.
+* Gestión de agenda.
+* Ejecución técnica segura.
+* Generación de propuestas PDF.
+* Gestión de intermediarios.
+* Flujo post-instalación estructurado (baseline → análisis → intervención → cierre).
+
+---
 
 ## 8. Socios clave
 
-**Powermeter SAS (proveedor/intermediario) — socio estructural**  
-Powermeter SAS (y otros proveedores/integradores) se consolida como socio estructural en el modelo B2B2B: funciona como **canal** (derivación) y, en muchos casos, como **cliente pagador** (OTs / subcontratación), mientras la planta queda como usuario final.  
-Desde su posicionamiento público, Powermeter declara:  
-- **Misión:** “Desarrollamos soluciones de medición para hacer más eficiente el uso de la energía eléctrica.”
-- **Visión:** “Ser el aliado estratégico del usuario desarrollando soluciones innovadoras para el uso eficiente de la energía.”
-Además, explicitan que sus soluciones incluyen **almacenamiento y procesamiento de datos en la nube (Powermate)**, lo cual conecta directamente con la propuesta de **post-instalación** (interpretación como entregable técnico).
+### Powermeter SAS — socio estructural
 
-**Alineación de principios (DataMaq ↔ Powermeter)**  
-- DataMaq complementa el “qué” (medición/solución) con el “cómo” en planta: ejecución segura, verificación, documentación (handoff) y mejora operativa post-instalación (cuando aplica, especialmente en industria gráfica).  
-- Se prioriza mantener el post-instalación como **entregable técnico post-intervención**, evitando presentarlo como producto independiente de “procesamiento de datos” (para reducir fricción administrativa).
+Cumple rol dual:
 
-**Acuerdo marco por escrito (prioridad) — para reducir fricción y riesgo**  
-Se define como actividad clave cerrar un **acuerdo marco DataMaq ↔ Powermeter** (y replicable a otros partners) con, mínimo, los siguientes bloques:
+* Canal de derivación.
+* Cliente pagador (OT).
 
-### 8.1 **Regla de canal / atribución de leads**  
-   - Lead originado por Powermeter: atribución a Powermeter por **[DEFINIR: 90/180 días]** desde **[DEFINIR: fecha de presentación / primer hito]**.  
-   - Renovación de atribución: **[DEFINIR: por OT/visita/presupuesto durante X días]**.  
-   - Excepción: “cuentas preexistentes” demostrables de DataMaq **[DEFINIR: evidencia aceptada]**.
+Se prioriza acuerdo marco con:
 
-### 8.2 **Condiciones de pago (anti-riesgo de caja)**  
-   - Mínimo para salida a campo: **[DEFINIR: anticipo / pago contra entrega / plazo fijo 15–30]**.  
-   - Tratamiento de plazos extendidos: **[PLACEHOLDER: recargo / condición especial / no aplica]**.
+* Regla clara de atribución (ej. 180 días).
+* Condiciones de pago.
+* Entregables estándar.
+* Límites de alcance.
+* No-circunvención razonable.
+* Seguridad primero como regla no negociable.
 
-### 8.3 **Alcance y entregables estándar**  
-   - No negociable: checklist + verificación final + handoff documentado (fotos / pruebas / observaciones).  
-   - Post-instalación (industria gráfica): **[DEFINIR: informe único / pack 30 días (informe + 2 revisiones)]**.  
-   - Límites explícitos: “mantenimiento/reparación en gráfica” **solo eléctrico/electrónico y control**; **no incluye mecánica**.
+---
 
-### 8.4 **Seguridad y condiciones de intervención**  
-   - “Seguridad primero”: si no hay condiciones seguras, no se interviene energizado; se propone adecuación mínima y se reprograma.
+### Otros socios
 
-### 8.5 **Soporte, escalamiento y responsabilidades**  
-   - Canales de escalamiento, responsables y tiempos de respuesta: **[PLACEHOLDER]**.  
-   - Coordinación con profesional matriculado cuando aplique: **[PLACEHOLDER]**.
+* Universidades/proyectos tecnológicos.
+* Hosting/VPS.
+* Meta/WhatsApp.
+* Profesionales matriculados.
+* Red técnica del ecosistema gráfico.
 
-### 8.6 **No-circunvención razonable / convivencia con canal directo**  
-   - Se busca proteger el canal del partner sin bloquear el B2B directo; se formaliza una regla simple de atribución y excepciones claras: **[PLACEHOLDER]**.
-
-**Otros socios clave**  
-- **Instituciones** (universidades/proyectos tecnológicos) como intermediarios válidos.  
-- **Infraestructura** (hosting/VPS, Meta/WhatsApp, herramientas de email marketing).  
-- **Profesionales matriculados** cuando corresponda (firmas habilitantes).  
-- **Industria gráfica (red de soporte)**: integradores del rubro, proveedores eléctricos/electrónicos, contactos técnicos que derivan y habilitan acceso a planta.
+---
 
 ## 9. Estructura de costos
-Movilidad, herramientas, EPP, hosting/VPS y operación técnica; ads y costo comercial del canal directo; tiempo no facturable (coordinación, presupuestos, documentación); costos financieros por inversiones con deuda.  
-Por intermediarios, se agrega peso de administración/compliance y riesgo de plazos de pago.  
-Para industria gráfica, se agrega el costo operativo del post-instalación (tiempo de análisis, reporting y revisiones) y el costo de mantener estándares de documentación consistentes para terceros.
+
+* Movilidad.
+* Instrumental.
+* Tiempo técnico.
+* Desarrollo backend/frontend.
+* Hosting/VPS.
+* Ads.
+* Coordinación administrativa B2B2B.
+* Tiempo de análisis post-instalación.
+
+Se prioriza margen y control de agenda por encima de volumen.
+
