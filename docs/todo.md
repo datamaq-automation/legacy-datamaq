@@ -30,3 +30,14 @@
   - Evidencia: `npx --yes actionlint` (no disponible en este entorno npm: "could not determine executable to run"); mitigado con parseo YAML local.
   - Siguiente paso: Re-ejecutar pipeline `CI/CD FTPS` en `main` y verificar si el fallo queda clasificado por causa (auth/DNS/TLS/path/data-channel) con el nuevo bloque de diagnostico.
   - Siguiente accion interna ejecutable ahora: Esperar el nuevo log del run de GitHub Actions para cerrar la causa raiz o ajustar parametros FTPS adicionales.
+
+- [>] (P0) Implementar cotizador publico MVP (`/cotizador`)
+  - Decision tomada (B-Frontend): Se mantuvo arquitectura actual (DTO + gateway infra + page routeada) y se alineo el flujo de WhatsApp al contrato backend, abriendo `whatsapp_url` sin reescrituras locales.
+  - Avance: Se ajusto `QuotePage` para consumir `whatsapp_url` de backend, mantener validacion minima requerida y normalizar descuentos para evitar `NaN` en UI.
+  - Avance: Se renombro el metodo de gateway a `fetchQuotePdf(quoteId)` para alinear API frontend con el requerimiento funcional de descarga PDF.
+  - Avance: Se corrigio compatibilidad con `exactOptionalPropertyTypes` en limpieza de errores del formulario, reemplazando asignaciones a `undefined` por `delete`.
+  - Evidencia: cambios en `src/ui/pages/QuotePage.vue`, `src/infrastructure/quote/quoteApiGateway.ts`.
+  - Evidencia: `npm test` (OK), `npm run build` (OK).
+  - Evidencia: smoke real contra `https://api.datamaq.com.ar` con `POST /v1/public/quote/diagnostic` (quote_id emitido) + `GET /v1/public/quote/{quote_id}/pdf` (HTTP 200, `Content-Type: application/pdf`, `content-disposition` con filename).
+  - Siguiente paso: Recolectar feedback de uso real del PDF (minimo 5 envios) para decidir si se itera branding/layout o se prioriza cobro de seña.
+  - Siguiente accion interna ejecutable ahora: Ejecutar `node scripts/check-todo-sync.mjs --require-evidence --require-open-p0`.

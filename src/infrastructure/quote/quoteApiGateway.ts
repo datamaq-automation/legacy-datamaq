@@ -13,16 +13,30 @@ export async function createDiagnosticQuote(
     throw new Error('Cotizador no disponible: falta VITE_BACKEND_BASE_URL')
   }
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  })
+  let response: Response
+  try {
+    response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+  } catch (error) {
+    debugQuote('createDiagnosticQuote network error', {
+      endpoint,
+      error
+    })
+    throw new Error('Error de red al generar cotizacion')
+  }
 
   if (!response.ok) {
     const errorText = await response.text().catch(() => '')
+    debugQuote('createDiagnosticQuote non-ok response', {
+      endpoint,
+      status: response.status,
+      errorText
+    })
     throw new Error(
       `Error al generar cotizacion (${response.status})${errorText ? `: ${errorText}` : ''}`
     )
@@ -34,12 +48,28 @@ export async function createDiagnosticQuote(
 
 export async function fetchQuotePdf(quoteId: string): Promise<QuotePdfDownloadResult> {
   const endpoint = buildQuotePdfEndpoint(quoteId)
-  const response = await fetch(endpoint, {
-    method: 'GET'
-  })
+  let response: Response
+  try {
+    response = await fetch(endpoint, {
+      method: 'GET'
+    })
+  } catch (error) {
+    debugQuote('fetchQuotePdf network error', {
+      endpoint,
+      quoteId,
+      error
+    })
+    throw new Error('Error de red al descargar PDF')
+  }
 
   if (!response.ok) {
     const errorText = await response.text().catch(() => '')
+    debugQuote('fetchQuotePdf non-ok response', {
+      endpoint,
+      quoteId,
+      status: response.status,
+      errorText
+    })
     throw new Error(
       `Error al descargar PDF (${response.status})${errorText ? `: ${errorText}` : ''}`
     )
@@ -81,4 +111,11 @@ function parseFilenameFromContentDisposition(value: string | null): string | und
   }
 
   return undefined
+}
+
+function debugQuote(message: string, context: Record<string, unknown>): void {
+  if (!import.meta.env.DEV) {
+    return
+  }
+  console.warn(`[quoteApiGateway] ${message}`, context)
 }

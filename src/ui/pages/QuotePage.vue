@@ -106,7 +106,10 @@ async function handleGenerateQuote() {
     }
 
     quote.value = await createDiagnosticQuote(payload)
-  } catch {
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn('[cotizador] error al generar propuesta', error)
+    }
     quote.value = undefined
     errorMessage.value =
       'No pudimos generar la propuesta en este momento. Podes continuar por WhatsApp.'
@@ -127,7 +130,10 @@ async function handleDownloadPdf() {
     const { blob, filename } = await fetchQuotePdf(quoteId)
     const safeFilename = filename?.trim() || `quote-${quoteId}.pdf`
     triggerFileDownload(blob, safeFilename)
-  } catch {
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn('[cotizador] error al descargar PDF', { quoteId, error })
+    }
     errorMessage.value = 'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
   } finally {
     pdfLoading.value = false
