@@ -100,6 +100,8 @@ jobs:
         id: prepare
         env:
           VITE_BACKEND_BASE_URL: ${{ secrets.VITE_BACKEND_BASE_URL }}
+          VITE_IS_CONTACT_FORM_ACTIVE: ${{ secrets.VITE_IS_CONTACT_FORM_ACTIVE }}
+          VITE_IS_EMAIL_FORM_ACTIVE: ${{ secrets.VITE_IS_EMAIL_FORM_ACTIVE }}
           FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
           FTPS_PORT: ${{ secrets.FTPS_PORT }}
           FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
@@ -116,6 +118,17 @@ jobs:
           fi
           if ! printf '%s' "${BACKEND_BASE_URL}" | grep -Eq '^https://'; then
             echo "::error::Invalid backend base URL. It must start with https://."
+            exit 1
+          fi
+
+          CONTACT_FORM_ACTIVE="${VITE_IS_CONTACT_FORM_ACTIVE:-false}"
+          EMAIL_FORM_ACTIVE="${VITE_IS_EMAIL_FORM_ACTIVE:-false}"
+          if ! printf '%s' "${CONTACT_FORM_ACTIVE}" | grep -Eq '^(true|false)$'; then
+            echo "::error::Invalid VITE_IS_CONTACT_FORM_ACTIVE. Use true or false."
+            exit 1
+          fi
+          if ! printf '%s' "${EMAIL_FORM_ACTIVE}" | grep -Eq '^(true|false)$'; then
+            echo "::error::Invalid VITE_IS_EMAIL_FORM_ACTIVE. Use true or false."
             exit 1
           fi
 
@@ -201,6 +214,8 @@ jobs:
       - name: Build
         env:
           VITE_BACKEND_BASE_URL: ${{ secrets.VITE_BACKEND_BASE_URL }}
+          VITE_IS_CONTACT_FORM_ACTIVE: ${{ secrets.VITE_IS_CONTACT_FORM_ACTIVE }}
+          VITE_IS_EMAIL_FORM_ACTIVE: ${{ secrets.VITE_IS_EMAIL_FORM_ACTIVE }}
         run: npm run build
 
       - name: Upload dist artifact
