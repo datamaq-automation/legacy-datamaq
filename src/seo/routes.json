@@ -13,5 +13,10 @@
     "name": "medicion-consumo-escobar",
     "path": "/medicion-consumo-electrico-escobar",
     "indexable": true
+  },
+  {
+    "name": "cotizador",
+    "path": "/cotizador",
+    "indexable": true
   }
 ]

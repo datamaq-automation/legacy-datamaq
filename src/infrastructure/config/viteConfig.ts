@@ -10,6 +10,7 @@ export class ViteConfig implements ConfigPort {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
+  quoteDiagnosticApiUrl: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
   emailFormActive: boolean
@@ -42,6 +43,7 @@ export class ViteConfig implements ConfigPort {
     this.inquiryApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/contact')
     this.mailApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/mail')
     this.pricingApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/public/pricing')
+    this.quoteDiagnosticApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/public/quote/diagnostic')
     this.contactFormActive = normalizeBoolean(
       import.meta.env.VITE_IS_CONTACT_FORM_ACTIVE,
       publicConfig.contactFormActive,

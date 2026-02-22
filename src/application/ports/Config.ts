@@ -4,6 +4,7 @@ export interface ConfigPort {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
+  quoteDiagnosticApiUrl: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
   emailFormActive: boolean
