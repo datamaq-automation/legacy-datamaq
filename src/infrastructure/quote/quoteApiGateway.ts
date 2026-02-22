@@ -32,7 +32,7 @@ export async function createDiagnosticQuote(
   return data
 }
 
-export async function downloadQuotePdf(quoteId: string): Promise<QuotePdfDownloadResult> {
+export async function fetchQuotePdf(quoteId: string): Promise<QuotePdfDownloadResult> {
   const endpoint = buildQuotePdfEndpoint(quoteId)
   const response = await fetch(endpoint, {
     method: 'GET'

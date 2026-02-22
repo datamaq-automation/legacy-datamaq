@@ -9,7 +9,7 @@ import type {
   DiagnosticQuoteResponse,
   QuoteBureaucracyLevel
 } from '@/application/dto/quote'
-import { createDiagnosticQuote, downloadQuotePdf } from '@/infrastructure/quote/quoteApiGateway'
+import { createDiagnosticQuote, fetchQuotePdf } from '@/infrastructure/quote/quoteApiGateway'
 import { getWhatsAppEnabled, getWhatsAppHref } from '@/ui/controllers/contactController'
 
 type BinaryChoice = boolean | null
@@ -44,7 +44,6 @@ interface QuoteDiscountView {
 
 const contactCtaEnabled = getWhatsAppEnabled()
 const fallbackWhatsAppUrl = computed(() => getWhatsAppHref() ?? 'https://wa.me/5491156297160')
-const salesWhatsAppPhone = '5491156297160'
 
 const loading = ref(false)
 const pdfLoading = ref(false)
@@ -66,20 +65,7 @@ const form = reactive<QuoteFormState>({
 const errors = reactive<QuoteFormErrors>({})
 
 const canDownloadPdf = computed(() => Boolean(quote.value?.quote_id))
-const canOpenWhatsapp = computed(() => Boolean(quote.value?.whatsapp_message || quote.value?.quote_id))
-const quoteWhatsappUrl = computed(() => {
-  const message = quote.value?.whatsapp_message?.trim()
-  if (message) {
-    return `https://wa.me/${salesWhatsAppPhone}?text=${encodeURIComponent(message)}`
-  }
-  const quoteId = quote.value?.quote_id?.trim()
-  if (!quoteId) {
-    return undefined
-  }
-  return `https://wa.me/${salesWhatsAppPhone}?text=${encodeURIComponent(
-    `Hola DataMaq, comparto la cotizacion ${quoteId}.`
-  )}`
-})
+const canOpenWhatsapp = computed(() => Boolean(quote.value?.whatsapp_url))
 const normalizedDiscounts = computed<QuoteDiscountView[]>(() => {
   const discounts = quote.value?.discounts ?? []
   return discounts.map((discount, index) => ({
@@ -123,7 +109,7 @@ async function handleGenerateQuote() {
   } catch {
     quote.value = undefined
     errorMessage.value =
-      'No pudimos generar la propuesta en este momento. Podés continuar por WhatsApp.'
+      'No pudimos generar la propuesta en este momento. Podes continuar por WhatsApp.'
   } finally {
     loading.value = false
   }
@@ -138,18 +124,18 @@ async function handleDownloadPdf() {
   pdfLoading.value = true
   errorMessage.value = undefined
   try {
-    const { blob, filename } = await downloadQuotePdf(quoteId)
+    const { blob, filename } = await fetchQuotePdf(quoteId)
     const safeFilename = filename?.trim() || `quote-${quoteId}.pdf`
     triggerFileDownload(blob, safeFilename)
   } catch {
-    errorMessage.value = 'No pudimos descargar el PDF. Probá nuevamente o escribinos por WhatsApp.'
+    errorMessage.value = 'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
   } finally {
     pdfLoading.value = false
   }
 }
 
 function handleOpenWhatsapp() {
-  const whatsappUrl = quoteWhatsappUrl.value
+  const whatsappUrl = quote.value?.whatsapp_url
   if (!whatsappUrl || typeof window === 'undefined') {
     return
   }
@@ -160,27 +146,27 @@ function validateForm(): boolean {
   let valid = true
 
   if (!form.company.trim()) {
-    errors.company = 'Ingresá la empresa.'
+    errors.company = 'Ingresa la empresa.'
     valid = false
   }
   if (!form.contact_name.trim()) {
-    errors.contact_name = 'Ingresá el nombre de contacto.'
+    errors.contact_name = 'Ingresa el nombre de contacto.'
     valid = false
   }
   if (!form.locality.trim()) {
-    errors.locality = 'Ingresá la localidad.'
+    errors.locality = 'Ingresa la localidad.'
     valid = false
   }
   if (form.scheduled === null) {
-    errors.scheduled = 'Seleccioná Sí o No.'
+    errors.scheduled = 'Selecciona Si o No.'
     valid = false
   }
   if (form.access_ready === null) {
-    errors.access_ready = 'Seleccioná Sí o No.'
+    errors.access_ready = 'Selecciona Si o No.'
     valid = false
   }
   if (form.safe_window_confirmed === null) {
-    errors.safe_window_confirmed = 'Seleccioná Sí o No.'
+    errors.safe_window_confirmed = 'Selecciona Si o No.'
     valid = false
   }
 
@@ -188,12 +174,12 @@ function validateForm(): boolean {
 }
 
 function clearErrors(): void {
-  errors.company = undefined
-  errors.contact_name = undefined
-  errors.locality = undefined
-  errors.scheduled = undefined
-  errors.access_ready = undefined
-  errors.safe_window_confirmed = undefined
+  delete errors.company
+  delete errors.contact_name
+  delete errors.locality
+  delete errors.scheduled
+  delete errors.access_ready
+  delete errors.safe_window_confirmed
 }
 
 function setBinaryChoice(field: 'scheduled' | 'access_ready' | 'safe_window_confirmed', value: boolean) {
@@ -256,10 +242,10 @@ function triggerFileDownload(blob: Blob, filename: string): void {
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta py-5">
       <div class="container">
         <section class="quote-hero mb-4 mb-lg-5">
-          <p class="quote-eyebrow mb-2">Cotizador público</p>
-          <h1 class="display-6 fw-bold mb-3">Propuesta técnica en minutos</h1>
+          <p class="quote-eyebrow mb-2">Cotizador publico</p>
+          <h1 class="display-6 fw-bold mb-3">Propuesta tecnica en minutos</h1>
           <p class="lead text-white-50 mb-0">
-            Completá los datos mínimos y generamos una propuesta premium con reserva y envío por WhatsApp.
+            Completa los datos minimos y generamos una propuesta premium con reserva y envio por WhatsApp.
           </p>
         </section>
 
@@ -296,7 +282,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
                       :class="form.scheduled === true ? 'btn-success' : 'btn-outline-light'"
                       @click="setBinaryChoice('scheduled', true)"
                     >
-                      Sí
+                      Si
                     </button>
                     <button
                       type="button"
@@ -319,7 +305,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
                       :class="form.access_ready === true ? 'btn-success' : 'btn-outline-light'"
                       @click="setBinaryChoice('access_ready', true)"
                     >
-                      Sí
+                      Si
                     </button>
                     <button
                       type="button"
@@ -342,7 +328,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
                       :class="form.safe_window_confirmed === true ? 'btn-success' : 'btn-outline-light'"
                       @click="setBinaryChoice('safe_window_confirmed', true)"
                     >
-                      Sí
+                      Si
                     </button>
                     <button
                       type="button"
@@ -391,15 +377,15 @@ function triggerFileDownload(blob: Blob, filename: string): void {
               <h2 class="h4 fw-semibold mb-3">Propuesta generada</h2>
 
               <p v-if="!quote" class="text-white-50 mb-0">
-                Al generar la propuesta vas a ver aquí el resumen premium con precio final, seña y vigencia.
+                Al generar la propuesta vas a ver aqui el resumen premium con precio final, sena y vigencia.
               </p>
 
               <template v-else>
                 <p class="mb-1"><strong>ID:</strong> {{ quote.quote_id }}</p>
                 <p class="mb-1"><strong>Lista:</strong> {{ formatArs(quote.list_price_ars) }}</p>
                 <p class="mb-1"><strong>Final:</strong> {{ formatArs(quote.final_price_ars) }}</p>
-                <p class="mb-1"><strong>Seña ({{ quote.deposit_pct }}%):</strong> {{ formatArs(quote.deposit_ars) }}</p>
-                <p class="mb-3"><strong>Válida hasta:</strong> {{ formatDateTime(quote.valid_until) }}</p>
+                <p class="mb-1"><strong>Sena ({{ quote.deposit_pct }}%):</strong> {{ formatArs(quote.deposit_ars) }}</p>
+                <p class="mb-3"><strong>Valida hasta:</strong> {{ formatDateTime(quote.valid_until) }}</p>
 
                 <div v-if="normalizedDiscounts.length" class="mb-3">
                   <p class="fw-semibold mb-2">Descuentos aplicados</p>
@@ -441,9 +427,9 @@ function triggerFileDownload(blob: Blob, filename: string): void {
               <hr class="my-4 border-secondary-subtle" />
 
               <ul class="quote-copy mb-0 ps-3">
-                <li>Seña 50% para reservar agenda</li>
-                <li>1 reprogramación sin costo con 24h</li>
-                <li>No-show: seña se pierde / Seguridad primero</li>
+                <li>Sena 50% para reservar agenda</li>
+                <li>1 reprogramacion sin costo con 24h</li>
+                <li>No-show: sena se pierde / Seguridad primero</li>
               </ul>
             </div>
           </aside>
