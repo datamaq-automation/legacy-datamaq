@@ -13,10 +13,10 @@ function createHttpClient(status = 204): HttpClient {
   }
 }
 
-function createConfig(inquiryApiUrl?: string): ConfigPort {
+function createConfig(inquiryApiUrl?: string, mailApiUrl?: string): ConfigPort {
   return {
     inquiryApiUrl,
-    mailApiUrl: undefined,
+    mailApiUrl,
     contactEmail: undefined
   } as ConfigPort
 }
@@ -82,5 +82,32 @@ describe('ContactBackendMonitor', () => {
     expect(status).toBe('unavailable')
     expect(http.options).toHaveBeenCalledTimes(1)
     expect(http.options).toHaveBeenCalledWith('https://api.example.com/contact')
+  })
+
+  it('deduplicates equivalent 404 warnings across contact and mail channels sharing origin', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const http = createHttpClient(404)
+    const config = createConfig('https://api-dedupe.example.com/v1/contact', 'https://api-dedupe.example.com/v1/mail')
+    const runtime = createRuntime(true)
+    const logger = createLogger()
+    const contactMonitor = new ContactBackendMonitor(http, config, runtime, logger)
+    const mailMonitor = new ContactBackendMonitor(
+      http,
+      config,
+      runtime,
+      logger,
+      (cfg) => cfg.mailApiUrl,
+      'mailBackendStatus'
+    )
+
+    await contactMonitor.ensureStatus()
+    await mailMonitor.ensureStatus()
+
+    const endpointNotFoundWarnings = warnSpy.mock.calls.filter(([, payload]) => {
+      const candidate = payload as { reason?: string } | undefined
+      return candidate?.reason === 'endpoint-not-found'
+    })
+
+    expect(endpointNotFoundWarnings).toHaveLength(1)
   })
 })

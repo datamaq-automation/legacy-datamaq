@@ -9,12 +9,18 @@
   - Decision tomada (B-Vue): Para reducir ruido en F12 sin cambiar contrato funcional, se aplico logging de backend con criterio: `info` solo en `DEV`, warnings deduplicados por endpoint/causa y 404 de probe tratado como `unavailable`.
   - Avance: Se ajusto `ContactBackendMonitor` para no reportar 404 como "conexion OK"; ahora marca `unavailable` y emite warning accionable deduplicado.
   - Avance: Se ajusto `ContentRepository` para evitar spam de logs repetidos y mover `conexion OK` de pricing a modo `DEV`.
+  - Avance: Se reforzo deduplicacion de warnings equivalentes entre `contact` y `mail` cuando comparten origen y misma causa (`network-error` / `endpoint-not-found`), evitando duplicados en F12.
+  - Decision tomada (B-Testing): Para estabilizar smoke E2E frente a overrides locales, se fijo `.env.e2e` con `VITE_IS_CONTACT_FORM_ACTIVE=true` y `VITE_IS_EMAIL_FORM_ACTIVE=true`; asi el modo `e2e` no hereda `false` desde `.env.local`.
+  - Avance: Se alinearon asserts del H1 en `tests/e2e/smoke.spec.ts` al copy vigente (`Diagnóstico y control industrial`) para eliminar falso negativo en home y retorno desde thanks.
+  - Avance: Se hizo determinista el render de formularios en pruebas E2E con `.env.e2e`, evitando timeouts por ausencia de `#contacto-lead-email` y `#contacto-mail-email`.
   - Evidencia: cambios en `src/application/contact/contactBackendStatus.ts`, `src/infrastructure/content/contentRepository.ts`, `tests/unit/application/contactBackendStatus.test.ts`.
-  - Evidencia: `npx vitest run tests/unit/application/contactBackendStatus.test.ts` (OK), `npx vitest run tests/unit/infrastructure/contentRepository.test.ts` (OK).
+  - Evidencia: cambios en `tests/e2e/smoke.spec.ts`, `.env.e2e`.
+  - Evidencia: `npx vitest run tests/unit/application/contactBackendStatus.test.ts` (OK), `npx vitest run tests/unit/infrastructure/contentRepository.test.ts` (OK), dedupe cross-channel validado en test `deduplicates equivalent 404 warnings across contact and mail channels sharing origin`.
   - Evidencia: `npm run lint:security` (OK), `npm run lint:test-coverage` (OK), `npm run quality:merge` (OK, incluye `quality:gate` + `quality:responsive` + `quality:mobile`).
   - Evidencia: `npm run typecheck` (OK), `npm run lint:layers` (OK), `npm run lint:security` (OK), `npm run lint:test-coverage` (FAIL inicial -> mitigado), `npx vitest run tests/unit/infrastructure/contentRepository.test.ts` (OK), `npm run lint:test-coverage` (OK), `npm run build` (OK), `npm run quality:merge` (FAIL inicial por `docs/todo.md` desactualizado; mitigacion aplicada), `npm run quality:merge` (OK), `npm run lint:todo-sync:merge-ready` (OK).
-  - Siguiente paso: Correr gate completo (`quality:merge`) con los ajustes de consola ya aplicados y consolidar dudas residuales para decision de producto.
-  - Siguiente accion interna ejecutable ahora: Ejecutar validacion merge-ready final y preparar resumen de certezas/dudas sobre estrategia de probe (`OPTIONS` vs `/v1/health`).
+  - Evidencia: `npm run test:e2e:smoke` (FAIL inicial por formularios ocultos en modo e2e -> mitigado), `npm run test:e2e:smoke` (OK), `npm run lint:security` (OK), `npm run lint:test-coverage` (OK), `npm run quality:merge` (OK), `npm run lint:todo-sync:merge-ready` (FAIL esperado hasta registrar evidencia en `docs/todo.md`).
+  - Siguiente paso: Reintentar `npm run lint:todo-sync:merge-ready` con trazabilidad ya registrada y, si queda en verde, continuar con mejoras pendientes de consola F12.
+  - Siguiente accion interna ejecutable ahora: Ejecutar `npm run lint:todo-sync:merge-ready`.
 
 - [>] (P0) Verificar contrato de backend y diagnostico fail-fast FTPS
   - Decision tomada (B-Deploy): Se priorizo confirmar primero estado real del workflow para no introducir cambios redundantes ni riesgo operativo en deploy.

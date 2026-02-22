@@ -147,10 +147,26 @@ function logContactBackendWarnOnce(
     reason?: string
   }
 ): void {
-  const dedupeKey = `${monitorLabel}|${payload.endpoint ?? 'null'}|${payload.status ?? 'na'}|${payload.reason ?? 'na'}`
+  const reason = payload.reason ?? 'na'
+  const dedupeKey =
+    reason === 'network-error' || reason === 'endpoint-not-found'
+      ? `${resolveEndpointOrigin(payload.endpoint)}|${reason}`
+      : `${monitorLabel}|${payload.endpoint ?? 'null'}|${payload.status ?? 'na'}|${reason}`
   if (backendConsoleWarnCache.has(dedupeKey)) {
     return
   }
   backendConsoleWarnCache.add(dedupeKey)
   console.warn(`[backend:${monitorLabel}] sin conexion`, payload)
+}
+
+function resolveEndpointOrigin(endpoint: string | null): string {
+  if (!endpoint) {
+    return 'null'
+  }
+
+  try {
+    return new URL(endpoint).origin
+  } catch {
+    return endpoint
+  }
 }
