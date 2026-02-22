@@ -38,9 +38,12 @@
   - Avance: Se corrigio compatibilidad con `exactOptionalPropertyTypes` en limpieza de errores del formulario, reemplazando asignaciones a `undefined` por `delete`.
   - Avance: Se corrigio lint de colores en `QuotePage` reemplazando HEX directo (`#7dd3fc`) por token de diseno (`var(--dm-line-blueprint)`), cumpliendo regla anti-HEX fuera de `_dm.tokens.scss`.
   - Avance: Se corrigio boundary `ui -> infrastructure` en cotizador: `QuotePage` ahora usa `src/ui/controllers/quoteController.ts`; el acceso a infraestructura queda encapsulado en DI via `quoteGateway` (`container`) y puerto `QuoteGateway`.
+  - Avance: Se agregaron tests unitarios del cotizador para recuperar cobertura de funciones por encima del umbral CI (`quoteApiGateway` + `quoteController`), incluyendo escenarios de exito, red, non-ok, parseo de filename y errores de configuracion.
   - Evidencia: cambios en `src/ui/pages/QuotePage.vue`, `src/infrastructure/quote/quoteApiGateway.ts`.
   - Evidencia: cambios en `src/ui/controllers/quoteController.ts`, `src/application/quote/ports/QuoteGateway.ts`, `src/di/container.ts`.
+  - Evidencia: cambios en `tests/unit/infrastructure/quoteApiGateway.test.ts`, `tests/unit/ui/quoteController.test.ts`.
   - Evidencia: `npm run lint:layers` (OK), `npm run build` (OK).
+  - Evidencia: `npm run test:coverage` (OK, `functions: 80.34%` >= `80.00%`).
   - Evidencia: `npm test` (OK), `npm run build` (OK).
   - Evidencia: smoke real contra `https://api.datamaq.com.ar` con `POST /v1/public/quote/diagnostic` (quote_id emitido) + `GET /v1/public/quote/{quote_id}/pdf` (HTTP 200, `Content-Type: application/pdf`, `content-disposition` con filename).
   - Siguiente paso: Recolectar feedback de uso real del PDF (minimo 5 envios) para decidir si se itera branding/layout o se prioriza cobro de seña.
