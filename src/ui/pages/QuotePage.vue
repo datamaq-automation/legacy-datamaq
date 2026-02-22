@@ -453,7 +453,7 @@ function triggerFileDownload(blob: Blob, filename: string): void {
 .quote-eyebrow {
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #7dd3fc;
+  color: var(--dm-line-blueprint);
   font-size: 0.8rem;
   font-weight: 700;
 }
