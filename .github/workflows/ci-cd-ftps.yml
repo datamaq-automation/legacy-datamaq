@@ -94,19 +94,7 @@ jobs:
             ftps_allow_insecure_data_channel_var: FTPS_UPP_ALLOW_INSECURE_DATA_CHANNEL
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Validate deploy inputs
+      - name: Preflight / Validate deploy inputs
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
@@ -165,18 +153,12 @@ jobs:
 
           echo "::notice::Deploy target=${{ matrix.target }} host=${SERVER_HOST} port=${PORT} dir=${REMOTE_DIR}"
 
-      - name: Build dist
-        run: |
-          set -euo pipefail
-          export BUILD_OUT_DIR=dist
-          npm run build -- ${{ matrix.target }}
-
-      - name: Install lftp client
+      - name: Preflight / Install lftp client
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp
 
-      - name: FTPS preflight
+      - name: Preflight / FTPS connectivity and auth
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
@@ -203,7 +185,7 @@ jobs:
           fi
 
           if ! getent hosts "${SERVER_HOST}" >/dev/null; then
-            echo "::error::FTPS server is not resolvable by DNS."
+            echo "::error::FTPS server is not resolvable by DNS (host=${SERVER_HOST})."
             exit 1
           fi
 
@@ -236,6 +218,24 @@ jobs:
 
           echo "::error::FTPS preflight failed for target=${{ matrix.target }}"
           exit 1
+
+      - name: Build / Checkout
+        uses: actions/checkout@v4
+
+      - name: Build / Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Build / Install dependencies
+        run: npm ci
+
+      - name: Build / Dist
+        run: |
+          set -euo pipefail
+          export BUILD_OUT_DIR=dist
+          npm run build -- ${{ matrix.target }}
 
       - name: Deploy dist via FTPS
         env:

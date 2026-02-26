@@ -20,6 +20,10 @@ Desplegar dos marcas desde el mismo repositorio, compartiendo rutas (`/`, `/coti
 - Archivo: `.github/workflows/ci-cd-ftps.yml`
 - Trigger: `push` a `main`
 - Matrix: `datamaq`, `upp`
+- Orden del job:
+  - Preflight FTPS primero (validacion de inputs, DNS y login FTPS)
+  - Build despues (checkout, `npm ci`, `npm run build -- <target>`)
+  - Upload FTPS al final
 - Build ejecutado por target:
   - `npm run build -- datamaq`
   - `npm run build -- upp`
