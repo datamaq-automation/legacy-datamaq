@@ -2,47 +2,56 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/health.php', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          status: 'ok',
-          service: 'e2e-api',
-          brand_id: 'e2e',
-          version: 'v1',
-          timestamp: '2026-02-26T00:00:00Z'
+    const healthRoutes = ['**/api/health.php', '**/plantilla-www/public/api/health.php']
+    for (const pattern of healthRoutes) {
+      await page.route(pattern, async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ok',
+            service: 'e2e-api',
+            brand_id: 'e2e',
+            version: 'v1',
+            timestamp: '2026-02-26T00:00:00Z'
+          })
         })
       })
-    })
+    }
 
-    await page.route('**/api/pricing.php', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          status: 'ok',
-          data: {
-            diagnostico_lista_2h_ars: 275000
-          }
-        })
-      })
-    })
-
-    await page.route('**/api/content.php', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          status: 'ok',
-          data: {
-            hero: {
-              title: 'Diagnostico e instalacion electrica para pymes'
+    const pricingRoutes = ['**/api/pricing.php', '**/plantilla-www/public/api/pricing.php']
+    for (const pattern of pricingRoutes) {
+      await page.route(pattern, async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ok',
+            data: {
+              diagnostico_lista_2h_ars: 275000
             }
-          }
+          })
         })
       })
-    })
+    }
+
+    const contentRoutes = ['**/api/content.php', '**/plantilla-www/public/api/content.php']
+    for (const pattern of contentRoutes) {
+      await page.route(pattern, async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ok',
+            data: {
+              hero: {
+                title: 'Diagnostico e instalacion electrica para pymes'
+              }
+            }
+          })
+        })
+      })
+    }
 
     const fulfillContactApi = async (route: any) => {
       const method = route.request().method()
@@ -70,8 +79,15 @@ test.describe('Smoke E2E', () => {
       await route.fulfill({ status: 405 })
     }
 
-    await page.route('**/api/contact.php', fulfillContactApi)
-    await page.route('**/api/mail.php', fulfillContactApi)
+    const contactRoutes = ['**/api/contact.php', '**/plantilla-www/public/api/contact.php']
+    for (const pattern of contactRoutes) {
+      await page.route(pattern, fulfillContactApi)
+    }
+
+    const mailRoutes = ['**/api/mail.php', '**/plantilla-www/public/api/mail.php']
+    for (const pattern of mailRoutes) {
+      await page.route(pattern, fulfillContactApi)
+    }
   })
 
   test('home renders core sections', async ({ page }) => {
