@@ -107,13 +107,19 @@ export interface DecisionFlowFaqContent {
 
 export interface DecisionFlowContent {
   processTitle: string
+  processStepPrefixLabel: string
   pricingTitle: string
   pricingSummaryFallback: string
+  pricingIncludesTitle: string
   pricingIncludes: string[]
+  pricingExcludesTitle: string
   pricingExcludes: string[]
+  pricingVariablesTitle: string
   pricingVariables: string[]
   coverageTitle: string
+  coverageAreasTitle: string
   coverageAreas: string[]
+  responseTimesTitle: string
   responseTimes: string[]
   whatsappLabel: string
   contactFormLabel: string

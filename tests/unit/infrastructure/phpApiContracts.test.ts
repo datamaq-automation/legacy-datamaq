@@ -66,7 +66,17 @@ describe('PHP API contracts', () => {
         services?: { cards?: unknown[] }
         about?: { paragraphs?: unknown[] }
         contact?: { labels?: { email?: unknown; message?: unknown } }
-        decisionFlow?: { processSteps?: unknown[]; faqItems?: unknown[]; processTitle?: unknown }
+        decisionFlow?: {
+          processSteps?: unknown[]
+          faqItems?: unknown[]
+          processTitle?: unknown
+          processStepPrefixLabel?: unknown
+          pricingIncludesTitle?: unknown
+          pricingExcludesTitle?: unknown
+          pricingVariablesTitle?: unknown
+          coverageAreasTitle?: unknown
+          responseTimesTitle?: unknown
+        }
         thanks?: { title?: unknown; goHomeButtonLabel?: unknown }
       }
     }
@@ -82,6 +92,12 @@ describe('PHP API contracts', () => {
     expect(typeof payload.data?.contact?.labels?.email).toBe('string')
     expect(typeof payload.data?.contact?.labels?.message).toBe('string')
     expect(typeof payload.data?.decisionFlow?.processTitle).toBe('string')
+    expect(typeof payload.data?.decisionFlow?.processStepPrefixLabel).toBe('string')
+    expect(typeof payload.data?.decisionFlow?.pricingIncludesTitle).toBe('string')
+    expect(typeof payload.data?.decisionFlow?.pricingExcludesTitle).toBe('string')
+    expect(typeof payload.data?.decisionFlow?.pricingVariablesTitle).toBe('string')
+    expect(typeof payload.data?.decisionFlow?.coverageAreasTitle).toBe('string')
+    expect(typeof payload.data?.decisionFlow?.responseTimesTitle).toBe('string')
     expect(Array.isArray(payload.data?.decisionFlow?.processSteps)).toBe(true)
     expect(Array.isArray(payload.data?.decisionFlow?.faqItems)).toBe(true)
     expect(typeof payload.data?.thanks?.title).toBe('string')

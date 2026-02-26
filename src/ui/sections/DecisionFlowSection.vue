@@ -6,7 +6,9 @@
         <li v-for="step in processSteps" :key="step.order" class="col-12 col-lg-6">
           <article class="card c-ui-card h-100 border-0">
             <div class="card-body">
-              <p class="small text-uppercase fw-semibold mb-2 c-decision-flow__eyebrow">Paso {{ step.order }}</p>
+              <p class="small text-uppercase fw-semibold mb-2 c-decision-flow__eyebrow">
+                {{ flow.processStepPrefixLabel }} {{ step.order }}
+              </p>
               <h3 class="h5 mb-2">{{ step.title }}</h3>
               <p class="mb-0 text-secondary">{{ step.description }}</p>
             </div>
@@ -24,7 +26,7 @@
         <article class="col-12 col-lg-4">
           <div class="card c-ui-card h-100 border-0">
             <div class="card-body">
-              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">Incluye</h3>
+              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">{{ flow.pricingIncludesTitle }}</h3>
               <ul class="mb-0 ps-3 c-decision-flow__list">
                 <li v-for="item in pricingIncludes" :key="item">{{ item }}</li>
               </ul>
@@ -34,7 +36,7 @@
         <article class="col-12 col-lg-4">
           <div class="card c-ui-card h-100 border-0">
             <div class="card-body">
-              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">No incluye</h3>
+              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">{{ flow.pricingExcludesTitle }}</h3>
               <ul class="mb-0 ps-3 c-decision-flow__list">
                 <li v-for="item in pricingExcludes" :key="item">{{ item }}</li>
               </ul>
@@ -44,7 +46,7 @@
         <article class="col-12 col-lg-4">
           <div class="card c-ui-card h-100 border-0">
             <div class="card-body">
-              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">Puede variar por</h3>
+              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">{{ flow.pricingVariablesTitle }}</h3>
               <ul class="mb-0 ps-3 c-decision-flow__list">
                 <li v-for="item in pricingVariables" :key="item">{{ item }}</li>
               </ul>
@@ -63,7 +65,7 @@
         <article class="col-12 col-lg-6">
           <div class="card c-ui-card c-ui-card--elevated h-100 border-0">
             <div class="card-body">
-              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">Zona</h3>
+              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">{{ flow.coverageAreasTitle }}</h3>
               <ul class="mb-0 ps-3 c-decision-flow__list">
                 <li v-for="item in coverageAreas" :key="item">{{ item }}</li>
               </ul>
@@ -73,7 +75,7 @@
         <article class="col-12 col-lg-6">
           <div class="card c-ui-card c-ui-card--elevated h-100 border-0">
             <div class="card-body">
-              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">Tiempo de respuesta</h3>
+              <h3 class="h6 text-uppercase mb-3 c-decision-flow__card-title">{{ flow.responseTimesTitle }}</h3>
               <ul class="mb-0 ps-3 c-decision-flow__list">
                 <li v-for="item in responseTimes" :key="item">{{ item }}</li>
               </ul>

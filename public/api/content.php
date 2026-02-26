@@ -168,30 +168,36 @@ function dmq_build_app_content(string $brandId): array
         ],
         'decisionFlow' => [
             'processTitle' => 'Como trabajamos',
+            'processStepPrefixLabel' => 'Paso',
             'pricingTitle' => 'Tarifa base y alcance',
             'pricingSummaryFallback' => 'Tarifa base y alcance sujetos a diagnostico, distancia y condiciones de seguridad.',
+            'pricingIncludesTitle' => 'Incluye',
             'pricingIncludes' => [
                 'Relevamiento inicial y checklist tecnico.',
                 'Instalacion de 1 Powermeter o diagnostico en sitio.',
                 'Verificacion final de funcionamiento.',
                 'Registro tecnico basico de la intervencion.'
             ],
+            'pricingExcludesTitle' => 'No incluye',
             'pricingExcludes' => [
                 'Equipo Powermeter/Automate (lo provee el cliente).',
                 'Adecuaciones electricas mayores del tablero.',
                 'Materiales extra no previstos en el alcance inicial.'
             ],
+            'pricingVariablesTitle' => 'Puede variar por',
             'pricingVariables' => [
                 'Distancia y traslado desde base operativa en Garin.',
                 'Criticidad de urgencia y franja horaria.',
                 'Condiciones de seguridad o accesibilidad en planta.'
             ],
             'coverageTitle' => 'Cobertura y tiempos',
+            'coverageAreasTitle' => 'Zona',
             'coverageAreas' => [
                 'Cobertura prioritaria en GBA Norte.',
                 'AMBA sujeto a agenda y viabilidad tecnica.',
                 'Interior con coordinacion previa.'
             ],
+            'responseTimesTitle' => 'Tiempo de respuesta',
             'responseTimes' => [
                 'Respuesta comercial en menos de 24 horas.',
                 'Agenda de visita segun criticidad y disponibilidad.',
