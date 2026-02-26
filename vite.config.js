@@ -8,16 +8,12 @@ import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import removeConsole from 'vite-plugin-remove-console'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const proxyTarget = process.env.VITE_API_PROXY_TARGET?.trim() || 'http://localhost'
   const proxyPrefix = process.env.VITE_API_PROXY_PREFIX?.trim() ?? '/plantilla-www/public'
-  const plugins = [
-    vue(),
-    removeConsole({ exclude: ['info', 'error', 'warn'] })
-  ]
+  const plugins = [vue()]
   const customOutDir = process.env.BUILD_OUT_DIR?.trim()
   const defaultOutDir = 'dist'
   const outDir = customOutDir ? path.resolve(customOutDir) : defaultOutDir
@@ -47,6 +43,7 @@ export default defineConfig(({ mode }) => {
       // Keep CI/default behavior for dist; avoid deleting external directories.
       emptyOutDir: !customOutDir
     },
+    esbuild: mode === 'production' ? { drop: ['console', 'debugger'] } : undefined,
     test: {
       environment: 'jsdom',
       globals: true,

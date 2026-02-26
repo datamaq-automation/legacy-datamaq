@@ -74,7 +74,6 @@
     "sass": "^1.92.1",
     "typescript": "^5.9.3",
     "vite": "^7.1.11",
-    "vite-plugin-remove-console": "^2.2.0",
     "vite-plugin-vue-devtools": "^8.0.3",
     "vitest": "^4.0.17"
   }
