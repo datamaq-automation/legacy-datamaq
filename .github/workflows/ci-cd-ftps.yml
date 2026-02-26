@@ -33,6 +33,7 @@ jobs:
             ftps_server_secret: FTPS_DATAMAQ_SERVER
             ftps_username_secret: FTPS_DATAMAQ_USERNAME
             ftps_password_secret: FTPS_DATAMAQ_PASSWORD
+            ftps_remote_dir_secret: FTPS_DATAMAQ_REMOTE_DIR
             ftps_port_var: FTPS_DATAMAQ_PORT
             ftps_remote_dir_var: FTPS_DATAMAQ_REMOTE_DIR
             ftps_allow_insecure_data_channel_var: FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
@@ -44,7 +45,7 @@ jobs:
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
-          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] }}
+          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
         run: |
           set -euo pipefail
 
@@ -61,7 +62,7 @@ jobs:
             exit 1
           fi
           if [ -z "${FTPS_REMOTE_DIR}" ]; then
-            echo "::error::Missing variable ${{ matrix.ftps_remote_dir_var }}"
+            echo "::error::Missing remote dir. Set variable ${{ matrix.ftps_remote_dir_var }} or secret ${{ matrix.ftps_remote_dir_secret }}."
             exit 1
           fi
 
@@ -115,7 +116,7 @@ jobs:
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
-          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] }}
+          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
         run: |
           set -euo pipefail
           RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
@@ -182,6 +183,10 @@ jobs:
             set -e
 
             cat "${LOG_FILE}"
+            if grep -qi "Peer closed connection" "${LOG_FILE}"; then
+              echo "::warning::FTPS peer closed connection. Possible causes: invalid credentials, wrong port, or server FTPS policy mismatch."
+              echo "::warning::Validate secrets, and verify whether server expects explicit FTPS on port 21 or implicit FTPS on port 990."
+            fi
             if [ "${STATUS}" -eq 0 ]; then
               return 0
             fi
@@ -224,7 +229,7 @@ jobs:
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
-          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] }}
+          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
           FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
         run: |
           set -euo pipefail
@@ -273,6 +278,10 @@ jobs:
             set -e
 
             cat "${LOG_FILE}"
+            if grep -qi "Peer closed connection" "${LOG_FILE}"; then
+              echo "::warning::FTPS peer closed connection. Possible causes: invalid credentials, wrong port, or server FTPS policy mismatch."
+              echo "::warning::Validate secrets, and verify whether server expects explicit FTPS on port 21 or implicit FTPS on port 990."
+            fi
             if [ "${STATUS}" -eq 0 ]; then
               return 0
             fi

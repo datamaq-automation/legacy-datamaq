@@ -96,6 +96,7 @@ Path: src/ui/sections/HeroSection.vue
                 fetchpriority="high"
                 loading="eager"
                 decoding="async"
+                @error="onHeroImageError"
               />
             </picture>
           </div>
@@ -109,6 +110,7 @@ Path: src/ui/sections/HeroSection.vue
 import { ref } from 'vue'
 import type { HeroSectionEmits, HeroSectionProps } from '@/ui/types/sections'
 import { useHeroSection } from './HeroSection'
+import { handleImageLoadError } from '@/ui/utils/imageDebug'
 
 const props = defineProps<HeroSectionProps>()
 const emit = defineEmits<HeroSectionEmits>()
@@ -130,5 +132,9 @@ function handleWhatsAppClick(href: string) {
 
 function toggleConditions() {
   conditionsExpanded.value = !conditionsExpanded.value
+}
+
+function onHeroImageError(event: Event) {
+  handleImageLoadError(event, 'HeroSection')
 }
 </script>

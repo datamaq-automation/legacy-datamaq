@@ -125,6 +125,33 @@ describe('ContentRepository', () => {
     expect(logger.debug).toHaveBeenCalled()
   })
 
+  it('supports nested pricing payload shapes with value wrappers', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            diagnostico_lista_2h_ars: {
+              value: 285000
+            }
+          }
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    )
+
+    new ContentRepository({ pricingApiUrl: 'https://api.example.com/v1/public/pricing' }, logger)
+
+    await flushRuntimePricing()
+    await flushRuntimePricing()
+
+    expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(285000)
+    expect(logger.debug).toHaveBeenCalled()
+  })
+
   it('hydrates hero.title from content backend payload', async () => {
     const logger = createLoggerSpy()
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {

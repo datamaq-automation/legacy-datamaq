@@ -16,6 +16,7 @@ Path: src/ui/sections/ServiceCard.vue
               :height="card.media.height"
               loading="lazy"
               decoding="async"
+              @error="onServiceImageError"
             />
           </div>
           <h3 class="h5 fw-semibold text-body-emphasis mb-2 c-services__card-title">{{ card.title }}</h3>
@@ -85,6 +86,7 @@ Path: src/ui/sections/ServiceCard.vue
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { ServiceCardContent } from '@/domain/types/content'
+import { handleImageLoadError } from '@/ui/utils/imageDebug'
 
 const props = defineProps<{
   card: ServiceCardContent
@@ -112,5 +114,9 @@ function handleWhatsAppClick(href: string, section: string) {
 
 function toggleDetails() {
   detailsExpanded.value = !detailsExpanded.value
+}
+
+function onServiceImageError(event: Event) {
+  handleImageLoadError(event, `ServiceCard:${props.card.id}`)
 }
 </script>

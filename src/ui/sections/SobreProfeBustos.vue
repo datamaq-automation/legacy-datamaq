@@ -15,6 +15,7 @@ Path: src/ui/sections/SobreProfeBustos.vue
             :height="about.image.height"
             loading="lazy"
             decoding="async"
+            @error="onAboutImageError"
           />
         </div>
         <div class="col-md-8">
@@ -33,10 +34,15 @@ Path: src/ui/sections/SobreProfeBustos.vue
 
 <script setup lang="ts">
 import { useSobreProfeBustos } from './SobreProfeBustos'
+import { handleImageLoadError } from '@/ui/utils/imageDebug'
 
 const { about } = useSobreProfeBustos()
 
 defineOptions({
   name: 'SobreProfeBustos'
 })
+
+function onAboutImageError(event: Event) {
+  handleImageLoadError(event, 'SobreProfeBustos')
+}
 </script>
