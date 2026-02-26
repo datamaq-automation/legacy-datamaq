@@ -16,7 +16,7 @@
 
 ## Backlog
 
-- [>] Hardening backend PHP posterior a auditoria (ciberseguridad + arquitectura + SOLID).
+- [x] Hardening backend PHP posterior a auditoria (ciberseguridad + arquitectura + SOLID) completado en este ciclo.
 
 ## P0 (migracion de endpoints sin `.php`)
 
@@ -26,24 +26,21 @@
 
 ## P0 (seguridad y operacion)
 
-- [ ] **Corregir exposicion de codigo fuente PHP en entorno dev/proxy**
-  - Evidencia observada: `pricing.php` retornando `<?php ...` en vez de JSON cuando no pasa por handler PHP.
-  - Accion: asegurar que todos los endpoints `/api/*.php` se ejecuten via PHP (en dev y despliegue).
+- [x] **Corregir exposicion de codigo fuente PHP en entorno dev/proxy**
+  - Estado: resuelto via proxy unificado `/api` en Vite y migracion a endpoints canónicos `/api/v1/*`.
 
-- [ ] **Agregar rate limit basico por IP/request-id en `contact.php`, `mail.php`, `quote/diagnostic.php`**
-  - Riesgo: abuso/spam y denegacion de servicio de bajo costo.
-  - Accion: umbral por ventana (ej. token bucket simple) + respuesta `429`.
+- [x] **Agregar rate limit basico por IP/request-id en `contact.php`, `mail.php`, `quote/diagnostic.php`**
+  - Estado: implementado (ventana fija en archivo temporal + respuesta `429` y header `Retry-After`).
 
 ## P1 (arquitectura limpia, SOLID, mantenibilidad)
 
-- [ ] **Separar contenido de `content.php` en proveedor/repositorio dedicado**
-  - Estado actual: payload extenso embebido en una sola funcion (`dmq_build_app_content`).
-  - Accion: mover a `ContentProvider` por marca (SRP), mantener endpoint como adaptador HTTP.
+- [x] **Separar contenido de `content.php` en proveedor/repositorio dedicado**
+  - Estado: `dmq_build_app_content` movido a `public/api/content_provider.php`; endpoint queda como adaptador HTTP.
 
 ## P2 (calidad de dominio y contratos)
 
-- [ ] **Agregar rate limit tests de contrato (429)**
-  - Dependencia: implementar rate limiting backend primero.
+- [x] **Agregar rate limit tests de contrato (429)**
+  - Estado: agregado test de contrato para `contact` con validación de `429` + `Retry-After`.
 
 ## P0 (backend como fuente unica de textos UI)
 

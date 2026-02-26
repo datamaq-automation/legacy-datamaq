@@ -205,6 +205,33 @@ describe('PHP API contracts', () => {
     expect(response.status).toBe(204)
     expect(response.headers.get('access-control-allow-origin')).toBe('http://localhost:5173')
   })
+
+  it('returns 429 when contact endpoint exceeds rate limit', async () => {
+    let limitedResponse: Response | undefined
+
+    for (let attempt = 1; attempt <= 8; attempt += 1) {
+      const response = await fetch(`${BASE_URL}/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'vitest-rate-limit-contact'
+        },
+        body: JSON.stringify({
+          email: 'rate-limit@example.com',
+          message: `Mensaje de prueba para rate limit intento ${attempt}`
+        })
+      })
+
+      if (response.status === 429) {
+        limitedResponse = response
+        break
+      }
+    }
+
+    expect(limitedResponse).toBeDefined()
+    expect(limitedResponse?.status).toBe(429)
+    expect(limitedResponse?.headers.get('retry-after')).toBeTruthy()
+  })
 })
 
 async function waitForServerReady(): Promise<void> {

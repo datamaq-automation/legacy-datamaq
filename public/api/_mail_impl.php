@@ -11,6 +11,13 @@ if ($method !== 'POST') {
     exit;
 }
 
+$retryAfter = dmq_enforce_rate_limit('mail', 5, 60);
+if (is_int($retryAfter)) {
+    header('Retry-After: ' . $retryAfter);
+    dmq_error_response(429, 'RATE_LIMITED', 'Too many requests');
+    exit;
+}
+
 $payload = dmq_read_json_body();
 if ($payload === null) {
     dmq_error_response(422, 'INVALID_JSON', 'Body must be a valid JSON object.');

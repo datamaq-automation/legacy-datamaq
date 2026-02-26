@@ -79,6 +79,28 @@
     - preflight CORS (`OPTIONS`) en `contact.php`
   - Evidencia: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` verde (11/11).
 
+### Hardening backend PHP adicional - 2026-02-26 (cierre backlog)
+
+- [x] Corregir exposicion de codigo fuente PHP en entorno dev/proxy.
+  - Evidencia: proxy Vite unificado para `/api` y consumo canónico de endpoints `/api/v1/*`.
+  - Evidencia: se evita acoplamiento a archivos `.php` en runtime frontend.
+
+- [x] Agregar rate limit basico en endpoints sensibles.
+  - Evidencia: helper `dmq_enforce_rate_limit()` en `public/api/_bootstrap.php`.
+  - Evidencia: aplicado en:
+    - `public/api/_contact_impl.php`
+    - `public/api/_mail_impl.php`
+    - `public/api/quote/_diagnostic_impl.php`
+  - Comportamiento: responde `429 RATE_LIMITED` con header `Retry-After`.
+
+- [x] Separar proveedor de contenido (SRP).
+  - Evidencia: `dmq_build_app_content()` movido a `public/api/content_provider.php`.
+  - Evidencia: `public/api/_content_impl.php` queda como adaptador HTTP liviano.
+
+- [x] Agregar test de contrato para rate limiting.
+  - Evidencia: `tests/unit/infrastructure/phpApiContracts.test.ts` incluye caso `429` en endpoint `contact` y verifica `Retry-After`.
+  - Evidencia de ejecucion: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` verde (12/12).
+
 ### Migracion de endpoints versionados sin `.php` - 2026-02-26
 
 - [x] Definir rutas canónicas versionadas.
