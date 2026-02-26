@@ -65,5 +65,18 @@
 - [x] Transformar contenido a plantilla generica (`Appcontent.*.ts`).
   - Evidencia: eliminacion de `src/infrastructure/content/Appcontent.ts`.
   - Evidencia: selector activo en `src/infrastructure/content/Appcontent.active.ts` con fallback `example`.
-  - Evidencia: variantes conservadas en `Appcontent.datamaq.ts`, `Appcontent.upp.ts`, `Appcontent.example.ts` y contenido comun en `Appcontent.shared.ts`.
+  - Evidencia: variantes conservadas en `Appcontent.datamaq.ts`, `Appcontent.upp.ts`, `Appcontent.example.ts` y builder comun en `landingContentBuilder.ts`.
   - Evidencia: target `example` soportado por `runtimeProfiles.json`, `runtimeProfile.ts`, `scripts/build-target.mjs` y `scripts/generate-sitemap.mjs`.
+
+### P0 finalizado - 2026-02-26 (`hero.title` remoto)
+
+- [x] Obtener `hero.title` desde `GET /api/content.php` con fallback local.
+  - Evidencia: endpoint dedicado en `public/api/content.php` (payload `data.hero.title`, `brand_id`, `version`, `request_id`).
+  - Evidencia: `contentApiUrl` agregado en runtime/config (`runtimeProfiles.json`, `runtimeProfile.ts`, `publicConfig.ts`, `viteConfig.ts`, `ConfigPort`).
+  - Evidencia: sync separado de pricing en `src/infrastructure/content/dynamicContentService.ts`.
+  - Evidencia: parche reactivo acotado a `hero.title` en `src/infrastructure/content/contentStore.ts`.
+  - Evidencia: `ContentRepository` integra ambos servicios sin acoplar responsabilidades.
+  - Evidencia: tests frontend y contrato:
+    - `tests/unit/infrastructure/contentRepository.test.ts`
+    - `tests/unit/infrastructure/viteConfig.test.ts`
+    - `tests/unit/infrastructure/phpApiContracts.test.ts`

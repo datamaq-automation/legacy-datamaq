@@ -84,6 +84,7 @@ describe('ContentRepository', () => {
     expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
 
     await flushRuntimePricing()
+    await flushRuntimePricing()
 
     expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
     expect(servicesRef.cards[0].figure?.caption).toContain('Consultar al WhatsApp')
@@ -113,6 +114,7 @@ describe('ContentRepository', () => {
     )
 
     await flushRuntimePricing()
+    await flushRuntimePricing()
 
     expect(repository.getHeroContent().responseNote).toContain('Consultar al WhatsApp')
     expect(repository.getServicesContent().cards[1].note).toContain('ARS 260.000')
@@ -121,6 +123,83 @@ describe('ContentRepository', () => {
     expect(commercialConfig.trasladoMinimoARS).toBeNull()
     expect(commercialConfig.diagnosticoHoraAdicionalARS).toBeNull()
     expect(logger.debug).toHaveBeenCalled()
+  })
+
+  it('hydrates hero.title from content backend payload', async () => {
+    const logger = createLoggerSpy()
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
+      const url = String(input)
+      if (url.includes('/content')) {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              status: 'ok',
+              data: { hero: { title: 'Titulo remoto por marca' } }
+            }),
+            {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' }
+            }
+          )
+        )
+      }
+      return Promise.resolve(
+        new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: '275000' } }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        })
+      )
+    })
+
+    const repository = new ContentRepository(
+      {
+        contentApiUrl: 'https://api.example.com/v1/public/content'
+      },
+      logger
+    )
+
+    await flushRuntimePricing()
+
+    expect(repository.getHeroContent().title).toBe('Titulo remoto por marca')
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.example.com/v1/public/content',
+      expect.objectContaining({ method: 'GET' })
+    )
+    expect(logger.debug).toHaveBeenCalled()
+  })
+
+  it('keeps local hero.title fallback when content payload lacks usable title', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
+      const url = String(input)
+      if (url.includes('/content')) {
+        return Promise.resolve(
+          new Response(JSON.stringify({ status: 'ok', data: { hero: { title: '   ' } } }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          })
+        )
+      }
+      return Promise.resolve(
+        new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: '275000' } }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        })
+      )
+    })
+
+    const repository = new ContentRepository(
+      {
+        contentApiUrl: 'https://api.example.com/v1/public/content'
+      },
+      logger
+    )
+    const localTitle = repository.getHeroContent().title
+
+    await flushRuntimePricing()
+
+    expect(repository.getHeroContent().title).toBe(localTitle)
+    expect(logger.warn).toHaveBeenCalled()
   })
 
   it('keeps fallback "Consultar al WhatsApp" when backend responds with non-ok status', async () => {

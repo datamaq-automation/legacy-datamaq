@@ -58,6 +58,15 @@ describe('PHP API contracts', () => {
     expect(payload.data?.diagnostico_lista_2h_ars).toBeTypeOf('number')
   })
 
+  it('content.php exposes data.hero.title', async () => {
+    const response = await fetch(`${BASE_URL}/content.php`)
+    const payload = (await response.json()) as { data?: { hero?: { title?: unknown } } }
+
+    expect(response.status).toBe(200)
+    expect(typeof payload.data?.hero?.title).toBe('string')
+    expect(String(payload.data?.hero?.title)).not.toHaveLength(0)
+  })
+
   it('quote/diagnostic.php returns expected quote payload', async () => {
     const response = await fetch(`${BASE_URL}/quote/diagnostic.php`, {
       method: 'POST',

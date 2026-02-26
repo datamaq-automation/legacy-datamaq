@@ -22,6 +22,7 @@ describe('publicConfig', () => {
     expect(profile.siteName).toBe('UPP')
     expect(profile.backendBaseUrl).toBeUndefined()
     expect(profile.inquiryApiUrl).toBe('/api/contact.php')
+    expect(profile.contentApiUrl).toBe('/api/content.php')
     expect(profile.quoteDiagnosticApiUrl).toBe('/api/quote/diagnostic.php')
     expect(profile.quotePdfApiUrl).toBe('/api/quote/pdf.php?quote_id={quote_id}')
   })

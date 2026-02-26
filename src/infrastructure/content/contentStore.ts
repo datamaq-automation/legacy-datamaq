@@ -44,6 +44,32 @@ export class ContentStore {
       parsed.data as unknown as Record<string, unknown>
     )
   }
+
+  applyHeroTitle(title: string, logger: LoggerPort): void {
+    const normalizedTitle = title.trim()
+    if (!normalizedTitle) {
+      return
+    }
+
+    const currentContent = this.getParsedContent()
+    const candidate = {
+      ...currentContent,
+      hero: {
+        ...currentContent.hero,
+        title: normalizedTitle
+      }
+    }
+    const parsed = AppContentSchema.safeParse(candidate)
+    if (!parsed.success) {
+      logger.error('[content] hero.title remoto invalida schema; se ignora update.')
+      return
+    }
+
+    patchObjectInPlace(
+      currentContent as unknown as Record<string, unknown>,
+      parsed.data as unknown as Record<string, unknown>
+    )
+  }
 }
 
 function patchObjectInPlace(target: Record<string, unknown>, source: Record<string, unknown>): void {

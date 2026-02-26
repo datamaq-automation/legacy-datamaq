@@ -18,6 +18,7 @@ import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
 import { buildAppContent, commercialConfig } from '@/infrastructure/content/Appcontent.active'
 import { ContentStore } from '@/infrastructure/content/contentStore'
+import { DynamicContentService } from '@/infrastructure/content/dynamicContentService'
 import { DynamicPricingService } from '@/infrastructure/content/dynamicPricingService'
 import { normalizeNavbarContent } from '@/infrastructure/content/navbarNormalizer'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
@@ -37,18 +38,25 @@ export class ContentRepository
     ServicesContentPort
 {
   private readonly contentStore: ContentStore
+  private readonly dynamicContentService: DynamicContentService
   private readonly dynamicPricingService: DynamicPricingService
 
   constructor(
-    private config?: Pick<ConfigPort, 'pricingApiUrl'>,
+    private config?: Pick<ConfigPort, 'pricingApiUrl' | 'contentApiUrl'>,
     private logger: LoggerPort = new NoopLogger()
   ) {
     this.contentStore = new ContentStore(commercialConfig, buildAppContent)
+    this.dynamicContentService = new DynamicContentService(
+      this.config?.contentApiUrl,
+      this.logger,
+      (title) => this.contentStore.applyHeroTitle(title, this.logger)
+    )
     this.dynamicPricingService = new DynamicPricingService(
       this.config?.pricingApiUrl,
       this.logger,
       (snapshot) => this.contentStore.applyCommercialPricingSnapshot(snapshot, this.logger)
     )
+    this.dynamicContentService.bootstrap()
     this.dynamicPricingService.bootstrap()
   }
 

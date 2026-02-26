@@ -39,6 +39,7 @@ export interface RuntimeProfile {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
+  contentApiUrl: NullableString
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
   allowInsecureBackend: boolean
@@ -85,6 +86,7 @@ type RuntimeProfileJson = {
   inquiryApiUrl: NullableStringJson
   mailApiUrl: NullableStringJson
   pricingApiUrl: NullableStringJson
+  contentApiUrl: NullableStringJson
   quoteDiagnosticApiUrl: NullableStringJson
   quotePdfApiUrl: NullableStringJson
   allowInsecureBackend: boolean
@@ -185,6 +187,7 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
     inquiryApiUrl: normalize(profile.inquiryApiUrl),
     mailApiUrl: normalize(profile.mailApiUrl),
     pricingApiUrl: normalize(profile.pricingApiUrl),
+    contentApiUrl: normalize(profile.contentApiUrl),
     quoteDiagnosticApiUrl: normalize(profile.quoteDiagnosticApiUrl),
     quotePdfApiUrl: normalize(profile.quotePdfApiUrl),
     allowInsecureBackend: profile.allowInsecureBackend,

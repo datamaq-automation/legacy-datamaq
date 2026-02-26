@@ -12,17 +12,17 @@
 
 ## Estado
 
-- [>] Nuevo bloque activo: `hero.title` dinamico desde backend PHP.
+- [x] Bloque `hero.title` dinamico desde backend PHP implementado y validado.
 
 ## P0 (contenido dinamico minimo)
 
-- [>] **Obtener `hero.title` desde `GET /api/content.php` con fallback local**
+- [x] **Obtener `hero.title` desde `GET /api/content.php` con fallback local**
   - [x] Decision tomada: endpoint dedicado `GET /api/content.php` (no anexar a `pricing.php`).
-  - [ ] Crear `public/api/content.php` con contrato JSON y errores estandarizados (`request_id`, `error_code`, `detail`).
-  - [ ] Definir payload minimo versionado (ej: `data.hero.title`) y mantener compatibilidad hacia adelante.
-  - [ ] Incorporar `contentApiUrl` en configuracion runtime (`runtimeProfiles.json` + `viteConfig`).
-  - [ ] Implementar servicio de sync de contenido separado de pricing (SRP) en infraestructura frontend.
-  - [ ] Actualizar `ContentRepository` para aplicar parche reactivo solo en campos soportados (`hero.title`).
-  - [ ] Mantener fallback deterministico al valor local de `landingContentBuilder.ts` si backend falla.
-  - [ ] Agregar tests unitarios frontend (config + sync + fallback).
-  - [ ] Agregar tests de contrato PHP para `GET /api/content.php`.
+  - [x] Crear `public/api/content.php` con contrato JSON y errores estandarizados (`request_id`, `error_code`, `detail`).
+  - [x] Definir payload minimo versionado (ej: `data.hero.title`) y mantener compatibilidad hacia adelante.
+  - [x] Incorporar `contentApiUrl` en configuracion runtime (`runtimeProfiles.json` + `viteConfig`).
+  - [x] Implementar servicio de sync de contenido separado de pricing (SRP) en infraestructura frontend.
+  - [x] Actualizar `ContentRepository` para aplicar parche reactivo solo en campos soportados (`hero.title`).
+  - [x] Mantener fallback deterministico al valor local de `landingContentBuilder.ts` si backend falla.
+  - [x] Agregar tests unitarios frontend (config + sync + fallback).
+  - [x] Agregar tests de contrato PHP para `GET /api/content.php`.

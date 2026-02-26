@@ -13,6 +13,7 @@ export class ViteConfig implements ConfigPort {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
+  contentApiUrl: NullableString
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
   contactEmail: NullableString
@@ -68,6 +69,13 @@ export class ViteConfig implements ConfigPort {
       backendBaseUrl,
       '/v1/public/pricing',
       'pricingApiUrl',
+      allowInsecureBackend
+    )
+    this.contentApiUrl = resolveApiEndpoint(
+      normalize(publicConfig.contentApiUrl),
+      backendBaseUrl,
+      '/v1/public/content',
+      'contentApiUrl',
       allowInsecureBackend
     )
     this.quoteDiagnosticApiUrl = resolveApiEndpoint(

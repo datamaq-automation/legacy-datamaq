@@ -37,6 +37,7 @@ export type PublicConfig = {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
+  contentApiUrl: NullableString
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
   allowInsecureBackend: boolean
@@ -76,6 +77,7 @@ export const publicConfig: PublicConfig = {
   inquiryApiUrl: activeRuntimeProfile.inquiryApiUrl,
   mailApiUrl: activeRuntimeProfile.mailApiUrl,
   pricingApiUrl: activeRuntimeProfile.pricingApiUrl,
+  contentApiUrl: activeRuntimeProfile.contentApiUrl,
   quoteDiagnosticApiUrl: activeRuntimeProfile.quoteDiagnosticApiUrl,
   quotePdfApiUrl: activeRuntimeProfile.quotePdfApiUrl,
   allowInsecureBackend: activeRuntimeProfile.allowInsecureBackend,
