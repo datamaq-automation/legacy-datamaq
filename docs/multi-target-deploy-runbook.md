@@ -42,6 +42,7 @@ Variables:
 - `FTPS_DATAMAQ_PORT` (opcional; default 21)
 - `FTPS_DATAMAQ_REMOTE_DIR`
 - `FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
+- Formato recomendado para `FTPS_DATAMAQ_SERVER`: `ftp.example.com` o `ftps://ftp.example.com` (evitar valores incompletos como `https://`).
 
 Para `upp`:
 
@@ -54,6 +55,7 @@ Variables:
 - `FTPS_UPP_PORT` (opcional; default 21)
 - `FTPS_UPP_REMOTE_DIR`
 - `FTPS_UPP_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
+- Formato recomendado para `FTPS_UPP_SERVER`: `ftp.example.com` o `ftps://ftp.example.com` (evitar valores incompletos como `https://`).
 
 ## Validacion local recomendada
 

@@ -76,6 +76,8 @@ jobs:
           RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
           SERVER="${RAW_SERVER#ftp://}"
           SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER#http://}"
+          SERVER="${SERVER#https://}"
           SERVER="${SERVER%%/*}"
           SERVER_HOST="${SERVER%%:*}"
           SERVER_PORT_FROM_HOST=""
@@ -91,6 +93,11 @@ jobs:
 
           if [ -z "${SERVER_HOST}" ]; then
             echo "::error::FTPS server is empty after normalization."
+            exit 1
+          fi
+          if printf '%s' "${SERVER_HOST}" | grep -Eq '^(https?|ftps?)$'; then
+            echo "::error::FTPS server host is invalid after normalization (host=${SERVER_HOST})."
+            echo "::error::Use host or URL with real hostname, e.g. ftp.example.com or ftps://ftp.example.com."
             exit 1
           fi
           if ! printf '%s' "${PORT}" | grep -Eq '^[0-9]+$'; then
@@ -122,6 +129,8 @@ jobs:
           RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
           SERVER="${RAW_SERVER#ftp://}"
           SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER#http://}"
+          SERVER="${SERVER#https://}"
           SERVER="${SERVER%%/*}"
 
           SERVER_HOST="${SERVER%%:*}"
@@ -135,8 +144,34 @@ jobs:
             REMOTE_DIR="/${REMOTE_DIR}"
           fi
 
+          if printf '%s' "${SERVER_HOST}" | grep -Eq '^(https?|ftps?)$'; then
+            echo "::error::FTPS server host is invalid after normalization (host=${SERVER_HOST})."
+            echo "::group::FTPS debug"
+            SCHEME="$(printf '%s' "${RAW_SERVER}" | sed -E 's#^([A-Za-z]+)://.*#\1#')"
+            if [ "${SCHEME}" = "${RAW_SERVER}" ]; then
+              SCHEME="none"
+            fi
+            echo "raw_server_scheme=${SCHEME}"
+            echo "normalized_host=${SERVER_HOST}"
+            echo "normalized_port=${PORT}"
+            echo "normalized_remote_dir=${REMOTE_DIR}"
+            echo "::endgroup::"
+            exit 1
+          fi
+
           if ! getent hosts "${SERVER_HOST}" >/dev/null; then
             echo "::error::FTPS server is not resolvable by DNS (host=${SERVER_HOST})."
+            echo "::group::FTPS debug"
+            SCHEME="$(printf '%s' "${RAW_SERVER}" | sed -E 's#^([A-Za-z]+)://.*#\1#')"
+            if [ "${SCHEME}" = "${RAW_SERVER}" ]; then
+              SCHEME="none"
+            fi
+            echo "raw_server_scheme=${SCHEME}"
+            echo "normalized_host=${SERVER_HOST}"
+            echo "normalized_port=${PORT}"
+            echo "normalized_remote_dir=${REMOTE_DIR}"
+            getent hosts "${SERVER_HOST}" || true
+            echo "::endgroup::"
             exit 1
           fi
 
@@ -204,6 +239,8 @@ jobs:
           RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
           SERVER="${RAW_SERVER#ftp://}"
           SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER#http://}"
+          SERVER="${SERVER#https://}"
           SERVER="${SERVER%%/*}"
 
           SERVER_HOST="${SERVER%%:*}"
@@ -215,6 +252,11 @@ jobs:
           REMOTE_DIR="${RAW_REMOTE_DIR}"
           if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
             REMOTE_DIR="/${REMOTE_DIR}"
+          fi
+
+          if printf '%s' "${SERVER_HOST}" | grep -Eq '^(https?|ftps?)$'; then
+            echo "::error::FTPS server host is invalid after normalization (host=${SERVER_HOST})."
+            exit 1
           fi
 
           ALLOW_INSECURE_DATA_CHANNEL="${FTPS_ALLOW_INSECURE_DATA_CHANNEL:-false}"
