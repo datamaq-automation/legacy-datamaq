@@ -79,19 +79,19 @@ jobs:
       matrix:
         include:
           - target: datamaq
-            ftps_server_secret: FTPS_SERVER_DATAMAQ
-            ftps_port_secret: FTPS_PORT_DATAMAQ
-            ftps_username_secret: FTPS_USERNAME_DATAMAQ
-            ftps_password_secret: FTPS_PASSWORD_DATAMAQ
-            ftps_remote_dir_secret: FTPS_REMOTE_DIR_DATAMAQ
-            ftps_allow_insecure_data_channel_secret: FTPS_ALLOW_INSECURE_DATA_CHANNEL_DATAMAQ
+            ftps_server_secret: FTPS__DATAMAQ_SERVER
+            ftps_username_secret: FTPS__DATAMAQ_USERNAME
+            ftps_password_secret: FTPS__DATAMAQ_PASSWORD
+            ftps_port_var: FTPS__DATAMAQ_PORT
+            ftps_remote_dir_var: FTPS__DATAMAQ_REMOTE_DIR
+            ftps_allow_insecure_data_channel_var: FTPS__DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
           - target: upp
-            ftps_server_secret: FTPS_SERVER_PROFEBUSTOS
-            ftps_port_secret: FTPS_PORT_PROFEBUSTOS
-            ftps_username_secret: FTPS_USERNAME_PROFEBUSTOS
-            ftps_password_secret: FTPS_PASSWORD_PROFEBUSTOS
-            ftps_remote_dir_secret: FTPS_REMOTE_DIR_PROFEBUSTOS
-            ftps_allow_insecure_data_channel_secret: FTPS_ALLOW_INSECURE_DATA_CHANNEL_PROFEBUSTOS
+            ftps_server_secret: FTPS__UPP_SERVER
+            ftps_username_secret: FTPS__UPP_USERNAME
+            ftps_password_secret: FTPS__UPP_PASSWORD
+            ftps_port_var: FTPS__UPP_PORT
+            ftps_remote_dir_var: FTPS__UPP_REMOTE_DIR
+            ftps_allow_insecure_data_channel_var: FTPS__UPP_ALLOW_INSECURE_DATA_CHANNEL
 
     steps:
       - name: Checkout
@@ -109,10 +109,10 @@ jobs:
       - name: Validate deploy inputs
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
-          FTPS_PORT: ${{ secrets[matrix.ftps_port_secret] }}
+          FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
-          FTPS_REMOTE_DIR: ${{ secrets[matrix.ftps_remote_dir_secret] }}
+          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] }}
         run: |
           set -euo pipefail
 
@@ -129,7 +129,7 @@ jobs:
             exit 1
           fi
           if [ -z "${FTPS_REMOTE_DIR}" ]; then
-            echo "::error::Missing secret ${{ matrix.ftps_remote_dir_secret }}"
+            echo "::error::Missing variable ${{ matrix.ftps_remote_dir_var }}"
             exit 1
           fi
 
@@ -179,10 +179,10 @@ jobs:
       - name: FTPS preflight
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
-          FTPS_PORT: ${{ secrets[matrix.ftps_port_secret] }}
+          FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
-          FTPS_REMOTE_DIR: ${{ secrets[matrix.ftps_remote_dir_secret] }}
+          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] }}
         run: |
           set -euo pipefail
           RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
@@ -240,11 +240,11 @@ jobs:
       - name: Deploy dist via FTPS
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
-          FTPS_PORT: ${{ secrets[matrix.ftps_port_secret] }}
+          FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
-          FTPS_REMOTE_DIR: ${{ secrets[matrix.ftps_remote_dir_secret] }}
-          FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ secrets[matrix.ftps_allow_insecure_data_channel_secret] }}
+          FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] }}
+          FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
         run: |
           set -euo pipefail
           RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"

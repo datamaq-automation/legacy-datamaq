@@ -24,25 +24,31 @@ Desplegar dos marcas desde el mismo repositorio, compartiendo rutas (`/`, `/coti
   - `npm run build -- datamaq`
   - `npm run build -- upp`
 
-## Secretos requeridos por target
+## Secrets y Variables por target
 
 Para `datamaq`:
 
-- `FTPS_SERVER_DATAMAQ`
-- `FTPS_PORT_DATAMAQ` (opcional; default 21)
-- `FTPS_USERNAME_DATAMAQ`
-- `FTPS_PASSWORD_DATAMAQ`
-- `FTPS_REMOTE_DIR_DATAMAQ`
-- `FTPS_ALLOW_INSECURE_DATA_CHANNEL_DATAMAQ` (`true|false`, opcional)
+Secrets:
+- `FTPS__DATAMAQ_SERVER`
+- `FTPS__DATAMAQ_USERNAME`
+- `FTPS__DATAMAQ_PASSWORD`
+
+Variables:
+- `FTPS__DATAMAQ_PORT` (opcional; default 21)
+- `FTPS__DATAMAQ_REMOTE_DIR`
+- `FTPS__DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
 
 Para `upp`:
 
-- `FTPS_SERVER_PROFEBUSTOS`
-- `FTPS_PORT_PROFEBUSTOS` (opcional; default 21)
-- `FTPS_USERNAME_PROFEBUSTOS`
-- `FTPS_PASSWORD_PROFEBUSTOS`
-- `FTPS_REMOTE_DIR_PROFEBUSTOS`
-- `FTPS_ALLOW_INSECURE_DATA_CHANNEL_PROFEBUSTOS` (`true|false`, opcional)
+Secrets:
+- `FTPS__UPP_SERVER`
+- `FTPS__UPP_USERNAME`
+- `FTPS__UPP_PASSWORD`
+
+Variables:
+- `FTPS__UPP_PORT` (opcional; default 21)
+- `FTPS__UPP_REMOTE_DIR`
+- `FTPS__UPP_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
 
 ## Validacion local recomendada
 
