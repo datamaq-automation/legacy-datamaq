@@ -45,6 +45,40 @@
   - Hallazgos priorizados trasladados a backlog activo en `docs/todo.md` (P0/P1/P2).
   - Riesgo principal detectado en operacion local: respuesta de codigo fuente PHP cuando endpoint no es ejecutado por handler PHP.
 
+### Hardening backend PHP implementado - 2026-02-26
+
+- [x] Definir politica de CORS explicita y consistente (produccion + desarrollo).
+  - Evidencia: helper `dmq_apply_cors_headers()` en `public/api/_bootstrap.php`.
+  - Evidencia: soporte de `OPTIONS` centralizado via `dmq_handle_preflight()` aplicado en endpoints API.
+  - Origenes habilitados: `https://datamaq.com.ar`, `https://www.datamaq.com.ar`, `http://localhost:5173`, `http://127.0.0.1:5173`.
+
+- [x] Unificar `request_id` en endpoints backend.
+  - Evidencia: `contact.php` y `mail.php` ya no usan IDs `test-*`; responden con `dmq_request_id()`.
+  - Evidencia: `health.php` ahora incluye `request_id` y usa `dmq_error_response()` para 405.
+
+- [x] Extraer validaciones de input reutilizables.
+  - Evidencia: `dmq_read_json_body()`, `dmq_validate_email()`, `dmq_validate_text_length()` en `public/api/_bootstrap.php`.
+  - Evidencia: consumo en `contact.php`, `mail.php`, `quote/diagnostic.php`.
+
+- [x] Centralizar headers de seguridad HTTP.
+  - Evidencia: `dmq_apply_security_headers()` en `public/api/_bootstrap.php`.
+  - Evidencia: aplicado en respuestas JSON (`dmq_json_response`) y PDF (`quote/pdf.php`).
+
+- [x] Validar formato de email y limites de longitud en entradas.
+  - Evidencia: `contact.php` y `mail.php` validan email (`FILTER_VALIDATE_EMAIL`) y rango de mensaje (10..2000).
+
+- [x] Versionar contrato de `pricing.php` sin breaking changes.
+  - Evidencia: `pricing.php` ahora incluye `version: v1` y `currency: ARS`, manteniendo `data.diagnostico_lista_2h_ars`.
+
+- [x] Agregar pruebas de contrato negativas y de seguridad.
+  - Evidencia: `tests/unit/infrastructure/phpApiContracts.test.ts` cubre:
+    - `health.php` con `request_id`
+    - `pricing.php` con `version`/`currency`
+    - rechazo de email invalido en `contact.php`
+    - rechazo de mensaje corto en `mail.php`
+    - preflight CORS (`OPTIONS`) en `contact.php`
+  - Evidencia: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` verde (11/11).
+
 ### P0 finalizado
 
 - [x] Migrar backend operativo a `public/api/*.php` manteniendo contrato del frontend.

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/_bootstrap.php';
 
+dmq_handle_preflight();
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 if ($method !== 'GET') {
     dmq_error_response(405, 'METHOD_NOT_ALLOWED', 'Method Not Allowed');
@@ -27,6 +29,8 @@ $pdfBytes = "%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"
     . "trailer\n<< /Root 1 0 R /Size 4 >>\nstartxref\n178\n%%EOF";
 
 http_response_code(200);
+dmq_apply_cors_headers();
+dmq_apply_security_headers();
 header('Content-Type: application/pdf');
 header('Cache-Control: no-store');
 header('Content-Disposition: attachment; filename="quote-' . $quoteId . '.pdf"');

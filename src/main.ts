@@ -23,6 +23,36 @@ import { container, provideContainer } from './di/container'
 
 const head = createHead()
 
+function applyCriticalCssVariableFallbacks(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
+
+  const root = document.documentElement
+  const computed = getComputedStyle(root)
+  const fallbackMap: Record<string, string> = {
+    '--dm-bg-0': '#0c092f',
+    '--dm-text-0': '#e2e9f3',
+    '--bs-body-bg': '#0c092f',
+    '--bs-body-color': '#e2e9f3',
+    '--bs-emphasis-color': '#e2e9f3'
+  }
+
+  let applied = false
+  Object.entries(fallbackMap).forEach(([variableName, fallbackValue]) => {
+    const currentValue = computed.getPropertyValue(variableName).trim()
+    if (currentValue.length > 0) {
+      return
+    }
+    root.style.setProperty(variableName, fallbackValue)
+    applied = true
+  })
+
+  if (applied) {
+    console.warn('[ui:css] Fallback de variables CSS criticas aplicado en runtime.')
+  }
+}
+
 export const createApp = ViteSSG(
   App,
   { routes },
@@ -36,6 +66,7 @@ export const createApp = ViteSSG(
     app.provide(consentManagerKey, container.consentManager)
 
     if (isClient) {
+      applyCriticalCssVariableFallbacks()
       void probeBackendHealth()
       configureAnalytics(container.config)
       initAttribution(container.storage)

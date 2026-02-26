@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/_bootstrap.php';
 
+dmq_handle_preflight();
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 if ($method !== 'GET') {
     dmq_error_response(405, 'METHOD_NOT_ALLOWED', 'Method Not Allowed');

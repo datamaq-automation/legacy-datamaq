@@ -3,15 +3,16 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/_bootstrap.php';
 
+dmq_handle_preflight();
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 if ($method !== 'POST') {
     dmq_error_response(405, 'METHOD_NOT_ALLOWED', 'Method Not Allowed');
     exit;
 }
 
-$rawBody = file_get_contents('php://input');
-$payload = json_decode($rawBody ?: '', true);
-if (!is_array($payload)) {
+$payload = dmq_read_json_body();
+if ($payload === null) {
     dmq_error_response(422, 'INVALID_JSON', 'Body must be a valid JSON object.');
     exit;
 }

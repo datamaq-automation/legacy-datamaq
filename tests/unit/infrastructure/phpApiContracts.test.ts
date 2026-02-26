@@ -29,7 +29,7 @@ describe('PHP API contracts', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: 'user@example.com',
-        message: 'Hola'
+        message: 'Hola desde contrato'
       })
     })
     const payload = (await response.json()) as Record<string, unknown>
@@ -52,10 +52,27 @@ describe('PHP API contracts', () => {
 
   it('pricing.php exposes diagnostico_lista_2h_ars', async () => {
     const response = await fetch(`${BASE_URL}/pricing.php`)
-    const payload = (await response.json()) as { data?: Record<string, unknown> }
+    const payload = (await response.json()) as {
+      request_id?: unknown
+      version?: unknown
+      currency?: unknown
+      data?: Record<string, unknown>
+    }
 
     expect(response.status).toBe(200)
+    expect(typeof payload.request_id).toBe('string')
+    expect(payload.version).toBe('v1')
+    expect(payload.currency).toBe('ARS')
     expect(payload.data?.diagnostico_lista_2h_ars).toBeTypeOf('number')
+  })
+
+  it('health.php includes request_id', async () => {
+    const response = await fetch(`${BASE_URL}/health.php`)
+    const payload = (await response.json()) as { request_id?: unknown; status?: unknown }
+
+    expect(response.status).toBe(200)
+    expect(payload.status).toBe('ok')
+    expect(typeof payload.request_id).toBe('string')
   })
 
   it('content.php exposes full AppContent contract', async () => {
@@ -142,6 +159,51 @@ describe('PHP API contracts', () => {
     expect(payload.error_code).toBe('VALIDATION_ERROR')
     expect(typeof payload.request_id).toBe('string')
     expect(typeof payload.detail).toBe('string')
+  })
+
+  it('contact.php rejects invalid email format', async () => {
+    const response = await fetch(`${BASE_URL}/contact.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'not-an-email',
+        message: 'Mensaje suficientemente largo'
+      })
+    })
+    const payload = (await response.json()) as Record<string, unknown>
+
+    expect(response.status).toBe(422)
+    expect(payload.status).toBe('error')
+    expect(payload.error_code).toBe('VALIDATION_ERROR')
+  })
+
+  it('mail.php rejects short messages', async () => {
+    const response = await fetch(`${BASE_URL}/mail.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'user@example.com',
+        message: 'corto'
+      })
+    })
+    const payload = (await response.json()) as Record<string, unknown>
+
+    expect(response.status).toBe(422)
+    expect(payload.status).toBe('error')
+    expect(payload.error_code).toBe('VALIDATION_ERROR')
+  })
+
+  it('handles CORS preflight for contact.php', async () => {
+    const response = await fetch(`${BASE_URL}/contact.php`, {
+      method: 'OPTIONS',
+      headers: {
+        Origin: 'http://localhost:5173',
+        'Access-Control-Request-Method': 'POST'
+      }
+    })
+
+    expect(response.status).toBe(204)
+    expect(response.headers.get('access-control-allow-origin')).toBe('http://localhost:5173')
   })
 })
 

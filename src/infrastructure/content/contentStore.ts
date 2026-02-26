@@ -81,6 +81,10 @@ export class ContentStore {
       logger.warn('[content] snapshot remoto no cumple AppContentSchema; se ignora.')
       return false
     }
+    if (!hasRequiredTextContent(parsed.data as AppContent)) {
+      logger.warn('[content] snapshot remoto con textos criticos vacios; se ignora y se mantiene fallback local.')
+      return false
+    }
 
     patchObjectInPlace(
       this.getParsedContent() as unknown as Record<string, unknown>,
@@ -136,4 +140,32 @@ function patchArrayInPlace(target: unknown[], source: unknown[]): void {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function hasRequiredTextContent(content: AppContent): boolean {
+  const requiredTexts = [
+    content.hero.title,
+    content.hero.subtitle,
+    content.services.title,
+    content.contact.title,
+    content.contact.subtitle,
+    content.decisionFlow.processTitle,
+    content.thanks.title
+  ]
+
+  const hasEmptyRequiredText = requiredTexts.some((value) => value.trim().length === 0)
+  if (hasEmptyRequiredText) {
+    return false
+  }
+
+  if (content.services.cards.length === 0) {
+    return false
+  }
+
+  const hasEmptyServiceTitle = content.services.cards.some((card) => card.title.trim().length === 0)
+  if (hasEmptyServiceTitle) {
+    return false
+  }
+
+  return true
 }
