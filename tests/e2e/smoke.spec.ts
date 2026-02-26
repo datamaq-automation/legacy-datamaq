@@ -53,7 +53,7 @@ test.describe('Smoke E2E', () => {
     await page.goto('/')
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Diagnóstico y control industrial'
+      'Diagnostico e instalacion electrica para pymes'
     )
     await expect(page.getByRole('heading', { name: 'Servicios', exact: true })).toBeVisible()
   })
@@ -230,7 +230,8 @@ test.describe('Smoke E2E', () => {
     await page.getByRole('button', { name: /Volver al inicio/i }).click()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Diagnóstico y control industrial'
+      'Diagnostico e instalacion electrica para pymes'
     )
   })
 })
+
