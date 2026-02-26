@@ -1,5 +1,8 @@
+/*
+Path: src/infrastructure/content/Appcontent.example.ts
+*/
+
 import type { CommercialConfig } from '@/domain/types/content'
-import { buildAppContent } from '@/infrastructure/content/Appcontent.shared'
 
 export const commercialConfig: CommercialConfig = {
   brandName: 'Marca Example',
@@ -19,5 +22,3 @@ export const commercialConfig: CommercialConfig = {
     automateNombre: 'Automate'
   }
 }
-
-export { buildAppContent }

@@ -1,6 +1,6 @@
 import type { CommercialConfig } from '@/domain/types/content'
 import { activeRuntimeProfile } from '@/infrastructure/content/runtimeProfile'
-import { buildAppContent } from '@/infrastructure/content/Appcontent.shared'
+import { buildLandingAppContent } from '@/infrastructure/content/landingContentBuilder'
 
 const { brandName, brandAriaLabel, baseOperativa, whatsappUrl } = activeRuntimeProfile
 
@@ -12,4 +12,4 @@ export const commercialConfig: CommercialConfig = {
   ...activeRuntimeProfile.commercialConfig
 }
 
-export { buildAppContent }
+export const buildAppContent = buildLandingAppContent

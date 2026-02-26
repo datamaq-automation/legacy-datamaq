@@ -6,7 +6,7 @@ import analyticsDashboard from '@/assets/analytics-dashboard.svg'
 import teamTraining from '@/assets/team-training.svg'
 import tecnicoACargo from '@/assets/tecnico-a-cargo.webp'
 
-export function buildAppContent(config: CommercialConfig): AppContent {
+export function buildLandingAppContent(config: CommercialConfig): AppContent {
   const diagnosticListNote =
     typeof config.visitaDiagnosticoHasta2hARS === 'number'
       ? `Diagnostico en lista: ARS ${formatArs(config.visitaDiagnosticoHasta2hARS)}.`
