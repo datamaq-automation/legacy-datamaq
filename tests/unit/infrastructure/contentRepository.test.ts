@@ -1,7 +1,7 @@
 ﻿import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { LoggerPort } from '@/application/ports/Logger'
 import { AppContentSchema } from '@/domain/schemas/contentSchema'
-import { commercialConfig } from '@/infrastructure/content/Appcontent'
+import { commercialConfig } from '@/infrastructure/content/Appcontent.active'
 import { ContentRepository } from '@/infrastructure/content/contentRepository'
 
 describe('ContentRepository', () => {

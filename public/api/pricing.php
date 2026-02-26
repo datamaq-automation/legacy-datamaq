@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-// public/api/pricing.php (minimal para pruebas)
-header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/_bootstrap.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    http_response_code(405);
-    echo json_encode(['ok' => false, 'error' => 'method_not_allowed']);
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+if ($method !== 'GET') {
+    dmq_error_response(405, 'METHOD_NOT_ALLOWED', 'Method Not Allowed');
     exit;
 }
 
-echo json_encode([
-    'ok' => true,
+dmq_json_response(200, [
+    'status' => 'ok',
+    'request_id' => dmq_request_id(),
     'data' => [
         'diagnostico_lista_2h_ars' => 275000
     ]
-], JSON_UNESCAPED_UNICODE);
+]);

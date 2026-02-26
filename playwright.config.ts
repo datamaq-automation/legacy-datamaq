@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 const E2E_PORT = 4173
 const E2E_BASE_URL = `http://127.0.0.1:${E2E_PORT}`
+const E2E_MODE = process.env.PLAYWRIGHT_MODE ?? 'e2e'
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -25,7 +26,7 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: `npm run dev -- --mode e2e --host 127.0.0.1 --port ${E2E_PORT}`,
+    command: `npm run dev -- --mode ${E2E_MODE} --host 127.0.0.1 --port ${E2E_PORT}`,
     url: E2E_BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000

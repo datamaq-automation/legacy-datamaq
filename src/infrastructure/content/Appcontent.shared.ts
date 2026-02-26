@@ -1,21 +1,10 @@
 import type { AppContent, CommercialConfig } from '@/domain/types/content'
-import { activeRuntimeProfile } from '@/infrastructure/content/runtimeProfile'
 
 import heroEnergy from '@/assets/hero-energy.svg'
 import installTools from '@/assets/install-tools.svg'
 import analyticsDashboard from '@/assets/analytics-dashboard.svg'
 import teamTraining from '@/assets/team-training.svg'
 import tecnicoACargo from '@/assets/tecnico-a-cargo.webp'
-
-const { brandName, brandAriaLabel, baseOperativa, whatsappUrl } = activeRuntimeProfile
-
-export const commercialConfig: CommercialConfig = {
-  brandName,
-  brandAriaLabel,
-  baseOperativa,
-  whatsappUrl: whatsappUrl ?? 'https://wa.me/5491100000000',
-  ...activeRuntimeProfile.commercialConfig
-}
 
 export function buildAppContent(config: CommercialConfig): AppContent {
   const diagnosticListNote =

@@ -44,8 +44,12 @@ jobs:
           npm run build
 
   build-smoke-e2e:
-    name: Build / Smoke E2E
+    name: Build / Smoke E2E (${{ matrix.target }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [datamaq, upp]
 
     steps:
       - name: Checkout
@@ -64,4 +68,6 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run smoke e2e
+        env:
+          PLAYWRIGHT_MODE: ${{ matrix.target }}
         run: npm run test:e2e:smoke

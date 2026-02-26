@@ -1,20 +1,15 @@
 import type { CommercialConfig } from '@/domain/types/content'
+import { getRuntimeProfile } from '@/infrastructure/content/runtimeProfile'
+import { buildAppContent } from '@/infrastructure/content/Appcontent.shared'
 
-export const appcontentUpp: CommercialConfig = {
-  brandName: 'UPP',
-  brandAriaLabel: 'UPP, inicio',
-  baseOperativa: 'Base Operativa UPP',
-  tarifaBaseDesdeARS: null,
-  trasladoMinimoARS: null,
-  whatsappUrl: 'https://wa.me/5491100000002',
-  visitaDiagnosticoHasta2hARS: null,
-  diagnosticoHoraAdicionalARS: null,
-  descuentos: {
-    cooperativasPct: 0,
-    pymeGraficaPct: 0
-  },
-  equipos: {
-    medidorNombre: 'Powermeter',
-    automateNombre: 'Automate'
-  }
+const profile = getRuntimeProfile('upp')
+
+export const commercialConfig: CommercialConfig = {
+  brandName: profile.brandName,
+  brandAriaLabel: profile.brandAriaLabel,
+  baseOperativa: profile.baseOperativa,
+  whatsappUrl: profile.whatsappUrl ?? 'https://wa.me/5491100000000',
+  ...profile.commercialConfig
 }
+
+export { buildAppContent }

@@ -3,7 +3,6 @@ import path from 'node:path'
 
 const SUPPORTED_TARGETS = new Set(['datamaq', 'upp', 'example', 'e2e'])
 const DEFAULT_TARGET = 'datamaq'
-const TARGET_ALIASES = new Map([['example', 'upp']])
 
 function normalize(value) {
   if (typeof value !== 'string') {
@@ -30,7 +29,7 @@ function resolveTarget(argv) {
     normalize(fromSeparateFlag) ??
     normalize(fromPositional) ??
     DEFAULT_TARGET
-  const target = TARGET_ALIASES.get(requestedTarget) ?? requestedTarget
+  const target = requestedTarget
 
   if (!SUPPORTED_TARGETS.has(target)) {
     throw new Error(

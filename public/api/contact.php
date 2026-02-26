@@ -11,11 +11,7 @@ if ($method === 'OPTIONS') {
 }
 
 if ($method !== 'POST') {
-    dmq_json_response(405, [
-        'status' => 'error',
-        'error_code' => 'METHOD_NOT_ALLOWED',
-        'detail' => 'Method Not Allowed',
-    ]);
+    dmq_error_response(405, 'METHOD_NOT_ALLOWED', 'Method Not Allowed');
     exit;
 }
 
@@ -23,11 +19,7 @@ $rawBody = file_get_contents('php://input');
 $payload = json_decode($rawBody ?: '', true);
 
 if (!is_array($payload)) {
-    dmq_json_response(422, [
-        'status' => 'error',
-        'error_code' => 'INVALID_JSON',
-        'detail' => 'Body must be a valid JSON object.',
-    ]);
+    dmq_error_response(422, 'INVALID_JSON', 'Body must be a valid JSON object.');
     exit;
 }
 
@@ -35,11 +27,7 @@ $email = trim((string)($payload['email'] ?? ''));
 $message = trim((string)($payload['message'] ?? ''));
 
 if ($email === '' || $message === '') {
-    dmq_json_response(422, [
-        'status' => 'error',
-        'error_code' => 'VALIDATION_ERROR',
-        'detail' => 'email and message are required.',
-    ]);
+    dmq_error_response(422, 'VALIDATION_ERROR', 'email and message are required.');
     exit;
 }
 

@@ -1,6 +1,7 @@
 import type { CommercialConfig } from '@/domain/types/content'
+import { buildAppContent } from '@/infrastructure/content/Appcontent.shared'
 
-export const appcontentExample: CommercialConfig = {
+export const commercialConfig: CommercialConfig = {
   brandName: 'Marca Example',
   brandAriaLabel: 'Marca Example, inicio',
   baseOperativa: 'Base Operativa',
@@ -18,3 +19,5 @@ export const appcontentExample: CommercialConfig = {
     automateNombre: 'Automate'
   }
 }
+
+export { buildAppContent }
