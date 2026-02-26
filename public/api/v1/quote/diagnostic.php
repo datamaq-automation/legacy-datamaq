@@ -1,3 +1,3 @@
 <?php
 declare(strict_types=1);
-require_once dirname(__DIR__, 2) . '/quote/diagnostic.php';
+require_once dirname(__DIR__, 2) . '/quote/_diagnostic_impl.php';

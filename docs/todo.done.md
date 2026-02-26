@@ -109,6 +109,18 @@
     - `npm run test -- tests/unit/infrastructure/probeBackendHealth.test.ts` verde
     - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` verde
 
+- [x] Retirar endpoints legacy `*.php`.
+  - Evidencia: implementación movida a archivos internos no públicos:
+    - `public/api/_health_impl.php`
+    - `public/api/_content_impl.php`
+    - `public/api/_pricing_impl.php`
+    - `public/api/_contact_impl.php`
+    - `public/api/_mail_impl.php`
+    - `public/api/quote/_diagnostic_impl.php`
+    - `public/api/quote/_pdf_impl.php`
+  - Evidencia: rutas públicas canónicas servidas por `public/api/v1/...` (wrappers + `index.php` sin extensión).
+  - Evidencia: contrato de pruebas ejecutado sobre `/api/v1/*` en `tests/unit/infrastructure/phpApiContracts.test.ts`.
+
 ### P0 finalizado
 
 - [x] Migrar backend operativo a `public/api/*.php` manteniendo contrato del frontend.

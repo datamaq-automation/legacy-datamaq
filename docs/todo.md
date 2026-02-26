@@ -20,9 +20,9 @@
 
 ## P0 (migracion de endpoints sin `.php`)
 
-- [ ] **Plan de deprecacion controlada**
-  - Estado: fase 1 dual-stack completada (canónico `/api/v1/...` + legacy `*.php`).
-  - Pendiente: definir fecha de retiro de legacy y checklist de rollback documentado para operaciones.
+- [x] **Plan de deprecacion controlada**
+  - Estado: retiro de endpoints legacy `*.php` completado.
+  - Estado final: endpoints canónicos exclusivos en `/api/v1/...`.
 
 ## P0 (seguridad y operacion)
 

@@ -4,7 +4,7 @@ import path from 'node:path'
 
 const HOST = '127.0.0.1'
 const PORT = 8899
-const BASE_URL = `http://${HOST}:${PORT}/api`
+const BASE_URL = `http://${HOST}:${PORT}/api/v1`
 
 let phpServer: ChildProcessWithoutNullStreams | undefined
 
@@ -23,8 +23,8 @@ describe('PHP API contracts', () => {
     }
   })
 
-  it('contact.php accepts POST and returns request_id', async () => {
-    const response = await fetch(`${BASE_URL}/contact.php`, {
+  it('contact endpoint accepts POST and returns request_id', async () => {
+    const response = await fetch(`${BASE_URL}/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -39,8 +39,8 @@ describe('PHP API contracts', () => {
     expect(typeof payload.request_id).toBe('string')
   })
 
-  it('mail.php rejects invalid method with standardized error shape', async () => {
-    const response = await fetch(`${BASE_URL}/mail.php`, { method: 'GET' })
+  it('mail endpoint rejects invalid method with standardized error shape', async () => {
+    const response = await fetch(`${BASE_URL}/mail`, { method: 'GET' })
     const payload = (await response.json()) as Record<string, unknown>
 
     expect(response.status).toBe(405)
@@ -50,8 +50,8 @@ describe('PHP API contracts', () => {
     expect(typeof payload.detail).toBe('string')
   })
 
-  it('pricing.php exposes diagnostico_lista_2h_ars', async () => {
-    const response = await fetch(`${BASE_URL}/pricing.php`)
+  it('pricing endpoint exposes diagnostico_lista_2h_ars', async () => {
+    const response = await fetch(`${BASE_URL}/pricing`)
     const payload = (await response.json()) as {
       request_id?: unknown
       version?: unknown
@@ -66,8 +66,8 @@ describe('PHP API contracts', () => {
     expect(payload.data?.diagnostico_lista_2h_ars).toBeTypeOf('number')
   })
 
-  it('health.php includes request_id', async () => {
-    const response = await fetch(`${BASE_URL}/health.php`)
+  it('health endpoint includes request_id', async () => {
+    const response = await fetch(`${BASE_URL}/health`)
     const payload = (await response.json()) as { request_id?: unknown; status?: unknown }
 
     expect(response.status).toBe(200)
@@ -75,8 +75,8 @@ describe('PHP API contracts', () => {
     expect(typeof payload.request_id).toBe('string')
   })
 
-  it('content.php exposes full AppContent contract', async () => {
-    const response = await fetch(`${BASE_URL}/content.php`)
+  it('content endpoint exposes full AppContent contract', async () => {
+    const response = await fetch(`${BASE_URL}/content`)
     const payload = (await response.json()) as {
       data?: {
         hero?: { title?: unknown; subtitle?: unknown; primaryCta?: { href?: unknown } }
@@ -121,8 +121,8 @@ describe('PHP API contracts', () => {
     expect(typeof payload.data?.thanks?.goHomeButtonLabel).toBe('string')
   })
 
-  it('quote/diagnostic.php returns expected quote payload', async () => {
-    const response = await fetch(`${BASE_URL}/quote/diagnostic.php`, {
+  it('quote/diagnostic endpoint returns expected quote payload', async () => {
+    const response = await fetch(`${BASE_URL}/quote/diagnostic`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -142,16 +142,16 @@ describe('PHP API contracts', () => {
     expect(payload.whatsapp_url).toBeTypeOf('string')
   })
 
-  it('quote/pdf.php serves application/pdf when quote_id is valid', async () => {
-    const response = await fetch(`${BASE_URL}/quote/pdf.php?quote_id=Q-20260226-000001`)
+  it('quote/pdf endpoint serves application/pdf when quote_id is valid', async () => {
+    const response = await fetch(`${BASE_URL}/quote/pdf?quote_id=Q-20260226-000001`)
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toContain('application/pdf')
     expect(response.headers.get('content-disposition')).toContain('quote-Q-20260226-000001.pdf')
   })
 
-  it('quote/pdf.php returns standardized validation error when quote_id is missing', async () => {
-    const response = await fetch(`${BASE_URL}/quote/pdf.php`)
+  it('quote/pdf endpoint returns standardized validation error when quote_id is missing', async () => {
+    const response = await fetch(`${BASE_URL}/quote/pdf`)
     const payload = (await response.json()) as Record<string, unknown>
 
     expect(response.status).toBe(422)
@@ -161,8 +161,8 @@ describe('PHP API contracts', () => {
     expect(typeof payload.detail).toBe('string')
   })
 
-  it('contact.php rejects invalid email format', async () => {
-    const response = await fetch(`${BASE_URL}/contact.php`, {
+  it('contact endpoint rejects invalid email format', async () => {
+    const response = await fetch(`${BASE_URL}/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -177,8 +177,8 @@ describe('PHP API contracts', () => {
     expect(payload.error_code).toBe('VALIDATION_ERROR')
   })
 
-  it('mail.php rejects short messages', async () => {
-    const response = await fetch(`${BASE_URL}/mail.php`, {
+  it('mail endpoint rejects short messages', async () => {
+    const response = await fetch(`${BASE_URL}/mail`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -193,8 +193,8 @@ describe('PHP API contracts', () => {
     expect(payload.error_code).toBe('VALIDATION_ERROR')
   })
 
-  it('handles CORS preflight for contact.php', async () => {
-    const response = await fetch(`${BASE_URL}/contact.php`, {
+  it('handles CORS preflight for contact endpoint', async () => {
+    const response = await fetch(`${BASE_URL}/contact`, {
       method: 'OPTIONS',
       headers: {
         Origin: 'http://localhost:5173',
@@ -211,7 +211,7 @@ async function waitForServerReady(): Promise<void> {
   const maxAttempts = 30
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      const response = await fetch(`${BASE_URL}/health.php`)
+      const response = await fetch(`${BASE_URL}/health`)
       if (response.ok) {
         return
       }
