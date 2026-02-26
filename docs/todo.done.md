@@ -38,6 +38,13 @@
 
 ## Actualizacion 2026-02-26
 
+### Auditoria backend PHP completada - 2026-02-26
+
+- [x] Auditoria tecnica backend desde ciberseguridad, arquitectura limpia, SOLID y buenas practicas PHP.
+  - Alcance auditado: `public/api/_bootstrap.php`, `health.php`, `pricing.php`, `content.php`, `contact.php`, `mail.php`, `quote/diagnostic.php`, `quote/pdf.php`.
+  - Hallazgos priorizados trasladados a backlog activo en `docs/todo.md` (P0/P1/P2).
+  - Riesgo principal detectado en operacion local: respuesta de codigo fuente PHP cuando endpoint no es ejecutado por handler PHP.
+
 ### P0 finalizado
 
 - [x] Migrar backend operativo a `public/api/*.php` manteniendo contrato del frontend.

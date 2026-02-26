@@ -132,7 +132,10 @@ jobs:
           if [ "${SERVER_HOST}" != "${SERVER}" ]; then
             SERVER_PORT_FROM_HOST="${SERVER##*:}"
           fi
-          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-}}"
+          if [ -z "${PORT}" ]; then
+            PORT="21"
+          fi
           REMOTE_DIR="${RAW_REMOTE_DIR}"
           if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
             REMOTE_DIR="/${REMOTE_DIR}"
@@ -171,12 +174,18 @@ jobs:
 
           run_preflight_attempt() {
             ATTEMPT="$1"
-            PREFER_EPSV="$2"
-            FIX_PASV_ADDRESS="$3"
+            ATTEMPT_PORT="$2"
+            FTPS_MODE="$3"
+            PREFER_EPSV="$4"
+            FIX_PASV_ADDRESS="$5"
             LOG_FILE="$(mktemp)"
-            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 4; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; pwd; cls -1; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; pwd; cls -1; bye"
+            OPEN_TARGET="${SERVER_HOST}"
+            if [ "${FTPS_MODE}" = "implicit" ]; then
+              OPEN_TARGET="ftps://${SERVER_HOST}"
+            fi
+            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 4; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${ATTEMPT_PORT}\" \"${OPEN_TARGET}\"; pwd; cls -1; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; pwd; cls -1; bye"
 
-            echo "::notice::Preflight attempt ${ATTEMPT} for target=${{ matrix.target }}"
+            echo "::notice::Preflight attempt ${ATTEMPT} for target=${{ matrix.target }} mode=${FTPS_MODE} port=${ATTEMPT_PORT}"
             set +e
             timeout 90 lftp -e "${LFTP_COMMAND}" >"${LOG_FILE}" 2>&1
             STATUS=$?
@@ -193,11 +202,31 @@ jobs:
             return 1
           }
 
-          if run_preflight_attempt 1 false true; then
-            exit 0
-          fi
-          if run_preflight_attempt 2 true false; then
-            exit 0
+          if [ -n "${FTPS_PORT:-}" ] || [ -n "${SERVER_PORT_FROM_HOST:-}" ]; then
+            SELECTED_PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST}}"
+            SELECTED_MODE="explicit"
+            if [ "${SELECTED_PORT}" = "990" ]; then
+              SELECTED_MODE="implicit"
+            fi
+            if run_preflight_attempt 1 "${SELECTED_PORT}" "${SELECTED_MODE}" false true; then
+              exit 0
+            fi
+            if run_preflight_attempt 2 "${SELECTED_PORT}" "${SELECTED_MODE}" true false; then
+              exit 0
+            fi
+          else
+            if run_preflight_attempt 1 21 explicit false true; then
+              exit 0
+            fi
+            if run_preflight_attempt 2 21 explicit true false; then
+              exit 0
+            fi
+            if run_preflight_attempt 3 990 implicit false true; then
+              exit 0
+            fi
+            if run_preflight_attempt 4 990 implicit true false; then
+              exit 0
+            fi
           fi
 
           echo "::error::FTPS preflight failed for target=${{ matrix.target }}"
@@ -246,7 +275,10 @@ jobs:
           if [ "${SERVER_HOST}" != "${SERVER}" ]; then
             SERVER_PORT_FROM_HOST="${SERVER##*:}"
           fi
-          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-}}"
+          if [ -z "${PORT}" ]; then
+            PORT="21"
+          fi
           REMOTE_DIR="${RAW_REMOTE_DIR}"
           if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
             REMOTE_DIR="/${REMOTE_DIR}"
@@ -265,13 +297,19 @@ jobs:
 
           run_upload_attempt() {
             ATTEMPT="$1"
-            PREFER_EPSV="$2"
-            FIX_PASV_ADDRESS="$3"
-            SSL_PROTECT_DATA="$4"
+            ATTEMPT_PORT="$2"
+            FTPS_MODE="$3"
+            PREFER_EPSV="$4"
+            FIX_PASV_ADDRESS="$5"
+            SSL_PROTECT_DATA="$6"
             LOG_FILE="$(mktemp)"
-            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data ${SSL_PROTECT_DATA}; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 3; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue --delete --verbose dist .; bye"
+            OPEN_TARGET="${SERVER_HOST}"
+            if [ "${FTPS_MODE}" = "implicit" ]; then
+              OPEN_TARGET="ftps://${SERVER_HOST}"
+            fi
+            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data ${SSL_PROTECT_DATA}; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 3; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${ATTEMPT_PORT}\" \"${OPEN_TARGET}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue --delete --verbose dist .; bye"
 
-            echo "::notice::Upload attempt ${ATTEMPT} for target=${{ matrix.target }}"
+            echo "::notice::Upload attempt ${ATTEMPT} for target=${{ matrix.target }} mode=${FTPS_MODE} port=${ATTEMPT_PORT}"
             set +e
             timeout 120 lftp -e "${LFTP_COMMAND}" >"${LOG_FILE}" 2>&1
             STATUS=$?
@@ -288,16 +326,41 @@ jobs:
             return 1
           }
 
-          if run_upload_attempt 1 false true true; then
-            exit 0
-          fi
-          if run_upload_attempt 2 true false true; then
-            exit 0
+          if [ -n "${FTPS_PORT:-}" ] || [ -n "${SERVER_PORT_FROM_HOST:-}" ]; then
+            SELECTED_PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST}}"
+            SELECTED_MODE="explicit"
+            if [ "${SELECTED_PORT}" = "990" ]; then
+              SELECTED_MODE="implicit"
+            fi
+            if run_upload_attempt 1 "${SELECTED_PORT}" "${SELECTED_MODE}" false true true; then
+              exit 0
+            fi
+            if run_upload_attempt 2 "${SELECTED_PORT}" "${SELECTED_MODE}" true false true; then
+              exit 0
+            fi
+          else
+            if run_upload_attempt 1 21 explicit false true true; then
+              exit 0
+            fi
+            if run_upload_attempt 2 21 explicit true false true; then
+              exit 0
+            fi
+            if run_upload_attempt 3 990 implicit false true true; then
+              exit 0
+            fi
+            if run_upload_attempt 4 990 implicit true false true; then
+              exit 0
+            fi
           fi
 
           if [ "${ALLOW_INSECURE_DATA_CHANNEL}" = "true" ]; then
             echo "::warning::Using insecure data-channel fallback (ssl-protect-data=false)"
-            if run_upload_attempt 3 false true false; then
+            FALLBACK_PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+            FALLBACK_MODE="explicit"
+            if [ "${FALLBACK_PORT}" = "990" ]; then
+              FALLBACK_MODE="implicit"
+            fi
+            if run_upload_attempt 5 "${FALLBACK_PORT}" "${FALLBACK_MODE}" false true false; then
               exit 0
             fi
           fi

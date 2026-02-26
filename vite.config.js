@@ -28,10 +28,10 @@ export default defineConfig(({ mode }) => {
     plugins,
     server: {
       proxy: {
-        '/api/health.php': {
+        '/api': {
           target: 'http://localhost',
           changeOrigin: true,
-          rewrite: () => '/plantilla-www/public/api/health.php'
+          rewrite: (path) => `/plantilla-www/public${path}`
         }
       }
     },
