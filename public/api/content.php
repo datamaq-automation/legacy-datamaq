@@ -12,11 +12,11 @@ if ($method !== 'GET') {
 $brandId = dmq_resolve_brand_id();
 
 $heroTitleByBrand = [
-    'datamaq' => 'Diagnostico e instalacion electrica para pymes',
-    'upp' => 'Diagnostico e instalacion electrica para pymes',
+    'datamaq' => 'Diagnóstico e instalación eléctrica para cooperativas',
+    'upp' => 'Diagnóstico e instalación eléctrica para pymes',
 ];
 
-$heroTitle = $heroTitleByBrand[$brandId] ?? 'Diagnostico e instalacion electrica para pymes';
+$heroTitle = $heroTitleByBrand[$brandId] ?? 'Diagnóstico e instalación eléctrica para pymes';
 
 dmq_json_response(200, [
     'status' => 'ok',

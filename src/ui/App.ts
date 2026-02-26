@@ -10,8 +10,16 @@ export function useApp() {
   const seo = getDefaultSeo(content, config, environment)
   const route = useRoute()
   const isThanksPage = computed(() => route.path === '/gracias')
+  const remoteContentStatus = computed(() => content.getRemoteContentStatus())
+  const isContentReady = computed(
+    () => remoteContentStatus.value === 'ready' || remoteContentStatus.value === 'not-required'
+  )
+  const isContentUnavailable = computed(() => remoteContentStatus.value === 'unavailable')
 
   useHead(() => buildAppHead(seo, route.path, isThanksPage.value))
 
-  return {}
+  return {
+    isContentReady,
+    isContentUnavailable
+  }
 }

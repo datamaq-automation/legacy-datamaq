@@ -24,6 +24,8 @@ import { normalizeNavbarContent } from '@/infrastructure/content/navbarNormalize
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import type { AppContent } from '@/domain/types/content'
 
+type RemoteContentStatus = 'pending' | 'ready' | 'unavailable' | 'not-required'
+
 export class ContentRepository
   implements
     ContentPort,
@@ -40,16 +42,25 @@ export class ContentRepository
   private readonly contentStore: ContentStore
   private readonly dynamicContentService: DynamicContentService
   private readonly dynamicPricingService: DynamicPricingService
+  private remoteContentStatus: RemoteContentStatus
 
   constructor(
     private config?: Pick<ConfigPort, 'pricingApiUrl' | 'contentApiUrl'>,
     private logger: LoggerPort = new NoopLogger()
   ) {
     this.contentStore = new ContentStore(commercialConfig, buildAppContent)
+    this.remoteContentStatus = this.config?.contentApiUrl ? 'pending' : 'not-required'
     this.dynamicContentService = new DynamicContentService(
       this.config?.contentApiUrl,
       this.logger,
-      (title) => this.contentStore.applyHeroTitle(title, this.logger)
+      (snapshot) => this.contentStore.applyRemoteContentSnapshot(snapshot, this.logger),
+      (title) => this.contentStore.applyHeroTitle(title, this.logger),
+      () => {
+        this.remoteContentStatus = 'ready'
+      },
+      () => {
+        this.remoteContentStatus = 'unavailable'
+      }
     )
     this.dynamicPricingService = new DynamicPricingService(
       this.config?.pricingApiUrl,
@@ -58,6 +69,10 @@ export class ContentRepository
     )
     this.dynamicContentService.bootstrap()
     this.dynamicPricingService.bootstrap()
+  }
+
+  getRemoteContentStatus(): RemoteContentStatus {
+    return this.remoteContentStatus
   }
 
   getContent(): AppContent {

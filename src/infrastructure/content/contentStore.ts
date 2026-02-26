@@ -70,6 +70,24 @@ export class ContentStore {
       parsed.data as unknown as Record<string, unknown>
     )
   }
+
+  applyRemoteContentSnapshot(snapshot: unknown, logger: LoggerPort): boolean {
+    if (!isRecord(snapshot)) {
+      return false
+    }
+
+    const parsed = AppContentSchema.safeParse(snapshot)
+    if (!parsed.success) {
+      logger.warn('[content] snapshot remoto no cumple AppContentSchema; se ignora.')
+      return false
+    }
+
+    patchObjectInPlace(
+      this.getParsedContent() as unknown as Record<string, unknown>,
+      parsed.data as unknown as Record<string, unknown>
+    )
+    return true
+  }
 }
 
 function patchObjectInPlace(target: Record<string, unknown>, source: Record<string, unknown>): void {

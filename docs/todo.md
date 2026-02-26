@@ -26,3 +26,12 @@
   - [x] Mantener fallback deterministico al valor local de `landingContentBuilder.ts` si backend falla.
   - [x] Agregar tests unitarios frontend (config + sync + fallback).
   - [x] Agregar tests de contrato PHP para `GET /api/content.php`.
+
+## P0 (backend como fuente unica de contenido)
+
+- [>] **Eliminar hardcode de contenido en frontend (`landingContentBuilder.ts`)**
+  - [x] Frontend preparado para aplicar snapshot completo remoto (`data`) cuando el backend lo provee.
+  - [x] Compatibilidad temporal: fallback por `hero.title` para contratos parciales.
+  - [ ] Definir contrato final completo de `GET /api/content.php` por target (`datamaq`, `upp`, `example`) con `AppContent` completo.
+  - [ ] Implementar payload completo en PHP por marca/target.
+  - [ ] Retirar contenido textual hardcodeado de `landingContentBuilder.ts` y dejar fallback tecnico minimo.

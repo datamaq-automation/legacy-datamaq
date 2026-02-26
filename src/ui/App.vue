@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import ContentUnavailableView from '@/ui/views/ContentUnavailableView.vue'
 import { useApp } from './App'
 
-useApp()
+const { isContentReady, isContentUnavailable } = useApp()
 </script>
 
 <template>
-  <RouterView />
+  <RouterView v-if="isContentReady" />
+  <ContentUnavailableView v-else-if="isContentUnavailable" />
 </template>

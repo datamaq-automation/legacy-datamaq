@@ -202,6 +202,50 @@ describe('ContentRepository', () => {
     expect(logger.warn).toHaveBeenCalled()
   })
 
+  it('applies full content snapshot when backend returns data compatible with AppContentSchema', async () => {
+    const logger = createLoggerSpy()
+    const repository = new ContentRepository(undefined, logger)
+    const baseContent = repository.getContent()
+    const remoteContent = {
+      ...baseContent,
+      hero: {
+        ...baseContent.hero,
+        title: 'Titulo full remoto',
+        subtitle: 'Subtitulo full remoto'
+      },
+      legal: {
+        text: 'Legal remoto'
+      }
+    }
+
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          status: 'ok',
+          data: remoteContent
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    )
+
+    const remoteRepository = new ContentRepository(
+      {
+        contentApiUrl: 'https://api.example.com/v1/public/content'
+      },
+      logger
+    )
+
+    await flushRuntimePricing()
+    await flushRuntimePricing()
+
+    expect(remoteRepository.getHeroContent().title).toBe('Titulo full remoto')
+    expect(remoteRepository.getHeroContent().subtitle).toBe('Subtitulo full remoto')
+    expect(remoteRepository.getLegalContent().text).toBe('Legal remoto')
+  })
+
   it('keeps fallback "Consultar al WhatsApp" when backend responds with non-ok status', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(

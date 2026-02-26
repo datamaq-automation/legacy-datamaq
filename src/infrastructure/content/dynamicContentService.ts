@@ -6,7 +6,10 @@ export class DynamicContentService {
   constructor(
     private contentApiUrl: string | undefined,
     private logger: LoggerPort,
-    private applyHeroTitle: (title: string) => void
+    private applyContentSnapshot: (snapshot: unknown) => boolean,
+    private applyHeroTitle: (title: string) => void,
+    private onReady: () => void = () => undefined,
+    private onUnavailable: () => void = () => undefined
   ) {}
 
   bootstrap(): void {
@@ -22,6 +25,7 @@ export class DynamicContentService {
     const contentApiUrl = normalizeUrl(this.contentApiUrl)
     if (!contentApiUrl) {
       this.logger.warn('[content] contentApiUrl no configurada; se mantiene title local.')
+      this.onUnavailable()
       return
     }
 
@@ -47,9 +51,22 @@ export class DynamicContentService {
       }
 
       const payload = (await response.json().catch(() => undefined)) as unknown
+      const fullSnapshot = extractFullContentSnapshot(payload)
+      if (fullSnapshot) {
+        const applied = this.applyContentSnapshot(fullSnapshot)
+        if (applied) {
+          this.logger.debug('[content] snapshot remoto completo aplicado', {
+            contentApiUrl
+          })
+          this.onReady()
+          return
+        }
+      }
+
       const heroTitle = extractHeroTitle(payload)
       if (!heroTitle) {
         this.logger.warn('[content] payload remoto sin hero.title utilizable; se mantiene title local.')
+        this.onUnavailable()
         return
       }
 
@@ -57,13 +74,27 @@ export class DynamicContentService {
       this.logger.debug('[content] hero.title remoto aplicado', {
         contentApiUrl
       })
+      this.onUnavailable()
     } catch (error) {
       this.logger.warn('[content] error consultando contenido remoto; se mantiene title local.', {
         contentApiUrl,
         error
       })
+      this.onUnavailable()
     }
   }
+}
+
+function extractFullContentSnapshot(payload: unknown): Record<string, unknown> | undefined {
+  if (!isRecord(payload)) {
+    return undefined
+  }
+
+  const dataValue = payload['data']
+  if (isRecord(dataValue)) {
+    return dataValue
+  }
+  return undefined
 }
 
 function extractHeroTitle(payload: unknown): string | undefined {
