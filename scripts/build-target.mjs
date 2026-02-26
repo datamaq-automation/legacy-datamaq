@@ -1,8 +1,9 @@
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 
-const SUPPORTED_TARGETS = new Set(['datamaq', 'upp', 'e2e'])
+const SUPPORTED_TARGETS = new Set(['datamaq', 'upp', 'example', 'e2e'])
 const DEFAULT_TARGET = 'datamaq'
+const TARGET_ALIASES = new Map([['example', 'upp']])
 
 function normalize(value) {
   if (typeof value !== 'string') {
@@ -24,11 +25,12 @@ function resolveTarget(argv) {
   })()
   const fromPositional = argv.find((arg) => !arg.startsWith('--'))
 
-  const target =
+  const requestedTarget =
     normalize(fromEqualFlag) ??
     normalize(fromSeparateFlag) ??
     normalize(fromPositional) ??
     DEFAULT_TARGET
+  const target = TARGET_ALIASES.get(requestedTarget) ?? requestedTarget
 
   if (!SUPPORTED_TARGETS.has(target)) {
     throw new Error(

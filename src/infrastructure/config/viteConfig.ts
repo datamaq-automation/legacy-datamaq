@@ -5,6 +5,7 @@ type NullableString = string | undefined
 
 const CONTACT_EMAIL_FALLBACK = 'contacto@example.com'
 const ALLOW_INSECURE_BACKEND_FLAG = 'runtimeProfile.allowInsecureBackend'
+const E2E_BUILD_MODE = 'e2e'
 
 export class ViteConfig implements ConfigPort {
   brandId: NullableString
@@ -145,7 +146,8 @@ function ensureApiBaseUrl(
   }
 
   if (!value.startsWith('https://')) {
-    if (allowInsecureBackend) {
+    const canUseLocalBypass = allowInsecureBackend && import.meta.env.MODE === E2E_BUILD_MODE
+    if (canUseLocalBypass) {
       try {
         const parsedUrl = new URL(value)
         const normalizedHost = parsedUrl.hostname.trim().toLowerCase()

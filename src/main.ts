@@ -6,6 +6,7 @@ import './styles/main.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import { configureAnalytics, enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
+import { probeBackendHealth } from './infrastructure/health/probeBackendHealth'
 
 // Exponer Bootstrap globalmente para que Vue pueda accesarlo
 declare global {
@@ -35,6 +36,7 @@ export const createApp = ViteSSG(
     app.provide(consentManagerKey, container.consentManager)
 
     if (isClient) {
+      void probeBackendHealth()
       configureAnalytics(container.config)
       initAttribution(container.storage)
       syncAnalyticsConsent(container.consentManager.getStatus())

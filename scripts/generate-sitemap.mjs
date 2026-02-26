@@ -14,8 +14,9 @@ const SITEMAP_PATH = path.resolve(PUBLIC_DIR, 'sitemap.xml')
 const ROBOTS_PATH = path.resolve(PUBLIC_DIR, 'robots.txt')
 const WHATSAPP_REDIRECT_PATH = path.resolve(PUBLIC_DIR, 'w', 'index.html')
 
-const SUPPORTED_TARGETS = new Set(['datamaq', 'upp', 'e2e'])
+const SUPPORTED_TARGETS = new Set(['datamaq', 'upp', 'example', 'e2e'])
 const DEFAULT_TARGET = 'datamaq'
+const TARGET_ALIASES = new Map([['example', 'upp']])
 const DEFAULT_SITE_URL = 'https://www.datamaq.com.ar'
 const DEFAULT_SITE_NAME = 'DataMaq'
 const DEFAULT_WHATSAPP_URL = 'https://wa.me/5491156297160'
@@ -123,11 +124,12 @@ function resolveTarget(argv) {
     return argv[index + 1]
   })()
 
-  const normalizedTarget =
+  const normalizedRequestedTarget =
     normalize(targetFromFlag)?.toLowerCase() ??
     normalize(targetFromSeparateFlag)?.toLowerCase() ??
     normalize(maybePositional)?.toLowerCase() ??
     DEFAULT_TARGET
+  const normalizedTarget = TARGET_ALIASES.get(normalizedRequestedTarget) ?? normalizedRequestedTarget
 
   if (!SUPPORTED_TARGETS.has(normalizedTarget)) {
     throw new Error(

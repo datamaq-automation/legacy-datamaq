@@ -1,0 +1,64 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { probeBackendHealth } from '@/infrastructure/health/probeBackendHealth'
+
+describe('probeBackendHealth', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('logs successful backend health connection', async () => {
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            status: 'ok',
+            service: 'datamaq-api',
+            brand_id: 'datamaq',
+            version: 'v1',
+            timestamp: '2026-02-26T00:00:00Z'
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        )
+      )
+    )
+
+    await probeBackendHealth('/api/health.php')
+
+    expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
+      endpoint: '/api/health.php',
+      status: 200,
+      service: 'datamaq-api',
+      brandId: 'datamaq',
+      version: 'v1',
+      timestamp: '2026-02-26T00:00:00Z',
+      health: 'ok'
+    })
+    expect(warnSpy).not.toHaveBeenCalled()
+  })
+
+  it('logs warning on network failure', async () => {
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
+
+    await probeBackendHealth('/api/health.php')
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[backend:health] error de red',
+      expect.objectContaining({
+        endpoint: '/api/health.php'
+      })
+    )
+    expect(infoSpy).not.toHaveBeenCalled()
+  })
+})

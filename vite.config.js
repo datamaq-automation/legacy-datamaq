@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     removeConsole({ exclude: ['info', 'error', 'warn'] })
   ]
   const customOutDir = process.env.BUILD_OUT_DIR?.trim()
-  const defaultOutDir = process.platform === 'win32' ? 'C:/AppServ/www' : 'dist'
+  const defaultOutDir = 'dist'
   const outDir = customOutDir ? path.resolve(customOutDir) : defaultOutDir
 
   if (mode !== 'production') {
@@ -26,6 +26,15 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins,
+    server: {
+      proxy: {
+        '/api/health.php': {
+          target: 'http://localhost',
+          changeOrigin: true,
+          rewrite: () => '/plantilla-www/public/api/health.php'
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
