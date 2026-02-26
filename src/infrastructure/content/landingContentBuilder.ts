@@ -1,3 +1,7 @@
+/*
+Path: src/infrastructure/content/landingContentBuilder.ts
+*/
+
 import type { AppContent, CommercialConfig } from '@/domain/types/content'
 
 import heroEnergy from '@/assets/hero-energy.svg'
