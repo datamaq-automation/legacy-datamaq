@@ -112,11 +112,6 @@ function detectLayerFromImport(sourceRoot, sourceFilePath, importPath) {
 
 async function runCli() {
   const report = await checkLayerBoundaries()
-  if (report.violations.length === 0) {
-    // eslint-disable-next-line no-console
-    console.info('[layer-boundaries] no violations')
-    return
-  }
 
   for (const violation of report.violations) {
     // eslint-disable-next-line no-console

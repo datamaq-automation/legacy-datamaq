@@ -78,9 +78,6 @@ export class DynamicPricingService {
 
       this.applySnapshot(pricingSnapshot)
       this.logger.debug('[content] precios dinamicos aplicados', pricingSnapshot)
-      if (isDevRuntime) {
-        console.info('[backend:pricing] conexion OK', { endpoint: pricingApiUrl })
-      }
     } catch (error) {
       this.logger.warn('[content] error consultando precios dinamicos; se mantiene fallback.', {
         pricingApiUrl,
@@ -282,13 +279,6 @@ function logPricingPayloadDebugOnce(endpoint: string, payload: unknown): void {
     return
   }
   pricingConsoleDebugCache.add(dedupeKey)
-
-  console.info('[backend:pricing] payload recibido (debug)', {
-    endpoint,
-    payloadType: typeof payload,
-    payloadPreview: getPayloadPreview(payload),
-    scalarKeys: extractDebugScalarKeys(payload)
-  })
 }
 
 function getPayloadPreview(payload: unknown): string {

@@ -4,12 +4,6 @@ Path: src/infrastructure/content/landingContentBuilder.ts
 
 import type { AppContent, CommercialConfig } from '@/domain/types/content'
 
-import heroEnergy from '@/assets/hero-energy.svg'
-import installTools from '@/assets/install-tools.svg'
-import analyticsDashboard from '@/assets/analytics-dashboard.svg'
-import teamTraining from '@/assets/team-training.svg'
-import tecnicoACargo from '@/assets/tecnico-a-cargo.webp'
-
 export function buildLandingAppContent(config: CommercialConfig): AppContent {
   const diagnosticListNote = 'Contenido no disponible temporalmente.'
 
@@ -34,7 +28,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         { title: 'Integridad', text: 'Validando contrato de contenido.', variant: 'success' },
         { title: 'Estado', text: 'Mostrando fallback tecnico.', variant: 'warning' }
       ],
-      image: { src: heroEnergy, alt: 'Energia y tablero industrial', width: 900, height: 700 }
+      image: { src: '/media/hero-energy.svg', alt: 'Energia y tablero industrial', width: 900, height: 700 }
     },
     services: {
       title: 'Contenido',
@@ -44,10 +38,10 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
           title: 'Bloque temporal',
           description: 'Este contenido sera provisto por backend.',
           subtitle: 'Pendiente de sincronizacion',
-          media: { src: installTools, alt: 'Herramientas de instalacion', width: 900, height: 700 },
+          media: { src: '/media/install-tools.svg', alt: 'Herramientas de instalacion', width: 900, height: 700 },
           items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           figure: {
-            src: installTools,
+            src: '/media/install-tools.svg',
             alt: 'Referencia comercial',
             width: 900,
             height: 700,
@@ -60,7 +54,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
           title: 'Bloque temporal',
           description: 'Este contenido sera provisto por backend.',
           subtitle: `Instrumentacion: ${config.equipos.medidorNombre}`,
-          media: { src: analyticsDashboard, alt: 'Panel de medicion', width: 900, height: 700 },
+          media: { src: '/media/analytics-dashboard.svg', alt: 'Panel de medicion', width: 900, height: 700 },
           items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           note: diagnosticListNote,
           cta: { label: 'Contactar', href: '#contacto', action: 'contact', section: 'contacto' }
@@ -70,7 +64,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
           title: 'Bloque temporal',
           description: 'Este contenido sera provisto por backend.',
           subtitle: 'Pendiente de sincronizacion',
-          media: { src: teamTraining, alt: 'Capacitacion de equipo', width: 900, height: 700 },
+          media: { src: '/media/team-training.svg', alt: 'Capacitacion de equipo', width: 900, height: 700 },
           items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           cta: { label: 'Contactar', href: '#contacto', action: 'contact', section: 'contacto' }
         }
@@ -82,7 +76,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         'Contenido temporal de fallback.',
         'Este bloque se reemplaza por backend.'
       ],
-      image: { src: tecnicoACargo, alt: 'Tecnico a cargo', width: 700, height: 933 }
+      image: { src: '/media/tecnico-a-cargo.webp', alt: 'Tecnico a cargo', width: 700, height: 933 }
     },
     profile: {
       title: 'Perfil',

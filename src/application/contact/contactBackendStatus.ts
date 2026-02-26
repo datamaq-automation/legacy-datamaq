@@ -102,12 +102,6 @@ export class ContactBackendMonitor {
       const response = await this.http.options(apiUrl)
       if (response.ok || response.status === 405 || response.status === 400) {
         this.status = 'available'
-        if (isDevRuntime) {
-          console.info(`[backend:${this.monitorLabel}] conexion OK`, {
-            endpoint: apiUrl,
-            status: response.status
-          })
-        }
       } else if (response.status === 404) {
         this.status = 'unavailable'
         logContactBackendWarnOnce(this.monitorLabel, {

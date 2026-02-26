@@ -1,3 +1,7 @@
+/*
+Path: src/ui/App.ts
+*/
+
 import { computed, nextTick, onMounted, watch } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
@@ -44,16 +48,6 @@ export function useApp() {
   async function logUiDebugSnapshot(reason: string): Promise<void> {
     await nextTick()
 
-    const appContent = content.getContent()
-    console.info('[ui:debug] snapshot', {
-      reason,
-      route: route.path,
-      remoteContentStatus: remoteContentStatus.value,
-      heroTitle: appContent.hero.title,
-      servicesTitle: appContent.services.title,
-      contactTitle: appContent.contact.title
-    })
-
     const selectors = ['h1', 'h2', '.c-hero__title', '.c-services__card-title', '.c-contact__title']
     const rows = selectors.map((selector) => {
       const element = document.querySelector(selector)
@@ -77,6 +71,5 @@ export function useApp() {
       }
     })
 
-    console.table(rows)
   }
 }

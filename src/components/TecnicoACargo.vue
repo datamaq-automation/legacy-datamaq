@@ -101,9 +101,10 @@ Path: src/components/TecnicoACargo.vue
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import tecnicoAvatar from '@/assets/tecnico-a-cargo.webp'
 import { getWhatsAppHref } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
+
+const tecnicoAvatar = '/media/tecnico-a-cargo.webp'
 
 const props = withDefaults(
   defineProps<{

@@ -49,11 +49,35 @@ function dmq_build_app_content(string $brandId): array
     ];
 
     $selected = $brandMap[$brandId] ?? $brandMap['example'];
-    $assetImage = [
-        'src' => '/favicon.ico',
-        'alt' => 'Imagen referencial',
-        'width' => 256,
-        'height' => 256
+    $heroImage = [
+        'src' => '/media/hero-energy.svg',
+        'alt' => 'Energia y tablero industrial',
+        'width' => 900,
+        'height' => 700
+    ];
+    $installToolsImage = [
+        'src' => '/media/install-tools.svg',
+        'alt' => 'Herramientas de instalacion',
+        'width' => 900,
+        'height' => 700
+    ];
+    $analyticsDashboardImage = [
+        'src' => '/media/analytics-dashboard.svg',
+        'alt' => 'Panel de medicion',
+        'width' => 900,
+        'height' => 700
+    ];
+    $teamTrainingImage = [
+        'src' => '/media/team-training.svg',
+        'alt' => 'Capacitacion de equipo',
+        'width' => 900,
+        'height' => 700
+    ];
+    $aboutImage = [
+        'src' => '/media/tecnico-a-cargo.webp',
+        'alt' => 'Tecnico a cargo',
+        'width' => 700,
+        'height' => 933
     ];
 
     return [
@@ -77,7 +101,7 @@ function dmq_build_app_content(string $brandId): array
                 ['title' => 'Implementacion', 'text' => 'Ejecucion por etapas con trazabilidad.', 'variant' => 'success'],
                 ['title' => 'Seguimiento', 'text' => 'Control de resultados y ajustes.', 'variant' => 'warning']
             ],
-            'image' => $assetImage
+            'image' => $heroImage
         ],
         'services' => [
             'title' => 'Servicios',
@@ -87,9 +111,9 @@ function dmq_build_app_content(string $brandId): array
                     'title' => 'Instalacion y adecuacion',
                     'description' => 'Montaje, recambio y ordenamiento de tableros.',
                     'subtitle' => 'Estandarizacion tecnica',
-                    'media' => $assetImage,
+                    'media' => $installToolsImage,
                     'items' => ['Tableros y protecciones', 'Cableado y etiquetado', 'Puesta en servicio'],
-                    'figure' => array_merge($assetImage, ['caption' => 'Referencia comercial: Consultar al WhatsApp.']),
+                    'figure' => array_merge($installToolsImage, ['caption' => 'Referencia comercial: Consultar al WhatsApp.']),
                     'cta' => ['label' => 'Consultar', 'href' => '#contacto', 'action' => 'contact', 'section' => 'contacto']
                 ],
                 [
@@ -97,7 +121,7 @@ function dmq_build_app_content(string $brandId): array
                     'title' => 'Medicion y diagnostico',
                     'description' => 'Medicion de consumo y deteccion de desbalances.',
                     'subtitle' => 'Instrumentacion: Powermeter',
-                    'media' => $assetImage,
+                    'media' => $analyticsDashboardImage,
                     'items' => ['Perfil de carga', 'Eventos y anomalias', 'Informe accionable'],
                     'note' => 'Diagnostico en lista: Consultar al WhatsApp.',
                     'cta' => ['label' => 'Solicitar diagnostico', 'href' => '#contacto', 'action' => 'contact', 'section' => 'contacto']
@@ -107,7 +131,7 @@ function dmq_build_app_content(string $brandId): array
                     'title' => 'Capacitacion operativa',
                     'description' => 'Transferencia de criterios para operacion diaria.',
                     'subtitle' => 'Procedimientos de campo',
-                    'media' => $assetImage,
+                    'media' => $teamTrainingImage,
                     'items' => ['Rutinas de control', 'Lectura de indicadores', 'Buenas practicas'],
                     'cta' => ['label' => 'Coordinar', 'href' => '#contacto', 'action' => 'contact', 'section' => 'contacto']
                 ]
@@ -119,7 +143,7 @@ function dmq_build_app_content(string $brandId): array
                 'Trabajo orientado a continuidad operativa y decisiones tecnicas claras.',
                 'Cada intervencion prioriza seguridad, orden documental y resultados medibles.'
             ],
-            'image' => $assetImage
+            'image' => $aboutImage
         ],
         'profile' => [
             'title' => 'Perfil tecnico',

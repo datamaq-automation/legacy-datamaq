@@ -58,7 +58,6 @@ export class DynamicContentService {
           this.logger.debug('[content] snapshot remoto completo aplicado', {
             contentApiUrl
           })
-          console.info('[backend:content] snapshot remoto aplicado', { endpoint: contentApiUrl })
           this.onReady()
           return
         }
@@ -78,7 +77,6 @@ export class DynamicContentService {
       this.logger.debug('[content] hero.title remoto aplicado', {
         contentApiUrl
       })
-      console.info('[backend:content] solo hero.title remoto aplicado', { endpoint: contentApiUrl })
       this.onUnavailable()
     } catch (error) {
       this.logger.warn('[content] error consultando contenido remoto; se mantiene title local.', {
