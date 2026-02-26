@@ -22,23 +22,23 @@ describe('ViteConfig', () => {
     vi.resetModules()
   })
 
-  it('preserves relative endpoints (/api/*.php)', async () => {
+  it('preserves relative canonical endpoints (/api/v1/...)', async () => {
     const ViteConfig = await importViteConfigWithPublicConfig({
-      inquiryApiUrl: '/api/v1/contact.php',
-      mailApiUrl: '/api/v1/mail.php',
-      pricingApiUrl: '/api/v1/pricing.php',
-      contentApiUrl: '/api/v1/content.php',
-      quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic.php',
-      quotePdfApiUrl: '/api/v1/quote/pdf.php?quote_id={quote_id}'
+      inquiryApiUrl: '/api/v1/contact',
+      mailApiUrl: '/api/v1/mail',
+      pricingApiUrl: '/api/v1/pricing',
+      contentApiUrl: '/api/v1/content',
+      quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
+      quotePdfApiUrl: '/api/v1/quote/pdf?quote_id={quote_id}'
     })
     const config = new ViteConfig()
 
-    expect(config.inquiryApiUrl).toBe('/api/v1/contact.php')
-    expect(config.mailApiUrl).toBe('/api/v1/mail.php')
-    expect(config.pricingApiUrl).toBe('/api/v1/pricing.php')
-    expect(config.contentApiUrl).toBe('/api/v1/content.php')
-    expect(config.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic.php')
-    expect(config.quotePdfApiUrl).toBe('/api/v1/quote/pdf.php?quote_id={quote_id}')
+    expect(config.inquiryApiUrl).toBe('/api/v1/contact')
+    expect(config.mailApiUrl).toBe('/api/v1/mail')
+    expect(config.pricingApiUrl).toBe('/api/v1/pricing')
+    expect(config.contentApiUrl).toBe('/api/v1/content')
+    expect(config.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
+    expect(config.quotePdfApiUrl).toBe('/api/v1/quote/pdf?quote_id={quote_id}')
   })
 
   it('accepts explicit https endpoints', async () => {

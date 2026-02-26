@@ -53,3 +53,37 @@
   - [x] Adaptar `src/ui/sections/DecisionFlowSection.vue` para consumir pasos y copy desde repositorio/contenido remoto.
   - [x] Eliminar hardcodes residuales de textos en esas vistas/sections.
   - [x] Agregar tests unitarios de contrato/consumo para `thanks` y `decisionFlow`.
+
+## P1 (compatibilidad con Laravel)
+
+- [x] **Definir contrato API canonico y agnostico de framework**
+  - [x] Documentar contrato unico para `content`, `pricing`, `health`, `contact`, `mail` (payload, codigos HTTP, errores).
+  - [x] Congelar formato de error comun: `code`, `message`, `details`, `request_id`.
+  - [x] Evitar acople del frontend a extensiones de archivo (`.php`) en contratos funcionales.
+
+- [x] **Normalizar versionado y rutas**
+  - [x] Consolidar endpoints funcionales en `/api/v1/...` a nivel de contrato.
+  - [x] Mantener compatibilidad transitoria mediante alias/redirect controlado para rutas legacy.
+
+- [ ] **Desacoplar frontend de detalles de transporte**
+  - [ ] Centralizar fetch/reintentos/timeout/errores en un cliente HTTP de infraestructura.
+  - [ ] Exponer solo repositorios/casos de uso hacia UI (sin endpoints hardcodeados en capas superiores).
+
+- [ ] **Normalizar mapeo de datos**
+  - [ ] Definir convención estable backend `snake_case` -> frontend `camelCase` mediante mappers.
+  - [ ] Eliminar transformaciones ad-hoc dispersas en componentes/servicios.
+
+- [ ] **Refactor backend por capas (alineado a Laravel)**
+  - [ ] Mantener endpoints como adaptadores delgados HTTP.
+  - [ ] Extraer reglas de negocio a servicios reutilizables.
+  - [ ] Aislar serialización de respuesta en DTO/Resource equivalente.
+
+- [ ] **Config, seguridad y operación**
+  - [ ] Unificar CORS por entorno (producción + desarrollo) en configuración central.
+  - [ ] Consolidar validación de entrada para `contact/mail` con reglas formales y respuestas homogéneas.
+  - [ ] Revisar middleware transversal esperado en Laravel: rate limit, request-id, logging estructurado.
+
+- [x] **Testing de migración sin big-bang**
+  - [x] Priorizar tests de contrato API independientes del framework.
+  - [x] Agregar pruebas de compatibilidad para aliases legacy durante ventana de transición.
+  - [x] Definir criterio de salida para remover compatibilidad legacy sin romper frontend.

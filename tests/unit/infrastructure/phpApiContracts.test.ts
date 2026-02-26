@@ -46,6 +46,9 @@ describe('PHP API contracts', () => {
     expect(response.status).toBe(405)
     expect(payload.status).toBe('error')
     expect(typeof payload.request_id).toBe('string')
+    expect(payload.code).toBe('METHOD_NOT_ALLOWED')
+    expect(typeof payload.message).toBe('string')
+    expect(Array.isArray(payload.details)).toBe(true)
     expect(payload.error_code).toBe('METHOD_NOT_ALLOWED')
     expect(typeof payload.detail).toBe('string')
   })
@@ -156,6 +159,9 @@ describe('PHP API contracts', () => {
 
     expect(response.status).toBe(422)
     expect(payload.status).toBe('error')
+    expect(payload.code).toBe('VALIDATION_ERROR')
+    expect(typeof payload.message).toBe('string')
+    expect(Array.isArray(payload.details)).toBe(true)
     expect(payload.error_code).toBe('VALIDATION_ERROR')
     expect(typeof payload.request_id).toBe('string')
     expect(typeof payload.detail).toBe('string')
@@ -190,7 +196,24 @@ describe('PHP API contracts', () => {
 
     expect(response.status).toBe(422)
     expect(payload.status).toBe('error')
+    expect(payload.code).toBe('VALIDATION_ERROR')
     expect(payload.error_code).toBe('VALIDATION_ERROR')
+  })
+
+  it('keeps legacy alias path /api/v1/contact.php during transition window', async () => {
+    const response = await fetch(`http://${HOST}:${PORT}/api/v1/contact.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'alias@example.com',
+        message: 'Mensaje valido para compatibilidad legacy'
+      })
+    })
+    const payload = (await response.json()) as Record<string, unknown>
+
+    expect(response.status).toBe(202)
+    expect(payload.status).toBe('ok')
+    expect(typeof payload.request_id).toBe('string')
   })
 
   it('handles CORS preflight for contact endpoint', async () => {

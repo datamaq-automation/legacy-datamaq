@@ -102,9 +102,13 @@ function dmq_json_response(int $statusCode, array $payload): void
 
 function dmq_error_response(int $statusCode, string $errorCode, string $detail): void
 {
+    $requestId = dmq_request_id();
     dmq_json_response($statusCode, [
         'status' => 'error',
-        'request_id' => dmq_request_id(),
+        'request_id' => $requestId,
+        'code' => $errorCode,
+        'message' => $detail,
+        'details' => [],
         'error_code' => $errorCode,
         'detail' => $detail,
     ]);

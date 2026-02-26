@@ -32,10 +32,10 @@ describe('probeBackendHealth', () => {
       )
     )
 
-    await probeBackendHealth('/api/v1/health.php')
+    await probeBackendHealth('/api/v1/health')
 
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
-      endpoint: '/api/v1/health.php',
+      endpoint: '/api/v1/health',
       status: 200,
       service: 'datamaq-api',
       brandId: 'datamaq',
@@ -51,12 +51,12 @@ describe('probeBackendHealth', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
 
-    await probeBackendHealth('/api/v1/health.php')
+    await probeBackendHealth('/api/v1/health')
 
     expect(warnSpy).toHaveBeenCalledWith(
       '[backend:health] error de red',
       expect.objectContaining({
-        endpoint: '/api/v1/health.php'
+        endpoint: '/api/v1/health'
       })
     )
     expect(infoSpy).not.toHaveBeenCalled()
