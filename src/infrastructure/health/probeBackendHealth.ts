@@ -16,6 +16,33 @@ export async function probeBackendHealth(endpoint: string = HEALTH_ENDPOINT): Pr
       })
       return
     }
+
+    const payload = (await response.json().catch(() => undefined)) as
+      | {
+          status?: unknown
+          service?: unknown
+          brand_id?: unknown
+          brandId?: unknown
+          version?: unknown
+          timestamp?: unknown
+        }
+      | undefined
+
+    const service = normalize(payload?.service)
+    const brandId = normalize(payload?.brandId) ?? normalize(payload?.brand_id)
+    const version = normalize(payload?.version)
+    const timestamp = normalize(payload?.timestamp)
+    const health = normalize(payload?.status)
+
+    console.info('[backend:health] conexion OK', {
+      endpoint,
+      status: response.status,
+      service,
+      brandId,
+      version,
+      timestamp,
+      health
+    })
   } catch (error) {
     console.warn('[backend:health] error de red', {
       endpoint,
