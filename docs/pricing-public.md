@@ -10,7 +10,7 @@
 ## Comportamiento de frontend
 
 - Endpoint consultado en runtime:
-  - `GET ${backendBaseUrl}/v1/public/pricing`
+  - `GET /api/pricing.php`
 - Visualizacion:
   - siempre `Consultar al WhatsApp` para tarifa base, traslado, diagnostico y hora adicional.
 - Parseo:
@@ -25,7 +25,7 @@ Archivos clave:
 
 ## Contrato backend
 
-### `GET /v1/public/pricing`
+### `GET /api/pricing.php`
 
 Response:
 ```json
@@ -39,7 +39,7 @@ Headers:
 - `Cache-Control: max-age=60`
 - `Content-Type: application/json`
 
-### `GET /v1/health`
+### `GET /api/health.php` (opcional)
 
 Response ejemplo:
 ```json

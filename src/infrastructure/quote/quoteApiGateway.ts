@@ -97,6 +97,10 @@ export class QuoteApiGateway implements QuoteGateway {
         detail: 'quote_id invalido'
       })
     }
+    const explicitPdfEndpoint = normalizeText(this.config.quotePdfApiUrl ?? '')
+    if (explicitPdfEndpoint) {
+      return buildQuotePdfUrlFromTemplate(explicitPdfEndpoint, normalizedQuoteId)
+    }
     return endpoint
       .replace(/\/v1\/public\/quote\/diagnostic\/?$/, '')
       .concat(`/v1/public/quote/${encodeURIComponent(normalizedQuoteId)}/pdf`)
@@ -258,6 +262,22 @@ function parseFilenameFromContentDisposition(value: string | null): string | und
   }
 
   return undefined
+}
+
+function buildQuotePdfUrlFromTemplate(template: string, quoteId: string): string {
+  const encodedQuoteId = encodeURIComponent(quoteId)
+  if (template.includes('{quote_id}')) {
+    return template.replace(/\{quote_id\}/g, encodedQuoteId)
+  }
+  return appendQueryParam(template, 'quote_id', encodedQuoteId)
+}
+
+function appendQueryParam(url: string, key: string, encodedValue: string): string {
+  const hashIndex = url.indexOf('#')
+  const baseWithQuery = hashIndex >= 0 ? url.slice(0, hashIndex) : url
+  const hashSuffix = hashIndex >= 0 ? url.slice(hashIndex) : ''
+  const separator = baseWithQuery.includes('?') ? '&' : '?'
+  return `${baseWithQuery}${separator}${encodeURIComponent(key)}=${encodedValue}${hashSuffix}`
 }
 
 function debugQuote(message: string, context: Record<string, unknown>): void {

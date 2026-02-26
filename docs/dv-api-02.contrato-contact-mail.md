@@ -1,15 +1,17 @@
-# Contrato API: Contacto + Mail (`backendBaseUrl` por target)
+# Contrato API: Contacto + Mail (endpoints runtime por target)
 
 ## 1) Base URL y endpoints
 
-- Variable fuente: `backendBaseUrl` en `src/infrastructure/content/runtimeProfiles.json`
+- Variables fuente en `src/infrastructure/content/runtimeProfiles.json`:
+  - `inquiryApiUrl`
+  - `mailApiUrl`
+  - (compatibilidad legacy opcional: `backendBaseUrl` + `/v1/...`)
 - Validacion en frontend:
-  - En desarrollo (`DEV`): acepta `http://` o `https://`
-  - En produccion: exige `https://`
-- Convencion productiva: versionado `/v1` y recursos semanticos.
-- Endpoints documentados en este archivo:
-  - `POST ${backendBaseUrl}/v1/contact`
-  - `POST ${backendBaseUrl}/v1/mail`
+  - acepta endpoints relativos (`/api/...`) para mismo dominio
+  - para endpoints absolutos, en produccion se exige `https://`
+- Endpoints actuales recomendados:
+  - `POST /api/contact.php`
+  - `POST /api/mail.php`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
@@ -21,8 +23,8 @@ Referencia de implementacion:
 
 ## 2) Endpoints de contacto comercial
 
-### 2.1 `POST /v1/contact`
-### 2.2 `POST /v1/mail`
+### 2.1 `POST /api/contact.php`
+### 2.2 `POST /api/mail.php`
 
 Ambos endpoints usan el mismo contrato de payload/respuesta.
 
@@ -103,5 +105,5 @@ Mapeo de errores frontend:
 
 ## 4) Compatibilidad y versionado
 
-- Este contrato corresponde al estado actual del frontend (fecha: 2026-02-21).
+- Este contrato corresponde al estado actual del frontend (fecha: 2026-02-26).
 - Cambios breaking deben versionarse (por ejemplo `/v2/...`) o sostener compatibilidad temporal.

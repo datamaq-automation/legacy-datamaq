@@ -10,6 +10,7 @@ function createConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
     mailApiUrl: undefined,
     pricingApiUrl: undefined,
     quoteDiagnosticApiUrl: 'https://api.example.com/v1/public/quote/diagnostic',
+    quotePdfApiUrl: undefined,
     contactEmail: undefined,
     contactFormActive: true,
     emailFormActive: true,
@@ -251,6 +252,31 @@ describe('QuoteApiGateway', () => {
     expect(result.blob.size).toBeGreaterThan(0)
     expect(result.blob.type).toBe('application/pdf')
     expect(result.filename).toBe('quote-Q-20260222-000001.pdf')
+  })
+
+  it('uses explicit quotePdfApiUrl template when configured', async () => {
+    const blobBody = new Blob(['pdf-bytes'], { type: 'application/pdf' })
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(blobBody, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/pdf'
+        }
+      })
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const gateway = new QuoteApiGateway(
+      createConfig({
+        quoteDiagnosticApiUrl: '/api/quote/diagnostic.php',
+        quotePdfApiUrl: '/api/quote/pdf.php?quote_id={quote_id}'
+      })
+    )
+    await gateway.fetchQuotePdf('Q-20260222-000321')
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/quote/pdf.php?quote_id=Q-20260222-000321', {
+      method: 'GET'
+    })
   })
 
   it('supports utf-8 filename* from content-disposition', async () => {

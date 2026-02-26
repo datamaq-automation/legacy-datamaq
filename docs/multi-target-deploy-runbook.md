@@ -9,7 +9,11 @@ Desplegar dos marcas desde el mismo repositorio, compartiendo rutas (`/`, `/coti
 - Archivo: `src/infrastructure/content/runtimeProfiles.json`
 - Targets: `datamaq`, `upp`, `e2e`
 - Campos minimos por target para produccion:
-  - `backendBaseUrl`
+  - `inquiryApiUrl`
+  - `mailApiUrl`
+  - `pricingApiUrl`
+  - `quoteDiagnosticApiUrl`
+  - `quotePdfApiUrl`
   - `siteUrl`
   - `siteName`
   - `whatsappUrl`

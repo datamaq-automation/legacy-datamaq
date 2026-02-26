@@ -1,16 +1,16 @@
-# Contrato API: Pricing Publico + Health (`backendBaseUrl` por target)
+# Contrato API: Pricing Publico + Health (endpoints runtime por target)
 
 ## 1) Base URL y endpoints
 
-- Variable fuente: `backendBaseUrl` en `src/infrastructure/content/runtimeProfiles.json`
+- Variables fuente en `src/infrastructure/content/runtimeProfiles.json`:
+  - `pricingApiUrl`
+  - (compatibilidad legacy opcional: `backendBaseUrl` + `/v1/public/pricing`)
 - Validacion en frontend:
-  - En desarrollo (`DEV`): acepta `http://` o `https://`
-  - En produccion: exige `https://`
-  - Bypass local controlado: en no-DEV, `allowInsecureBackend=true` solo habilita `http://localhost`, `http://127.0.0.1` o `http://[::1]`
-  - Si `allowInsecureBackend` vale `false`, se mantiene validacion estricta (`https://`) fuera de `DEV`
-- Endpoints de este contrato:
-  - `GET ${backendBaseUrl}/v1/public/pricing`
-  - `GET ${backendBaseUrl}/v1/health`
+  - acepta endpoints relativos (`/api/...`) para mismo dominio
+  - para endpoints absolutos, en produccion se exige `https://`
+  - bypass local controlado: en no-DEV, `allowInsecureBackend=true` solo habilita `http://localhost`, `http://127.0.0.1` o `http://[::1]`
+- Endpoint actual recomendado:
+  - `GET /api/pricing.php`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
@@ -19,7 +19,7 @@ Referencia de implementacion:
 
 ## 2) Endpoint de precios publicos
 
-### 2.1 `GET /v1/public/pricing`
+### 2.1 `GET /api/pricing.php`
 
 Uso:
 - El frontend consulta este endpoint en runtime.
@@ -53,7 +53,7 @@ Validacion frontend:
 
 ## 3) Endpoint de salud
 
-### 3.1 `GET /v1/health`
+### 3.1 `GET /api/health.php` (opcional)
 
 Uso recomendado:
 - monitoreo de disponibilidad de API y edge
@@ -81,5 +81,5 @@ Response sugerida:
 
 ## 5) Compatibilidad
 
-- Contrato vigente para frontend (fecha: 2026-02-21).
+- Contrato vigente para frontend (fecha: 2026-02-26).
 - Cambios breaking deben versionarse (`/v2/...`) o mantener compatibilidad temporal.

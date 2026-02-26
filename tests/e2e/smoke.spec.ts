@@ -45,8 +45,8 @@ test.describe('Smoke E2E', () => {
       await route.continue()
     }
 
-    await page.route('**/v1/contact', fulfillApi)
-    await page.route('**/v1/mail', fulfillApi)
+    await page.route('**/api/contact.php', fulfillApi)
+    await page.route('**/api/mail.php', fulfillApi)
   })
 
   test('home renders hero and services', async ({ page }) => {

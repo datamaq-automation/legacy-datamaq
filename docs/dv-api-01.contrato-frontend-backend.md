@@ -1,4 +1,4 @@
-# Contratos API Frontend <-> Backend (`backendBaseUrl` por target)
+# Contratos API Frontend <-> Backend (runtimeProfile por target)
 
 Este documento ahora actua como indice de contratos separados:
 
@@ -7,4 +7,4 @@ Este documento ahora actua como indice de contratos separados:
 2. Contacto comercial + mail:
    - `docs/dv-api-02.contrato-contact-mail.md`
 
-Fecha de actualizacion: 2026-02-21.
+Fecha de actualizacion: 2026-02-26.
