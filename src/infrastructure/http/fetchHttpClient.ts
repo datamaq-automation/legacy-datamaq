@@ -63,7 +63,7 @@ export class FetchHttpClient implements HttpClient {
     headers: Record<string, string> = {},
     options: Omit<HttpRequestOptions, 'headers'> = {}
   ): Promise<HttpResponse<T>> {
-    const requestHeaders =
+    const requestHeaders: Record<string, string> =
       method === 'GET' ? { ...headers } : { 'Content-Type': 'application/json', ...headers }
     const logPrefix = `[http] ${method} JSON`
     try {
