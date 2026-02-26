@@ -1,8 +1,9 @@
 import type { AnalyticsPort } from '@/application/ports/Analytics'
+import type { ConfigPort } from '@/application/ports/Config'
+import { publicConfig } from '@/infrastructure/config/publicConfig'
 import { getAnalyticsConsent } from '../consent/consent'
 import { initClarity, updateClarityConsent } from './clarity'
 import { clearGa4PendingEvents, initGa4, trackGa4Event, trackGa4PageView, updateGa4Consent } from './ga4'
-import { publicConfig } from '@/infrastructure/config/publicConfig'
 import { clearAnalyticsCookies } from './cookies'
 
 type PageViewPayload = {
@@ -11,12 +12,26 @@ type PageViewPayload = {
 }
 
 export type AnalyticsConsentStatus = 'unknown' | 'granted' | 'denied'
+type AnalyticsRuntimeConfig = {
+  analyticsEnabled: boolean
+  ga4Id: string | undefined
+  clarityProjectId: string | undefined
+}
 
 let analyticsReady = false
 let ga4Enabled = false
 let spaTrackingEnabled = false
 let spaCleanup: (() => void) | null = null
 let consentStatus: AnalyticsConsentStatus = resolveInitialConsentStatus()
+let runtimeConfig: AnalyticsRuntimeConfig = resolveRuntimeConfigFromPublicConfig()
+
+export function configureAnalytics(config: Pick<ConfigPort, 'analyticsEnabled' | 'ga4Id' | 'clarityProjectId'>): void {
+  runtimeConfig = {
+    analyticsEnabled: parseBoolean(config.analyticsEnabled, runtimeConfig.analyticsEnabled),
+    ga4Id: normalize(config.ga4Id) ?? runtimeConfig.ga4Id,
+    clarityProjectId: normalize(config.clarityProjectId) ?? runtimeConfig.clarityProjectId
+  }
+}
 
 export function syncAnalyticsConsent(status: AnalyticsConsentStatus): void {
   consentStatus = status
@@ -43,8 +58,7 @@ export function initAnalytics(): void {
     return
   }
 
-  const enabled = parseBoolean(publicConfig.analyticsEnabled, true)
-  if (!enabled) {
+  if (!runtimeConfig.analyticsEnabled) {
     return
   }
 
@@ -52,8 +66,8 @@ export function initAnalytics(): void {
     return
   }
 
-  const ga4Id = normalize(publicConfig.ga4Id)
-  const clarityId = normalize(publicConfig.clarityProjectId)
+  const ga4Id = normalize(runtimeConfig.ga4Id)
+  const clarityId = normalize(runtimeConfig.clarityProjectId)
 
   if (ga4Id) {
     initGa4({ id: ga4Id, debug: import.meta.env.DEV })
@@ -152,6 +166,14 @@ function parseBoolean(value: string | boolean | undefined, fallback: boolean): b
     return value
   }
   return value.toLowerCase() === 'true'
+}
+
+function resolveRuntimeConfigFromPublicConfig(): AnalyticsRuntimeConfig {
+  return {
+    analyticsEnabled: parseBoolean(publicConfig.analyticsEnabled, true),
+    ga4Id: normalize(publicConfig.ga4Id),
+    clarityProjectId: normalize(publicConfig.clarityProjectId)
+  }
 }
 
 function updateRuntimeConsent(state: 'granted' | 'denied'): void {

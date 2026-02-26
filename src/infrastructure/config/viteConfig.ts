@@ -3,10 +3,12 @@ import { publicConfig } from '@/infrastructure/config/publicConfig'
 
 type NullableString = string | undefined
 
-const CONTACT_EMAIL_FALLBACK = 'contacto@datamaq.com.ar'
-const ALLOW_INSECURE_BACKEND_FLAG = 'VITE_ALLOW_INSECURE_BACKEND'
+const CONTACT_EMAIL_FALLBACK = 'contacto@example.com'
+const ALLOW_INSECURE_BACKEND_FLAG = 'runtimeProfile.allowInsecureBackend'
 
 export class ViteConfig implements ConfigPort {
+  brandId: NullableString
+  storageNamespace: NullableString
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
@@ -15,6 +17,8 @@ export class ViteConfig implements ConfigPort {
   contactFormActive: boolean
   emailFormActive: boolean
   analyticsEnabled: boolean | undefined
+  ga4Id: NullableString
+  clarityProjectId: NullableString
   siteUrl: NullableString
   siteName: NullableString
   siteDescription: NullableString
@@ -34,27 +38,23 @@ export class ViteConfig implements ConfigPort {
   businessArea: NullableString
 
   constructor() {
+    this.brandId = normalize(publicConfig.brandId)
+    this.storageNamespace = normalize(publicConfig.storageNamespace)
     this.contactEmail = normalize(publicConfig.contactEmail) ?? CONTACT_EMAIL_FALLBACK
     const backendBaseUrl = ensureApiBaseUrl(
-      normalize(import.meta.env.VITE_BACKEND_BASE_URL) ??
-        normalize(publicConfig.backendBaseUrl),
-      'VITE_BACKEND_BASE_URL'
+      normalize(publicConfig.backendBaseUrl),
+      'backendBaseUrl',
+      publicConfig.allowInsecureBackend
     )
     this.inquiryApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/contact')
     this.mailApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/mail')
     this.pricingApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/public/pricing')
     this.quoteDiagnosticApiUrl = buildEndpointUrl(backendBaseUrl, '/v1/public/quote/diagnostic')
-    this.contactFormActive = normalizeBoolean(
-      import.meta.env.VITE_IS_CONTACT_FORM_ACTIVE,
-      publicConfig.contactFormActive,
-      'VITE_IS_CONTACT_FORM_ACTIVE'
-    )
-    this.emailFormActive = normalizeBoolean(
-      import.meta.env.VITE_IS_EMAIL_FORM_ACTIVE,
-      publicConfig.emailFormActive,
-      'VITE_IS_EMAIL_FORM_ACTIVE'
-    )
+    this.contactFormActive = publicConfig.contactFormActive
+    this.emailFormActive = publicConfig.emailFormActive
     this.analyticsEnabled = publicConfig.analyticsEnabled
+    this.ga4Id = normalize(publicConfig.ga4Id)
+    this.clarityProjectId = normalize(publicConfig.clarityProjectId)
     this.siteUrl = normalize(publicConfig.siteUrl)
     this.siteName = normalize(publicConfig.siteName)
     this.siteDescription = normalize(publicConfig.siteDescription)
@@ -80,7 +80,11 @@ function normalize(value: string | undefined): NullableString {
   return trimmed ? trimmed : undefined
 }
 
-function ensureApiBaseUrl(value: NullableString, envKey: string): NullableString {
+function ensureApiBaseUrl(
+  value: NullableString,
+  configKey: string,
+  allowInsecureBackend: boolean
+): NullableString {
   if (!value) {
     return undefined
   }
@@ -88,7 +92,7 @@ function ensureApiBaseUrl(value: NullableString, envKey: string): NullableString
   if (import.meta.env.DEV) {
     if (!value.startsWith('http://') && !value.startsWith('https://')) {
       console.warn(
-        `[config] La variable ${envKey} debe comenzar con "http://" o "https://" en desarrollo. Valor recibido: ${value}`
+        `[config] El campo ${configKey} debe comenzar con "http://" o "https://" en desarrollo. Valor recibido: ${value}`
       )
       return undefined
     }
@@ -96,8 +100,6 @@ function ensureApiBaseUrl(value: NullableString, envKey: string): NullableString
   }
 
   if (!value.startsWith('https://')) {
-    const allowInsecureBackend =
-      import.meta.env.VITE_ALLOW_INSECURE_BACKEND?.trim().toLowerCase() === 'true'
     if (allowInsecureBackend) {
       try {
         const parsedUrl = new URL(value)
@@ -107,7 +109,7 @@ function ensureApiBaseUrl(value: NullableString, envKey: string): NullableString
 
         if (parsedUrl.protocol === 'http:' && isLoopbackHost) {
           console.warn(
-            `[config] Se habilito bypass local para ${envKey} via ${ALLOW_INSECURE_BACKEND_FLAG}=true. Valor recibido: ${value}`
+            `[config] Se habilito bypass local para ${configKey} via ${ALLOW_INSECURE_BACKEND_FLAG}=true. Valor recibido: ${value}`
           )
           return value
         }
@@ -116,7 +118,7 @@ function ensureApiBaseUrl(value: NullableString, envKey: string): NullableString
       }
     }
     console.warn(
-      `[config] La variable ${envKey} debe comenzar con "https://" en produccion. Valor recibido: ${value}`
+      `[config] El campo ${configKey} debe comenzar con "https://" en produccion. Valor recibido: ${value}`
     )
     return undefined
   }
@@ -128,27 +130,4 @@ function buildEndpointUrl(baseUrl: NullableString, path: string): NullableString
     return undefined
   }
   return `${baseUrl.replace(/\/+$/, '')}${path}`
-}
-
-function normalizeBoolean(
-  rawValue: string | undefined,
-  fallback: boolean,
-  envKey: string
-): boolean {
-  if (rawValue === undefined) {
-    return fallback
-  }
-
-  const normalized = rawValue.trim().toLowerCase()
-  if (normalized === 'true') {
-    return true
-  }
-  if (normalized === 'false') {
-    return false
-  }
-
-  console.warn(
-    `[config] La variable ${envKey} debe ser "true" o "false". Valor recibido: ${rawValue}`
-  )
-  return fallback
 }

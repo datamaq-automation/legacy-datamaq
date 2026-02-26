@@ -14,7 +14,7 @@ export function getDefaultSeo(
 ): SeoMeta {
   const fallbackOrigin = getOrigin(location.href())
   const siteUrl = normalize(config.siteUrl) || fallbackOrigin
-  const siteName = normalize(config.siteName) || 'Datamaq'
+  const siteName = normalize(config.siteName) || 'Sitio'
   const description =
     normalize(config.siteDescription) ||
     'Servicios industriales y eficiencia energetica para empresas.'

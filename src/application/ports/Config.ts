@@ -1,6 +1,8 @@
 type NullableString = string | undefined
 
 export interface ConfigPort {
+  brandId: NullableString
+  storageNamespace: NullableString
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
@@ -9,6 +11,8 @@ export interface ConfigPort {
   contactFormActive: boolean
   emailFormActive: boolean
   analyticsEnabled: boolean | undefined
+  ga4Id: NullableString
+  clarityProjectId: NullableString
   siteUrl: NullableString
   siteName: NullableString
   siteDescription: NullableString

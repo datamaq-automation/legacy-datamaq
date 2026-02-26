@@ -1,3 +1,5 @@
+import { publicConfig } from '@/infrastructure/config/publicConfig'
+
 export interface WhatsAppQrConfig {
   phoneE164: string
   message: string
@@ -5,9 +7,11 @@ export interface WhatsAppQrConfig {
 }
 
 export const whatsappQrConfig: WhatsAppQrConfig = {
-  phoneE164: 'TODO_REEMPLAZAR',
-  message: 'Hola, te contacto por la tarjeta de DataMaq. ¿Podemos coordinar?',
-  sourceTag: 'qr_card'
+  phoneE164: publicConfig.whatsappQrPhoneE164?.trim() ?? '',
+  message:
+    publicConfig.whatsappQrMessage?.trim() ??
+    'Hola, te contacto desde la web. Podemos coordinar?',
+  sourceTag: publicConfig.whatsappQrSourceTag?.trim() ?? 'qr_card'
 }
 
 export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = whatsappQrConfig): string {
@@ -20,7 +24,14 @@ export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = whatsappQrConf
 }
 
 export function buildWhatsAppQrHref(config: WhatsAppQrConfig = whatsappQrConfig): string {
-  const phoneE164 = config.phoneE164.trim()
+  const phoneE164 = normalizePhone(config.phoneE164)
+  if (!phoneE164) {
+    return publicConfig.whatsappUrl?.trim() ?? ''
+  }
   const text = encodeURIComponent(buildWhatsAppQrMessage(config))
   return `https://wa.me/${phoneE164}?text=${text}`
+}
+
+function normalizePhone(value: string): string {
+  return value.replace(/[^\d]/g, '').trim()
 }

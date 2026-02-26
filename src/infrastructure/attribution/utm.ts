@@ -1,12 +1,14 @@
 import type { Attribution } from '@/application/ports/Attribution'
 import type { StoragePort } from '@/application/ports/Storage'
+import { publicConfig } from '@/infrastructure/config/publicConfig'
 
 type StoredAttribution = {
   data: Attribution
   expiresAt: number
 }
 
-const STORAGE_KEY = 'datamaq_attribution'
+const STORAGE_KEY = `${resolveStorageNamespace(publicConfig.storageNamespace)}_attribution`
+const LEGACY_STORAGE_KEYS = ['datamaq_attribution']
 const DEFAULT_TTL_DAYS = 30
 
 export function initAttribution(
@@ -77,22 +79,25 @@ export function persistAttribution(
 }
 
 export function getAttribution(storage: StoragePort): Attribution | null {
-  const raw = storage.get(STORAGE_KEY)
-  if (!raw) {
-    return null
+  const primaryStored = readStoredAttribution(storage, STORAGE_KEY)
+  if (primaryStored) {
+    return primaryStored.data
   }
 
-  try {
-    const stored = JSON.parse(raw) as StoredAttribution
-    if (!stored.expiresAt || stored.expiresAt < Date.now()) {
-      storage.remove(STORAGE_KEY)
-      return null
+  for (const legacyKey of LEGACY_STORAGE_KEYS) {
+    if (legacyKey === STORAGE_KEY) {
+      continue
     }
-    return stored.data
-  } catch {
-    storage.remove(STORAGE_KEY)
-    return null
+    const legacyStored = readStoredAttribution(storage, legacyKey)
+    if (!legacyStored) {
+      continue
+    }
+    storage.set(STORAGE_KEY, JSON.stringify(legacyStored))
+    storage.remove(legacyKey)
+    return legacyStored.data
   }
+
+  return null
 }
 
 export function attachAttributionToPayload<T extends object>(
@@ -108,4 +113,34 @@ export function attachAttributionToPayload<T extends object>(
     ...payload,
     attribution
   }
+}
+
+function readStoredAttribution(
+  storage: StoragePort,
+  key: string
+): StoredAttribution | null {
+  const raw = storage.get(key)
+  if (!raw) {
+    return null
+  }
+
+  try {
+    const stored = JSON.parse(raw) as StoredAttribution
+    if (!stored.expiresAt || stored.expiresAt < Date.now()) {
+      storage.remove(key)
+      return null
+    }
+    return stored
+  } catch {
+    storage.remove(key)
+    return null
+  }
+}
+
+function resolveStorageNamespace(value: string | undefined): string {
+  const normalized = value?.trim().toLowerCase()
+  if (!normalized) {
+    return 'site'
+  }
+  return normalized.replace(/[^a-z0-9_-]/g, '') || 'site'
 }

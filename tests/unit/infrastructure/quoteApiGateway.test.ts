@@ -372,10 +372,10 @@ describe('QuoteApiGateway', () => {
         safe_window_confirmed: true,
         bureaucracy: 'medium'
       })
-    ).rejects.toThrow('Cotizador no disponible: falta VITE_BACKEND_BASE_URL')
+    ).rejects.toThrow('Cotizador no disponible: falta configuracion de backend')
 
     await expect(gateway.fetchQuotePdf('Q-1')).rejects.toThrow(
-      'Cotizador no disponible: falta VITE_BACKEND_BASE_URL'
+      'Cotizador no disponible: falta configuracion de backend'
     )
   })
 })

@@ -14,7 +14,7 @@ export class QuoteApiGateway implements QuoteGateway {
   async createDiagnosticQuote(payload: DiagnosticQuoteRequest): Promise<DiagnosticQuoteResponse> {
     const endpoint = this.config.quoteDiagnosticApiUrl
     if (!endpoint) {
-      throw new Error('Cotizador no disponible: falta VITE_BACKEND_BASE_URL')
+      throw new Error('Cotizador no disponible: falta configuracion de backend')
     }
 
     let response: Response
@@ -87,7 +87,7 @@ export class QuoteApiGateway implements QuoteGateway {
   private buildQuotePdfEndpoint(quoteId: string): string {
     const endpoint = this.config.quoteDiagnosticApiUrl
     if (!endpoint) {
-      throw new Error('Cotizador no disponible: falta VITE_BACKEND_BASE_URL')
+      throw new Error('Cotizador no disponible: falta configuracion de backend')
     }
     const normalizedQuoteId = quoteId.trim()
     if (!isValidQuoteId(normalizedQuoteId)) {

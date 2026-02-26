@@ -35,6 +35,11 @@ describe('analytics consent synchronization', () => {
 
   it('initializes analytics after consent is granted', async () => {
     const analytics = await import('@/infrastructure/analytics')
+    analytics.configureAnalytics({
+      analyticsEnabled: true,
+      ga4Id: 'G-TEST',
+      clarityProjectId: 'clarity-test'
+    })
 
     analytics.syncAnalyticsConsent('denied')
     expect(initGa4).not.toHaveBeenCalled()
@@ -49,6 +54,11 @@ describe('analytics consent synchronization', () => {
 
   it('blocks events/page views and applies hard revoke when consent is denied', async () => {
     const analytics = await import('@/infrastructure/analytics')
+    analytics.configureAnalytics({
+      analyticsEnabled: true,
+      ga4Id: 'G-TEST',
+      clarityProjectId: 'clarity-test'
+    })
 
     analytics.syncAnalyticsConsent('granted')
     analytics.trackEvent('event.allowed', { source: 'test' })

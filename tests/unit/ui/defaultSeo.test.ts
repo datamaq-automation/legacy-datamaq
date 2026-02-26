@@ -89,8 +89,8 @@ describe('defaultSeo', () => {
 
     expect(seo.siteUrl).toBe('https://datamaq.com')
     expect(seo.ogImage).toBe('https://datamaq.com/og-default.png')
-    expect(seo.siteName).toBe('Datamaq')
-    expect(seo.title).toBe('Datamaq')
+    expect(seo.siteName).toBe('Sitio')
+    expect(seo.title).toBe('Sitio')
     expect(seo.description).toBe('Servicios industriales y eficiencia energetica para empresas.')
   })
 
@@ -107,7 +107,7 @@ describe('defaultSeo', () => {
 
     expect(seo.siteUrl).toBe('')
     expect(seo.ogImage).toBe('')
-    expect(seo.title).toBe('Datamaq')
+    expect(seo.title).toBe('Sitio')
   })
 
   it('incluye datos de negocio, verificacion y locale cuando se configuran', () => {

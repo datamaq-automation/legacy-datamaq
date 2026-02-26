@@ -85,9 +85,9 @@
               </ul>
               <a
                 class="btn c-ui-btn c-ui-btn--primary mt-3"
-                href="https://wa.me/5491156297160?text=Hola%20vengo%20de%20la%20p%C3%A1gina%20web%20y%20quiero%20m%C3%A1s%20informaci%C3%B3n"
-                target="_blank"
-                rel="noopener noreferrer"
+                :href="decisionFlowWhatsappHref"
+                :target="isExternalWhatsappHref ? '_blank' : undefined"
+                :rel="isExternalWhatsappHref ? 'noopener noreferrer' : undefined"
               >
                 Pedir coordinacion por WhatsApp
               </a>
@@ -118,6 +118,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useContainer } from '@/di/container'
+import { getWhatsAppHref } from '@/ui/controllers/contactController'
 
 interface ProcessStep {
   order: number
@@ -131,6 +132,8 @@ interface FaqItem {
 }
 
 const { content } = useContainer()
+const decisionFlowWhatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
+const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(decisionFlowWhatsappHref.value))
 const pricingSummary = computed(() => {
   const installationCard = content
     .getServicesContent()

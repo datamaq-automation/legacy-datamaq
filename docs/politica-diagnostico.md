@@ -1,118 +1,77 @@
-## Política Comercial del Diagnóstico (v1.0) — DataMaq
+﻿# Politica Comercial del Diagnostico (v1.0)
 
-### 1) Producto
+## 1) Servicio base
 
-**Diagnóstico técnico en planta (hasta 2 horas)**
-Incluye:
+Diagnostico tecnico en planta (hasta 2 horas), con:
 
-* Relevamiento y mediciones en sitio
-* Registro mínimo (fotos + notas)
-* Identificación de riesgos
-* Causa probable (o hipótesis priorizadas)
-* **Informe breve** con recomendaciones y próximos pasos
+- relevamiento y mediciones en sitio
+- registro minimo (fotos y notas)
+- identificacion de riesgos
+- causa probable o hipotesis priorizadas
+- informe breve con recomendaciones y proximos pasos
 
-> sin diagnóstico, no hay intervención.
+Regla: sin diagnostico, no hay intervencion.
 
----
+## 2) Precio publicado
 
-### 2) Precio
+- El unico precio publico viene del backend (`diagnostico_lista_2h_ars`).
+- Si el backend no esta disponible, la web muestra: `Consultar al WhatsApp`.
+- No se publican otros precios (instalacion, traslado, excedentes).
 
-* **Precio de lista**: viene del backend (`diagnostico_lista_2h_ars`)
-* Si el backend no está disponible → “Consultar al WhatsApp”
-* **No publicamos otros precios** (instalación/traslado/excedentes: a cotizar)
+## 3) Reserva y pago
 
----
+- La seña es obligatoria para reservar agenda.
+- Sin seña no se confirma fecha/hora.
+- El porcentaje de seña se define en el cotizador.
 
-### 3) Reserva de agenda y forma de pago (estricta)
+## 4) Condiciones de acceso
 
-**Seña obligatoria para reservar agenda.**
-Sin seña, no se confirma fecha/hora.
+Para ejecutar dentro del bloque de 2 horas, el cliente debe garantizar:
 
-* La seña bloquea el turno.
-* El saldo (si aplica) se paga al finalizar o según acuerdo B2B2B (intermediarios).
+- acceso al sector/tablero/maquina
+- responsable presente
+- permisos internos
+- condiciones minimas de seguridad
 
-*(El porcentaje de seña lo definimos en la implementación del cotizador; recomendación: 50% del diagnóstico.)*
+Las esperas por permisos o acceso consumen tiempo del bloque.
 
----
+## 5) Seguridad primero
 
-### 4) Condiciones de acceso (cliente responsable)
+Si no hay condiciones seguras:
 
-Para que el diagnóstico se ejecute dentro de las 2h, el cliente debe garantizar:
+- se registra el estado
+- se deja constancia tecnica
+- se reprograma cuando exista ventana segura
 
-* Acceso al sector/tablero/máquina
-* Responsable presente (operación/mantenimiento)
-* Permisos internos y acompañamiento (si aplica)
-* Condiciones mínimas de seguridad y orden
+No se interviene energizado sin condiciones adecuadas.
 
-**Las esperas por permisos/llaves/protocolos consumen tiempo del bloque.**
+## 6) Reprogramacion
 
----
+- Una reprogramacion sin costo con aviso >= 24 horas.
+- Con aviso < 24 horas, o segunda reprogramacion, se aplica penalidad segun politica comercial vigente.
 
-### 5) Seguridad primero (no negociable)
+## 7) No-show
 
-Si al llegar **no existen condiciones seguras** para evaluar:
+Si no hay acceso/responsable al momento acordado:
 
-* se realiza registro del estado y se deja constancia,
-* el diagnóstico se considera efectuado (salida + criterio),
-* se reprograma la intervención cuando haya ventana segura/desenergizada.
+- se considera no-show operativo
+- se pierde la seña
+- para reagendar se requiere nueva seña
 
->  no se interviene energizado sin condiciones adecuadas.
+## 8) Excedentes y trabajos posteriores
 
----
+- El diagnostico cubre hasta 2 horas.
+- Cualquier trabajo posterior se cotiza por alcance y se agenda por prioridad.
 
-### 6) Reprogramación (estricta)
+## 9) Descuentos
 
-* **1 reprogramación sin costo** si se avisa con **≥ 24 horas**.
-* Con aviso < 24 horas, o por segunda reprogramación:
+Los descuentos se aplican solo por cotizador y nunca de forma manual.
 
-  * se pierde la seña **o** se cobra un cargo de reprogramación (a definir en el cotizador).
+Condiciones tipicas:
 
----
+- turno programado
+- acceso garantizado
+- baja burocracia
+- ventana segura confirmada
 
-### 7) No-show
-
-Si el cliente no está listo al momento acordado (sin acceso / sin responsable / no autorizan ingreso):
-
-* se considera **no-show operativo**,
-* se pierde la seña,
-* para reagendar se requiere nueva seña.
-
-Esto filtra desorganización. Es premium.
-
----
-
-### 8) Excedentes y trabajos posteriores
-
-* El diagnóstico cubre hasta 2h.
-* Cualquier excedente, reparación, instalación, normalización o intervención:
-
-  * se cotiza por alcance
-  * se agenda según prioridad
-
----
-
-### 9) Descuentos (solo por cotizador, nunca “a mano”)
-
-Podemos aplicar descuentos **únicamente** si se cumplen condiciones operativas favorables, por ejemplo:
-
-* turno programado
-* acceso garantizado y responsable presente
-* baja burocracia interna
-* ventana segura confirmada
-
-**Siempre con piso mínimo** (nunca degradar el filtro).
-
----
-
-## Cómo se usa esta política en el negocio (CEO)
-
-* WhatsApp: la política se explica en 3 líneas + link al cotizador.
-* Cotizador: genera PDF con precio de lista, seña, reglas y supuestos.
-* Operación: si no cumplen condiciones → no improvisamos.
-
----
-
-## Próximo paso (tarea siguiente)
-
-Ahora toca **Cotizador v1 + PDF**, porque la política sin herramienta termina en discusión por chat.
-
+Siempre con piso minimo definido por negocio.

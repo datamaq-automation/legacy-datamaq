@@ -116,6 +116,8 @@ export interface AppContent {
 }
 
 export interface CommercialConfig {
+  brandName: string
+  brandAriaLabel: string
   baseOperativa: string
   tarifaBaseDesdeARS: number | null
   trasladoMinimoARS: number | null

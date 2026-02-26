@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useWhatsAppRedirectView } from './WhatsAppRedirectView'
 
-const { whatsappHref } = useWhatsAppRedirectView()
+const { whatsappHref, title, shouldRedirect } = useWhatsAppRedirectView()
 </script>
 
 <template>
@@ -10,16 +10,16 @@ const { whatsappHref } = useWhatsAppRedirectView()
       <div class="row justify-content-center">
         <div class="col-12 col-sm-10 col-md-8 col-lg-6">
           <section class="wa-redirect__card p-4 p-sm-5">
-            <p class="wa-redirect__kicker mb-2">DataMaq</p>
-            <h1 class="wa-redirect__title h3 mb-3">DataMaq</h1>
+            <p class="wa-redirect__kicker mb-2">{{ title }}</p>
+            <h1 class="wa-redirect__title h3 mb-3">{{ title }}</h1>
             <p class="wa-redirect__text mb-4">
               Si no se abrió WhatsApp automáticamente, tocá el botón.
             </p>
             <a
               class="btn wa-redirect__button btn-lg w-100 mb-3"
               :href="whatsappHref"
-              target="_blank"
-              rel="noopener noreferrer"
+              :target="shouldRedirect ? '_blank' : undefined"
+              :rel="shouldRedirect ? 'noopener noreferrer' : undefined"
             >
               Abrir WhatsApp
             </a>

@@ -7,7 +7,7 @@ Path: src/ui/layout/Footer.vue
     <div class="container">
       <div class="d-flex flex-column flex-lg-row gap-3 align-items-lg-center justify-content-between">
         <small>
-          © {{ year }} datamaq — {{ footer.note }}
+          © {{ year }} {{ brand }} — {{ footer.note }}
         </small>
         <button
           v-if="contactCtaEnabled"
@@ -28,5 +28,5 @@ import { useFooter } from './Footer'
 
 defineProps<FooterProps>()
 const emit = defineEmits<FooterEmits>()
-const { footer, contactLabel, year } = useFooter()
+const { footer, contactLabel, brand, year } = useFooter()
 </script>

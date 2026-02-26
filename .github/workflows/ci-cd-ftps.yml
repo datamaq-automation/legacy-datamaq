@@ -36,8 +36,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run quality gate
-        run: npm run quality:gate
+      - name: Run quality checks
+        run: |
+          npm run lint:brand-hardcodes
+          npm run typecheck
+          npm run test
+          npm run build
 
   build-smoke-e2e:
     name: Build / Smoke E2E
@@ -60,121 +64,34 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run smoke e2e
-        env:
-          VITE_BACKEND_BASE_URL: http://127.0.0.1:4173
         run: npm run test:e2e:smoke
 
-  deploy-prepare:
-    name: Deploy / Prepare
+  deploy-ftps:
+    name: Deploy / FTPS (${{ matrix.target }})
     runs-on: ubuntu-latest
     needs:
       - build-quality-gate
       - build-smoke-e2e
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     environment: production
-
-    steps:
-      - name: Validate deploy inputs
-        id: prepare
-        env:
-          VITE_BACKEND_BASE_URL: ${{ secrets.VITE_BACKEND_BASE_URL }}
-          VITE_IS_CONTACT_FORM_ACTIVE: ${{ secrets.VITE_IS_CONTACT_FORM_ACTIVE }}
-          VITE_IS_EMAIL_FORM_ACTIVE: ${{ secrets.VITE_IS_EMAIL_FORM_ACTIVE }}
-          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
-          FTPS_PORT: ${{ secrets.FTPS_PORT }}
-          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
-          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
-          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
-        run: |
-          set -euo pipefail
-
-          BACKEND_BASE_URL="${VITE_BACKEND_BASE_URL:-}"
-
-          if [ -z "${BACKEND_BASE_URL}" ]; then
-            echo "::error::Missing secret VITE_BACKEND_BASE_URL"
-            exit 1
-          fi
-          if ! printf '%s' "${BACKEND_BASE_URL}" | grep -Eq '^https://'; then
-            echo "::error::Invalid backend base URL. It must start with https://."
-            exit 1
-          fi
-
-          CONTACT_FORM_ACTIVE="${VITE_IS_CONTACT_FORM_ACTIVE:-false}"
-          EMAIL_FORM_ACTIVE="${VITE_IS_EMAIL_FORM_ACTIVE:-false}"
-          if ! printf '%s' "${CONTACT_FORM_ACTIVE}" | grep -Eq '^(true|false)$'; then
-            echo "::error::Invalid VITE_IS_CONTACT_FORM_ACTIVE. Use true or false."
-            exit 1
-          fi
-          if ! printf '%s' "${EMAIL_FORM_ACTIVE}" | grep -Eq '^(true|false)$'; then
-            echo "::error::Invalid VITE_IS_EMAIL_FORM_ACTIVE. Use true or false."
-            exit 1
-          fi
-
-          if [ -z "${FTPS_SERVER}" ]; then
-            echo "::error::Missing secret FTPS_SERVER"
-            exit 1
-          fi
-          if [ -z "${FTPS_USERNAME}" ]; then
-            echo "::error::Missing secret FTPS_USERNAME"
-            exit 1
-          fi
-          if [ -z "${FTPS_PASSWORD}" ]; then
-            echo "::error::Missing secret FTPS_PASSWORD"
-            exit 1
-          fi
-          if [ -z "${FTPS_REMOTE_DIR}" ]; then
-            echo "::error::Missing secret FTPS_REMOTE_DIR"
-            exit 1
-          fi
-
-          RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
-          RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
-          SERVER="${RAW_SERVER#ftp://}"
-          SERVER="${SERVER#ftps://}"
-          SERVER="${SERVER%%/*}"
-
-          SERVER_HOST="${SERVER%%:*}"
-          SERVER_PORT_FROM_HOST=""
-          if [ "${SERVER_HOST}" != "${SERVER}" ]; then
-            SERVER_PORT_FROM_HOST="${SERVER##*:}"
-          fi
-
-          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
-          REMOTE_DIR="${RAW_REMOTE_DIR}"
-
-          if [ -z "${SERVER_HOST}" ]; then
-            echo "::error::FTPS_SERVER is empty after normalization."
-            exit 1
-          fi
-
-          if [ -z "${REMOTE_DIR}" ]; then
-            echo "::error::FTPS_REMOTE_DIR is empty after normalization."
-            exit 1
-          fi
-
-          if ! printf '%s' "${PORT}" | grep -Eq '^[0-9]+$'; then
-            echo "::error::FTPS port is invalid. Check FTPS_PORT or FTPS_SERVER format."
-            exit 1
-          fi
-
-          if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
-            REMOTE_DIR="/${REMOTE_DIR}"
-          fi
-
-          if printf '%s' "${REMOTE_DIR}" | grep -q '\\'; then
-            echo "::error::FTPS_REMOTE_DIR must use Unix-style slashes. Current value is invalid."
-            exit 1
-          fi
-
-          echo "::notice::Deploy target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
-
-  deploy-build:
-    name: Deploy / Build Dist
-    runs-on: ubuntu-latest
-    needs:
-      - deploy-prepare
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: datamaq
+            ftps_server_secret: FTPS_SERVER_DATAMAQ
+            ftps_port_secret: FTPS_PORT_DATAMAQ
+            ftps_username_secret: FTPS_USERNAME_DATAMAQ
+            ftps_password_secret: FTPS_PASSWORD_DATAMAQ
+            ftps_remote_dir_secret: FTPS_REMOTE_DIR_DATAMAQ
+            ftps_allow_insecure_data_channel_secret: FTPS_ALLOW_INSECURE_DATA_CHANNEL_DATAMAQ
+          - target: upp
+            ftps_server_secret: FTPS_SERVER_PROFEBUSTOS
+            ftps_port_secret: FTPS_PORT_PROFEBUSTOS
+            ftps_username_secret: FTPS_USERNAME_PROFEBUSTOS
+            ftps_password_secret: FTPS_PASSWORD_PROFEBUSTOS
+            ftps_remote_dir_secret: FTPS_REMOTE_DIR_PROFEBUSTOS
+            ftps_allow_insecure_data_channel_secret: FTPS_ALLOW_INSECURE_DATA_CHANNEL_PROFEBUSTOS
 
     steps:
       - name: Checkout
@@ -189,44 +106,83 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Validate deploy inputs
         env:
-          VITE_BACKEND_BASE_URL: ${{ secrets.VITE_BACKEND_BASE_URL }}
-          VITE_IS_CONTACT_FORM_ACTIVE: ${{ secrets.VITE_IS_CONTACT_FORM_ACTIVE }}
-          VITE_IS_EMAIL_FORM_ACTIVE: ${{ secrets.VITE_IS_EMAIL_FORM_ACTIVE }}
-        run: npm run build
+          FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
+          FTPS_PORT: ${{ secrets[matrix.ftps_port_secret] }}
+          FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
+          FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
+          FTPS_REMOTE_DIR: ${{ secrets[matrix.ftps_remote_dir_secret] }}
+        run: |
+          set -euo pipefail
 
-      - name: Upload dist artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-ftps
-          path: dist
-          if-no-files-found: error
-          retention-days: 1
+          if [ -z "${FTPS_SERVER}" ]; then
+            echo "::error::Missing secret ${{ matrix.ftps_server_secret }}"
+            exit 1
+          fi
+          if [ -z "${FTPS_USERNAME}" ]; then
+            echo "::error::Missing secret ${{ matrix.ftps_username_secret }}"
+            exit 1
+          fi
+          if [ -z "${FTPS_PASSWORD}" ]; then
+            echo "::error::Missing secret ${{ matrix.ftps_password_secret }}"
+            exit 1
+          fi
+          if [ -z "${FTPS_REMOTE_DIR}" ]; then
+            echo "::error::Missing secret ${{ matrix.ftps_remote_dir_secret }}"
+            exit 1
+          fi
 
-  deploy-ftps-preflight:
-    name: Deploy / FTPS Preflight
-    runs-on: ubuntu-latest
-    timeout-minutes: 4
-    needs:
-      - deploy-prepare
-      - deploy-build
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    environment: production
+          RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
+          RAW_REMOTE_DIR="$(printf '%s' "${FTPS_REMOTE_DIR}" | tr -d '\r\n\t ')"
+          SERVER="${RAW_SERVER#ftp://}"
+          SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER%%/*}"
+          SERVER_HOST="${SERVER%%:*}"
+          SERVER_PORT_FROM_HOST=""
+          if [ "${SERVER_HOST}" != "${SERVER}" ]; then
+            SERVER_PORT_FROM_HOST="${SERVER##*:}"
+          fi
 
-    steps:
+          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+          REMOTE_DIR="${RAW_REMOTE_DIR}"
+          if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
+            REMOTE_DIR="/${REMOTE_DIR}"
+          fi
+
+          if [ -z "${SERVER_HOST}" ]; then
+            echo "::error::FTPS server is empty after normalization."
+            exit 1
+          fi
+          if ! printf '%s' "${PORT}" | grep -Eq '^[0-9]+$'; then
+            echo "::error::FTPS port is invalid."
+            exit 1
+          fi
+          if printf '%s' "${REMOTE_DIR}" | grep -q '\\'; then
+            echo "::error::FTPS remote dir must use Unix-style slashes."
+            exit 1
+          fi
+
+          echo "::notice::Deploy target=${{ matrix.target }} host=${SERVER_HOST} port=${PORT} dir=${REMOTE_DIR}"
+
+      - name: Build dist
+        run: |
+          set -euo pipefail
+          export BUILD_OUT_DIR=dist
+          npm run build -- ${{ matrix.target }}
+
       - name: Install lftp client
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp
 
-      - name: Validate DNS and remote dir access
+      - name: FTPS preflight
         env:
-          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
-          FTPS_PORT: ${{ secrets.FTPS_PORT }}
-          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
-          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
-          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
+          FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
+          FTPS_PORT: ${{ secrets[matrix.ftps_port_secret] }}
+          FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
+          FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
+          FTPS_REMOTE_DIR: ${{ secrets[matrix.ftps_remote_dir_secret] }}
         run: |
           set -euo pipefail
           RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
@@ -240,125 +196,55 @@ jobs:
           if [ "${SERVER_HOST}" != "${SERVER}" ]; then
             SERVER_PORT_FROM_HOST="${SERVER##*:}"
           fi
-
           PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
           REMOTE_DIR="${RAW_REMOTE_DIR}"
-
           if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
             REMOTE_DIR="/${REMOTE_DIR}"
           fi
 
           if ! getent hosts "${SERVER_HOST}" >/dev/null; then
-            echo "::error::FTPS_SERVER is not resolvable by DNS. Check secret FTPS_SERVER."
+            echo "::error::FTPS server is not resolvable by DNS."
             exit 1
           fi
 
-          echo "::notice::FTPS preflight target host=${SERVER_HOST} port=${PORT} remote_dir=${REMOTE_DIR}"
-          echo "::notice::lftp version: $(lftp --version | head -n 1)"
-
-          LAST_LOG_FILE=""
-          LAST_STATUS=1
-
           run_preflight_attempt() {
             ATTEMPT="$1"
-            TOTAL="$2"
-            PREFER_EPSV="$3"
-            FIX_PASV_ADDRESS="$4"
-            PASSIVE_MODE="$5"
+            PREFER_EPSV="$2"
+            FIX_PASV_ADDRESS="$3"
             LOG_FILE="$(mktemp)"
-            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set net:reconnect-interval-base 1; set net:reconnect-interval-max 2; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode ${PASSIVE_MODE}; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; cls -1; pwd; bye"
+            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; cls -1; pwd; bye"
 
-            echo "::notice::FTPS preflight attempt ${ATTEMPT}/${TOTAL} (passive-mode=${PASSIVE_MODE}, prefer-epsv=${PREFER_EPSV}, fix-pasv-address=${FIX_PASV_ADDRESS})"
+            echo "::notice::Preflight attempt ${ATTEMPT} for target=${{ matrix.target }}"
             set +e
             timeout 90 lftp -e "${LFTP_COMMAND}" >"${LOG_FILE}" 2>&1
             STATUS=$?
             set -e
 
             cat "${LOG_FILE}"
-            LAST_LOG_FILE="${LOG_FILE}"
-            LAST_STATUS="${STATUS}"
-
             if [ "${STATUS}" -eq 0 ]; then
-              echo "::notice::FTPS preflight succeeded on attempt ${ATTEMPT}/${TOTAL}."
               return 0
             fi
-
-            if [ "${STATUS}" -eq 124 ]; then
-              echo "::error::FTPS preflight timed out after 90 seconds."
-            fi
-
-            if grep -Eqi 'Login failed|530[[:space:]]' "${LOG_FILE}"; then
-              echo "::error::FTPS authentication failed in preflight."
-            fi
-            if grep -Eqi 'Name or service not known|Temporary failure in name resolution|Could not resolve host' "${LOG_FILE}"; then
-              echo "::error::FTPS DNS resolution failed in preflight."
-            fi
-            if grep -Eqi 'certificate|TLS|SSL|handshake|hostname does not match' "${LOG_FILE}"; then
-              echo "::error::FTPS TLS validation failed in preflight."
-            fi
-            if grep -Eqi 'cd: Access failed|550[[:space:]].*No such file|No such file or directory|Permission denied' "${LOG_FILE}"; then
-              echo "::error::FTPS remote path access failed in preflight."
-            fi
-            if grep -Eqi 'max-retries exceeded' "${LOG_FILE}"; then
-              echo "::error::FTPS reached lftp retry limit in preflight (max-retries exceeded)."
-            fi
-            if grep -Eqi '425[[:space:]]|Connection refused|Network is unreachable|Connection reset|timed out|max-retries exceeded' "${LOG_FILE}"; then
-              echo "::error::FTPS network/data channel failure in preflight."
-            fi
-
-            echo "::group::FTPS preflight diagnostic matches (attempt ${ATTEMPT}/${TOTAL})"
-            grep -Ein 'Fatal|error|421|425|426|530|TLS|SSL|handshake|certificate|hostname|timed out|timeout|refused|reset|max-retries|passive|epsv|pasv' "${LOG_FILE}" | tail -n 40 || true
-            echo "::endgroup::"
-            echo "::group::FTPS preflight failure tail (attempt ${ATTEMPT}/${TOTAL}, last 40 lines)"
-            tail -n 40 "${LOG_FILE}" || true
-            echo "::endgroup::"
             return 1
           }
 
-          ATTEMPTS=3
-          if run_preflight_attempt 1 "${ATTEMPTS}" false true true; then
+          if run_preflight_attempt 1 false true; then
             exit 0
           fi
-          if run_preflight_attempt 2 "${ATTEMPTS}" true false true; then
-            exit 0
-          fi
-          if run_preflight_attempt 3 "${ATTEMPTS}" false false false; then
+          if run_preflight_attempt 2 true false; then
             exit 0
           fi
 
-          echo "::error::FTPS preflight failed after bounded fallback attempts."
-          exit "${LAST_STATUS}"
-
-  deploy-ftps-upload:
-    name: Deploy / FTPS Upload
-    runs-on: ubuntu-latest
-    timeout-minutes: 6
-    needs:
-      - deploy-prepare
-      - deploy-ftps-preflight
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    environment: production
-
-    steps:
-      - name: Download dist artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-ftps
-          path: dist
-
-      - name: Install lftp client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y lftp
+          echo "::error::FTPS preflight failed for target=${{ matrix.target }}"
+          exit 1
 
       - name: Deploy dist via FTPS
         env:
-          FTPS_SERVER: ${{ secrets.FTPS_SERVER }}
-          FTPS_PORT: ${{ secrets.FTPS_PORT }}
-          FTPS_USERNAME: ${{ secrets.FTPS_USERNAME }}
-          FTPS_PASSWORD: ${{ secrets.FTPS_PASSWORD }}
-          FTPS_REMOTE_DIR: ${{ secrets.FTPS_REMOTE_DIR }}
-          FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ secrets.FTPS_ALLOW_INSECURE_DATA_CHANNEL }}
+          FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
+          FTPS_PORT: ${{ secrets[matrix.ftps_port_secret] }}
+          FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
+          FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
+          FTPS_REMOTE_DIR: ${{ secrets[matrix.ftps_remote_dir_secret] }}
+          FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ secrets[matrix.ftps_allow_insecure_data_channel_secret] }}
         run: |
           set -euo pipefail
           RAW_SERVER="$(printf '%s' "${FTPS_SERVER}" | tr -d '\r\n\t ')"
@@ -372,120 +258,52 @@ jobs:
           if [ "${SERVER_HOST}" != "${SERVER}" ]; then
             SERVER_PORT_FROM_HOST="${SERVER##*:}"
           fi
-
           PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
           REMOTE_DIR="${RAW_REMOTE_DIR}"
-
           if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
             REMOTE_DIR="/${REMOTE_DIR}"
           fi
 
           ALLOW_INSECURE_DATA_CHANNEL="${FTPS_ALLOW_INSECURE_DATA_CHANNEL:-false}"
           if ! printf '%s' "${ALLOW_INSECURE_DATA_CHANNEL}" | grep -Eq '^(true|false)$'; then
-            echo "::error::Invalid FTPS_ALLOW_INSECURE_DATA_CHANNEL. Use true or false."
+            echo "::error::FTPS_ALLOW_INSECURE_DATA_CHANNEL must be true or false."
             exit 1
           fi
-          if [ "${ALLOW_INSECURE_DATA_CHANNEL}" = "true" ]; then
-            echo "::warning::FTPS_ALLOW_INSECURE_DATA_CHANNEL=true enables PROT C fallback. Use only as temporary hosting workaround."
-          fi
-
-          LAST_LOG_FILE=""
-          LAST_STATUS=1
 
           run_upload_attempt() {
             ATTEMPT="$1"
-            TOTAL="$2"
-            PREFER_EPSV="$3"
-            FIX_PASV_ADDRESS="$4"
-            PASSIVE_MODE="$5"
-            SSL_PROTECT_DATA="$6"
+            PREFER_EPSV="$2"
+            FIX_PASV_ADDRESS="$3"
+            SSL_PROTECT_DATA="$4"
             LOG_FILE="$(mktemp)"
-            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set net:reconnect-interval-base 1; set net:reconnect-interval-max 2; set ftp:ssl-force true; set ftp:ssl-protect-data ${SSL_PROTECT_DATA}; set ftp:passive-mode ${PASSIVE_MODE}; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; cls -1; set cmd:fail-exit false; rm -f \"w\"; set cmd:fail-exit true; mirror -R --continue --delete --verbose dist .; bye"
+            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 20; set net:max-retries 1; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data ${SSL_PROTECT_DATA}; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${PORT}\" \"${SERVER_HOST}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue --delete --verbose dist .; bye"
 
-            echo "::notice::FTPS upload attempt ${ATTEMPT}/${TOTAL} (passive-mode=${PASSIVE_MODE}, prefer-epsv=${PREFER_EPSV}, fix-pasv-address=${FIX_PASV_ADDRESS}, ssl-protect-data=${SSL_PROTECT_DATA})"
-
+            echo "::notice::Upload attempt ${ATTEMPT} for target=${{ matrix.target }}"
             set +e
             timeout 120 lftp -e "${LFTP_COMMAND}" >"${LOG_FILE}" 2>&1
-            UPLOAD_STATUS=$?
+            STATUS=$?
             set -e
 
             cat "${LOG_FILE}"
-
-            LAST_LOG_FILE="${LOG_FILE}"
-            LAST_STATUS="${UPLOAD_STATUS}"
-
-            if [ "${UPLOAD_STATUS}" -eq 0 ]; then
-              echo "::notice::FTPS upload completed successfully on attempt ${ATTEMPT}/${TOTAL}."
+            if [ "${STATUS}" -eq 0 ]; then
               return 0
             fi
-
-            if [ "${UPLOAD_STATUS}" -eq 124 ]; then
-              echo "::error::FTPS upload timed out after 120 seconds."
-            fi
-
-            if grep -Eqi 'Login failed|530[[:space:]]' "${LOG_FILE}"; then
-              echo "::error::FTPS authentication failed. Validate FTPS_USERNAME/FTPS_PASSWORD."
-            fi
-            if grep -Eqi 'Name or service not known|Temporary failure in name resolution|Could not resolve host' "${LOG_FILE}"; then
-              echo "::error::FTPS server DNS resolution failed. Validate FTPS_SERVER."
-            fi
-            if grep -Eqi 'certificate|TLS|SSL|handshake|hostname does not match' "${LOG_FILE}"; then
-              echo "::error::FTPS TLS validation failed. Validate certificate and hostname."
-            fi
-            if grep -Eqi 'cd: Access failed|550[[:space:]].*No such file|No such file or directory|Permission denied' "${LOG_FILE}"; then
-              echo "::error::FTPS remote path access failed. Validate FTPS_REMOTE_DIR and user permissions."
-            fi
-            if grep -Eqi 'max-retries exceeded' "${LOG_FILE}"; then
-              echo "::error::FTPS reached lftp retry limit (max-retries). This usually indicates PASV/EPSV data-channel blocking or unstable hosting network."
-            fi
-            if grep -Eqi '425[[:space:]]|Connection refused|Network is unreachable|Connection reset|timed out|max-retries exceeded' "${LOG_FILE}"; then
-              echo "::error::FTPS network/data channel failure. Validate passive mode, firewall or hosting stability."
-            fi
-
-            echo "::group::FTPS diagnostic matches (attempt ${ATTEMPT}/${TOTAL})"
-            grep -Ein 'Fatal|error|421|425|426|530|TLS|SSL|handshake|certificate|hostname|timed out|timeout|refused|reset|max-retries|passive|epsv|pasv' "${LOG_FILE}" | tail -n 40 || true
-            echo "::endgroup::"
-            echo "::group::FTPS failure tail (attempt ${ATTEMPT}/${TOTAL}, last 40 lines)"
-            tail -n 40 "${LOG_FILE}" || true
-            echo "::endgroup::"
-
             return 1
           }
 
-          # Bounded fallback chain:
-          # 1) PASV + PASV fix, 2) EPSV preferred, 3) Active mode.
-          # Optional: if enabled, insecure data-channel (PROT C) retries each profile.
-          ATTEMPTS=3
-          if run_upload_attempt 1 "${ATTEMPTS}" false true true true; then
+          if run_upload_attempt 1 false true true; then
+            exit 0
+          fi
+          if run_upload_attempt 2 true false true; then
             exit 0
           fi
 
-          if grep -Eqi '425[[:space:]]|Connection refused|Network is unreachable|Connection reset|timed out|max-retries exceeded|passive|epsv|pasv' "${LAST_LOG_FILE}"; then
-            echo "::notice::Retrying FTPS upload with EPSV fallback profile due to data-channel/network indicators."
-            if run_upload_attempt 2 "${ATTEMPTS}" true false true true; then
-              exit 0
-            fi
-
-            echo "::notice::Retrying FTPS upload with active-mode fallback profile due to persistent data-channel/network indicators."
-            if run_upload_attempt 3 "${ATTEMPTS}" false false false true; then
-              exit 0
-            fi
-          else
-            echo "::notice::Skipping fallback upload attempt because failure does not look network/data-channel related."
-          fi
-
-          if [ "${ALLOW_INSECURE_DATA_CHANNEL}" = "true" ] && grep -Eqi '425[[:space:]]|Connection refused|Network is unreachable|Connection reset|timed out|max-retries exceeded|passive|epsv|pasv|Data connection|PROT|PBSZ' "${LAST_LOG_FILE}"; then
-            echo "::warning::Running insecure FTPS data-channel fallback sequence (ssl-protect-data=false)."
-            if run_upload_attempt 1 "${ATTEMPTS}" false true true false; then
-              exit 0
-            fi
-            if run_upload_attempt 2 "${ATTEMPTS}" true false true false; then
-              exit 0
-            fi
-            if run_upload_attempt 3 "${ATTEMPTS}" false false false false; then
+          if [ "${ALLOW_INSECURE_DATA_CHANNEL}" = "true" ]; then
+            echo "::warning::Using insecure data-channel fallback (ssl-protect-data=false)"
+            if run_upload_attempt 3 false true false; then
               exit 0
             fi
           fi
 
-          echo "::error::FTPS upload failed after bounded fallback attempts. Review the diagnostic errors above."
-          exit "${LAST_STATUS}"
+          echo "::error::FTPS upload failed for target=${{ matrix.target }}"
+          exit 1

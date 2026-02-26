@@ -52,7 +52,8 @@ interface QuoteDiscountView {
 }
 
 const contactCtaEnabled = getWhatsAppEnabled()
-const fallbackWhatsAppUrl = computed(() => getWhatsAppHref() ?? 'https://wa.me/5491156297160')
+const fallbackWhatsAppUrl = computed(() => getWhatsAppHref() ?? '#contacto')
+const isFallbackWhatsAppExternal = computed(() => /^https?:\/\//.test(fallbackWhatsAppUrl.value))
 
 const loading = ref(false)
 const pdfLoading = ref(false)
@@ -555,7 +556,11 @@ function triggerFileDownload(blob: Blob, filename: string): void {
 
               <div v-if="errorMessage" class="alert alert-warning mt-3 mb-0" role="alert">
                 <p class="mb-2">{{ errorMessage }}</p>
-                <a :href="fallbackWhatsAppUrl" target="_blank" rel="noopener noreferrer">
+                <a
+                  :href="fallbackWhatsAppUrl"
+                  :target="isFallbackWhatsAppExternal ? '_blank' : undefined"
+                  :rel="isFallbackWhatsAppExternal ? 'noopener noreferrer' : undefined"
+                >
                   Consultar al WhatsApp
                 </a>
               </div>

@@ -10,7 +10,7 @@
 ## Comportamiento de frontend
 
 - Endpoint consultado en runtime:
-  - `GET ${VITE_BACKEND_BASE_URL}/v1/public/pricing`
+  - `GET ${backendBaseUrl}/v1/public/pricing`
 - Visualizacion:
   - siempre `Consultar al WhatsApp` para tarifa base, traslado, diagnostico y hora adicional.
 - Parseo:

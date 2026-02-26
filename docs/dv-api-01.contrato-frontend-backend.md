@@ -1,4 +1,4 @@
-# Contratos API Frontend <-> Backend (`VITE_BACKEND_BASE_URL`)
+# Contratos API Frontend <-> Backend (`backendBaseUrl` por target)
 
 Este documento ahora actua como indice de contratos separados:
 

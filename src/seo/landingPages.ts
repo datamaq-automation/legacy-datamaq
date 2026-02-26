@@ -1,3 +1,5 @@
+import { publicConfig } from '@/infrastructure/config/publicConfig'
+
 export type LandingPageFaq = {
   question: string
   answer: string
@@ -24,11 +26,13 @@ export type LandingPageContent = {
   }
 }
 
+const SITE_NAME = publicConfig.siteName?.trim() || 'Sitio'
+
 export const landingPages = {
   medicionConsumoEscobar: {
     name: 'medicion-consumo-escobar',
     path: '/medicion-consumo-electrico-escobar',
-    title: 'Medicion de consumo electrico en Escobar | DataMaq',
+    title: `Medicion de consumo electrico en Escobar | ${SITE_NAME}`,
     description:
       'Medicion de consumo electrico en Escobar para industrias y PYMEs. Instalacion de Powermeter, verificacion de lectura y reporte tecnico con recomendaciones.',
     eyebrow: 'Escobar · GBA Norte',

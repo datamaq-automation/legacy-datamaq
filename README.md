@@ -1,119 +1,37 @@
-# datamaq-www
+# profebustos-www
 
-Landing corporativa construida con Vue 3 y Vite para promocionar servicios industriales de DataMaq.
+Frontend Vue 3 + Vite para landing y cotizador, con deploy FTPS multi-target desde un solo repositorio.
 
-## Caracteristicas principales
-- SPA liviana optimizada para CTAs de WhatsApp y correo electronico.
-- Integracion de formulario via endpoint backend (`VITE_INQUIRY_API_URL`).
-- Instrumentacion analitica con GA4 y Microsoft Clarity.
-- Componentes accesibles y reutilizables segun la guia de `docs/`.
-- Banner de consentimiento que bloquea GA4/Clarity hasta aceptacion explicita.
-- Monitoreo de disponibilidad del endpoint de contacto para deshabilitar el formulario cuando el servicio no responde.
+## Estado
 
-## Requisitos previos
-- Node.js >= 20.19.0
-- npm >= 8
-- Endpoint backend HTTPS para ingesta de consultas.
+- Rutas compartidas entre marcas: `/`, `/cotizador`, `/gracias`.
+- Configuracion por marca centralizada en [`src/infrastructure/content/runtimeProfiles.json`](src/infrastructure/content/runtimeProfiles.json).
+- Build por target sin `.env`: `npm run build -- <target>`.
 
-## Configuracion de entorno
-1. Usa `.env.example` como plantilla canonica y crea solo los archivos necesarios para tu entorno:
-   - `.env.local` para desarrollo local (no versionado).
-   - `.env.e2e` para pruebas E2E del repo (versionado).
-   - `.env.e2e.local` para overrides E2E locales (no versionado).
-2. Configura `VITE_INQUIRY_API_URL` apuntando al backend de contacto (ejemplo: `https://api.tudominio.com/contact`).
-   - Usa la URL real en `.env.local`.
-   - Mantene `.env.e2e` con endpoint de prueba/mocks para no impactar datos reales en CI.
-3. Chatwoot, provider de email y credenciales sensibles deben resolverse server-to-server fuera del frontend.
-4. Ajusta los IDs de analitica (`VITE_CLARITY_PROJECT_ID`, `VITE_GA4_ID`) segun la propiedad correspondiente.
+## Targets disponibles
 
-## Arquitectura de contacto y despliegue
-- Frontend estatico en Ferozo (DonWeb), publicado en `public_html` via FTPS.
-- Flujo de contacto: `frontend -> backend de contacto -> Chatwoot/Email`.
-- `VITE_INQUIRY_API_URL` define el endpoint backend de ingesta.
-- Credenciales, tokens y reglas de entrega quedan fuera de este repo (server-side).
-- Contrato tecnico DV-02: `docs/dv-chat-01.md`.
+- `datamaq`
+- `upp`
+- `e2e`
 
-## Instalacion y scripts
-```sh
-npm install         # instala dependencias
-npm run dev         # servidor de desarrollo
-npm run build       # compila assets para produccion en ./dist
-npm run preview     # sirve el build localmente
-npm run typecheck   # valida TypeScript estricto
-npm run test        # ejecuta tests unitarios
-npm run test:e2e    # ejecuta suite e2e con Playwright
-npm run test:e2e:smoke # ejecuta smoke e2e (home/contacto/gracias)
-npm run smoke:contact:backend -- https://api.tudominio.com/contact # smoke contacto
-npm run test:a11y   # auditoria heuristica de accesibilidad
-npm run test:coverage # cobertura unitaria con salida json-summary
-npm run check:css   # valida presupuesto de CSS
-npm run lint:colors # valida regla anti-HEX fuera de tokens
-npm run lint:layers # valida limites de dependencias entre capas
-npm run lint:client-secrets # evita secretos VITE_* y headers sensibles en frontend
-npm run lint:security # corre guardrails de seguridad cliente (origin-verify + client-secrets)
-npm run lint:test-coverage # valida umbrales minimos de cobertura global
-npm run lint:testing # lint:test-coverage + smoke e2e
-npm run lint:todo-sync # valida trazabilidad obligatoria src/tests -> docs/todo.md
-npm run quality:merge # puerta local recomendada antes de merge/deploy
-npm run ci:remote:status # estado remoto del workflow FTPS via GitHub API publica
-npm run ci:branch-protection:check # valida required checks en main (requiere GITHUB_TOKEN/GH_TOKEN)
+## Comandos principales
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run build:datamaq
+npm run build:upp
+npm run typecheck
+npm run test
+npm run test:e2e:smoke
 ```
 
-## CI/CD recomendado (GitHub Actions + FTPS)
-Este repositorio incluye el workflow `./.github/workflows/ci-cd-ftps.yml` con tres jobs:
-- `Quality Gate`: ejecuta `npm run quality:gate` en `pull_request` y `push`.
-- `Smoke E2E`: ejecuta `npm run test:e2e:smoke` en `pull_request` y `push`.
-- `Deploy Production (FTPS)`: publica `dist/` por FTPS al hacer `push` a `main`, solo si `Quality Gate` y `Smoke E2E` pasan.
+## CI/CD
 
-Secrets requeridos en GitHub:
-- `FTPS_SERVER`
-- `FTPS_USERNAME`
-- `FTPS_PASSWORD`
-- `FTPS_REMOTE_DIR` (ejemplo: `/public_html`)
-- `FTPS_PORT` (opcional, default `21`)
+Workflow: `.github/workflows/ci-cd-ftps.yml`
 
-Formato recomendado para `FTPS_SERVER`:
-- Solo host (sin `ftp://`, sin path), por ejemplo: `ftp.tudominio.com`.
-- El workflow tambien normaliza formato URL (`ftp://host:21/ruta`) si quedara configurado asi por error.
+- `pull_request`: typecheck, unit tests, build, smoke e2e.
+- `push` a `main`: deploy FTPS por matrix (`datamaq`, `upp`).
 
-Valores operativos confirmados para este proyecto:
-- `FTPS_REMOTE_DIR=/public_html`
-- `FTPS_PORT=21` (FTPS explicito)
-
-Configuracion recomendada en GitHub:
-1. Crear environment `production` y asociar los secrets FTPS.
-2. Activar branch protection en `main`.
-3. Marcar `CI/CD FTPS / Quality Gate` y `CI/CD FTPS / Smoke E2E` como checks obligatorios para merge.
-4. Si no aparecen en el selector de required checks, ejecutar una corrida manual (`workflow_dispatch`) del workflow sobre `main` y reintentar.
-5. Mientras el enforcement externo no este confirmado, usar `npm run quality:merge` como control operativo manual.
-
-## Analitica y eventos
-- Los eventos de compromiso se envian via `gtag` y `clarity`.
-- El contrato de datos esta en `src/application/analytics/engagementTracker.ts` y `src/application/analytics/trackingFacade.ts`.
-- Para evitar duplicados, se deduplican eventos en una ventana de 2 segundos.
-- GA4 y Clarity solo se inicializan cuando el banner de consentimiento registra aceptacion.
-- Politica de revocacion activa: `hard revoke` (al rechazar/revocar se bloquea tracking y se limpian cookies de analytics first-party).
-- Detalle de matriz y decision: `docs/dv-priv-01.md`.
-
-## Accesibilidad
-- Ejecuta `npm run test:a11y` para analizar templates `.vue`.
-- Corrige hallazgos antes de desplegar cambios visuales.
-
-## Despliegue (flujo objetivo)
-1. Verificar localmente `npm run quality:gate` y `npm run test:e2e:smoke`.
-2. Ejecutar workflow en GitHub (por `push` a `main` o `workflow_dispatch` sobre `main`).
-3. Confirmar en verde `Quality Gate` y `Smoke E2E`.
-4. GitHub Actions ejecuta build y deploy FTPS automatico a `FTPS_REMOTE_DIR`.
-5. Verificar en QA que el formulario crea contacto en Chatwoot y que eventos de WhatsApp/correo se registran una sola vez en GA4 y Clarity.
-
-## Smoke de backend de contacto
-- Script: `npm run smoke:contact:backend -- <INQUIRY_API_URL>`.
-- Referencia recomendada: `https://api.tudominio.com/contact`.
-- El script envía un `POST` de consulta al endpoint configurado y falla (exit code `1`) si no recibe `2xx`.
-
-## Recursos adicionales
-- Backlog tecnico priorizado: `docs/todo.md`.
-- Contrato operativo del agente: `AGENTS.md`.
-- Guia de uso con Codex: `docs/dv-opsr-02.md`.
-
-Consultas: [contacto@datamaq.com.ar](mailto:contacto@datamaq.com.ar).
+Runbook operativo: `docs/multi-target-deploy-runbook.md`.

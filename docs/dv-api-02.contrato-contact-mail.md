@@ -1,15 +1,15 @@
-# Contrato API: Contacto + Mail (`VITE_BACKEND_BASE_URL`)
+# Contrato API: Contacto + Mail (`backendBaseUrl` por target)
 
 ## 1) Base URL y endpoints
 
-- Variable fuente: `VITE_BACKEND_BASE_URL`
+- Variable fuente: `backendBaseUrl` en `src/infrastructure/content/runtimeProfiles.json`
 - Validacion en frontend:
   - En desarrollo (`DEV`): acepta `http://` o `https://`
   - En produccion: exige `https://`
 - Convencion productiva: versionado `/v1` y recursos semanticos.
 - Endpoints documentados en este archivo:
-  - `POST ${VITE_BACKEND_BASE_URL}/v1/contact`
-  - `POST ${VITE_BACKEND_BASE_URL}/v1/mail`
+  - `POST ${backendBaseUrl}/v1/contact`
+  - `POST ${backendBaseUrl}/v1/mail`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
