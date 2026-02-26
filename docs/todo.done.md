@@ -79,6 +79,36 @@
     - preflight CORS (`OPTIONS`) en `contact.php`
   - Evidencia: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` verde (11/11).
 
+### Migracion de endpoints versionados sin `.php` - 2026-02-26
+
+- [x] Definir rutas canónicas versionadas.
+  - Decisión aplicada: `/api/v1/...` como canónico.
+  - Rutas: `/api/v1/health`, `/api/v1/content`, `/api/v1/pricing`, `/api/v1/contact`, `/api/v1/mail`, `/api/v1/quote/diagnostic`, `/api/v1/quote/pdf`.
+
+- [x] Mantener compatibilidad temporal dual-stack.
+  - Evidencia: se conservan endpoints legacy `*.php`.
+  - Evidencia: se agregaron aliases versionados en `public/api/v1/*` (wrappers `.php`) y rutas directorio `index.php` sin extensión para entornos sin rewrite avanzado.
+
+- [x] Actualizar frontend/runtime al endpoint canónico versionado.
+  - Evidencia: `src/infrastructure/content/runtimeProfiles.json` actualizado a `/api/v1/...`.
+  - Evidencia: `src/infrastructure/health/probeBackendHealth.ts` usa `/api/v1/health`.
+
+- [x] Actualizar pruebas y contratos al endpoint canónico.
+  - Evidencia: tests actualizados en:
+    - `tests/unit/infrastructure/viteConfig.test.ts`
+    - `tests/unit/infrastructure/publicConfig.test.ts`
+    - `tests/unit/infrastructure/quoteApiGateway.test.ts`
+    - `tests/unit/infrastructure/probeBackendHealth.test.ts`
+    - `tests/unit/infrastructure/phpApiContracts.test.ts`
+    - `tests/e2e/smoke.spec.ts`
+  - Evidencia de ejecución:
+    - `npm run typecheck` verde
+    - `npm run test -- tests/unit/infrastructure/viteConfig.test.ts` verde
+    - `npm run test -- tests/unit/infrastructure/publicConfig.test.ts` verde
+    - `npm run test -- tests/unit/infrastructure/quoteApiGateway.test.ts` verde
+    - `npm run test -- tests/unit/infrastructure/probeBackendHealth.test.ts` verde
+    - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` verde
+
 ### P0 finalizado
 
 - [x] Migrar backend operativo a `public/api/*.php` manteniendo contrato del frontend.

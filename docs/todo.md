@@ -18,6 +18,12 @@
 
 - [>] Hardening backend PHP posterior a auditoria (ciberseguridad + arquitectura + SOLID).
 
+## P0 (migracion de endpoints sin `.php`)
+
+- [ ] **Plan de deprecacion controlada**
+  - Estado: fase 1 dual-stack completada (canónico `/api/v1/...` + legacy `*.php`).
+  - Pendiente: definir fecha de retiro de legacy y checklist de rollback documentado para operaciones.
+
 ## P0 (seguridad y operacion)
 
 - [ ] **Corregir exposicion de codigo fuente PHP en entorno dev/proxy**

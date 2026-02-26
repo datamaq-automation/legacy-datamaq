@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
-    const healthRoutes = ['**/api/health.php', '**/plantilla-www/public/api/health.php']
+    const healthRoutes = ['**/api/v1/health', '**/plantilla-www/public/api/v1/health']
     for (const pattern of healthRoutes) {
       await page.route(pattern, async (route) => {
         await route.fulfill({
@@ -19,7 +19,7 @@ test.describe('Smoke E2E', () => {
       })
     }
 
-    const pricingRoutes = ['**/api/pricing.php', '**/plantilla-www/public/api/pricing.php']
+    const pricingRoutes = ['**/api/v1/pricing', '**/plantilla-www/public/api/v1/pricing']
     for (const pattern of pricingRoutes) {
       await page.route(pattern, async (route) => {
         await route.fulfill({
@@ -35,7 +35,7 @@ test.describe('Smoke E2E', () => {
       })
     }
 
-    const contentRoutes = ['**/api/content.php', '**/plantilla-www/public/api/content.php']
+    const contentRoutes = ['**/api/v1/content', '**/plantilla-www/public/api/v1/content']
     for (const pattern of contentRoutes) {
       await page.route(pattern, async (route) => {
         await route.fulfill({
@@ -79,12 +79,12 @@ test.describe('Smoke E2E', () => {
       await route.fulfill({ status: 405 })
     }
 
-    const contactRoutes = ['**/api/contact.php', '**/plantilla-www/public/api/contact.php']
+    const contactRoutes = ['**/api/v1/contact', '**/plantilla-www/public/api/v1/contact']
     for (const pattern of contactRoutes) {
       await page.route(pattern, fulfillContactApi)
     }
 
-    const mailRoutes = ['**/api/mail.php', '**/plantilla-www/public/api/mail.php']
+    const mailRoutes = ['**/api/v1/mail', '**/plantilla-www/public/api/v1/mail']
     for (const pattern of mailRoutes) {
       await page.route(pattern, fulfillContactApi)
     }
@@ -131,3 +131,4 @@ test.describe('Smoke E2E', () => {
     )
   })
 })
+

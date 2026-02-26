@@ -268,13 +268,13 @@ describe('QuoteApiGateway', () => {
 
     const gateway = new QuoteApiGateway(
       createConfig({
-        quoteDiagnosticApiUrl: '/api/quote/diagnostic.php',
-        quotePdfApiUrl: '/api/quote/pdf.php?quote_id={quote_id}'
+        quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
+        quotePdfApiUrl: '/api/v1/quote/pdf?quote_id={quote_id}'
       })
     )
     await gateway.fetchQuotePdf('Q-20260222-000321')
 
-    expect(fetchMock).toHaveBeenCalledWith('/api/quote/pdf.php?quote_id=Q-20260222-000321', {
+    expect(fetchMock).toHaveBeenCalledWith('/api/v1/quote/pdf?quote_id=Q-20260222-000321', {
       method: 'GET'
     })
   })
@@ -405,3 +405,4 @@ describe('QuoteApiGateway', () => {
     )
   })
 })
+

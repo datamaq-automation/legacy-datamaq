@@ -1,4 +1,4 @@
-const HEALTH_ENDPOINT = '/api/health.php'
+const HEALTH_ENDPOINT = '/api/v1/health'
 
 export async function probeBackendHealth(endpoint: string = HEALTH_ENDPOINT): Promise<void> {
   try {
