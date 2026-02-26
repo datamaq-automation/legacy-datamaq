@@ -36,13 +36,6 @@ jobs:
             ftps_port_var: FTPS_DATAMAQ_PORT
             ftps_remote_dir_var: FTPS_DATAMAQ_REMOTE_DIR
             ftps_allow_insecure_data_channel_var: FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
-          - target: upp
-            ftps_server_secret: FTPS_UPP_SERVER
-            ftps_username_secret: FTPS_UPP_USERNAME
-            ftps_password_secret: FTPS_UPP_PASSWORD
-            ftps_port_var: FTPS_UPP_PORT
-            ftps_remote_dir_var: FTPS_UPP_REMOTE_DIR
-            ftps_allow_insecure_data_channel_var: FTPS_UPP_ALLOW_INSECURE_DATA_CHANNEL
 
     steps:
       - name: Preflight / Validate deploy inputs

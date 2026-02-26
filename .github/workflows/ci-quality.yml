@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [datamaq, upp]
+        target: [datamaq]
 
     steps:
       - name: Checkout
