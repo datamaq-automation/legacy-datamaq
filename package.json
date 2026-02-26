@@ -21,6 +21,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts --project=chromium",
+    "test:e2e:integration": "playwright test tests/e2e/integration.backend.spec.ts --project=chromium",
     "smoke:contact:backend": "node scripts/smoke-contact-backend.mjs",
     "typecheck": "tsc --noEmit",
     "test:watch": "vitest",

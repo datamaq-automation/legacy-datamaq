@@ -12,6 +12,8 @@ import removeConsole from 'vite-plugin-remove-console'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
+  const proxyTarget = process.env.VITE_API_PROXY_TARGET?.trim() || 'http://localhost'
+  const proxyPrefix = process.env.VITE_API_PROXY_PREFIX?.trim() ?? '/plantilla-www/public'
   const plugins = [
     vue(),
     removeConsole({ exclude: ['info', 'error', 'warn'] })
@@ -29,9 +31,9 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: 'http://localhost',
+          target: proxyTarget,
           changeOrigin: true,
-          rewrite: (path) => `/plantilla-www/public${path}`
+          rewrite: (requestPath) => `${proxyPrefix}${requestPath}`
         }
       }
     },
