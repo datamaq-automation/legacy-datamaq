@@ -80,3 +80,17 @@
     - `tests/unit/infrastructure/contentRepository.test.ts`
     - `tests/unit/infrastructure/viteConfig.test.ts`
     - `tests/unit/infrastructure/phpApiContracts.test.ts`
+
+### P0 finalizado - 2026-02-26 (`content` remoto completo)
+
+- [x] Definir contrato final completo de `GET /api/content.php` por target.
+  - Evidencia: `public/api/content.php` entrega `data` con estructura completa compatible con `AppContentSchema` y `version: v2`.
+  - Evidencia: soporte de `brand_id` adicional `example` en `public/api/_bootstrap.php`.
+
+- [x] Implementar payload completo en PHP por marca/target.
+  - Evidencia: `dmq_build_app_content()` con variantes `datamaq`, `upp`, `example`.
+  - Evidencia: test de contrato ampliado en `tests/unit/infrastructure/phpApiContracts.test.ts`.
+
+- [x] Retirar contenido textual hardcodeado de frontend y dejar fallback tecnico minimo.
+  - Evidencia: `src/infrastructure/content/landingContentBuilder.ts` reducido a fallback tecnico neutral.
+  - Evidencia: frontend prioriza snapshot remoto completo en `src/infrastructure/content/dynamicContentService.ts`.

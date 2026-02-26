@@ -11,88 +11,85 @@ import teamTraining from '@/assets/team-training.svg'
 import tecnicoACargo from '@/assets/tecnico-a-cargo.webp'
 
 export function buildLandingAppContent(config: CommercialConfig): AppContent {
-  const diagnosticListNote =
-    typeof config.visitaDiagnosticoHasta2hARS === 'number'
-      ? `Diagnostico en lista: ARS ${formatArs(config.visitaDiagnosticoHasta2hARS)}.`
-      : 'Diagnostico en lista: Consultar al WhatsApp.'
+  const diagnosticListNote = 'Contenido no disponible temporalmente.'
 
   return {
     hero: {
       badge: `Servicio tecnico ${config.brandName}`,
-      title: 'Diagnostico e instalacion electrica para pymes',
-      subtitle: 'Levantamiento en campo, medicion y plan de accion con criterios operativos.',
-      responseNote: `Base operativa: ${config.baseOperativa}. Valores de referencia: Consultar al WhatsApp.`,
+      title: 'Contenido no disponible',
+      subtitle: 'Estamos actualizando la informacion de esta landing.',
+      responseNote: `Base operativa: ${config.baseOperativa}.`,
       primaryCta: {
-        label: 'Escribir por WhatsApp',
+        label: 'Contactar',
         href: config.whatsappUrl,
         action: 'whatsapp'
       },
       secondaryCta: {
-        label: 'Ver servicios',
+        label: 'Ver estado',
         href: '#servicios',
         action: 'services'
       },
       benefits: [
-        { title: 'Diagnostico inicial', text: 'Relevamiento tecnico y prioridades.', variant: 'primary' },
-        { title: 'Implementacion', text: 'Ejecucion por etapas con trazabilidad.', variant: 'success' },
-        { title: 'Seguimiento', text: 'Control de resultados y ajustes.', variant: 'warning' }
+        { title: 'Sincronizacion', text: 'Esperando contenido remoto.', variant: 'primary' },
+        { title: 'Integridad', text: 'Validando contrato de contenido.', variant: 'success' },
+        { title: 'Estado', text: 'Mostrando fallback tecnico.', variant: 'warning' }
       ],
       image: { src: heroEnergy, alt: 'Energia y tablero industrial', width: 900, height: 700 }
     },
     services: {
-      title: 'Servicios',
+      title: 'Contenido',
       cards: [
         {
-          id: 'instalacion',
-          title: 'Instalacion y adecuacion',
-          description: 'Montaje, recambio y ordenamiento de tableros.',
-          subtitle: 'Estandarizacion tecnica',
+          id: 'placeholder-1',
+          title: 'Bloque temporal',
+          description: 'Este contenido sera provisto por backend.',
+          subtitle: 'Pendiente de sincronizacion',
           media: { src: installTools, alt: 'Herramientas de instalacion', width: 900, height: 700 },
-          items: ['Tableros y protecciones', 'Cableado y etiquetado', 'Puesta en servicio'],
+          items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           figure: {
             src: installTools,
             alt: 'Referencia comercial',
             width: 900,
             height: 700,
-            caption: 'Referencia comercial: Consultar al WhatsApp.'
+            caption: 'Contenido temporal.'
           },
-          cta: { label: 'Consultar', href: '#contacto', action: 'contact', section: 'contacto' }
+          cta: { label: 'Contactar', href: '#contacto', action: 'contact', section: 'contacto' }
         },
         {
-          id: 'medicion',
-          title: 'Medicion y diagnostico',
-          description: 'Medicion de consumo y deteccion de desbalances.',
+          id: 'placeholder-2',
+          title: 'Bloque temporal',
+          description: 'Este contenido sera provisto por backend.',
           subtitle: `Instrumentacion: ${config.equipos.medidorNombre}`,
           media: { src: analyticsDashboard, alt: 'Panel de medicion', width: 900, height: 700 },
-          items: ['Perfil de carga', 'Eventos y anomalias', 'Informe accionable'],
+          items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           note: diagnosticListNote,
-          cta: { label: 'Solicitar diagnostico', href: '#contacto', action: 'contact', section: 'contacto' }
+          cta: { label: 'Contactar', href: '#contacto', action: 'contact', section: 'contacto' }
         },
         {
-          id: 'capacitacion',
-          title: 'Capacitacion operativa',
-          description: 'Transferencia de criterios para operacion diaria.',
-          subtitle: 'Procedimientos de campo',
+          id: 'placeholder-3',
+          title: 'Bloque temporal',
+          description: 'Este contenido sera provisto por backend.',
+          subtitle: 'Pendiente de sincronizacion',
           media: { src: teamTraining, alt: 'Capacitacion de equipo', width: 900, height: 700 },
-          items: ['Rutinas de control', 'Lectura de indicadores', 'Buenas practicas'],
-          cta: { label: 'Coordinar', href: '#contacto', action: 'contact', section: 'contacto' }
+          items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
+          cta: { label: 'Contactar', href: '#contacto', action: 'contact', section: 'contacto' }
         }
       ]
     },
     about: {
       title: `Sobre ${config.brandName}`,
       paragraphs: [
-        'Trabajo orientado a continuidad operativa y decisiones tecnicas claras.',
-        'Cada intervencion prioriza seguridad, orden documental y resultados medibles.'
+        'Contenido temporal de fallback.',
+        'Este bloque se reemplaza por backend.'
       ],
       image: { src: tecnicoACargo, alt: 'Tecnico a cargo', width: 700, height: 933 }
     },
     profile: {
-      title: 'Perfil tecnico',
+      title: 'Perfil',
       bullets: [
-        'Diagnostico en sitio y plan de mejora.',
-        'Implementacion por etapas.',
-        'Acompanamiento posterior a la puesta en marcha.'
+        'Contenido temporal.',
+        'Esperando backend.',
+        'Sincronizacion pendiente.'
       ]
     },
     navbar: {
@@ -112,14 +109,14 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       note: `${config.brandName} | ${config.baseOperativa}`
     },
     legal: {
-      text: 'La informacion publicada es referencial y puede actualizarse sin previo aviso.'
+      text: 'Contenido temporal.'
     },
     contact: {
       title: 'Contacto',
-      subtitle: 'Contanos tu necesidad y te respondemos con un plan de accion.',
+      subtitle: 'Formulario disponible mientras se sincroniza contenido.',
       labels: { email: 'Email', message: 'Mensaje' },
       submitLabel: 'Enviar',
-      checkingMessage: 'Verificando disponibilidad del backend...',
+      checkingMessage: 'Verificando backend...',
       unavailableMessage: 'Servicio temporalmente no disponible.',
       successMessage: 'Mensaje enviado. Gracias por contactarte.',
       errorMessage: 'No se pudo enviar. Intentalo nuevamente.',
@@ -127,13 +124,9 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
     },
     consent: {
       title: 'Privacidad',
-      description: 'Usamos analitica para mejorar la experiencia.',
+      description: 'Configuracion temporal de consentimiento.',
       acceptLabel: 'Aceptar',
       rejectLabel: 'Rechazar'
     }
   }
-}
-
-function formatArs(amount: number): string {
-  return new Intl.NumberFormat('es-AR').format(amount)
 }

@@ -58,13 +58,27 @@ describe('PHP API contracts', () => {
     expect(payload.data?.diagnostico_lista_2h_ars).toBeTypeOf('number')
   })
 
-  it('content.php exposes data.hero.title', async () => {
+  it('content.php exposes full AppContent contract', async () => {
     const response = await fetch(`${BASE_URL}/content.php`)
-    const payload = (await response.json()) as { data?: { hero?: { title?: unknown } } }
+    const payload = (await response.json()) as {
+      data?: {
+        hero?: { title?: unknown; subtitle?: unknown; primaryCta?: { href?: unknown } }
+        services?: { cards?: unknown[] }
+        about?: { paragraphs?: unknown[] }
+        contact?: { labels?: { email?: unknown; message?: unknown } }
+      }
+    }
 
     expect(response.status).toBe(200)
     expect(typeof payload.data?.hero?.title).toBe('string')
     expect(String(payload.data?.hero?.title)).not.toHaveLength(0)
+    expect(typeof payload.data?.hero?.subtitle).toBe('string')
+    expect(typeof payload.data?.hero?.primaryCta?.href).toBe('string')
+    expect(Array.isArray(payload.data?.services?.cards)).toBe(true)
+    expect((payload.data?.services?.cards ?? []).length).toBeGreaterThan(0)
+    expect(Array.isArray(payload.data?.about?.paragraphs)).toBe(true)
+    expect(typeof payload.data?.contact?.labels?.email).toBe('string')
+    expect(typeof payload.data?.contact?.labels?.message).toBe('string')
   })
 
   it('quote/diagnostic.php returns expected quote payload', async () => {

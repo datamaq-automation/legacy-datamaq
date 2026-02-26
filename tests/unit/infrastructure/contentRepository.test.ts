@@ -81,14 +81,14 @@ describe('ContentRepository', () => {
     const heroRef = repository.getHeroContent()
     const servicesRef = repository.getServicesContent()
 
-    expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
+    expect(heroRef.responseNote).toContain('Base operativa')
 
     await flushRuntimePricing()
     await flushRuntimePricing()
 
-    expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
-    expect(servicesRef.cards[0].figure?.caption).toContain('Consultar al WhatsApp')
-    expect(servicesRef.cards[1].note).toContain('ARS 275.000')
+    expect(heroRef.responseNote).toContain('Base operativa')
+    expect(servicesRef.cards[0].figure?.caption).toContain('Contenido temporal.')
+    expect(servicesRef.cards[1].note).toContain('Contenido no disponible temporalmente.')
     expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(275000)
     expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
     expect(commercialConfig.trasladoMinimoARS).toBeNull()
@@ -116,8 +116,8 @@ describe('ContentRepository', () => {
     await flushRuntimePricing()
     await flushRuntimePricing()
 
-    expect(repository.getHeroContent().responseNote).toContain('Consultar al WhatsApp')
-    expect(repository.getServicesContent().cards[1].note).toContain('ARS 260.000')
+    expect(repository.getHeroContent().responseNote).toContain('Base operativa')
+    expect(repository.getServicesContent().cards[1].note).toContain('Contenido no disponible temporalmente.')
     expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(260000)
     expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
     expect(commercialConfig.trasladoMinimoARS).toBeNull()
@@ -246,7 +246,7 @@ describe('ContentRepository', () => {
     expect(remoteRepository.getLegalContent().text).toBe('Legal remoto')
   })
 
-  it('keeps fallback "Consultar al WhatsApp" when backend responds with non-ok status', async () => {
+  it('keeps technical fallback when backend responds with non-ok status', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response('backend-down', {
@@ -262,11 +262,11 @@ describe('ContentRepository', () => {
 
     await flushRuntimePricing()
 
-    expect(heroRef.responseNote).toContain('Consultar al WhatsApp')
+    expect(heroRef.responseNote).toContain('Base operativa')
     expect(logger.warn).toHaveBeenCalled()
   })
 
-  it('keeps fallback "Consultar al WhatsApp" when payload has no recognized pricing keys', async () => {
+  it('keeps technical fallback when payload has no recognized pricing keys', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ ok: true, data: { foo: 'bar' } }), {
@@ -282,7 +282,7 @@ describe('ContentRepository', () => {
 
     await flushRuntimePricing()
 
-    expect(repository.getHeroContent().responseNote).toContain('Consultar al WhatsApp')
+    expect(repository.getHeroContent().responseNote).toContain('Base operativa')
     expect(logger.warn).toHaveBeenCalled()
   })
 

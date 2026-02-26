@@ -94,9 +94,9 @@ test.describe('Smoke E2E', () => {
     await page.goto('/')
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Diagnostico e instalacion electrica para pymes'
+      'Contenido no disponible'
     )
-    await expect(page.getByRole('heading', { name: 'Servicios', exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Contenido', exact: true })).toBeVisible()
   })
 
   test('contact lead flow submits and navigates to thanks', async ({ page }) => {
@@ -127,7 +127,7 @@ test.describe('Smoke E2E', () => {
     await page.getByRole('button', { name: /Volver al inicio/i }).click()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Diagnostico e instalacion electrica para pymes'
+      'Contenido no disponible'
     )
   })
 })

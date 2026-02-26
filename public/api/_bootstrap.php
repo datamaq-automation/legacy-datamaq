@@ -18,7 +18,7 @@ function dmq_resolve_brand_id(): string
     $brandFromEnv = getenv('BRAND_ID');
     if (is_string($brandFromEnv)) {
         $normalized = strtolower(trim($brandFromEnv));
-        if ($normalized === 'datamaq' || $normalized === 'upp') {
+        if ($normalized === 'datamaq' || $normalized === 'upp' || $normalized === 'example') {
             return $normalized;
         }
     }
@@ -36,6 +36,8 @@ function dmq_resolve_brand_id(): string
         'datamaq.com.ar' => 'datamaq',
         'www.upp.example' => 'upp',
         'upp.example' => 'upp',
+        'www.example.com' => 'example',
+        'example.com' => 'example',
     ];
 
     return $hostBrandMap[$host] ?? 'datamaq';
