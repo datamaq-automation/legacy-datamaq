@@ -1,4 +1,4 @@
-const HEALTH_ENDPOINT = '/api/v1/health'
+const HEALTH_ENDPOINT = '/api/v1/health.php'
 
 export async function probeBackendHealth(endpoint: string = HEALTH_ENDPOINT): Promise<void> {
   try {
@@ -58,3 +58,4 @@ function normalize(value: unknown): string | null {
   const trimmed = value.trim()
   return trimmed ? trimmed : null
 }
+

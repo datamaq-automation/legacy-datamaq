@@ -21,10 +21,11 @@ describe('publicConfig', () => {
     expect(profile.storageNamespace).toBe('upp')
     expect(profile.siteName).toBe('UPP')
     expect(profile.backendBaseUrl).toBeUndefined()
-    expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
-    expect(profile.contentApiUrl).toBe('/api/v1/content')
-    expect(profile.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
-    expect(profile.quotePdfApiUrl).toBe('/api/v1/quote/pdf?quote_id={quote_id}')
+    expect(profile.inquiryApiUrl).toBe('/api/v1/contact.php')
+    expect(profile.contentApiUrl).toBe('/api/v1/content.php')
+    expect(profile.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic.php')
+    expect(profile.quotePdfApiUrl).toBe('/api/v1/quote/pdf.php?quote_id={quote_id}')
   })
 })
+
 
