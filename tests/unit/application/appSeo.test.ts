@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { buildAppHead } from '@/ui/seo/appSeo'
+import { buildLandingAppContent } from '@/infrastructure/content/landingContentBuilder'
+import { commercialConfig } from '@/infrastructure/content/Appcontent.active'
 
 const baseSeo = {
   title: 'Datamaq',
@@ -99,5 +101,31 @@ describe('buildAppHead', () => {
       true
     )
     expect(payloads.some((entry) => entry['@type'] === 'OfferCatalog')).toBe(true)
+  })
+
+  it('builds Escobar landing SEO from backend AppContent payload', () => {
+    const appContent = buildLandingAppContent(commercialConfig)
+    appContent.hero.title = 'Medicion de consumo electrico en Escobar'
+    appContent.hero.subtitle = 'Servicio tecnico con diagnostico y plan de accion.'
+    appContent.decisionFlow.faqItems = [
+      {
+        question: 'Trabajan en Escobar?',
+        answer: 'Si, con base operativa en GBA Norte.'
+      }
+    ]
+
+    const head = buildAppHead(baseSeo, '/medicion-consumo-electrico-escobar', false, appContent)
+
+    expect(head.title).toBe('Medicion de consumo electrico en Escobar | Datamaq')
+    expect(head.meta).toEqual(
+      expect.arrayContaining([
+        { name: 'description', content: 'Servicio tecnico con diagnostico y plan de accion.' }
+      ])
+    )
+
+    const scripts = head.script ?? []
+    const payloads = scripts.map((entry) => JSON.parse(String(entry.children)))
+    expect(payloads.some((entry) => entry['@type'] === 'Service')).toBe(true)
+    expect(payloads.some((entry) => entry['@type'] === 'FAQPage')).toBe(true)
   })
 })

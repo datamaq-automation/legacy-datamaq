@@ -16,7 +16,7 @@ export function useApp() {
   )
   const isContentUnavailable = computed(() => remoteContentStatus.value === 'unavailable')
 
-  useHead(() => buildAppHead(seo, route.path, isThanksPage.value))
+  useHead(() => buildAppHead(seo, route.path, isThanksPage.value, content.getContent()))
 
   return {
     isContentReady,

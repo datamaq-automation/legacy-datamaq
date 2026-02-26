@@ -1,4 +1,5 @@
 import type { HeadObject } from '@vueuse/head'
+import type { AppContent } from '@/domain/types/content'
 import {
   buildLocalBusinessJsonLd,
   buildOfferCatalogJsonLd,
@@ -6,18 +7,18 @@ import {
   buildWebsiteJsonLd,
   SeoMeta
 } from '@/ui/seo/defaultSeo'
-import { getLandingPageByPath, type LandingPageContent, type LandingPageFaq } from '@/seo/landingPages'
 
 export function buildAppHead(
   seo: SeoMeta,
   currentPath: string,
-  isThanksPage: boolean
+  isThanksPage: boolean,
+  appContent?: AppContent
 ): HeadObject {
   const normalizedPath = currentPath.startsWith('/') ? currentPath : `/${currentPath}`
   const canonicalUrl = buildCanonicalUrl(seo.siteUrl, normalizedPath)
-  const landingPage = getLandingPageByPath(normalizedPath)
-  const baseTitle = landingPage?.title ?? seo.title
-  const baseDescription = landingPage?.description ?? seo.description
+  const escobarSeo = buildEscobarSeoData(normalizedPath, appContent, seo)
+  const baseTitle = escobarSeo?.title ?? seo.title
+  const baseDescription = escobarSeo?.description ?? seo.description
   const pageTitle = isThanksPage ? `Gracias | ${seo.siteName}` : baseTitle
   const pageDescription = isThanksPage
     ? 'Recibimos tu consulta. En breve te contactamos.'
@@ -70,16 +71,16 @@ export function buildAppHead(
     })
   }
 
-  if (landingPage && !isThanksPage) {
+  if (escobarSeo && !isThanksPage) {
     scripts.push({
       type: 'application/ld+json',
-      children: JSON.stringify(buildServiceJsonLd(landingPage, seo))
+      children: JSON.stringify(buildServiceJsonLd(escobarSeo, seo))
     })
 
-    if (landingPage.faqs.length) {
+    if (escobarSeo.faqs.length) {
       scripts.push({
         type: 'application/ld+json',
-        children: JSON.stringify(buildFaqJsonLd(landingPage.faqs))
+        children: JSON.stringify(buildFaqJsonLd(escobarSeo.faqs))
       })
     }
   }
@@ -104,10 +105,7 @@ function buildCanonicalUrl(base: string, path: string): string {
   return `${normalizedBase}${path}`
 }
 
-function buildServiceJsonLd(
-  landing: LandingPageContent,
-  seo: SeoMeta
-): Record<string, unknown> {
+function buildServiceJsonLd(landing: EscobarSeoData, seo: SeoMeta): Record<string, unknown> {
   const provider: Record<string, unknown> = {
     '@type': 'Organization',
     name: seo.business.name || seo.siteName
@@ -119,15 +117,15 @@ function buildServiceJsonLd(
   return {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: landing.service.name,
-    serviceType: landing.service.serviceType,
-    description: landing.service.description,
-    areaServed: landing.service.areaServed,
+    name: landing.serviceName,
+    serviceType: landing.serviceType,
+    description: landing.serviceDescription,
+    areaServed: landing.areaServed,
     provider
   }
 }
 
-function buildFaqJsonLd(faqs: LandingPageFaq[]): Record<string, unknown> {
+function buildFaqJsonLd(faqs: Array<{ question: string; answer: string }>): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -139,5 +137,42 @@ function buildFaqJsonLd(faqs: LandingPageFaq[]): Record<string, unknown> {
         text: faq.answer
       }
     }))
+  }
+}
+
+type EscobarSeoData = {
+  title: string
+  description: string
+  serviceName: string
+  serviceType: string
+  serviceDescription: string
+  areaServed: string[]
+  faqs: Array<{ question: string; answer: string }>
+}
+
+function buildEscobarSeoData(
+  normalizedPath: string,
+  appContent: AppContent | undefined,
+  seo: SeoMeta
+): EscobarSeoData | null {
+  if (normalizedPath !== '/medicion-consumo-electrico-escobar' || !appContent) {
+    return null
+  }
+
+  const hero = appContent.hero
+  const medicionService =
+    appContent.services.cards.find((card) => card.id === 'medicion') ?? appContent.services.cards[0]
+  if (!medicionService) {
+    return null
+  }
+
+  return {
+    title: `${hero.title} | ${seo.siteName}`,
+    description: hero.subtitle,
+    serviceName: medicionService.title,
+    serviceType: 'Medicion de consumo electrico',
+    serviceDescription: medicionService.description,
+    areaServed: ['Escobar', 'GBA Norte', 'Buenos Aires', 'Argentina'],
+    faqs: appContent.decisionFlow.faqItems
   }
 }
