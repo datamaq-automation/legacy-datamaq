@@ -307,7 +307,7 @@ jobs:
             if [ "${FTPS_MODE}" = "implicit" ]; then
               OPEN_TARGET="ftps://${SERVER_HOST}"
             fi
-            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data ${SSL_PROTECT_DATA}; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 3; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${ATTEMPT_PORT}\" \"${OPEN_TARGET}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue --delete --verbose dist .; bye"
+            LFTP_COMMAND="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data ${SSL_PROTECT_DATA}; set ftp:passive-mode true; set ftp:prefer-epsv ${PREFER_EPSV}; set ftp:fix-pasv-address ${FIX_PASV_ADDRESS}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 3; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${ATTEMPT_PORT}\" \"${OPEN_TARGET}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue --verbose dist .; bye"
 
             echo "::notice::Upload attempt ${ATTEMPT} for target=${{ matrix.target }} mode=${FTPS_MODE} port=${ATTEMPT_PORT}"
             set +e
