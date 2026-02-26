@@ -10,8 +10,8 @@
   - acepta endpoints relativos (`/api/...`) para mismo dominio
   - para endpoints absolutos, en produccion se exige `https://`
 - Endpoints actuales recomendados:
-  - `POST /api/contact.php`
-  - `POST /api/mail.php`
+  - `POST /api/v1/contact`
+  - `POST /api/v1/mail`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
@@ -23,8 +23,8 @@ Referencia de implementacion:
 
 ## 2) Endpoints de contacto comercial
 
-### 2.1 `POST /api/contact.php`
-### 2.2 `POST /api/mail.php`
+### 2.1 `POST /api/v1/contact`
+### 2.2 `POST /api/v1/mail`
 
 Ambos endpoints usan el mismo contrato de payload/respuesta.
 

@@ -10,7 +10,7 @@
   - para endpoints absolutos, en produccion se exige `https://`
   - bypass local controlado: en no-DEV, `allowInsecureBackend=true` solo habilita `http://localhost`, `http://127.0.0.1` o `http://[::1]`
 - Endpoint actual recomendado:
-  - `GET /api/pricing.php`
+  - `GET /api/v1/pricing`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
@@ -19,7 +19,7 @@ Referencia de implementacion:
 
 ## 2) Endpoint de precios publicos
 
-### 2.1 `GET /api/pricing.php`
+### 2.1 `GET /api/v1/pricing`
 
 Uso:
 - El frontend consulta este endpoint en runtime.
@@ -53,7 +53,7 @@ Validacion frontend:
 
 ## 3) Endpoint de salud
 
-### 3.1 `GET /api/health.php` (opcional)
+### 3.1 `GET /api/v1/health` (opcional)
 
 Uso recomendado:
 - monitoreo de disponibilidad de API y edge
