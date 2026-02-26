@@ -8,6 +8,7 @@ export type CommercialPricingSnapshot = Partial<Pick<CommercialConfig, Commercia
 
 export class ContentStore {
   private parsedContentCache: AppContent | undefined
+  private hasRemoteSnapshotApplied = false
 
   constructor(
     private commercialConfig: CommercialConfig,
@@ -33,6 +34,11 @@ export class ContentStore {
     }
 
     Object.assign(this.commercialConfig, snapshot)
+    if (this.hasRemoteSnapshotApplied) {
+      logger.debug('[content] pricing snapshot recibido; se conserva contenido remoto aplicado.')
+      return
+    }
+
     const parsed = AppContentSchema.safeParse(this.buildAppContent(this.commercialConfig))
     if (!parsed.success) {
       logger.error('[content] precios dinamicos invalidan schema de contenido; se ignora update.')
@@ -90,6 +96,7 @@ export class ContentStore {
       this.getParsedContent() as unknown as Record<string, unknown>,
       parsed.data as unknown as Record<string, unknown>
     )
+    this.hasRemoteSnapshotApplied = true
     return true
   }
 }
