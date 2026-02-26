@@ -3,6 +3,18 @@ declare(strict_types=1);
 
 function dmq_get_allowed_origins(): array
 {
+    $configured = getenv('CORS_ALLOWED_ORIGINS');
+    if (is_string($configured) && trim($configured) !== '') {
+        $items = array_values(array_filter(array_map(
+            static fn(string $value): string => trim($value),
+            explode(',', $configured)
+        ), static fn(string $value): bool => $value !== ''));
+
+        if (count($items) > 0) {
+            return array_values(array_unique($items));
+        }
+    }
+
     return [
         'https://datamaq.com.ar',
         'https://www.datamaq.com.ar',
@@ -119,6 +131,43 @@ function dmq_read_json_body(): ?array
     $rawBody = file_get_contents('php://input');
     $payload = json_decode($rawBody ?: '', true);
     return is_array($payload) ? $payload : null;
+}
+
+function dmq_validate_contact_payload(array $payload): array
+{
+    $email = trim((string)($payload['email'] ?? ''));
+    $message = trim((string)($payload['message'] ?? ''));
+
+    if ($email === '' || $message === '') {
+        return [
+            'ok' => false,
+            'status' => 422,
+            'code' => 'VALIDATION_ERROR',
+            'message' => 'email and message are required.'
+        ];
+    }
+    if (!dmq_validate_email($email)) {
+        return [
+            'ok' => false,
+            'status' => 422,
+            'code' => 'VALIDATION_ERROR',
+            'message' => 'email format is invalid.'
+        ];
+    }
+    if (!dmq_validate_text_length($message, 10, 2000)) {
+        return [
+            'ok' => false,
+            'status' => 422,
+            'code' => 'VALIDATION_ERROR',
+            'message' => 'message must contain between 10 and 2000 characters.'
+        ];
+    }
+
+    return [
+        'ok' => true,
+        'email' => $email,
+        'message' => $message
+    ];
 }
 
 function dmq_validate_email(string $email): bool

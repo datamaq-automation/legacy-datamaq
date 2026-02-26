@@ -24,19 +24,14 @@ if ($payload === null) {
     exit;
 }
 
-$email = trim((string)($payload['email'] ?? ''));
-$message = trim((string)($payload['message'] ?? ''));
-
-if ($email === '' || $message === '') {
-    dmq_error_response(422, 'VALIDATION_ERROR', 'email and message are required.');
-    exit;
-}
-if (!dmq_validate_email($email)) {
-    dmq_error_response(422, 'VALIDATION_ERROR', 'email format is invalid.');
-    exit;
-}
-if (!dmq_validate_text_length($message, 10, 2000)) {
-    dmq_error_response(422, 'VALIDATION_ERROR', 'message must contain between 10 and 2000 characters.');
+/** @var array{ok:bool,status?:int,code?:string,message?:string} $validation */
+$validation = dmq_validate_contact_payload($payload);
+if (($validation['ok'] ?? false) !== true) {
+    dmq_error_response(
+        (int)($validation['status'] ?? 422),
+        (string)($validation['code'] ?? 'VALIDATION_ERROR'),
+        (string)($validation['message'] ?? 'Validation error.')
+    );
     exit;
 }
 

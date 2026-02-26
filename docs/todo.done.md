@@ -213,3 +213,24 @@
 - [x] Validar contrato y comportamiento.
   - Evidencia: `tests/unit/infrastructure/phpApiContracts.test.ts` valida campos `decisionFlow` y `thanks`.
   - Evidencia: `npm run test:e2e:smoke` en verde con flujo actualizado.
+
+### Archivado desde `docs/todo.md` - 2026-02-26
+
+- [x] Hardening backend PHP posterior a auditoría (ciberseguridad + arquitectura + SOLID).
+- [x] Migración de endpoints canónicos sin `.php` (`/api/v1/...`) y deprecación controlada legacy.
+- [x] Corrección de exposición de código PHP en entorno dev/proxy con proxy unificado `/api`.
+- [x] Rate limit básico en `contact`, `mail`, `quote/diagnostic` con `429` y `Retry-After`.
+- [x] Separación de proveedor de contenido (`content_provider.php`) con endpoint HTTP delgado.
+- [x] Tests de contrato para rate limit (`429`) en API PHP.
+- [x] Extensión de contrato remoto de contenido UI (`thanks`, `decisionFlow`) y consumo en frontend.
+- [x] Contrato API canónico agnóstico de framework (`content`, `pricing`, `health`, `contact`, `mail`).
+- [x] Formato de error común congelado: `code`, `message`, `details`, `request_id` (con compatibilidad legacy).
+- [x] Normalización de versionado/rutas en `/api/v1/...` con compatibilidad transitoria para aliases legacy.
+- [x] Testing de migración sin big-bang: contratos independientes del framework, compatibilidad legacy y criterio de salida.
+- [x] Estrategia dual E2E en CI:
+  - smoke mockeado (`npm run test:e2e:smoke`)
+  - integración con backend PHP real (`npm run test:e2e:integration`) en workflow.
+- [x] Unificar CORS por entorno en configuraciÃ³n central backend.
+  - Evidencia: `CORS_ALLOWED_ORIGINS` (CSV) en `public/api/_bootstrap.php` con fallback seguro.
+- [x] Consolidar validaciÃ³n de entrada `contact/mail` con reglas formales compartidas.
+  - Evidencia: `dmq_validate_contact_payload()` reutilizado por `public/api/_contact_impl.php` y `public/api/_mail_impl.php`.
