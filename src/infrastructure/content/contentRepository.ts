@@ -45,11 +45,12 @@ export class ContentRepository
   private remoteContentStatus: RemoteContentStatus
 
   constructor(
-    private config?: Pick<ConfigPort, 'pricingApiUrl' | 'contentApiUrl'>,
+    private config?: Pick<ConfigPort, 'pricingApiUrl' | 'contentApiUrl' | 'requireRemoteContent'>,
     private logger: LoggerPort = new NoopLogger()
   ) {
     this.contentStore = new ContentStore(commercialConfig, buildAppContent)
-    this.remoteContentStatus = this.config?.contentApiUrl ? 'pending' : 'not-required'
+    const requiresRemoteContent = Boolean(this.config?.requireRemoteContent)
+    this.remoteContentStatus = this.config?.contentApiUrl && requiresRemoteContent ? 'pending' : 'not-required'
     this.dynamicContentService = new DynamicContentService(
       this.config?.contentApiUrl,
       this.logger,
@@ -59,7 +60,9 @@ export class ContentRepository
         this.remoteContentStatus = 'ready'
       },
       () => {
-        this.remoteContentStatus = 'unavailable'
+        if (requiresRemoteContent) {
+          this.remoteContentStatus = 'unavailable'
+        }
       }
     )
     this.dynamicPricingService = new DynamicPricingService(

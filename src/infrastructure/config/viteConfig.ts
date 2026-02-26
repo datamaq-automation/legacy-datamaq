@@ -14,6 +14,7 @@ export class ViteConfig implements ConfigPort {
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
   contentApiUrl: NullableString
+  requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
   contactEmail: NullableString
@@ -78,6 +79,7 @@ export class ViteConfig implements ConfigPort {
       'contentApiUrl',
       allowInsecureBackend
     )
+    this.requireRemoteContent = Boolean(publicConfig.requireRemoteContent)
     this.quoteDiagnosticApiUrl = resolveApiEndpoint(
       normalize(publicConfig.quoteDiagnosticApiUrl),
       backendBaseUrl,

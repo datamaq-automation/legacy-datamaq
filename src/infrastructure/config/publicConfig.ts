@@ -38,6 +38,7 @@ export type PublicConfig = {
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
   contentApiUrl: NullableString
+  requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
   allowInsecureBackend: boolean
@@ -78,6 +79,7 @@ export const publicConfig: PublicConfig = {
   mailApiUrl: activeRuntimeProfile.mailApiUrl,
   pricingApiUrl: activeRuntimeProfile.pricingApiUrl,
   contentApiUrl: activeRuntimeProfile.contentApiUrl,
+  requireRemoteContent: activeRuntimeProfile.requireRemoteContent,
   quoteDiagnosticApiUrl: activeRuntimeProfile.quoteDiagnosticApiUrl,
   quotePdfApiUrl: activeRuntimeProfile.quotePdfApiUrl,
   allowInsecureBackend: activeRuntimeProfile.allowInsecureBackend,
