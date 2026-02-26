@@ -1,15 +1,13 @@
 import type { ContactSubmitFeedback } from '@/application/dto/contact'
 import type { HttpResponse } from '@/application/ports/HttpClient'
+import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
 const REQUEST_ID_PATHS: string[][] = [
-  ['request_id'],
   ['requestId'],
   ['request', 'id'],
-  ['meta', 'request_id'],
   ['meta', 'requestId']
 ]
 const ERROR_CODE_PATHS: string[][] = [
-  ['error_code'],
   ['errorCode'],
   ['code'],
   ['error', 'code']
@@ -18,14 +16,14 @@ const MESSAGE_PATHS: string[][] = [
   ['detail'],
   ['message'],
   ['error'],
-  ['error_message'],
+  ['errorMessage'],
   ['description'],
   ['error', 'message']
 ]
 const REQUEST_ID_HEADER_KEYS = ['x-request-id', 'request-id', 'x-correlation-id']
 
 export function extractContactSubmitFeedback(response: HttpResponse): ContactSubmitFeedback {
-  const record = asRecord(response.data)
+  const record = asRecord(mapKeysToCamelCase(response.data))
   const requestIdFromBody = extractByPaths(record, REQUEST_ID_PATHS)
   const requestIdFromHeaders = extractHeader(response.headers, REQUEST_ID_HEADER_KEYS)
   const requestId = requestIdFromHeaders ?? requestIdFromBody

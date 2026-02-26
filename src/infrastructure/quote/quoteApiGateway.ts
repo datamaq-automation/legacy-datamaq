@@ -10,6 +10,7 @@ import { QuoteApiError, type QuoteValidationIssue } from '@/application/quote/qu
 import { isValidQuoteId } from '@/application/quote/quoteId'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
+import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
 export class QuoteApiGateway implements QuoteGateway {
   constructor(
@@ -146,11 +147,12 @@ function parseErrorPayload(payload: unknown, rawText: string | undefined): {
   detail: string | undefined
   validationIssues: QuoteValidationIssue[]
 } {
-  if (!isRecord(payload)) {
+  const normalizedPayload = mapKeysToCamelCase(payload)
+  if (!isRecord(normalizedPayload)) {
     return { detail: rawText, validationIssues: [] }
   }
 
-  const detailValue = payload['detail']
+  const detailValue = normalizedPayload['detail']
   if (Array.isArray(detailValue)) {
     const validationIssues = extractValidationIssues(detailValue)
     return {
@@ -166,7 +168,7 @@ function parseErrorPayload(payload: unknown, rawText: string | undefined): {
     }
   }
 
-  const messageValue = payload['message']
+  const messageValue = normalizedPayload['message']
   if (typeof messageValue === 'string') {
     return {
       detail: normalizeText(messageValue) ?? rawText,

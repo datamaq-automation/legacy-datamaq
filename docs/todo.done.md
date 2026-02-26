@@ -244,3 +244,12 @@
   - Evidencia: consumo de `HttpClient` en `DynamicContentService`, `DynamicPricingService`, `probeBackendHealth`, `QuoteApiGateway`.
   - Evidencia: DI unificada en `src/di/container.ts` para compartir cliente HTTP.
   - Evidencia de tests: `44 passed` en suite enfocada de infraestructura/aplicación.
+- [x] Normalizar mapeo de datos backend -> frontend (`snake_case` -> `camelCase`) mediante mappers.
+  - Evidencia: mapper reutilizable `mapKeysToCamelCase()` en `src/infrastructure/mappers/caseMapper.ts`.
+  - Evidencia: aplicado en `probeBackendHealth`, `contactResponseFeedback` y parseo de errores en `QuoteApiGateway`.
+  - Evidencia: elimina transformaciones ad-hoc de claves en consumidores frontend.
+  - Evidencia de tests:
+    - `tests/unit/infrastructure/caseMapper.test.ts`
+    - `tests/unit/infrastructure/contactResponseFeedback.test.ts`
+    - `tests/unit/infrastructure/probeBackendHealth.test.ts`
+    - `tests/unit/infrastructure/quoteApiGateway.test.ts`

@@ -1,6 +1,7 @@
 import type { HttpClient } from '@/application/ports/HttpClient'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
+import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
 const HEALTH_ENDPOINT = '/api/v1/health'
 
@@ -32,10 +33,16 @@ export async function probeBackendHealth(
       return
     }
 
-    const payload = response.data
+    const payload = mapKeysToCamelCase<{
+      status?: unknown
+      service?: unknown
+      brandId?: unknown
+      version?: unknown
+      timestamp?: unknown
+    }>(response.data)
 
     const service = normalize(payload?.service)
-    const brandId = normalize(payload?.brandId) ?? normalize(payload?.brand_id)
+    const brandId = normalize(payload?.brandId)
     const version = normalize(payload?.version)
     const timestamp = normalize(payload?.timestamp)
     const health = normalize(payload?.status)

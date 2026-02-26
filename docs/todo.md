@@ -18,10 +18,6 @@
 
 ## P1 (compatibilidad con Laravel)
 
-- [ ] **Normalizar mapeo de datos**
-  - [ ] Definir convención estable backend `snake_case` -> frontend `camelCase` mediante mappers.
-  - [ ] Eliminar transformaciones ad-hoc dispersas en componentes/servicios.
-
 - [ ] **Refactor backend por capas (alineado a Laravel)**
   - [ ] Mantener endpoints como adaptadores delgados HTTP.
   - [ ] Extraer reglas de negocio a servicios reutilizables.
