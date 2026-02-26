@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+$GLOBALS['dmq_request_started_at'] = microtime(true);
+
 function dmq_get_allowed_origins(): array
 {
     $configured = getenv('CORS_ALLOWED_ORIGINS');
@@ -66,7 +68,11 @@ function dmq_request_id(): string
         return $requestId;
     }
 
-    $requestId = 'req-' . gmdate('YmdHis') . '-' . bin2hex(random_bytes(4));
+    $requestId = dmq_extract_incoming_request_id();
+    if (!is_string($requestId) || $requestId === '') {
+        $requestId = 'req-' . gmdate('YmdHis') . '-' . bin2hex(random_bytes(4));
+    }
+
     header('X-Request-Id: ' . $requestId);
     return $requestId;
 }
@@ -103,12 +109,13 @@ function dmq_resolve_brand_id(): string
 
 function dmq_json_response(int $statusCode, array $payload): void
 {
-    dmq_request_id();
+    $requestId = dmq_request_id();
     http_response_code($statusCode);
     dmq_apply_cors_headers();
     dmq_apply_security_headers();
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
+    dmq_log_response($statusCode, $requestId);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 
@@ -124,6 +131,59 @@ function dmq_error_response(int $statusCode, string $errorCode, string $detail):
         'error_code' => $errorCode,
         'detail' => $detail,
     ]);
+}
+
+function dmq_extract_incoming_request_id(): ?string
+{
+    $candidates = [
+        $_SERVER['HTTP_X_REQUEST_ID'] ?? null,
+        $_SERVER['HTTP_REQUEST_ID'] ?? null,
+        $_SERVER['HTTP_X_CORRELATION_ID'] ?? null,
+    ];
+
+    foreach ($candidates as $candidate) {
+        if (!is_string($candidate)) {
+            continue;
+        }
+        $normalized = trim($candidate);
+        if ($normalized === '' || strlen($normalized) > 128) {
+            continue;
+        }
+        if (!preg_match('/^[A-Za-z0-9._:-]+$/', $normalized)) {
+            continue;
+        }
+        return $normalized;
+    }
+
+    return null;
+}
+
+function dmq_request_duration_ms(): int
+{
+    $startedAt = $GLOBALS['dmq_request_started_at'] ?? null;
+    if (!is_float($startedAt)) {
+        return 0;
+    }
+
+    $duration = (int) round((microtime(true) - $startedAt) * 1000);
+    return max(0, $duration);
+}
+
+function dmq_log_response(int $statusCode, string $requestId): void
+{
+    $payload = [
+        'ts' => gmdate('c'),
+        'level' => $statusCode >= 500 ? 'error' : ($statusCode >= 400 ? 'warn' : 'info'),
+        'event' => 'api.response',
+        'request_id' => $requestId,
+        'method' => (string)($_SERVER['REQUEST_METHOD'] ?? 'GET'),
+        'path' => (string)($_SERVER['REQUEST_URI'] ?? ''),
+        'status' => $statusCode,
+        'duration_ms' => dmq_request_duration_ms(),
+        'client_ip' => (string)($_SERVER['REMOTE_ADDR'] ?? ''),
+    ];
+
+    error_log((string) json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 }
 
 function dmq_read_json_body(): ?array

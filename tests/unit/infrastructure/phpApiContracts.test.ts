@@ -39,6 +39,25 @@ describe('PHP API contracts', () => {
     expect(typeof payload.request_id).toBe('string')
   })
 
+  it('propagates incoming request id from x-request-id header', async () => {
+    const response = await fetch(`${BASE_URL}/contact`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Request-Id': 'test-propagated-request-id'
+      },
+      body: JSON.stringify({
+        email: 'user@example.com',
+        message: 'Hola desde propagacion'
+      })
+    })
+    const payload = (await response.json()) as Record<string, unknown>
+
+    expect(response.status).toBe(202)
+    expect(response.headers.get('x-request-id')).toBe('test-propagated-request-id')
+    expect(payload.request_id).toBe('test-propagated-request-id')
+  })
+
   it('mail endpoint rejects invalid method with standardized error shape', async () => {
     const response = await fetch(`${BASE_URL}/mail`, { method: 'GET' })
     const payload = (await response.json()) as Record<string, unknown>

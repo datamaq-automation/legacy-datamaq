@@ -34,4 +34,4 @@
 - [ ] **Config, seguridad y operación**
   - [x] Unificar CORS por entorno (producción + desarrollo) en configuración central.
   - [x] Consolidar validación de entrada para `contact/mail` con reglas formales y respuestas homogéneas.
-  - [ ] Revisar middleware transversal esperado en Laravel: rate limit, request-id, logging estructurado.
+  - [x] Revisar middleware transversal esperado en Laravel: rate limit, request-id, logging estructurado.

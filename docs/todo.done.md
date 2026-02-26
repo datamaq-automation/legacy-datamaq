@@ -234,3 +234,7 @@
   - Evidencia: `CORS_ALLOWED_ORIGINS` (CSV) en `public/api/_bootstrap.php` con fallback seguro.
 - [x] Consolidar validación de entrada `contact/mail` con reglas formales compartidas.
   - Evidencia: `dmq_validate_contact_payload()` reutilizado por `public/api/_contact_impl.php` y `public/api/_mail_impl.php`.
+- [x] Middleware transversal backend (enfoque Laravel-like) para request-id + logging estructurado.
+  - Evidencia: propagación de `x-request-id`/`request-id`/`x-correlation-id` en `public/api/_bootstrap.php`.
+  - Evidencia: logging JSON por respuesta (`event=api.response`, `status`, `duration_ms`, `request_id`) vía `error_log`.
+  - Evidencia de contrato: `tests/unit/infrastructure/phpApiContracts.test.ts` valida propagación de request id.
