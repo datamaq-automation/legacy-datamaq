@@ -17,8 +17,9 @@ Desplegar dos marcas desde el mismo repositorio, compartiendo rutas (`/`, `/coti
 
 ## Workflow de deploy
 
-- Archivo: `.github/workflows/ci-cd-ftps.yml`
-- Trigger: `push` a `main`
+- Archivo CI (quality): `.github/workflows/ci-quality.yml`
+- Archivo CD (deploy): `.github/workflows/ci-cd-ftps.yml`
+- Trigger CD: `workflow_run` del workflow `CI / Quality` cuando termina `success` en `main`
 - Matrix: `datamaq`, `upp`
 - Orden del job:
   - Preflight FTPS primero (validacion de inputs, DNS y login FTPS)

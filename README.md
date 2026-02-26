@@ -29,9 +29,10 @@ npm run test:e2e:smoke
 
 ## CI/CD
 
-Workflow: `.github/workflows/ci-cd-ftps.yml`
+- CI: `.github/workflows/ci-quality.yml`
+- CD: `.github/workflows/ci-cd-ftps.yml`
 
-- `pull_request`: typecheck, unit tests, build, smoke e2e.
-- `push` a `main`: deploy FTPS por matrix (`datamaq`, `upp`).
+- `pull_request`: CI (typecheck, unit tests, build, smoke e2e).
+- `push` a `main`: CI y luego CD FTPS por matrix (`datamaq`, `upp`) si CI termina OK.
 
 Runbook operativo: `docs/multi-target-deploy-runbook.md`.
