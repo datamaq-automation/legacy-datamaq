@@ -127,6 +127,32 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       description: 'Configuracion temporal de consentimiento.',
       acceptLabel: 'Aceptar',
       rejectLabel: 'Rechazar'
+    },
+    decisionFlow: {
+      processTitle: 'Proceso',
+      pricingTitle: 'Tarifa y alcance',
+      pricingSummaryFallback: 'Contenido temporal.',
+      pricingIncludes: ['Contenido temporal.'],
+      pricingExcludes: ['Contenido temporal.'],
+      pricingVariables: ['Contenido temporal.'],
+      coverageTitle: 'Cobertura y tiempos',
+      coverageAreas: ['Contenido temporal.'],
+      responseTimes: ['Contenido temporal.'],
+      whatsappLabel: 'Contactar por WhatsApp',
+      contactFormLabel: 'Ir al formulario de contacto',
+      faqTitle: 'Preguntas frecuentes',
+      processSteps: [
+        { order: 1, title: 'Paso 1', description: 'Contenido temporal.' },
+        { order: 2, title: 'Paso 2', description: 'Contenido temporal.' }
+      ],
+      faqItems: [{ question: 'Pregunta temporal', answer: 'Respuesta temporal.' }]
+    },
+    thanks: {
+      badge: 'Formulario enviado',
+      title: 'Gracias!',
+      subtitle: 'Recibimos tu consulta.',
+      whatsappButtonLabel: 'Escribir por WhatsApp',
+      goHomeButtonLabel: 'Volver al inicio'
     }
   }
 }

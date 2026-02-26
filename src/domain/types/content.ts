@@ -94,6 +94,42 @@ export interface ConsentContent {
   rejectLabel: string
 }
 
+export interface DecisionFlowStepContent {
+  order: number
+  title: string
+  description: string
+}
+
+export interface DecisionFlowFaqContent {
+  question: string
+  answer: string
+}
+
+export interface DecisionFlowContent {
+  processTitle: string
+  pricingTitle: string
+  pricingSummaryFallback: string
+  pricingIncludes: string[]
+  pricingExcludes: string[]
+  pricingVariables: string[]
+  coverageTitle: string
+  coverageAreas: string[]
+  responseTimes: string[]
+  whatsappLabel: string
+  contactFormLabel: string
+  faqTitle: string
+  processSteps: DecisionFlowStepContent[]
+  faqItems: DecisionFlowFaqContent[]
+}
+
+export interface ThanksContent {
+  badge: string
+  title: string
+  subtitle: string
+  whatsappButtonLabel: string
+  goHomeButtonLabel: string
+}
+
 /**
  * Perfil tecnico y enfoque de trabajo.
  */
@@ -113,6 +149,8 @@ export interface AppContent {
   legal: LegalContent
   contact: ContactContent
   consent: ConsentContent
+  decisionFlow: DecisionFlowContent
+  thanks: ThanksContent
 }
 
 export interface CommercialConfig {

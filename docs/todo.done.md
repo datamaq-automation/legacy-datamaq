@@ -94,3 +94,17 @@
 - [x] Retirar contenido textual hardcodeado de frontend y dejar fallback tecnico minimo.
   - Evidencia: `src/infrastructure/content/landingContentBuilder.ts` reducido a fallback tecnico neutral.
   - Evidencia: frontend prioriza snapshot remoto completo en `src/infrastructure/content/dynamicContentService.ts`.
+
+### P0 finalizado - 2026-02-26 (`thanks` y `decisionFlow` remoto)
+
+- [x] Extender contrato remoto para cubrir textos UI fuera del bloque landing base.
+  - Evidencia: `AppContent` y `AppContentSchema` incluyen `decisionFlow` y `thanks`.
+  - Evidencia: `public/api/content.php` entrega `data.decisionFlow` y `data.thanks` por target.
+
+- [x] Adaptar consumo UI a contenido remoto.
+  - Evidencia: `src/ui/sections/DecisionFlowSection.vue` consume `content.getContent().decisionFlow`.
+  - Evidencia: `src/ui/views/ThanksView.ts` y `src/ui/views/ThanksView.vue` consumen `content.getContent().thanks`.
+
+- [x] Validar contrato y comportamiento.
+  - Evidencia: `tests/unit/infrastructure/phpApiContracts.test.ts` valida campos `decisionFlow` y `thanks`.
+  - Evidencia: `npm run test:e2e:smoke` en verde con flujo actualizado.

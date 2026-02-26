@@ -165,6 +165,88 @@ function dmq_build_app_content(string $brandId): array
             'description' => 'Usamos analitica para mejorar la experiencia.',
             'acceptLabel' => 'Aceptar',
             'rejectLabel' => 'Rechazar'
+        ],
+        'decisionFlow' => [
+            'processTitle' => 'Como trabajamos',
+            'pricingTitle' => 'Tarifa base y alcance',
+            'pricingSummaryFallback' => 'Tarifa base y alcance sujetos a diagnostico, distancia y condiciones de seguridad.',
+            'pricingIncludes' => [
+                'Relevamiento inicial y checklist tecnico.',
+                'Instalacion de 1 Powermeter o diagnostico en sitio.',
+                'Verificacion final de funcionamiento.',
+                'Registro tecnico basico de la intervencion.'
+            ],
+            'pricingExcludes' => [
+                'Equipo Powermeter/Automate (lo provee el cliente).',
+                'Adecuaciones electricas mayores del tablero.',
+                'Materiales extra no previstos en el alcance inicial.'
+            ],
+            'pricingVariables' => [
+                'Distancia y traslado desde base operativa en Garin.',
+                'Criticidad de urgencia y franja horaria.',
+                'Condiciones de seguridad o accesibilidad en planta.'
+            ],
+            'coverageTitle' => 'Cobertura y tiempos',
+            'coverageAreas' => [
+                'Cobertura prioritaria en GBA Norte.',
+                'AMBA sujeto a agenda y viabilidad tecnica.',
+                'Interior con coordinacion previa.'
+            ],
+            'responseTimes' => [
+                'Respuesta comercial en menos de 24 horas.',
+                'Agenda de visita segun criticidad y disponibilidad.',
+                'Urgencias industriales fuera de horario con coordinacion.'
+            ],
+            'whatsappLabel' => 'Pedir coordinacion por WhatsApp',
+            'contactFormLabel' => 'Ir al formulario de contacto',
+            'faqTitle' => 'Preguntas frecuentes',
+            'processSteps' => [
+                [
+                    'order' => 1,
+                    'title' => 'Relevamiento y checklist de seguridad',
+                    'description' => 'Levantamos contexto de tablero, riesgos y objetivo operativo antes de intervenir para evitar cambios a ciegas.'
+                ],
+                [
+                    'order' => 2,
+                    'title' => 'Ejecucion tecnica en planta',
+                    'description' => 'Instalamos o diagnosticamos con criterio industrial, manteniendo trazabilidad de cada accion durante la intervencion.'
+                ],
+                [
+                    'order' => 3,
+                    'title' => 'Verificacion final',
+                    'description' => 'Validamos lectura de referencia y condiciones de funcionamiento para confirmar que el servicio queda operativo.'
+                ],
+                [
+                    'order' => 4,
+                    'title' => 'Cierre tecnico y documentacion',
+                    'description' => 'Entregamos observaciones, pendientes y recomendaciones concretas para sostener continuidad operativa.'
+                ]
+            ],
+            'faqItems' => [
+                [
+                    'question' => 'Que necesito para coordinar rapido?',
+                    'answer' => 'Servicio requerido, zona de planta y nivel de urgencia. Con eso enviamos tarifa base y siguiente paso.'
+                ],
+                [
+                    'question' => 'Trabajan con seguridad y trazabilidad?',
+                    'answer' => 'Si. El flujo incluye checklist previo, verificacion final y cierre tecnico documentado.'
+                ],
+                [
+                    'question' => 'La tarifa base puede cambiar?',
+                    'answer' => 'Si, puede variar por distancia, urgencia, accesibilidad y condiciones de seguridad detectadas en sitio.'
+                ],
+                [
+                    'question' => 'Si no puedo esperar correo, como sigo?',
+                    'answer' => 'El canal mas rapido es WhatsApp. Desde ahi coordinamos diagnostico, instalacion o urgencia.'
+                ]
+            ]
+        ],
+        'thanks' => [
+            'badge' => 'Formulario enviado',
+            'title' => 'Gracias!',
+            'subtitle' => 'Recibimos tu consulta. En breve te contactamos.',
+            'whatsappButtonLabel' => 'Escribir por WhatsApp',
+            'goHomeButtonLabel' => 'Volver al inicio'
         ]
     ];
 }

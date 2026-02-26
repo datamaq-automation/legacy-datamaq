@@ -66,6 +66,8 @@ describe('PHP API contracts', () => {
         services?: { cards?: unknown[] }
         about?: { paragraphs?: unknown[] }
         contact?: { labels?: { email?: unknown; message?: unknown } }
+        decisionFlow?: { processSteps?: unknown[]; faqItems?: unknown[]; processTitle?: unknown }
+        thanks?: { title?: unknown; goHomeButtonLabel?: unknown }
       }
     }
 
@@ -79,6 +81,11 @@ describe('PHP API contracts', () => {
     expect(Array.isArray(payload.data?.about?.paragraphs)).toBe(true)
     expect(typeof payload.data?.contact?.labels?.email).toBe('string')
     expect(typeof payload.data?.contact?.labels?.message).toBe('string')
+    expect(typeof payload.data?.decisionFlow?.processTitle).toBe('string')
+    expect(Array.isArray(payload.data?.decisionFlow?.processSteps)).toBe(true)
+    expect(Array.isArray(payload.data?.decisionFlow?.faqItems)).toBe(true)
+    expect(typeof payload.data?.thanks?.title).toBe('string')
+    expect(typeof payload.data?.thanks?.goHomeButtonLabel).toBe('string')
   })
 
   it('quote/diagnostic.php returns expected quote payload', async () => {

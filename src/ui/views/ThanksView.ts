@@ -6,8 +6,9 @@ import './ThanksView.css'
 
 export function useThanksView() {
   const contactCtaEnabled = getWhatsAppEnabled()
-  const { leadTracking } = useContainer()
+  const { leadTracking, content } = useContainer()
   const router = useRouter()
+  const thanksContent = content.getContent().thanks
 
   function handleChat() {
     openWhatsApp('gracias')
@@ -24,6 +25,7 @@ export function useThanksView() {
 
   return {
     contactCtaEnabled,
+    thanksContent,
     handleChat,
     handleGoHome
   }

@@ -1,9 +1,7 @@
 <template>
   <section id="proceso" class="section-mobile py-5 bg-body text-body c-decision-flow" aria-labelledby="proceso-title">
     <div class="container">
-      <h2 id="proceso-title" class="mb-4 text-body-emphasis c-decision-flow__title">
-        Como trabajamos
-      </h2>
+      <h2 id="proceso-title" class="mb-4 text-body-emphasis c-decision-flow__title">{{ flow.processTitle }}</h2>
       <ol class="row g-3 list-unstyled c-decision-flow__steps">
         <li v-for="step in processSteps" :key="step.order" class="col-12 col-lg-6">
           <article class="card c-ui-card h-100 border-0">
@@ -20,12 +18,8 @@
 
   <section id="tarifas" class="section-mobile py-5 bg-body-secondary text-body c-decision-flow" aria-labelledby="tarifas-title">
     <div class="container">
-      <h2 id="tarifas-title" class="mb-3 text-body-emphasis c-decision-flow__title">
-        Tarifa base y alcance
-      </h2>
-      <p class="mb-4 text-secondary c-decision-flow__summary">
-        {{ pricingSummary }}
-      </p>
+      <h2 id="tarifas-title" class="mb-3 text-body-emphasis c-decision-flow__title">{{ flow.pricingTitle }}</h2>
+      <p class="mb-4 text-secondary c-decision-flow__summary">{{ pricingSummary }}</p>
       <div class="row g-3">
         <article class="col-12 col-lg-4">
           <div class="card c-ui-card h-100 border-0">
@@ -58,13 +52,13 @@
           </div>
         </article>
       </div>
-      <a class="btn c-ui-btn c-ui-btn--outline mt-4" href="#contacto">Ir al formulario de contacto</a>
+      <a class="btn c-ui-btn c-ui-btn--outline mt-4" href="#contacto">{{ flow.contactFormLabel }}</a>
     </div>
   </section>
 
   <section id="cobertura" class="section-mobile py-5 bg-dark text-white c-decision-flow" aria-labelledby="cobertura-title">
     <div class="container">
-      <h2 id="cobertura-title" class="mb-3 c-decision-flow__title">Cobertura y tiempos</h2>
+      <h2 id="cobertura-title" class="mb-3 c-decision-flow__title">{{ flow.coverageTitle }}</h2>
       <div class="row g-3">
         <article class="col-12 col-lg-6">
           <div class="card c-ui-card c-ui-card--elevated h-100 border-0">
@@ -89,7 +83,7 @@
                 :target="isExternalWhatsappHref ? '_blank' : undefined"
                 :rel="isExternalWhatsappHref ? 'noopener noreferrer' : undefined"
               >
-                Pedir coordinacion por WhatsApp
+                {{ flow.whatsappLabel }}
               </a>
             </div>
           </div>
@@ -100,7 +94,7 @@
 
   <section id="faq" class="section-mobile py-5 bg-body text-body c-decision-flow" aria-labelledby="faq-title">
     <div class="container">
-      <h2 id="faq-title" class="mb-4 text-body-emphasis c-decision-flow__title">Preguntas frecuentes</h2>
+      <h2 id="faq-title" class="mb-4 text-body-emphasis c-decision-flow__title">{{ flow.faqTitle }}</h2>
       <div class="row g-3">
         <article v-for="item in faqItems" :key="item.question" class="col-12 col-lg-6">
           <div class="card c-ui-card h-100 border-0">
@@ -120,111 +114,22 @@ import { computed } from 'vue'
 import { useContainer } from '@/di/container'
 import { getWhatsAppHref } from '@/ui/controllers/contactController'
 
-interface ProcessStep {
-  order: number
-  title: string
-  description: string
-}
-
-interface FaqItem {
-  question: string
-  answer: string
-}
-
 const { content } = useContainer()
+const flow = computed(() => content.getContent().decisionFlow)
 const decisionFlowWhatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
 const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(decisionFlowWhatsappHref.value))
 const pricingSummary = computed(() => {
-  const installationCard = content
-    .getServicesContent()
-    .cards.find((card) => card.id === 'instalacion')
-
-  return (
-    installationCard?.figure?.caption ??
-    'Tarifa base y alcance sujetos a diagnóstico, distancia y condiciones de seguridad.'
-  )
+  const installationCard = content.getServicesContent().cards.find((card) => card.id === 'instalacion')
+  return installationCard?.figure?.caption ?? flow.value.pricingSummaryFallback
 })
 
-const processSteps: ProcessStep[] = [
-  {
-    order: 1,
-    title: 'Relevamiento y checklist de seguridad',
-    description:
-      'Levantamos contexto de tablero, riesgos y objetivo operativo antes de intervenir para evitar cambios a ciegas.'
-  },
-  {
-    order: 2,
-    title: 'Ejecucion tecnica en planta',
-    description:
-      'Instalamos o diagnosticamos con criterio industrial, manteniendo trazabilidad de cada accion durante la intervencion.'
-  },
-  {
-    order: 3,
-    title: 'Verificacion final',
-    description:
-      'Validamos lectura de referencia y condiciones de funcionamiento para confirmar que el servicio queda operativo.'
-  },
-  {
-    order: 4,
-    title: 'Cierre tecnico y documentacion',
-    description:
-      'Entregamos observaciones, pendientes y recomendaciones concretas para sostener continuidad operativa.'
-  }
-]
-
-const pricingIncludes = [
-  'Relevamiento inicial y checklist tecnico.',
-  'Instalacion de 1 Powermeter o diagnostico en sitio.',
-  'Verificacion final de funcionamiento.',
-  'Registro tecnico basico de la intervencion.'
-]
-
-const pricingExcludes = [
-  'Equipo Powermeter/Automate (lo provee el cliente).',
-  'Adecuaciones electricas mayores del tablero.',
-  'Materiales extra no previstos en el alcance inicial.'
-]
-
-const pricingVariables = [
-  'Distancia y traslado desde base operativa en Garin.',
-  'Criticidad de urgencia y franja horaria.',
-  'Condiciones de seguridad o accesibilidad en planta.'
-]
-
-const coverageAreas = [
-  'Cobertura prioritaria en GBA Norte.',
-  'AMBA sujeto a agenda y viabilidad tecnica.',
-  'Interior con coordinacion previa.'
-]
-
-const responseTimes = [
-  'Respuesta comercial en menos de 24 horas.',
-  'Agenda de visita segun criticidad y disponibilidad.',
-  'Urgencias industriales fuera de horario con coordinacion.'
-]
-
-const faqItems: FaqItem[] = [
-  {
-    question: 'Que necesito para coordinar rapido?',
-    answer:
-      'Servicio requerido, zona de planta y nivel de urgencia. Con eso enviamos tarifa base y siguiente paso.'
-  },
-  {
-    question: 'Trabajan con seguridad y trazabilidad?',
-    answer:
-      'Si. El flujo incluye checklist previo, verificacion final y cierre tecnico documentado.'
-  },
-  {
-    question: 'La tarifa base puede cambiar?',
-    answer:
-      'Si, puede variar por distancia, urgencia, accesibilidad y condiciones de seguridad detectadas en sitio.'
-  },
-  {
-    question: 'Si no puedo esperar correo, como sigo?',
-    answer:
-      'El canal mas rapido es WhatsApp. Desde ahi coordinamos diagnostico, instalacion o urgencia.'
-  }
-]
+const processSteps = computed(() => flow.value.processSteps)
+const pricingIncludes = computed(() => flow.value.pricingIncludes)
+const pricingExcludes = computed(() => flow.value.pricingExcludes)
+const pricingVariables = computed(() => flow.value.pricingVariables)
+const coverageAreas = computed(() => flow.value.coverageAreas)
+const responseTimes = computed(() => flow.value.responseTimes)
+const faqItems = computed(() => flow.value.faqItems)
 
 defineOptions({
   name: 'DecisionFlowSection'

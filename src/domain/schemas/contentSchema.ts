@@ -99,6 +99,42 @@ const ConsentSchema = z.object({
   rejectLabel: z.string()
 })
 
+const DecisionFlowSchema = z.object({
+  processTitle: z.string(),
+  pricingTitle: z.string(),
+  pricingSummaryFallback: z.string(),
+  pricingIncludes: z.array(z.string()),
+  pricingExcludes: z.array(z.string()),
+  pricingVariables: z.array(z.string()),
+  coverageTitle: z.string(),
+  coverageAreas: z.array(z.string()),
+  responseTimes: z.array(z.string()),
+  whatsappLabel: z.string(),
+  contactFormLabel: z.string(),
+  faqTitle: z.string(),
+  processSteps: z.array(
+    z.object({
+      order: z.number(),
+      title: z.string(),
+      description: z.string()
+    })
+  ),
+  faqItems: z.array(
+    z.object({
+      question: z.string(),
+      answer: z.string()
+    })
+  )
+})
+
+const ThanksSchema = z.object({
+  badge: z.string(),
+  title: z.string(),
+  subtitle: z.string(),
+  whatsappButtonLabel: z.string(),
+  goHomeButtonLabel: z.string()
+})
+
 export const AppContentSchema = z.object({
   hero: HeroSchema,
   services: ServicesSchema,
@@ -108,5 +144,7 @@ export const AppContentSchema = z.object({
   footer: FooterSchema,
   legal: LegalSchema,
   contact: ContactSchema,
-  consent: ConsentSchema
+  consent: ConsentSchema,
+  decisionFlow: DecisionFlowSchema,
+  thanks: ThanksSchema
 })
