@@ -238,3 +238,9 @@
   - Evidencia: propagación de `x-request-id`/`request-id`/`x-correlation-id` en `public/api/_bootstrap.php`.
   - Evidencia: logging JSON por respuesta (`event=api.response`, `status`, `duration_ms`, `request_id`) vía `error_log`.
   - Evidencia de contrato: `tests/unit/infrastructure/phpApiContracts.test.ts` valida propagación de request id.
+- [x] Desacoplar frontend de detalles de transporte.
+  - Evidencia: `HttpClient` extendido con `get()` + opciones de `timeoutMs` y `retries` en `src/application/ports/HttpClient.ts`.
+  - Evidencia: centralización en `src/infrastructure/http/fetchHttpClient.ts` (GET/POST/PATCH/OPTIONS con timeout y retries).
+  - Evidencia: consumo de `HttpClient` en `DynamicContentService`, `DynamicPricingService`, `probeBackendHealth`, `QuoteApiGateway`.
+  - Evidencia: DI unificada en `src/di/container.ts` para compartir cliente HTTP.
+  - Evidencia de tests: `44 passed` en suite enfocada de infraestructura/aplicación.

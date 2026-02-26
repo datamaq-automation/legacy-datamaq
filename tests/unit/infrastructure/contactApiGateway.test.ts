@@ -51,6 +51,7 @@ function createLogger(): LoggerPort {
 
 function createHttpClient(): HttpClient {
   return {
+    get: vi.fn().mockResolvedValue({ ok: true, status: 200, data: {} }),
     postJson: vi.fn().mockResolvedValue({ ok: true, status: 200, data: {} }),
     patchJson: vi.fn().mockResolvedValue({ ok: true, status: 200 }),
     options: vi.fn().mockResolvedValue({ ok: true, status: 200 })

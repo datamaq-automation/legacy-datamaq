@@ -53,12 +53,10 @@ describe('probeBackendHealth', () => {
 
     await probeBackendHealth('/api/v1/health')
 
-    expect(warnSpy).toHaveBeenCalledWith(
-      '[backend:health] error de red',
-      expect.objectContaining({
-        endpoint: '/api/v1/health'
-      })
-    )
+    expect(warnSpy).toHaveBeenCalledWith('[backend:health] sin conexion', {
+      endpoint: '/api/v1/health',
+      status: 0
+    })
     expect(infoSpy).not.toHaveBeenCalled()
   })
 })

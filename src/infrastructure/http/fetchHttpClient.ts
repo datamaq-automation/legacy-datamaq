@@ -1,121 +1,40 @@
-import type { HttpClient, HttpResponse } from '@/application/ports/HttpClient'
+import type { HttpClient, HttpResponse, HttpRequestOptions } from '@/application/ports/HttpClient'
 import type { LoggerPort } from '@/application/ports/Logger'
-import type { JsonValue } from '@/application/types/json'
 
 export class FetchHttpClient implements HttpClient {
+  private static readonly DEFAULT_TIMEOUT_MS = 10_000
+
   constructor(private logger: LoggerPort) {}
+
+  async get<T = unknown>(url: string, options: HttpRequestOptions = {}): Promise<HttpResponse<T>> {
+    return this.requestWithBody<T>('GET', url, undefined, options.headers, options)
+  }
 
   async postJson<T = unknown>(
     url: string,
     body: unknown,
-    headers: Record<string, string> = {}
+    headers: Record<string, string> = {},
+    options: Omit<HttpRequestOptions, 'headers'> = {}
   ): Promise<HttpResponse<T>> {
-    try {
-      this.logger.debug('[http] POST JSON request', {
-        url,
-        headers: Object.keys(headers)
-      })
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: JSON.stringify(body)
-      })
-
-      const rawText = await response.text().catch(() => undefined)
-      const data = parseJson<T>(rawText)
-      const text = normalizeErrorText(rawText)
-      const responseHeaders = extractResponseHeaders(response.headers)
-      this.logger.debug('[http] POST JSON response', {
-        url,
-        status: response.status,
-        ok: response.ok,
-        text
-      })
-      if (!response.ok) {
-        this.logger.warn('[http] POST JSON no OK:', {
-          url,
-          status: response.status,
-          text
-        })
-      }
-      return {
-        ok: response.ok,
-        status: response.status,
-        headers: responseHeaders,
-        ...(text ? { text } : {}),
-        ...(typeof data !== 'undefined' ? { data } : {})
-      }
-    } catch (error) {
-      this.logger.error('[http] Error en POST JSON:', { url, headers, error })
-      return {
-        ok: false,
-        status: 0
-      }
-    }
+    return this.requestWithBody<T>('POST', url, body, headers, options)
   }
 
   async patchJson<T = unknown>(
     url: string,
     body: unknown,
-    headers: Record<string, string> = {}
+    headers: Record<string, string> = {},
+    options: Omit<HttpRequestOptions, 'headers'> = {}
   ): Promise<HttpResponse<T>> {
-    try {
-      this.logger.debug('[http] PATCH JSON request', {
-        url,
-        headers: Object.keys(headers)
-      })
-      const response = await fetch(url, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: JSON.stringify(body)
-      })
-
-      const rawText = await response.text().catch(() => undefined)
-      const data = parseJson<T>(rawText)
-      const text = normalizeErrorText(rawText)
-      const responseHeaders = extractResponseHeaders(response.headers)
-      this.logger.debug('[http] PATCH JSON response', {
-        url,
-        status: response.status,
-        ok: response.ok,
-        text
-      })
-      if (!response.ok) {
-        this.logger.warn('[http] PATCH JSON no OK:', {
-          url,
-          status: response.status,
-          text
-        })
-      }
-      return {
-        ok: response.ok,
-        status: response.status,
-        headers: responseHeaders,
-        ...(text ? { text } : {}),
-        ...(typeof data !== 'undefined' ? { data } : {})
-      }
-    } catch (error) {
-      this.logger.error('[http] Error en PATCH JSON:', { url, headers, error })
-      return {
-        ok: false,
-        status: 0
-      }
-    }
+    return this.requestWithBody<T>('PATCH', url, body, headers, options)
   }
 
-  async options(url: string): Promise<HttpResponse> {
+  async options(url: string, options: Omit<HttpRequestOptions, 'headers'> = {}): Promise<HttpResponse> {
     try {
       this.logger.debug('[http] OPTIONS request', { url })
-      const response = await fetch(url, {
+      const response = await this.fetchWithRetry(url, {
         method: 'OPTIONS',
         mode: 'cors'
-      })
+      }, options)
 
       this.logger.debug('[http] OPTIONS response', {
         url,
@@ -135,6 +54,129 @@ export class FetchHttpClient implements HttpClient {
         status: 0
       }
     }
+  }
+
+  private async requestWithBody<T>(
+    method: 'GET' | 'POST' | 'PATCH',
+    url: string,
+    body: unknown,
+    headers: Record<string, string> = {},
+    options: Omit<HttpRequestOptions, 'headers'> = {}
+  ): Promise<HttpResponse<T>> {
+    const requestHeaders =
+      method === 'GET' ? { ...headers } : { 'Content-Type': 'application/json', ...headers }
+    const logPrefix = `[http] ${method} JSON`
+    try {
+      this.logger.debug(`${logPrefix} request`, {
+        url,
+        headers: Object.keys(requestHeaders)
+      })
+      const response = await this.fetchWithRetry(
+        url,
+        {
+          method,
+          headers: requestHeaders,
+          ...(method === 'GET' ? {} : { body: JSON.stringify(body) })
+        },
+        options
+      )
+
+      const responseHeaders = extractResponseHeaders(response.headers)
+      const contentType = responseHeaders['content-type'] ?? ''
+      const acceptHeader = requestHeaders['Accept'] ?? requestHeaders['accept'] ?? ''
+      const expectsPdf = typeof acceptHeader === 'string' && acceptHeader.includes('application/pdf')
+      if (method === 'GET' && (contentType.includes('application/pdf') || (expectsPdf && response.ok))) {
+        let blob = await response.blob().catch(() => undefined)
+        if (!blob) {
+          const buffer = await response.arrayBuffer().catch(() => undefined)
+          if (buffer) {
+            blob = new Blob([buffer], { type: contentType || 'application/pdf' })
+          }
+        }
+        if (!blob) {
+          const rawPdfText = await response.text().catch(() => undefined)
+          if (typeof rawPdfText === 'string') {
+            blob = new Blob([rawPdfText], { type: contentType || 'application/pdf' })
+          }
+        }
+        if (!blob) {
+          blob = new Blob([], { type: contentType || 'application/pdf' })
+        }
+        return {
+          ok: response.ok,
+          status: response.status,
+          headers: responseHeaders,
+          data: { blob } as T
+        }
+      }
+
+      const rawText = await response.text().catch(() => undefined)
+      const data = parseJson<T>(rawText)
+      const text = normalizeErrorText(rawText)
+      this.logger.debug(`${logPrefix} response`, {
+        url,
+        status: response.status,
+        ok: response.ok,
+        text
+      })
+      if (!response.ok) {
+        this.logger.warn(`${logPrefix} no OK:`, {
+          url,
+          status: response.status,
+          text
+        })
+      }
+      return {
+        ok: response.ok,
+        status: response.status,
+        headers: responseHeaders,
+        ...(text ? { text } : {}),
+        ...(typeof data !== 'undefined' ? { data } : {})
+      }
+    } catch (error) {
+      this.logger.error(`${logPrefix} error:`, { url, headers: requestHeaders, error })
+      return {
+        ok: false,
+        status: 0
+      }
+    }
+  }
+
+  private async fetchWithRetry(
+    url: string,
+    init: RequestInit,
+    options: Omit<HttpRequestOptions, 'headers'>
+  ): Promise<Response> {
+    const retries = Math.max(0, options.retries ?? 0)
+    const timeoutMs = Math.max(1, options.timeoutMs ?? FetchHttpClient.DEFAULT_TIMEOUT_MS)
+
+    let attempt = 0
+    let lastError: unknown
+    while (attempt <= retries) {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+      try {
+        const response = await fetch(url, {
+          ...init,
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        if (response.status >= 500 && attempt < retries) {
+          attempt += 1
+          continue
+        }
+        return response
+      } catch (error) {
+        clearTimeout(timeoutId)
+        lastError = error
+        if (attempt >= retries) {
+          throw error
+        }
+        attempt += 1
+      }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error('request failed')
   }
 }
 

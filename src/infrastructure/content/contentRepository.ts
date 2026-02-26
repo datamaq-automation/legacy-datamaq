@@ -16,10 +16,12 @@ import type {
 } from '@/application/ports/Content'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
+import type { HttpClient } from '@/application/ports/HttpClient'
 import { buildAppContent, commercialConfig } from '@/infrastructure/content/Appcontent.active'
 import { ContentStore } from '@/infrastructure/content/contentStore'
 import { DynamicContentService } from '@/infrastructure/content/dynamicContentService'
 import { DynamicPricingService } from '@/infrastructure/content/dynamicPricingService'
+import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { normalizeNavbarContent } from '@/infrastructure/content/navbarNormalizer'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import type { AppContent } from '@/domain/types/content'
@@ -46,12 +48,14 @@ export class ContentRepository
 
   constructor(
     private config?: Pick<ConfigPort, 'pricingApiUrl' | 'contentApiUrl' | 'requireRemoteContent'>,
-    private logger: LoggerPort = new NoopLogger()
+    private logger: LoggerPort = new NoopLogger(),
+    private http: HttpClient = new FetchHttpClient(logger)
   ) {
     this.contentStore = new ContentStore(commercialConfig, buildAppContent)
     const requiresRemoteContent = Boolean(this.config?.requireRemoteContent)
     this.remoteContentStatus = this.config?.contentApiUrl && requiresRemoteContent ? 'pending' : 'not-required'
     this.dynamicContentService = new DynamicContentService(
+      this.http,
       this.config?.contentApiUrl,
       this.logger,
       (snapshot) => this.contentStore.applyRemoteContentSnapshot(snapshot, this.logger),
@@ -66,6 +70,7 @@ export class ContentRepository
       }
     )
     this.dynamicPricingService = new DynamicPricingService(
+      this.http,
       this.config?.pricingApiUrl,
       this.logger,
       (snapshot) => this.contentStore.applyCommercialPricingSnapshot(snapshot, this.logger)

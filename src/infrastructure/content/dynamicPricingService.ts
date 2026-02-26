@@ -1,4 +1,5 @@
 import type { LoggerPort } from '@/application/ports/Logger'
+import type { HttpClient } from '@/application/ports/HttpClient'
 import type { CommercialPricingSnapshot, CommercialPriceKey } from '@/infrastructure/content/contentStore'
 
 const pricingConsoleWarnCache = new Set<string>()
@@ -21,6 +22,7 @@ export class DynamicPricingService {
   private dynamicPricingFetchStarted = false
 
   constructor(
+    private http: HttpClient,
     private pricingApiUrl: string | undefined,
     private logger: LoggerPort,
     private applySnapshot: (snapshot: CommercialPricingSnapshot) => void
@@ -47,12 +49,12 @@ export class DynamicPricingService {
 
   private async syncDynamicPricing(pricingApiUrl: string): Promise<void> {
     try {
-      const response = await fetch(pricingApiUrl, {
-        method: 'GET',
+      const response = await this.http.get(pricingApiUrl, {
         headers: {
           Accept: 'application/json, text/plain;q=0.9, */*;q=0.8'
         },
-        cache: 'no-store'
+        timeoutMs: 8_000,
+        retries: 1
       })
 
       if (!response.ok) {
@@ -64,7 +66,7 @@ export class DynamicPricingService {
         return
       }
 
-      const payload = await readPricingPayload(response)
+      const payload = readPricingPayload(response)
       const pricingSnapshot = extractCommercialPricingSnapshot(payload)
       if (!pricingSnapshot) {
         this.logger.warn('[content] payload de precios sin campos reconocibles; se mantiene fallback.', {
@@ -91,18 +93,13 @@ export class DynamicPricingService {
   }
 }
 
-async function readPricingPayload(response: Response): Promise<unknown> {
-  const rawText = await response.text().catch(() => '')
+function readPricingPayload(response: { data?: unknown; text?: string }): unknown {
+  const rawText = typeof response.text === 'string' ? response.text : ''
   const normalizedText = rawText.trim()
-  if (!normalizedText) {
-    return undefined
+  if (typeof response.data !== 'undefined') {
+    return response.data
   }
-
-  try {
-    return JSON.parse(normalizedText) as unknown
-  } catch {
-    return normalizedText
-  }
+  return normalizedText || undefined
 }
 
 function extractCommercialPricingSnapshot(payload: unknown): CommercialPricingSnapshot | undefined {

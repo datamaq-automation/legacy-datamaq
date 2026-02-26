@@ -57,8 +57,8 @@ const mailBackend = new ContactBackendMonitor(
   'mailBackendStatus'
 )
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
-const contentRepository = new ContentRepository(config, logger)
-const quoteGateway = new QuoteApiGateway(config)
+const contentRepository = new ContentRepository(config, logger, http)
+const quoteGateway = new QuoteApiGateway(config, http)
 
 const submitContact = new SubmitContactUseCase(
   contactService,

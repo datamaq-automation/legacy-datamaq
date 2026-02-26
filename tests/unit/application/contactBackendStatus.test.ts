@@ -7,6 +7,7 @@ import type { LoggerPort } from '@/application/ports/Logger'
 
 function createHttpClient(status = 204): HttpClient {
   return {
+    get: vi.fn(),
     postJson: vi.fn(),
     patchJson: vi.fn(),
     options: vi.fn().mockResolvedValue({ ok: status >= 200 && status < 300, status })

@@ -1,9 +1,11 @@
 import type { LoggerPort } from '@/application/ports/Logger'
+import type { HttpClient } from '@/application/ports/HttpClient'
 
 export class DynamicContentService {
   private contentFetchStarted = false
 
   constructor(
+    private http: HttpClient,
     private contentApiUrl: string | undefined,
     private logger: LoggerPort,
     private applyContentSnapshot: (snapshot: unknown) => boolean,
@@ -34,12 +36,12 @@ export class DynamicContentService {
 
   private async syncRemoteContent(contentApiUrl: string): Promise<void> {
     try {
-      const response = await fetch(contentApiUrl, {
-        method: 'GET',
+      const response = await this.http.get(contentApiUrl, {
         headers: {
           Accept: 'application/json, text/plain;q=0.9, */*;q=0.8'
         },
-        cache: 'no-store'
+        timeoutMs: 8_000,
+        retries: 1
       })
 
       if (!response.ok) {
@@ -50,7 +52,7 @@ export class DynamicContentService {
         return
       }
 
-      const payload = (await response.json().catch(() => undefined)) as unknown
+      const payload = response.data as unknown
       const fullSnapshot = extractFullContentSnapshot(payload)
       if (fullSnapshot) {
         const applied = this.applyContentSnapshot(fullSnapshot)

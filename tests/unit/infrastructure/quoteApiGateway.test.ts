@@ -274,9 +274,12 @@ describe('QuoteApiGateway', () => {
     )
     await gateway.fetchQuotePdf('Q-20260222-000321')
 
-    expect(fetchMock).toHaveBeenCalledWith('/api/v1/quote/pdf?quote_id=Q-20260222-000321', {
-      method: 'GET'
-    })
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/v1/quote/pdf?quote_id=Q-20260222-000321',
+      expect.objectContaining({
+        method: 'GET'
+      })
+    )
   })
 
   it('supports utf-8 filename* from content-disposition', async () => {
