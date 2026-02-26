@@ -129,8 +129,8 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       rejectLabel: 'Rechazar'
     },
     decisionFlow: {
-      processTitle: 'Proceso',
-      pricingTitle: 'Tarifa y alcance',
+      processTitle: 'Como trabajamos',
+      pricingTitle: 'Tarifa base y alcance',
       pricingSummaryFallback: 'Contenido temporal.',
       pricingIncludes: ['Contenido temporal.'],
       pricingExcludes: ['Contenido temporal.'],
@@ -138,7 +138,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       coverageTitle: 'Cobertura y tiempos',
       coverageAreas: ['Contenido temporal.'],
       responseTimes: ['Contenido temporal.'],
-      whatsappLabel: 'Contactar por WhatsApp',
+      whatsappLabel: 'Pedir coordinacion por WhatsApp',
       contactFormLabel: 'Ir al formulario de contacto',
       faqTitle: 'Preguntas frecuentes',
       processSteps: [
