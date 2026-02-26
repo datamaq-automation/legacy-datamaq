@@ -79,19 +79,19 @@ jobs:
       matrix:
         include:
           - target: datamaq
-            ftps_server_secret: FTPS__DATAMAQ_SERVER
-            ftps_username_secret: FTPS__DATAMAQ_USERNAME
-            ftps_password_secret: FTPS__DATAMAQ_PASSWORD
-            ftps_port_var: FTPS__DATAMAQ_PORT
-            ftps_remote_dir_var: FTPS__DATAMAQ_REMOTE_DIR
-            ftps_allow_insecure_data_channel_var: FTPS__DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
+            ftps_server_secret: FTPS_DATAMAQ_SERVER
+            ftps_username_secret: FTPS_DATAMAQ_USERNAME
+            ftps_password_secret: FTPS_DATAMAQ_PASSWORD
+            ftps_port_var: FTPS_DATAMAQ_PORT
+            ftps_remote_dir_var: FTPS_DATAMAQ_REMOTE_DIR
+            ftps_allow_insecure_data_channel_var: FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
           - target: upp
-            ftps_server_secret: FTPS__UPP_SERVER
-            ftps_username_secret: FTPS__UPP_USERNAME
-            ftps_password_secret: FTPS__UPP_PASSWORD
-            ftps_port_var: FTPS__UPP_PORT
-            ftps_remote_dir_var: FTPS__UPP_REMOTE_DIR
-            ftps_allow_insecure_data_channel_var: FTPS__UPP_ALLOW_INSECURE_DATA_CHANNEL
+            ftps_server_secret: FTPS_UPP_SERVER
+            ftps_username_secret: FTPS_UPP_USERNAME
+            ftps_password_secret: FTPS_UPP_PASSWORD
+            ftps_port_var: FTPS_UPP_PORT
+            ftps_remote_dir_var: FTPS_UPP_REMOTE_DIR
+            ftps_allow_insecure_data_channel_var: FTPS_UPP_ALLOW_INSECURE_DATA_CHANNEL
 
     steps:
       - name: Checkout

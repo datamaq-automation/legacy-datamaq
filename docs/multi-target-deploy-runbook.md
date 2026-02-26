@@ -29,26 +29,26 @@ Desplegar dos marcas desde el mismo repositorio, compartiendo rutas (`/`, `/coti
 Para `datamaq`:
 
 Secrets:
-- `FTPS__DATAMAQ_SERVER`
-- `FTPS__DATAMAQ_USERNAME`
-- `FTPS__DATAMAQ_PASSWORD`
+- `FTPS_DATAMAQ_SERVER`
+- `FTPS_DATAMAQ_USERNAME`
+- `FTPS_DATAMAQ_PASSWORD`
 
 Variables:
-- `FTPS__DATAMAQ_PORT` (opcional; default 21)
-- `FTPS__DATAMAQ_REMOTE_DIR`
-- `FTPS__DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
+- `FTPS_DATAMAQ_PORT` (opcional; default 21)
+- `FTPS_DATAMAQ_REMOTE_DIR`
+- `FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
 
 Para `upp`:
 
 Secrets:
-- `FTPS__UPP_SERVER`
-- `FTPS__UPP_USERNAME`
-- `FTPS__UPP_PASSWORD`
+- `FTPS_UPP_SERVER`
+- `FTPS_UPP_USERNAME`
+- `FTPS_UPP_PASSWORD`
 
 Variables:
-- `FTPS__UPP_PORT` (opcional; default 21)
-- `FTPS__UPP_REMOTE_DIR`
-- `FTPS__UPP_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
+- `FTPS_UPP_PORT` (opcional; default 21)
+- `FTPS_UPP_REMOTE_DIR`
+- `FTPS_UPP_ALLOW_INSECURE_DATA_CHANNEL` (`true|false`, opcional)
 
 ## Validacion local recomendada
 
