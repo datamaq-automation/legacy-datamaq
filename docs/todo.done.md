@@ -348,3 +348,19 @@
 - [x] Migración vertical inicial (`contact`) manteniendo contrato HTTP.
   - Evidencia: `public/api/_contact_impl.php` ahora actúa como adaptador HTTP delgado y delega en controller/use case/presenter.
   - Evidencia de compatibilidad: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).
+- [x] Puertos/interfaces explícitos entre capas (avance implementado en migración vertical `contact`).
+  - [x] Input/Output boundaries de `use_cases`.
+  - [x] Gateway contracts para dependencias de `use_cases`.
+  - Evidencia de implementación:
+    - `public/api/use_cases/ports/input/submit_contact_input_boundary.php`
+    - `public/api/use_cases/ports/output/submit_contact_output_boundary.php`
+    - `public/api/use_cases/ports/gateways/contact_rate_limit_gateway_port.php`
+    - `public/api/use_cases/ports/gateways/contact_validation_gateway_port.php`
+    - `public/api/use_cases/submit_contact.php` (`DmqSubmitContactInteractor`)
+    - `public/api/interface_adapters/gateways/contact_rate_limit_gateway.php`
+    - `public/api/interface_adapters/gateways/contact_validation_gateway.php`
+    - `public/api/interface_adapters/presenters/contact_presenter.php`
+    - `public/api/interface_adapters/controllers/contact_controller.php`
+    - `public/api/_contact_impl.php`
+  - Evidencia de compatibilidad de contrato:
+    - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).

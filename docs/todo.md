@@ -19,8 +19,8 @@
 ## P1 (arquitectura limpia + SOLID)
 
 - [ ] **Definir puertos/interfaces explícitos entre capas**
-  - [ ] Crear contratos de entrada/salida de `use_cases` (input/output boundaries).
-  - [ ] Definir contratos de gateway consumidos por `use_cases` e implementados en `interface_adapters/gateways` o `infrastructure`.
+  - [x] Crear contratos de entrada/salida de `use_cases` (input/output boundaries).
+  - [x] Definir contratos de gateway consumidos por `use_cases` e implementados en `interface_adapters/gateways` o `infrastructure`.
   - [ ] Prohibir dependencia de `use_cases` hacia framework/Laravel en reglas de arquitectura.
 
 - [ ] **Separar responsabilidades del módulo `_bootstrap.php`**

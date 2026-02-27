@@ -14,10 +14,10 @@ function dmq_controller_submit_contact(): array
     }
 
     $contactSubmission = dmq_entity_contact_submission((array)($request['payload'] ?? []));
-    return dmq_use_case_submit_contact(
-        $contactSubmission,
-        'dmq_gateway_contact_rate_limit',
-        'dmq_service_validate_contact_like_payload'
+    $interactor = new DmqSubmitContactInteractor(
+        new DmqContactRateLimitGateway(),
+        new DmqContactValidationGateway()
     );
-}
 
+    return $interactor->handle($contactSubmission);
+}

@@ -8,6 +8,7 @@ require_once __DIR__ . '/entities/contact_submission.php';
 require_once __DIR__ . '/use_cases/submit_contact.php';
 require_once __DIR__ . '/infrastructure/http_request.php';
 require_once __DIR__ . '/interface_adapters/gateways/contact_rate_limit_gateway.php';
+require_once __DIR__ . '/interface_adapters/gateways/contact_validation_gateway.php';
 require_once __DIR__ . '/interface_adapters/presenters/contact_presenter.php';
 require_once __DIR__ . '/interface_adapters/controllers/contact_controller.php';
 
@@ -32,4 +33,5 @@ if (($result['ok'] ?? false) !== true) {
     exit;
 }
 
-dmq_json_response(202, dmq_presenter_contact_accepted());
+$presenter = new DmqSubmitContactPresenter();
+dmq_json_response(202, $presenter->presentAccepted());
