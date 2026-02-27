@@ -98,4 +98,4 @@ jobs:
             fi
             sleep 1
           done
-          VITE_API_PROXY_TARGET=http://127.0.0.1:8899 VITE_API_PROXY_PREFIX= npm run test:e2e:integration
+          PLAYWRIGHT_MODE=integration VITE_API_PROXY_TARGET=http://127.0.0.1:8899 VITE_API_PROXY_PREFIX= npm run test:e2e:integration
