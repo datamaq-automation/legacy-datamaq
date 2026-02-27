@@ -3,6 +3,7 @@ import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
+const DEFAULT_HEALTH_ENDPOINT = 'https://api.datamaq.com.ar/v1/health'
 const HEALTH_ENDPOINT = resolveHealthEndpoint()
 
 export async function probeBackendHealth(
@@ -74,6 +75,6 @@ function normalize(value: unknown): string | null {
 
 function resolveHealthEndpoint(): string {
   const configuredEndpoint = import.meta.env.VITE_HEALTH_ENDPOINT?.trim()
-  return configuredEndpoint || '/api/v1/health.php'
+  return configuredEndpoint || DEFAULT_HEALTH_ENDPOINT
 }
 
