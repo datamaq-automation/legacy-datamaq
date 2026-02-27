@@ -4,6 +4,8 @@ Fecha de actualizacion: 2026-02-26.
 
 ## Base y versionado
 
+- Base URL oficial (produccion): `https://api.datamaq.com.ar/v1`
+- Base URL anterior deprecada: `https://datamaq.com.ar/api/v1`
 - Base funcional canonica: `/api/v1/...`
 - Endpoints canonicos:
   - `GET /api/v1/content`
@@ -57,6 +59,7 @@ Compatibilidad transitoria legacy permitida:
 
 - `200`: `status`, `request_id`, `service`, `brand_id`, `version`, `timestamp`
 - `405`: error comun
+- Compatibilidad transitoria permitida: alias legacy `GET /api/v1/health.php`
 
 ### `POST /api/v1/contact`
 

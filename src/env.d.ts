@@ -3,6 +3,7 @@ interface ImportMetaEnv {
   readonly MODE: string
   readonly DEV: boolean
   readonly VITE_CONTENT_TARGET?: string
+  readonly VITE_HEALTH_ENDPOINT?: string
 }
 
 interface ImportMeta {

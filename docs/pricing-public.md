@@ -11,8 +11,10 @@
 
 ## Comportamiento de frontend
 
+- Base URL oficial (produccion): `https://api.datamaq.com.ar/v1`
+- Base URL anterior deprecada: `https://datamaq.com.ar/api/v1`
 - Endpoint consultado en runtime:
-  - `GET /api/v1/pricing`
+  - `GET https://api.datamaq.com.ar/v1/pricing`
 - Visualizacion:
   - siempre `Consultar al WhatsApp` para tarifa base, traslado, diagnostico y hora adicional.
 - Parseo:
@@ -27,7 +29,7 @@ Archivos clave:
 
 ## Contrato backend
 
-### `GET /api/v1/pricing`
+### `GET https://api.datamaq.com.ar/v1/pricing`
 
 Response:
 ```json
@@ -46,7 +48,7 @@ Headers:
 - `Cache-Control: max-age=60`
 - `Content-Type: application/json`
 
-### `GET /api/v1/health` (opcional)
+### `GET https://api.datamaq.com.ar/v1/health` (opcional)
 
 Response ejemplo:
 ```json

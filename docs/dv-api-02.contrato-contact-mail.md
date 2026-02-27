@@ -2,6 +2,8 @@
 
 ## 1) Base URL y endpoints
 
+- Base URL oficial (produccion): `https://api.datamaq.com.ar/v1`
+- Base URL anterior deprecada: `https://datamaq.com.ar/api/v1`
 - Variables fuente en `src/infrastructure/content/runtimeProfiles.json`:
   - `inquiryApiUrl`
   - `mailApiUrl`
@@ -10,8 +12,8 @@
   - acepta endpoints relativos (`/api/...`) para mismo dominio
   - para endpoints absolutos, en produccion se exige `https://`
 - Endpoints actuales recomendados:
-  - `POST /api/v1/contact`
-  - `POST /api/v1/mail`
+  - `POST https://api.datamaq.com.ar/v1/contact`
+  - `POST https://api.datamaq.com.ar/v1/mail`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
@@ -23,8 +25,8 @@ Referencia de implementacion:
 
 ## 2) Endpoints de contacto comercial
 
-### 2.1 `POST /api/v1/contact`
-### 2.2 `POST /api/v1/mail`
+### 2.1 `POST https://api.datamaq.com.ar/v1/contact`
+### 2.2 `POST https://api.datamaq.com.ar/v1/mail`
 
 Ambos endpoints usan el mismo contrato de payload/respuesta.
 

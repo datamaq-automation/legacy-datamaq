@@ -2,6 +2,8 @@
 
 ## 1) Base URL y endpoints
 
+- Base URL oficial (produccion): `https://api.datamaq.com.ar/v1`
+- Base URL anterior deprecada: `https://datamaq.com.ar/api/v1`
 - Variables fuente en `src/infrastructure/content/runtimeProfiles.json`:
   - `pricingApiUrl`
   - (compatibilidad legacy opcional: `backendBaseUrl` + `/v1/public/pricing`)
@@ -10,7 +12,7 @@
   - para endpoints absolutos, en produccion se exige `https://`
   - bypass local controlado: en no-DEV, `allowInsecureBackend=true` solo habilita `http://localhost`, `http://127.0.0.1` o `http://[::1]`
 - Endpoint actual recomendado:
-  - `GET /api/v1/pricing`
+  - `GET https://api.datamaq.com.ar/v1/pricing`
 
 Referencia de implementacion:
 - `src/infrastructure/config/viteConfig.ts`
@@ -19,7 +21,7 @@ Referencia de implementacion:
 
 ## 2) Endpoint de precios publicos
 
-### 2.1 `GET /api/v1/pricing`
+### 2.1 `GET https://api.datamaq.com.ar/v1/pricing`
 
 Uso:
 - El frontend consulta este endpoint en runtime.
@@ -53,7 +55,7 @@ Validacion frontend:
 
 ## 3) Endpoint de salud
 
-### 3.1 `GET /api/v1/health` (opcional)
+### 3.1 `GET https://api.datamaq.com.ar/v1/health` (opcional)
 
 Uso recomendado:
 - monitoreo de disponibilidad de API y edge
