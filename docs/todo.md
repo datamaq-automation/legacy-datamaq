@@ -44,12 +44,3 @@
 
 - [ ] **Eliminar dependencias implícitas globales tipo `$_SERVER` en servicios**
   - [ ] Inyectar contexto HTTP explícito en servicios/middleware para facilitar port a Laravel middleware/request lifecycle.
-
-## P2 (buenas prácticas PHP y operabilidad)
-
-- [ ] **Cobertura de contratos negativos adicional**
-  - [ ] Agregar tests que validen logging estructurado en flujo `quote/pdf` mock.
-
-- [ ] **Convergencia de configuración por entorno**
-  - [ ] Externalizar límites de rate limit por endpoint a configuración (env) para evitar valores hardcodeados en código.
-  - [ ] Externalizar parámetros operativos (ej. política de CORS y logging detail level) en configuración central.

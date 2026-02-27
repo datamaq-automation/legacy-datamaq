@@ -81,3 +81,14 @@ Compatibilidad transitoria legacy permitida:
   - valida `quote_id`
   - retorna `application/pdf` sintético
   - propaga `request_id` via header `X-Request-Id`
+
+## Configuración operativa por entorno
+
+- Límite de payload JSON (bytes):
+  - `API_MAX_BODY_BYTES` (default: `32768`)
+- Rate limit por bucket (`contact`, `mail`, `quote_diagnostic`):
+  - `API_RL_<BUCKET>_LIMIT`
+  - `API_RL_<BUCKET>_WINDOW_SECONDS`
+  - Ejemplo: `API_RL_CONTACT_LIMIT`, `API_RL_CONTACT_WINDOW_SECONDS`
+- Nivel de logging estructurado:
+  - `API_LOG_LEVEL` en `debug|info|warn|error` (default: `info`)

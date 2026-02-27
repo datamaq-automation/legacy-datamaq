@@ -120,6 +120,28 @@ function dmq_json_response(int $statusCode, array $payload): void
     echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 
+function dmq_binary_response(
+    int $statusCode,
+    string $contentType,
+    string $body,
+    array $extraHeaders = []
+): void {
+    $requestId = dmq_request_id();
+    http_response_code($statusCode);
+    dmq_apply_cors_headers();
+    dmq_apply_security_headers();
+    header('Content-Type: ' . $contentType);
+    header('Cache-Control: no-store');
+    foreach ($extraHeaders as $name => $value) {
+        if (!is_string($name) || !is_string($value) || trim($name) === '') {
+            continue;
+        }
+        header($name . ': ' . $value);
+    }
+    dmq_log_response($statusCode, $requestId);
+    echo $body;
+}
+
 function dmq_error_response(int $statusCode, string $errorCode, string $detail): void
 {
     $requestId = dmq_request_id();
@@ -172,9 +194,14 @@ function dmq_request_duration_ms(): int
 
 function dmq_log_response(int $statusCode, string $requestId): void
 {
+    $level = $statusCode >= 500 ? 'error' : ($statusCode >= 400 ? 'warn' : 'info');
+    if (!dmq_should_log_level($level)) {
+        return;
+    }
+
     $payload = [
         'ts' => gmdate('c'),
-        'level' => $statusCode >= 500 ? 'error' : ($statusCode >= 400 ? 'warn' : 'info'),
+        'level' => $level,
         'event' => 'api.response',
         'request_id' => $requestId,
         'method' => (string)($_SERVER['REQUEST_METHOD'] ?? 'GET'),
@@ -185,6 +212,23 @@ function dmq_log_response(int $statusCode, string $requestId): void
     ];
 
     error_log((string) json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+}
+
+function dmq_should_log_level(string $level): bool
+{
+    $priority = [
+        'debug' => 10,
+        'info' => 20,
+        'warn' => 30,
+        'error' => 40,
+    ];
+
+    $configured = strtolower(trim((string) (getenv('API_LOG_LEVEL') ?: 'info')));
+    if (!isset($priority[$configured])) {
+        $configured = 'info';
+    }
+
+    return ($priority[$level] ?? 20) >= $priority[$configured];
 }
 
 function dmq_read_json_body(): ?array
@@ -205,6 +249,35 @@ function dmq_get_max_body_bytes(): int
     }
 
     return 32768;
+}
+
+function dmq_get_rate_limit_config(string $bucket, int $defaultLimit, int $defaultWindowSeconds): array
+{
+    $envPrefix = strtoupper($bucket);
+    $envPrefix = preg_replace('/[^A-Z0-9]+/', '_', $envPrefix) ?? $envPrefix;
+    $envPrefix = trim($envPrefix, '_');
+
+    $limit = dmq_parse_positive_int_env("API_RL_{$envPrefix}_LIMIT", $defaultLimit);
+    $window = dmq_parse_positive_int_env("API_RL_{$envPrefix}_WINDOW_SECONDS", $defaultWindowSeconds);
+
+    return [
+        'limit' => $limit,
+        'window_seconds' => $window
+    ];
+}
+
+function dmq_parse_positive_int_env(string $key, int $fallback): int
+{
+    $configured = getenv($key);
+    if (!is_string($configured)) {
+        return $fallback;
+    }
+    $trimmed = trim($configured);
+    if (!preg_match('/^\d+$/', $trimmed)) {
+        return $fallback;
+    }
+    $value = (int) $trimmed;
+    return $value > 0 ? $value : $fallback;
 }
 
 function dmq_validate_json_request_headers_and_size(int $maxBytes): ?array

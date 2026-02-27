@@ -171,6 +171,8 @@ describe('PHP API contracts', () => {
     expect(response.headers.get('content-type')).toContain('application/pdf')
     expect(response.headers.get('content-disposition')).toContain('quote-Q-20260226-000001.pdf')
     expect(response.headers.get('x-request-id')).toBeTruthy()
+    expect(response.headers.get('cache-control')).toBe('no-store')
+    expect(response.headers.get('x-content-type-options')).toBe('nosniff')
   })
 
   it('quote/pdf endpoint returns standardized validation error when quote_id is missing', async () => {

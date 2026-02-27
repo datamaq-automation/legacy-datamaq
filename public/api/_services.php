@@ -19,7 +19,12 @@ function dmq_service_validate_contact_like_payload(array $payload): array
 
 function dmq_service_enforce_bucket_rate_limit(string $bucket, int $limit, int $windowSeconds): array
 {
-    $retryAfter = dmq_enforce_rate_limit($bucket, $limit, $windowSeconds);
+    $rl = dmq_get_rate_limit_config($bucket, $limit, $windowSeconds);
+    $retryAfter = dmq_enforce_rate_limit(
+        $bucket,
+        (int)($rl['limit'] ?? $limit),
+        (int)($rl['window_seconds'] ?? $windowSeconds)
+    );
     if (!is_int($retryAfter)) {
         return ['ok' => true];
     }
@@ -68,4 +73,3 @@ function dmq_service_build_diagnostic_quote(array $payload): array
         'whatsapp_url' => 'https://wa.me/5491100000000?text=' . rawurlencode('Hola, quiero confirmar la cotizacion ' . $quoteId),
     ];
 }
-

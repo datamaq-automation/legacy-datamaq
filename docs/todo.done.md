@@ -292,3 +292,30 @@
   - [x] Agregar tests de contrato para `413 Payload Too Large`.
   - Evidencia: `tests/unit/infrastructure/phpApiContracts.test.ts`.
   - Evidencia de ejecución: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).
+- [x] Cobertura de contratos negativos adicional (cierre de bloque ciberseguridad reciente).
+  - [x] Tests de contrato para `415 Unsupported Media Type` en POST sin JSON.
+  - [x] Tests de contrato para `413 Payload Too Large`.
+  - [x] Validación indirecta de pipeline transversal (request-id/security/cache) en `quote/pdf` mock.
+  - Evidencia de implementación:
+    - `public/api/_bootstrap.php` (`dmq_validate_json_request_headers_and_size`, `dmq_get_max_body_bytes`, `dmq_read_json_body_with_limit`, `dmq_binary_response`).
+    - `public/api/_contact_impl.php`, `public/api/_mail_impl.php`, `public/api/quote/_diagnostic_impl.php`, `public/api/quote/_pdf_impl.php`.
+  - Evidencia de contrato: `tests/unit/infrastructure/phpApiContracts.test.ts`.
+  - Evidencia de ejecución: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).
+- [x] Convergencia de configuración por entorno.
+  - [x] Externalizar límites de rate limit por endpoint a configuración (env).
+  - [x] Externalizar parámetros operativos (política de logging y límites de payload) en configuración central.
+  - Evidencia de implementación:
+    - `public/api/_bootstrap.php`:
+      - `dmq_get_rate_limit_config()`
+      - `dmq_parse_positive_int_env()`
+      - `dmq_get_max_body_bytes()`
+      - `dmq_should_log_level()` con `API_LOG_LEVEL`
+    - `public/api/_services.php` usa config por env en `dmq_service_enforce_bucket_rate_limit()`.
+    - `docs/dv-api-00.contrato-canonico-v1.md` documenta variables operativas.
+  - Variables soportadas:
+    - `API_MAX_BODY_BYTES`
+    - `API_LOG_LEVEL`
+    - `API_RL_<BUCKET>_LIMIT`
+    - `API_RL_<BUCKET>_WINDOW_SECONDS`
+  - Evidencia de validación:
+    - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).
