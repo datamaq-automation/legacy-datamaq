@@ -5,7 +5,7 @@ Fecha de validacion: 2026-02-27
 Nota:
 
 - Este documento refleja la observacion de produccion realizada el 2026-02-27.
-- En el codigo fuente de esta rama, la sonda `health` ya fue limpiada para usar por defecto `https://api.datamaq.com.ar/v1/health`.
+- En el codigo fuente de esta rama, la sonda `health` ya fue limpiada para usar un endpoint de health desde configuracion runtime o `VITE_HEALTH_ENDPOINT`.
 
 Alcance de esta validacion:
 

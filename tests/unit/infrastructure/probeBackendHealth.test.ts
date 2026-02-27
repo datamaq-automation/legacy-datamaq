@@ -60,8 +60,13 @@ describe('probeBackendHealth', () => {
     expect(infoSpy).not.toHaveBeenCalled()
   })
 
-  it('uses canonical health endpoint by default', async () => {
+  it('uses runtime-configured health endpoint by default', async () => {
     vi.resetModules()
+    vi.doMock('@/infrastructure/config/publicConfig', () => ({
+      publicConfig: {
+        healthApiUrl: 'https://api.example.com/v1/health'
+      }
+    }))
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ status: 'ok' }), {
         status: 200,
@@ -78,7 +83,7 @@ describe('probeBackendHealth', () => {
     await probeBackendHealthWithDefault()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://api.datamaq.com.ar/v1/health',
+      'https://api.example.com/v1/health',
       expect.objectContaining({
         method: 'GET',
         headers: {
@@ -87,7 +92,7 @@ describe('probeBackendHealth', () => {
       })
     )
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
-      endpoint: 'https://api.datamaq.com.ar/v1/health',
+      endpoint: 'https://api.example.com/v1/health',
       status: 200,
       service: null,
       brandId: null,
