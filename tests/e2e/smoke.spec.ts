@@ -2,7 +2,11 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
-    const healthRoutes = ['**/api/v1/health*', '**/plantilla-www/public/api/v1/health*']
+    const healthRoutes = [
+      '**/api/v1/health*',
+      '**/v1/health*',
+      '**/plantilla-www/public/api/v1/health*'
+    ]
     for (const pattern of healthRoutes) {
       await page.route(pattern, async (route) => {
         await route.fulfill({
@@ -19,7 +23,11 @@ test.describe('Smoke E2E', () => {
       })
     }
 
-    const pricingRoutes = ['**/api/v1/pricing*', '**/plantilla-www/public/api/v1/pricing*']
+    const pricingRoutes = [
+      '**/api/v1/pricing*',
+      '**/v1/pricing*',
+      '**/plantilla-www/public/api/v1/pricing*'
+    ]
     for (const pattern of pricingRoutes) {
       await page.route(pattern, async (route) => {
         await route.fulfill({
@@ -35,7 +43,11 @@ test.describe('Smoke E2E', () => {
       })
     }
 
-    const contentRoutes = ['**/api/v1/content*', '**/plantilla-www/public/api/v1/content*']
+    const contentRoutes = [
+      '**/api/v1/content*',
+      '**/v1/content*',
+      '**/plantilla-www/public/api/v1/content*'
+    ]
     for (const pattern of contentRoutes) {
       await page.route(pattern, async (route) => {
         await route.fulfill({
@@ -79,12 +91,16 @@ test.describe('Smoke E2E', () => {
       await route.fulfill({ status: 405 })
     }
 
-    const contactRoutes = ['**/api/v1/contact*', '**/plantilla-www/public/api/v1/contact*']
+    const contactRoutes = [
+      '**/api/v1/contact*',
+      '**/v1/contact*',
+      '**/plantilla-www/public/api/v1/contact*'
+    ]
     for (const pattern of contactRoutes) {
       await page.route(pattern, fulfillContactApi)
     }
 
-    const mailRoutes = ['**/api/v1/mail*', '**/plantilla-www/public/api/v1/mail*']
+    const mailRoutes = ['**/api/v1/mail*', '**/v1/mail*', '**/plantilla-www/public/api/v1/mail*']
     for (const pattern of mailRoutes) {
       await page.route(pattern, fulfillContactApi)
     }
@@ -101,8 +117,13 @@ test.describe('Smoke E2E', () => {
 
   test('contact lead flow submits and navigates to thanks', async ({ page }) => {
     await page.goto('/')
-    await page.fill('#contacto-lead-email', 'ada@example.com')
-    await page.fill('#contacto-lead-mensaje', 'Necesito una propuesta para mantenimiento industrial.')
+    const leadSection = page.locator('#contacto-lead')
+    await leadSection.scrollIntoViewIfNeeded()
+    await expect(leadSection).toBeVisible()
+    await leadSection.locator('input[name="email"]').fill('ada@example.com')
+    await leadSection
+      .locator('textarea[name="message"]')
+      .fill('Necesito una propuesta para mantenimiento industrial.')
 
     await page.getByRole('button', { name: /Registrar contacto/i }).click()
 
@@ -112,8 +133,11 @@ test.describe('Smoke E2E', () => {
 
   test('mail flow submits and navigates to thanks', async ({ page }) => {
     await page.goto('/')
-    await page.fill('#contacto-mail-email', 'ada@example.com')
-    await page.fill('#contacto-mail-mensaje', 'Necesito enviar una consulta por correo.')
+    const mailSection = page.locator('#contacto-mail')
+    await mailSection.scrollIntoViewIfNeeded()
+    await expect(mailSection).toBeVisible()
+    await mailSection.locator('input[name="email"]').fill('ada@example.com')
+    await mailSection.locator('textarea[name="message"]').fill('Necesito enviar una consulta por correo.')
 
     await page.getByRole('button', { name: /Enviar consulta por correo/i }).click()
 

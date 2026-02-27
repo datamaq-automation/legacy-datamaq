@@ -4,7 +4,7 @@ import runtimeProfilesRaw from '@/infrastructure/content/runtimeProfiles.json'
 type NullableString = string | undefined
 type NullableStringJson = string | null
 
-const APP_TARGETS = ['datamaq', 'upp', 'example', 'e2e'] as const
+const APP_TARGETS = ['datamaq', 'upp', 'example', 'e2e', 'integration'] as const
 const DEFAULT_APP_TARGET = 'datamaq'
 
 export type AppTarget = (typeof APP_TARGETS)[number]
@@ -121,7 +121,8 @@ const runtimeProfilesByTarget: Record<AppTarget, RuntimeProfile> = {
   datamaq: mapProfile(rawProfiles.datamaq),
   upp: mapProfile(rawProfiles.upp),
   example: mapProfile(rawProfiles.example),
-  e2e: mapProfile(rawProfiles.e2e)
+  e2e: mapProfile(rawProfiles.e2e),
+  integration: mapProfile(rawProfiles.integration)
 }
 
 export function normalizeAppTarget(value: string | undefined): AppTarget | undefined {

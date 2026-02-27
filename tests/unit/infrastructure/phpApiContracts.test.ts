@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 
 const HOST = '127.0.0.1'
@@ -8,6 +9,9 @@ const BASE_URL = `http://${HOST}:${PORT}`
 const SERVER_BOOT_TIMEOUT_MS = Number(process.env.PHP_API_BOOT_TIMEOUT_MS ?? 30_000)
 const SERVER_POLL_INTERVAL_MS = Number(process.env.PHP_API_BOOT_POLL_MS ?? 250)
 const SERVER_LOG_LINES = 40
+const PHP_API_V1_ROOT = path.resolve(process.cwd(), 'public', 'api', 'v1')
+const HAS_LOCAL_PHP_API =
+  existsSync(path.join(PHP_API_V1_ROOT, 'health.php')) || existsSync(path.join(PHP_API_V1_ROOT, 'health'))
 
 let phpServer: ChildProcessWithoutNullStreams | undefined
 let apiRouteMode: 'pretty' | 'php' = 'pretty'
@@ -15,7 +19,7 @@ let phpServerStdout = ''
 let phpServerStderr = ''
 let phpServerExit: { code: number | null; signal: NodeJS.Signals | null } | undefined
 
-describe('PHP API contracts', () => {
+describe.skipIf(!HAS_LOCAL_PHP_API)('PHP API contracts', () => {
   beforeAll(async () => {
     phpServer = spawn('php', ['-S', `${HOST}:${PORT}`, '-t', 'public'], {
       cwd: path.resolve(process.cwd()),

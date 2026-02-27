@@ -1,27 +1,22 @@
-# profebustos-www
+# plantilla-www
 
-Frontend Vue 3 + Vite para landing y cotizador, con deploy FTPS multi-target desde un solo repositorio.
+Frontend Vue 3 + Vite con configuracion multi-target desde un solo repositorio.
 
-## Estado
-
-- Rutas compartidas entre marcas: `/`, `/cotizador`, `/gracias`.
-- Configuracion por marca centralizada en [`src/infrastructure/content/runtimeProfiles.json`](src/infrastructure/content/runtimeProfiles.json).
-- Build por target sin `.env`: `npm run build -- <target>`.
-
-## Targets disponibles
+## Targets
 
 - `datamaq`
 - `upp`
+- `example`
 - `e2e`
 
-## Comandos principales
+Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfiles.json`.
+
+## Comandos
 
 ```bash
 npm install
 npm run dev
-npm run build
-npm run build:datamaq
-npm run build:upp
+npm run build -- <target>
 npm run typecheck
 npm run test
 npm run test:e2e:smoke
@@ -30,9 +25,6 @@ npm run test:e2e:smoke
 ## CI/CD
 
 - CI: `.github/workflows/ci-quality.yml`
-- CD: `.github/workflows/ci-cd-ftps.yml`
+- CD FTPS: `.github/workflows/ci-cd-ftps.yml`
 
-- `pull_request`: CI (typecheck, unit tests, build, smoke e2e).
-- `push` a `main`: CI y luego CD FTPS por matrix (`datamaq`, `upp`) si CI termina OK.
-
-Runbook operativo: `docs/multi-target-deploy-runbook.md`.
+Runbook: `docs/multi-target-deploy-runbook.md`.

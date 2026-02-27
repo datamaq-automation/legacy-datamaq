@@ -119,7 +119,7 @@ async function runCli() {
       `[layer-boundaries] ${violation.rule} source=${violation.sourceLayer} target=${violation.targetLayer} file=${violation.filePath} import=${violation.importPath}`
     )
   }
-  process.exitCode = 1
+  process.exitCode = report.violations.length > 0 ? 1 : 0
 }
 
 const invokedAsScript =

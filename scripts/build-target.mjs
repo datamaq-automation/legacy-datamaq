@@ -24,12 +24,11 @@ function resolveTarget(argv) {
   })()
   const fromPositional = argv.find((arg) => !arg.startsWith('--'))
 
-  const requestedTarget =
+  const target =
     normalize(fromEqualFlag) ??
     normalize(fromSeparateFlag) ??
     normalize(fromPositional) ??
     DEFAULT_TARGET
-  const target = requestedTarget
 
   if (!SUPPORTED_TARGETS.has(target)) {
     throw new Error(

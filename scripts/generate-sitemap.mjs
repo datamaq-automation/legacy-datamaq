@@ -123,20 +123,19 @@ function resolveTarget(argv) {
     return argv[index + 1]
   })()
 
-  const normalizedRequestedTarget =
+  const target =
     normalize(targetFromFlag)?.toLowerCase() ??
     normalize(targetFromSeparateFlag)?.toLowerCase() ??
     normalize(maybePositional)?.toLowerCase() ??
     DEFAULT_TARGET
-  const normalizedTarget = normalizedRequestedTarget
 
-  if (!SUPPORTED_TARGETS.has(normalizedTarget)) {
+  if (!SUPPORTED_TARGETS.has(target)) {
     throw new Error(
-      `[sitemap] invalid target "${normalizedTarget}". Expected one of: ${Array.from(SUPPORTED_TARGETS).join(', ')}`
+      `[sitemap] invalid target "${target}". Expected one of: ${Array.from(SUPPORTED_TARGETS).join(', ')}`
     )
   }
 
-  return normalizedTarget
+  return target
 }
 
 function resolveProfile(target, profiles) {
