@@ -3,10 +3,17 @@ import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
 import path from 'node:path'
 
 const HOST = '127.0.0.1'
-const PORT = 8899
-const BASE_URL = `http://${HOST}:${PORT}/api/v1`
+const PORT = Number(process.env.PHP_API_TEST_PORT ?? 8899)
+const BASE_URL = `http://${HOST}:${PORT}`
+const SERVER_BOOT_TIMEOUT_MS = Number(process.env.PHP_API_BOOT_TIMEOUT_MS ?? 30_000)
+const SERVER_POLL_INTERVAL_MS = Number(process.env.PHP_API_BOOT_POLL_MS ?? 250)
+const SERVER_LOG_LINES = 40
 
 let phpServer: ChildProcessWithoutNullStreams | undefined
+let apiRouteMode: 'pretty' | 'php' = 'pretty'
+let phpServerStdout = ''
+let phpServerStderr = ''
+let phpServerExit: { code: number | null; signal: NodeJS.Signals | null } | undefined
 
 describe('PHP API contracts', () => {
   beforeAll(async () => {
@@ -14,8 +21,18 @@ describe('PHP API contracts', () => {
       cwd: path.resolve(process.cwd()),
       stdio: 'pipe'
     })
+    phpServer.stdout.on('data', (chunk: Buffer | string) => {
+      phpServerStdout += String(chunk)
+    })
+    phpServer.stderr.on('data', (chunk: Buffer | string) => {
+      phpServerStderr += String(chunk)
+    })
+    phpServer.on('exit', (code, signal) => {
+      phpServerExit = { code, signal }
+    })
+
     await waitForServerReady()
-  }, 20_000)
+  }, SERVER_BOOT_TIMEOUT_MS + 10_000)
 
   afterAll(() => {
     if (phpServer && !phpServer.killed) {
@@ -24,7 +41,7 @@ describe('PHP API contracts', () => {
   })
 
   it('contact endpoint accepts POST and returns request_id', async () => {
-    const response = await fetch(`${BASE_URL}/contact`, {
+    const response = await fetch(apiUrl('contact'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -40,7 +57,7 @@ describe('PHP API contracts', () => {
   })
 
   it('propagates incoming request id from x-request-id header', async () => {
-    const response = await fetch(`${BASE_URL}/contact`, {
+    const response = await fetch(apiUrl('contact'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +76,7 @@ describe('PHP API contracts', () => {
   })
 
   it('mail endpoint rejects invalid method with standardized error shape', async () => {
-    const response = await fetch(`${BASE_URL}/mail`, { method: 'GET' })
+    const response = await fetch(apiUrl('mail'), { method: 'GET' })
     const payload = (await response.json()) as Record<string, unknown>
 
     expect(response.status).toBe(405)
@@ -73,7 +90,7 @@ describe('PHP API contracts', () => {
   })
 
   it('pricing endpoint exposes diagnostico_lista_2h_ars', async () => {
-    const response = await fetch(`${BASE_URL}/pricing`)
+    const response = await fetch(apiUrl('pricing'))
     const payload = (await response.json()) as {
       request_id?: unknown
       version?: unknown
@@ -89,7 +106,7 @@ describe('PHP API contracts', () => {
   })
 
   it('health endpoint includes request_id', async () => {
-    const response = await fetch(`${BASE_URL}/health`)
+    const response = await fetch(apiUrl('health'))
     const payload = (await response.json()) as { request_id?: unknown; status?: unknown }
 
     expect(response.status).toBe(200)
@@ -98,7 +115,7 @@ describe('PHP API contracts', () => {
   })
 
   it('content endpoint exposes full AppContent contract', async () => {
-    const response = await fetch(`${BASE_URL}/content`)
+    const response = await fetch(apiUrl('content'))
     const payload = (await response.json()) as {
       request_id?: unknown
       brand_id?: unknown
@@ -153,7 +170,7 @@ describe('PHP API contracts', () => {
   })
 
   it('content endpoint rejects invalid method with standardized error shape', async () => {
-    const response = await fetch(`${BASE_URL}/content`, { method: 'POST' })
+    const response = await fetch(apiUrl('content'), { method: 'POST' })
     const payload = (await response.json()) as Record<string, unknown>
 
     expect(response.status).toBe(405)
@@ -164,7 +181,7 @@ describe('PHP API contracts', () => {
   })
 
   it('quote/diagnostic endpoint returns expected quote payload', async () => {
-    const response = await fetch(`${BASE_URL}/quote/diagnostic`, {
+    const response = await fetch(apiUrl('quote/diagnostic'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -185,7 +202,7 @@ describe('PHP API contracts', () => {
   })
 
   it('quote/pdf endpoint serves application/pdf when quote_id is valid', async () => {
-    const response = await fetch(`${BASE_URL}/quote/pdf?quote_id=Q-20260226-000001`)
+    const response = await fetch(apiUrl('quote/pdf?quote_id=Q-20260226-000001'))
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toContain('application/pdf')
@@ -196,7 +213,7 @@ describe('PHP API contracts', () => {
   })
 
   it('quote/pdf endpoint returns standardized validation error when quote_id is missing', async () => {
-    const response = await fetch(`${BASE_URL}/quote/pdf`)
+    const response = await fetch(apiUrl('quote/pdf'))
     const payload = (await response.json()) as Record<string, unknown>
 
     expect(response.status).toBe(422)
@@ -210,7 +227,7 @@ describe('PHP API contracts', () => {
   })
 
   it('contact endpoint rejects invalid email format', async () => {
-    const response = await fetch(`${BASE_URL}/contact`, {
+    const response = await fetch(apiUrl('contact'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -226,7 +243,7 @@ describe('PHP API contracts', () => {
   })
 
   it('mail endpoint rejects short messages', async () => {
-    const response = await fetch(`${BASE_URL}/mail`, {
+    const response = await fetch(apiUrl('mail'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -243,7 +260,7 @@ describe('PHP API contracts', () => {
   })
 
   it('contact endpoint rejects unsupported media type with 415', async () => {
-    const response = await fetch(`${BASE_URL}/contact`, {
+    const response = await fetch(apiUrl('contact'), {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
       body: 'email=user@example.com&message=hola'
@@ -257,7 +274,7 @@ describe('PHP API contracts', () => {
 
   it('contact endpoint rejects oversized payload with 413', async () => {
     const hugeMessage = 'a'.repeat(40_000)
-    const response = await fetch(`${BASE_URL}/contact`, {
+    const response = await fetch(apiUrl('contact'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -289,7 +306,7 @@ describe('PHP API contracts', () => {
   })
 
   it('handles CORS preflight for contact endpoint', async () => {
-    const response = await fetch(`${BASE_URL}/contact`, {
+    const response = await fetch(apiUrl('contact'), {
       method: 'OPTIONS',
       headers: {
         Origin: 'http://localhost:5173',
@@ -305,7 +322,7 @@ describe('PHP API contracts', () => {
     let limitedResponse: Response | undefined
 
     for (let attempt = 1; attempt <= 8; attempt += 1) {
-      const response = await fetch(`${BASE_URL}/contact`, {
+      const response = await fetch(apiUrl('contact'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -330,23 +347,63 @@ describe('PHP API contracts', () => {
 })
 
 async function waitForServerReady(): Promise<void> {
-  const maxAttempts = 30
-  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+  const startedAt = Date.now()
+  while (Date.now() - startedAt < SERVER_BOOT_TIMEOUT_MS) {
     try {
-      const response = await fetch(`${BASE_URL}/health`)
-      if (response.ok) {
+      const prettyResponse = await fetch(`${BASE_URL}/api/v1/health`)
+      if (prettyResponse.ok) {
+        apiRouteMode = 'pretty'
+        return
+      }
+
+      const phpResponse = await fetch(`${BASE_URL}/api/v1/health.php`)
+      if (phpResponse.ok) {
+        apiRouteMode = 'php'
         return
       }
     } catch {
       // wait and retry until server is available
     }
-    await sleep(200)
+    await sleep(SERVER_POLL_INTERVAL_MS)
   }
-  throw new Error('PHP server did not start in time for contract tests')
+
+  const stderrTail = tailLines(phpServerStderr, SERVER_LOG_LINES)
+  const stdoutTail = tailLines(phpServerStdout, SERVER_LOG_LINES)
+  const exitSummary = phpServerExit
+    ? `process exited (code=${phpServerExit.code ?? 'null'}, signal=${phpServerExit.signal ?? 'null'})`
+    : 'process still running or exit not observed'
+
+  throw new Error(
+    [
+      `PHP server did not start in time for contract tests (timeout=${SERVER_BOOT_TIMEOUT_MS}ms, baseUrl=${BASE_URL}, ${exitSummary}).`,
+      stderrTail ? `stderr (tail):\n${stderrTail}` : '',
+      stdoutTail ? `stdout (tail):\n${stdoutTail}` : ''
+    ]
+      .filter(Boolean)
+      .join('\n\n')
+  )
 }
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function apiUrl(route: string): string {
+  if (apiRouteMode === 'pretty') {
+    return `${BASE_URL}/api/v1/${route}`
+  }
+
+  const [pathPart, queryPart] = route.split('?', 2)
+  const phpPath = `${pathPart}.php`
+  return queryPart ? `${BASE_URL}/api/v1/${phpPath}?${queryPart}` : `${BASE_URL}/api/v1/${phpPath}`
+}
+
+function tailLines(text: string, maxLines: number): string {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd())
+    .filter((line) => line.length > 0)
+  return lines.slice(-maxLines).join('\n')
 }
 
 
