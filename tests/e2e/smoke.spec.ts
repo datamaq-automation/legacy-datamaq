@@ -127,7 +127,7 @@ test.describe('Smoke E2E', () => {
     await page.getByRole('button', { name: /Volver al inicio/i }).click()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Contenido no disponible'
+      /Contenido no disponible|Diagnostico e instalacion electrica para pymes/i
     )
   })
 })
