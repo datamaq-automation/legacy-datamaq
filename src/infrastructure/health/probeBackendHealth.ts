@@ -3,7 +3,7 @@ import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
-const HEALTH_ENDPOINT = '/api/v1/health'
+const HEALTH_ENDPOINT = 'https://api.datamaq.com.ar/v1/health.php'
 
 export async function probeBackendHealth(
   endpoint: string = HEALTH_ENDPOINT,
