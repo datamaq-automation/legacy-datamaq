@@ -13,6 +13,17 @@ if ($method !== 'POST') {
     exit;
 }
 
+$maxBodyBytes = dmq_get_max_body_bytes();
+$requestValidation = dmq_validate_json_request_headers_and_size($maxBodyBytes);
+if (is_array($requestValidation)) {
+    dmq_error_response(
+        (int)($requestValidation['status'] ?? 415),
+        (string)($requestValidation['code'] ?? 'UNSUPPORTED_MEDIA_TYPE'),
+        (string)($requestValidation['message'] ?? 'Unsupported media type.')
+    );
+    exit;
+}
+
 $rateLimit = dmq_service_enforce_bucket_rate_limit('quote_diagnostic', 8, 60);
 if (($rateLimit['ok'] ?? false) !== true) {
     header('Retry-After: ' . (string)($rateLimit['retry_after'] ?? '1'));
@@ -24,11 +35,16 @@ if (($rateLimit['ok'] ?? false) !== true) {
     exit;
 }
 
-$payload = dmq_read_json_body();
-if ($payload === null) {
-    dmq_error_response(422, 'INVALID_JSON', 'Body must be a valid JSON object.');
+$body = dmq_read_json_body_with_limit($maxBodyBytes);
+if (($body['ok'] ?? false) !== true) {
+    dmq_error_response(
+        (int)($body['status'] ?? 422),
+        (string)($body['code'] ?? 'INVALID_JSON'),
+        (string)($body['message'] ?? 'Body must be a valid JSON object.')
+    );
     exit;
 }
+$payload = (array)($body['payload'] ?? []);
 
 $quoteResult = dmq_service_build_diagnostic_quote($payload);
 if (($quoteResult['ok'] ?? false) !== true) {

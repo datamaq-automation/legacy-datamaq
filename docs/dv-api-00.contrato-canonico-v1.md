@@ -73,3 +73,11 @@ Compatibilidad transitoria legacy permitida:
 - Se mantienen aliases por archivo (`/api/v1/*.php`) en ventana transitoria.
 - El frontend debe consumir exclusivamente rutas canonicas sin extension.
 - Criterio de salida de legacy: remover aliases solo cuando no existan consumidores activos.
+
+## Nota operativa sobre `quote/pdf`
+
+- `GET /api/v1/quote/pdf` se mantiene como endpoint **mock transitorio** en esta etapa.
+- Alcance actual del mock:
+  - valida `quote_id`
+  - retorna `application/pdf` sintético
+  - propaga `request_id` via header `X-Request-Id`

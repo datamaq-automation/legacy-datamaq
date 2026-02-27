@@ -39,7 +39,8 @@ function dmq_apply_cors_headers(): void
     header('Access-Control-Allow-Origin: ' . $origin);
     header('Vary: Origin');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, X-Request-Id');
+    header('Access-Control-Allow-Headers: Content-Type, X-Request-Id, Request-Id, X-Correlation-Id');
+    header('Access-Control-Expose-Headers: X-Request-Id');
 }
 
 function dmq_apply_security_headers(): void
@@ -191,6 +192,82 @@ function dmq_read_json_body(): ?array
     $rawBody = file_get_contents('php://input');
     $payload = json_decode($rawBody ?: '', true);
     return is_array($payload) ? $payload : null;
+}
+
+function dmq_get_max_body_bytes(): int
+{
+    $configured = getenv('API_MAX_BODY_BYTES');
+    if (is_string($configured) && preg_match('/^\d+$/', trim($configured))) {
+        $value = (int) trim($configured);
+        if ($value > 0) {
+            return $value;
+        }
+    }
+
+    return 32768;
+}
+
+function dmq_validate_json_request_headers_and_size(int $maxBytes): ?array
+{
+    $contentType = trim((string)($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? ''));
+    if ($contentType === '' || stripos($contentType, 'application/json') !== 0) {
+        return [
+            'status' => 415,
+            'code' => 'UNSUPPORTED_MEDIA_TYPE',
+            'message' => 'Content-Type must be application/json.'
+        ];
+    }
+
+    $contentLengthRaw = trim((string)($_SERVER['CONTENT_LENGTH'] ?? ''));
+    if ($contentLengthRaw !== '' && preg_match('/^\d+$/', $contentLengthRaw)) {
+        $contentLength = (int) $contentLengthRaw;
+        if ($contentLength > $maxBytes) {
+            return [
+                'status' => 413,
+                'code' => 'PAYLOAD_TOO_LARGE',
+                'message' => 'Payload exceeds allowed size.'
+            ];
+        }
+    }
+
+    return null;
+}
+
+function dmq_read_json_body_with_limit(int $maxBytes): array
+{
+    $rawBody = file_get_contents('php://input');
+    if (!is_string($rawBody)) {
+        return [
+            'ok' => false,
+            'status' => 422,
+            'code' => 'INVALID_JSON',
+            'message' => 'Body must be a valid JSON object.'
+        ];
+    }
+
+    if (strlen($rawBody) > $maxBytes) {
+        return [
+            'ok' => false,
+            'status' => 413,
+            'code' => 'PAYLOAD_TOO_LARGE',
+            'message' => 'Payload exceeds allowed size.'
+        ];
+    }
+
+    $payload = json_decode($rawBody, true);
+    if (!is_array($payload)) {
+        return [
+            'ok' => false,
+            'status' => 422,
+            'code' => 'INVALID_JSON',
+            'message' => 'Body must be a valid JSON object.'
+        ];
+    }
+
+    return [
+        'ok' => true,
+        'payload' => $payload
+    ];
 }
 
 function dmq_validate_contact_payload(array $payload): array

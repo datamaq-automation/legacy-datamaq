@@ -269,3 +269,26 @@
       - `public/api/quote/_diagnostic_impl.php`
   - Evidencia de validación:
     - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (14/14 verde).
+- [x] Fortalecer controles de entrada HTTP en endpoints POST.
+  - [x] Requerir y validar `Content-Type: application/json` en `contact`, `mail`, `quote/diagnostic`.
+  - [x] Definir límite explícito de tamaño de body y rechazo temprano (`413`) para reducir superficie DoS.
+  - Evidencia de implementación:
+    - `dmq_validate_json_request_headers_and_size()` en `public/api/_bootstrap.php`
+    - `dmq_get_max_body_bytes()` + `dmq_read_json_body_with_limit()` en `public/api/_bootstrap.php`
+    - Aplicado en `public/api/_contact_impl.php`, `public/api/_mail_impl.php`, `public/api/quote/_diagnostic_impl.php`
+
+- [x] Completar política CORS para request tracing.
+  - Evidencia: `Access-Control-Allow-Headers` ahora incluye `Request-Id` y `X-Correlation-Id` en `public/api/_bootstrap.php`.
+  - Evidencia: `Access-Control-Expose-Headers: X-Request-Id` agregado para trazabilidad desde cliente.
+
+- [x] Endpoint `quote/pdf` definido como mock (no productivo).
+  - [x] Etiquetar explícitamente en contrato/documentación que `quote/pdf` es mock transitorio.
+  - [x] Mantener controles mínimos (headers de seguridad + request_id + validación de `quote_id`) sin ampliar alcance funcional.
+  - Evidencia de documentación: `docs/dv-api-00.contrato-canonico-v1.md`.
+  - Evidencia de contrato: `tests/unit/infrastructure/phpApiContracts.test.ts` valida `X-Request-Id` en `quote/pdf`.
+
+- [x] Cobertura de contratos negativos adicional (parcial cerrada).
+  - [x] Agregar tests de contrato para `415 Unsupported Media Type` (POST sin JSON).
+  - [x] Agregar tests de contrato para `413 Payload Too Large`.
+  - Evidencia: `tests/unit/infrastructure/phpApiContracts.test.ts`.
+  - Evidencia de ejecución: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).

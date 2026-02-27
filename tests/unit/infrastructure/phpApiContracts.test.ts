@@ -170,6 +170,7 @@ describe('PHP API contracts', () => {
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toContain('application/pdf')
     expect(response.headers.get('content-disposition')).toContain('quote-Q-20260226-000001.pdf')
+    expect(response.headers.get('x-request-id')).toBeTruthy()
   })
 
   it('quote/pdf endpoint returns standardized validation error when quote_id is missing', async () => {
@@ -217,6 +218,36 @@ describe('PHP API contracts', () => {
     expect(payload.status).toBe('error')
     expect(payload.code).toBe('VALIDATION_ERROR')
     expect(payload.error_code).toBe('VALIDATION_ERROR')
+  })
+
+  it('contact endpoint rejects unsupported media type with 415', async () => {
+    const response = await fetch(`${BASE_URL}/contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'email=user@example.com&message=hola'
+    })
+    const payload = (await response.json()) as Record<string, unknown>
+
+    expect(response.status).toBe(415)
+    expect(payload.status).toBe('error')
+    expect(payload.code).toBe('UNSUPPORTED_MEDIA_TYPE')
+  })
+
+  it('contact endpoint rejects oversized payload with 413', async () => {
+    const hugeMessage = 'a'.repeat(40_000)
+    const response = await fetch(`${BASE_URL}/contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'user@example.com',
+        message: hugeMessage
+      })
+    })
+    const payload = (await response.json()) as Record<string, unknown>
+
+    expect(response.status).toBe(413)
+    expect(payload.status).toBe('error')
+    expect(payload.code).toBe('PAYLOAD_TOO_LARGE')
   })
 
   it('keeps legacy alias path /api/v1/contact.php during transition window', async () => {
