@@ -19,14 +19,7 @@
 ## P1 (arquitectura limpia + SOLID)
 
 - [ ] **Definir puertos/interfaces explícitos entre capas**
-  - [x] Crear contratos de entrada/salida de `use_cases` (input/output boundaries).
-  - [x] Definir contratos de gateway consumidos por `use_cases` e implementados en `interface_adapters/gateways` o `infrastructure`.
   - [ ] Prohibir dependencia de `use_cases` hacia framework/Laravel en reglas de arquitectura.
-
-- [ ] **Separar responsabilidades del módulo `_bootstrap.php`**
-  - [ ] Extraer CORS/security headers a módulo dedicado.
-  - [ ] Extraer request context (`request_id`, logging, timing) a módulo dedicado.
-  - [ ] Extraer validaciones/rate-limit a módulos específicos para reducir acoplamiento global.
 
 - [ ] **Formalizar capa de contratos de API (Request/Response DTO)**
   - [ ] Definir DTOs de request por endpoint (`contact`, `mail`, `quote/diagnostic`) con validación declarativa.
@@ -53,17 +46,10 @@
 
 ## P2 (`/api/v1/content` - resiliencia y DevOps)
 
-- [ ] **Agregar versionado operativo del contenido**
-  - [x] Exponer `content_revision` o `last_modified` en respuesta para trazabilidad de despliegues.
-  - [ ] Registrar logs estructurados de versión de contenido servida por `request_id`.
-
 - [ ] **Observabilidad del endpoint `content`**
-  - [ ] Registrar en logs estructurados: `request_id`, `brand_id`, `content_revision`, `status`, `duration_ms`.
   - [ ] Agregar alerta operativa básica sobre errores 5xx y respuestas inválidas de contrato en `content`.
 
 - [ ] **Fortalecer cobertura de contratos de `content`**
-  - [x] Validar metadatos base del endpoint (`request_id`, `brand_id`, `version`) en test de contrato.
-  - [x] Validar rechazo de método no permitido (`POST` -> `405 METHOD_NOT_ALLOWED`) para `content`.
   - [ ] Agregar pruebas de consistencia del contrato por marca (`datamaq`, `upp`, `example`).
   - [ ] Agregar prueba negativa para payload incompleto/no válido antes de exponer respuesta.
 
@@ -71,60 +57,45 @@
   - [ ] Separar señal de “contenido no disponible” vs “contenido degradado (solo `hero.title`)”.
   - [ ] Ajustar telemetría frontend para distinguir fallback local, snapshot completo y fallback parcial.
 
-## P2 (`/api/v1/content` - decisión operativa de disponibilidad)
+## P1 (`/api/v1/contact` + Chatwoot)
 
-- [x] **Criterios técnicos confirmados (buenas prácticas + DevOps)**
-  - [x] Mantener validación estricta del contrato antes de exponer respuesta (`shape` válido o rechazo controlado).
-  - [x] Mantener `content_revision` como identificador de release de contenido para trazabilidad.
-  - [x] Priorizar degradación controlada en cliente (fallback local existente) para evitar caída total de UX por fallo remoto.
-  - [x] Tratar respuestas inválidas de `content` como incidente observable (logs/alerta), no como éxito silencioso.
+- [ ] Integrar despacho a Chatwoot desde backend (`Application API`) preservando contrato `POST /api/v1/contact` actual.
+- [ ] Agregar gateway de salida de Chatwoot en `use_cases` de `contact`.
+- [ ] Externalizar configuración sensible (`CHATWOOT_BASE_URL`, `CHATWOOT_ACCOUNT_ID`, `CHATWOOT_INBOX_ID`, `CHATWOOT_API_ACCESS_TOKEN`).
+- [ ] Cubrir contrato y errores (`auth`, `timeout/network`) con tests.
 
-- [ ] **Decisión pendiente de estrategia de respuesta backend cuando el payload de origen falla validación**
-  - [ ] Opción A (consistencia estricta): responder `5xx` y delegar completamente en fallback cliente.
-  - [ ] Opción B (alta disponibilidad): responder `200` con snapshot server-side de último contenido válido (LKG).
+## Análisis aplicado (`contact` + Chatwoot)
 
-## Análisis (buenas prácticas + DevOps) aplicado
+- [x] **Certezas de buenas prácticas**
+  - [x] Backend-only para integración Chatwoot (evita exponer secretos en frontend).
+  - [x] Mantener contrato HTTP actual de `POST /api/v1/contact` para no romper frontend/E2E.
+  - [x] Aislar Chatwoot detrás de gateway/puerto (facilita migración a Laravel y pruebas).
 
-- [x] **Certezas de arquitectura**
-  - [x] `Fail-fast` (A) reduce deuda técnica oculta: evita normalizar respuestas inválidas y fuerza corrección temprana.
-  - [x] `Best-effort` con LKG (B) mejora continuidad operativa: baja impacto visible al usuario ante incidentes de datos.
-  - [x] En ambos casos, el contrato debe permanecer estable (`request_id`, `brand_id`, `version`, `content_revision`).
+- [x] **Certezas de DevOps**
+  - [x] Configuración por entorno vía variables (`CHATWOOT_*`) sin hardcode en repo.
+  - [x] Logs estructurados con `request_id` y resultado de despacho a Chatwoot.
+  - [x] Pruebas de contrato + mocks para CI (sin dependencia dura de Chatwoot externo).
 
-- [x] **Certezas de operación**
-  - [x] Definir SLI de `content` por separado: tasa de `2xx`, latencia p95, tasa de fallback cliente.
-  - [x] Alertar por degradación sostenida (no solo por caída total) para detectar incidentes silenciosos.
-  - [x] Mantener test de contrato en CI como gate obligatorio para despliegue.
+- [ ] **Duda de diseño operativo**
+  - [ ] Definir estrategia de inbox: por marca (`datamaq`/`upp`/`example`) o inbox único con segmentación por `custom_attributes`.
 
-- [ ] **Duda estratégica no técnica**
-  - [ ] Seleccionar prioridad principal del servicio: consistencia fuerte (A) vs disponibilidad máxima (B).
+## Buenas prácticas: inbox por marca vs inbox único
 
-## Plan de implementación segura (certezas)
+- [x] **Certezas (inbox por marca)**
+  - [x] Mejor separación de dominios de negocio y menor riesgo de mezcla de leads entre marcas.
+  - [x] Permisos/roles más simples de auditar por equipo o unidad comercial.
+  - [x] Reportería más limpia por marca sin depender de filtros manuales.
+  - [x] Menor impacto de error de configuración cruzada entre marcas.
 
-- [x] **Evitar decisión irreversible temprana**
-  - [x] Introducir modo de estrategia configurable por entorno (`CONTENT_FAILURE_MODE=A|B`) para habilitar rollout gradual.
-  - [x] Mantener mismo contrato HTTP de `content` en ambos modos para no romper frontend.
+- [x] **Desventajas (inbox por marca)**
+  - [x] Mayor sobrecarga operativa (más inboxes, reglas y monitoreo).
+  - [x] Configuración inicial más extensa en entornos múltiples.
 
-- [x] **Reducir riesgo operativo en despliegues**
-  - [x] Activar primero en no productivo con comparación de métricas A/B (error-rate, fallback-rate, p95).
-  - [x] Definir criterio de salida del experimento antes de pasar a producción (umbral de error y degradación).
+- [x] **Certezas (inbox único + segmentación)**
+  - [x] Menor costo de operación inicial y onboarding más rápido.
+  - [x] Centraliza automatizaciones en un solo punto.
 
-- [x] **Buenas prácticas de mantenimiento**
-  - [x] Documentar runbook de incidente para `content` (detección, mitigación, rollback de estrategia).
-  - [x] Registrar decisión final en ADR para preservar contexto técnico y de negocio.
-
-## Matriz de decisión (certezas)
-
-- [x] **Opción A - consistencia estricta (`5xx` ante payload inválido)**
-  - [x] Ventajas: contrato fuerte, detección temprana, menor riesgo de servir contenido obsoleto.
-  - [x] Desventajas: más errores visibles al usuario durante incidentes.
-  - [x] Riesgo principal: caída percibida de disponibilidad aun cuando exista fallback cliente.
-
-- [x] **Opción B - disponibilidad alta (`200` con último snapshot válido)**
-  - [x] Ventajas: continuidad de servicio, mejor experiencia durante fallas de origen.
-  - [x] Desventajas: mayor complejidad operativa y riesgo de “stale content”.
-  - [x] Riesgo principal: degradación silenciosa si alertas/telemetría no son estrictas.
-
-- [x] **Señales DevOps obligatorias para cualquier opción**
-  - [x] Dashboard con `content_error_rate`, `fallback_rate`, `stale_age_minutes`, `p95_latency`.
-  - [x] Alertas por umbral: degradación sostenida > 15 min y `stale_age_minutes` fuera de política.
-  - [x] Gate de CI con contrato `content` + smoke E2E de carga de contenido.
+- [x] **Desventajas (inbox único + segmentación)**
+  - [x] Mayor riesgo de errores humanos en etiquetado/ruteo.
+  - [x] Riesgo de fuga de contexto entre marcas si fallan reglas de segmentación.
+  - [x] Auditoría y cumplimiento más frágiles al depender de disciplina operativa.
