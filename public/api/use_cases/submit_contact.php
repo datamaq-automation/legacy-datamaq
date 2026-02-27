@@ -4,12 +4,14 @@ declare(strict_types=1);
 require_once __DIR__ . '/ports/input/submit_contact_input_boundary.php';
 require_once __DIR__ . '/ports/gateways/contact_rate_limit_gateway_port.php';
 require_once __DIR__ . '/ports/gateways/contact_validation_gateway_port.php';
+require_once __DIR__ . '/ports/gateways/contact_dispatch_gateway_port.php';
 
 final class DmqSubmitContactInteractor implements DmqSubmitContactInputBoundary
 {
     public function __construct(
         private DmqContactRateLimitGatewayPort $rateLimitGateway,
-        private DmqContactValidationGatewayPort $validationGateway
+        private DmqContactValidationGatewayPort $validationGateway,
+        private DmqContactDispatchGatewayPort $dispatchGateway
     ) {}
 
     public function handle(array $contactSubmission): array
@@ -32,6 +34,16 @@ final class DmqSubmitContactInteractor implements DmqSubmitContactInputBoundary
                 'status' => (int)($validation['status'] ?? 422),
                 'code' => (string)($validation['code'] ?? 'VALIDATION_ERROR'),
                 'message' => (string)($validation['message'] ?? 'Validation error.'),
+            ];
+        }
+
+        $dispatch = $this->dispatchGateway->dispatch($contactSubmission);
+        if (($dispatch['ok'] ?? false) !== true) {
+            return [
+                'ok' => false,
+                'status' => (int)($dispatch['status'] ?? 503),
+                'code' => (string)($dispatch['code'] ?? 'UPSTREAM_UNAVAILABLE'),
+                'message' => (string)($dispatch['message'] ?? 'Contact channel unavailable.'),
             ];
         }
 

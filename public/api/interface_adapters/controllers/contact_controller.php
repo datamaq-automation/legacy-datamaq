@@ -16,7 +16,8 @@ function dmq_controller_submit_contact(): array
     $contactSubmission = dmq_entity_contact_submission((array)($request['payload'] ?? []));
     $interactor = new DmqSubmitContactInteractor(
         new DmqContactRateLimitGateway(),
-        new DmqContactValidationGateway()
+        new DmqContactValidationGateway(),
+        new DmqContactDispatchChatwootGateway()
     );
 
     return $interactor->handle($contactSubmission);

@@ -59,9 +59,9 @@
 
 ## P1 (`/api/v1/contact` + Chatwoot)
 
-- [ ] Integrar despacho a Chatwoot desde backend (`Application API`) preservando contrato `POST /api/v1/contact` actual.
-- [ ] Agregar gateway de salida de Chatwoot en `use_cases` de `contact`.
-- [ ] Externalizar configuración sensible (`CHATWOOT_BASE_URL`, `CHATWOOT_ACCOUNT_ID`, `CHATWOOT_INBOX_ID`, `CHATWOOT_API_ACCESS_TOKEN`).
+- [x] Integrar despacho a Chatwoot desde backend (`Application API`) preservando contrato `POST /api/v1/contact` actual.
+- [x] Agregar gateway de salida de Chatwoot en `use_cases` de `contact`.
+- [x] Externalizar configuración sensible (`CHATWOOT_BASE_URL`, `CHATWOOT_ACCOUNT_ID`, `CHATWOOT_INBOX_ID`, `CHATWOOT_API_ACCESS_TOKEN`).
 - [ ] Cubrir contrato y errores (`auth`, `timeout/network`) con tests.
 
 ## Análisis aplicado (`contact` + Chatwoot)
@@ -77,7 +77,8 @@
   - [x] Pruebas de contrato + mocks para CI (sin dependencia dura de Chatwoot externo).
 
 - [ ] **Duda de diseño operativo**
-  - [ ] Definir estrategia de inbox: por marca (`datamaq`/`upp`/`example`) o inbox único con segmentación por `custom_attributes`.
+  - [x] Definir estrategia de inbox: por marca (`datamaq`/`upp`/`example`) o inbox único con segmentación por `custom_attributes`.
+  - [x] Definir tenancy Chatwoot por marca: **cuentas distintas** (account_id y token por marca).
 
 ## Buenas prácticas: inbox por marca vs inbox único
 
@@ -99,3 +100,36 @@
   - [x] Mayor riesgo de errores humanos en etiquetado/ruteo.
   - [x] Riesgo de fuga de contexto entre marcas si fallan reglas de segmentación.
   - [x] Auditoría y cumplimiento más frágiles al depender de disciplina operativa.
+
+## Implementación objetivo confirmada (inbox por marca)
+
+- [x] **Archivos involucrados identificados**
+  - [x] Frontend DI/config y gateway:
+    - `src/di/container.ts`
+    - `src/infrastructure/contact/contactApiGateway.ts`
+    - `src/application/contact/contactEndpointPolicy.ts`
+    - `src/infrastructure/content/runtimeProfiles.json`
+  - [x] Backend `contact` (clean architecture in-place):
+    - `public/api/_contact_impl.php`
+    - `public/api/interface_adapters/controllers/contact_controller.php`
+    - `public/api/use_cases/submit_contact.php`
+    - `public/api/interface_adapters/gateways/contact_rate_limit_gateway.php`
+    - `public/api/interface_adapters/gateways/contact_validation_gateway.php`
+
+- [x] **Evaluación de arquitectura limpia + SOLID (certezas)**
+  - [x] `_contact_impl.php` ya es adaptador HTTP delgado (alineado).
+  - [x] `DmqSubmitContactInteractor` cumple SRP para validación/rate-limit, pero aún no modela salida a proveedor externo.
+  - [x] Para integrar Chatwoot correctamente falta puerto de salida (DIP): `use_case` no debe conocer HTTP/SDK Chatwoot.
+  - [x] `contact_controller.php` instancia dependencias concretas; conviene mover wiring a composition root/factory para mejorar OCP y testabilidad.
+  - [x] `chatwootPublicContactChannel.ts` en frontend no es ruta objetivo productiva; mantener integración Chatwoot en backend evita exposición de secretos.
+
+- [ ] **Refactor recomendado antes de integrar Chatwoot (alta certeza)**
+  - [x] Crear puerto de salida `contact_dispatch_gateway_port` para envío de contacto.
+  - [x] Inyectar gateway de despacho en `DmqSubmitContactInteractor` y ejecutar envío tras validación.
+  - [x] Implementar adaptador de infraestructura `chatwoot_application_api_gateway` (HTTP + token).
+  - [x] Resolver `account_id`, `inbox_id` y `api_access_token` por `brand_id` en backend (tenancy por cuenta separada).
+  - [x] Mantener respuesta externa de `POST /api/v1/contact` sin cambios (`202` + `request_id`).
+  - [ ] Agregar tests de contrato y de unidad para:
+    - éxito de despacho,
+    - fallo `401/403` Chatwoot,
+    - timeout/reintento controlado.
