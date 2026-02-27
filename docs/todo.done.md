@@ -319,3 +319,32 @@
     - `API_RL_<BUCKET>_WINDOW_SECONDS`
   - Evidencia de validación:
     - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).
+- [x] Estructura objetivo clean architecture para migración a Laravel.
+  - [x] Naming estandarizado a `interface_adapters/` (plural).
+  - [x] Estructura base objetivo definida:
+    - `entities/`
+    - `use_cases/`
+    - `interface_adapters/controllers/`
+    - `interface_adapters/presenters/`
+    - `interface_adapters/gateways/`
+    - `infrastructure/`
+  - Evidencia: `docs/laravel-clean-architecture-target.md`.
+- [x] Análisis comparativo de rutas de migración backend (buenas prácticas + DevOps).
+  - Alcance: `backend_clean/` vs `public/api` in-place.
+  - Certeza documentada: menor riesgo operativo y mejor aislamiento arquitectural en ruta `backend_clean/`.
+  - Evidencia: `docs/laravel-migration-paths-analysis.md`.
+- [x] Confirmación de ruta de migración física.
+  - Decisión operativa: migración in-place controlada en `public/api`.
+  - Motivo: diferir complejidad DevOps/pipeline dual para una etapa posterior.
+- [x] Scaffolding in-place de estructura clean architecture en backend actual.
+  - Evidencia de carpetas/archivos:
+    - `public/api/entities/contact_submission.php`
+    - `public/api/use_cases/submit_contact.php`
+    - `public/api/interface_adapters/controllers/contact_controller.php`
+    - `public/api/interface_adapters/presenters/contact_presenter.php`
+    - `public/api/interface_adapters/gateways/contact_rate_limit_gateway.php`
+    - `public/api/infrastructure/http_request.php`
+
+- [x] Migración vertical inicial (`contact`) manteniendo contrato HTTP.
+  - Evidencia: `public/api/_contact_impl.php` ahora actúa como adaptador HTTP delgado y delega en controller/use case/presenter.
+  - Evidencia de compatibilidad: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).
