@@ -16,9 +16,4 @@
 
 ## Backlog
 
-## P1 (compatibilidad con Laravel)
-
-- [ ] **Refactor backend por capas (alineado a Laravel)**
-  - [ ] Mantener endpoints como adaptadores delgados HTTP.
-  - [ ] Extraer reglas de negocio a servicios reutilizables.
-  - [ ] Aislar serialización de respuesta en DTO/Resource equivalente.
+- [x] Sin tareas pendientes activas.

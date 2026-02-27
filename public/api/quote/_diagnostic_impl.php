@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/_bootstrap.php';
+require_once dirname(__DIR__) . '/_services.php';
+require_once dirname(__DIR__) . '/_resources.php';
 
 dmq_handle_preflight();
 
@@ -11,10 +13,14 @@ if ($method !== 'POST') {
     exit;
 }
 
-$retryAfter = dmq_enforce_rate_limit('quote_diagnostic', 8, 60);
-if (is_int($retryAfter)) {
-    header('Retry-After: ' . $retryAfter);
-    dmq_error_response(429, 'RATE_LIMITED', 'Too many requests');
+$rateLimit = dmq_service_enforce_bucket_rate_limit('quote_diagnostic', 8, 60);
+if (($rateLimit['ok'] ?? false) !== true) {
+    header('Retry-After: ' . (string)($rateLimit['retry_after'] ?? '1'));
+    dmq_error_response(
+        (int)($rateLimit['status'] ?? 429),
+        (string)($rateLimit['code'] ?? 'RATE_LIMITED'),
+        (string)($rateLimit['message'] ?? 'Too many requests')
+    );
     exit;
 }
 
@@ -24,31 +30,15 @@ if ($payload === null) {
     exit;
 }
 
-$requiredFields = ['company', 'contact_name', 'locality'];
-foreach ($requiredFields as $field) {
-    $value = trim((string) ($payload[$field] ?? ''));
-    if ($value === '') {
-        dmq_error_response(422, 'VALIDATION_ERROR', sprintf('%s is required.', $field));
-        exit;
-    }
+$quoteResult = dmq_service_build_diagnostic_quote($payload);
+if (($quoteResult['ok'] ?? false) !== true) {
+    dmq_error_response(
+        (int)($quoteResult['status'] ?? 422),
+        (string)($quoteResult['code'] ?? 'VALIDATION_ERROR'),
+        (string)($quoteResult['message'] ?? 'Validation error.')
+    );
+    exit;
 }
 
-$quoteId = 'Q-' . gmdate('Ymd') . '-' . str_pad((string) random_int(1, 999999), 6, '0', STR_PAD_LEFT);
-$finalPrice = 275000;
-$depositPct = 50;
-$depositArs = (int) round($finalPrice * ($depositPct / 100));
-
-dmq_json_response(200, [
-    'request_id' => dmq_request_id(),
-    'quote_id' => $quoteId,
-    'list_price_ars' => $finalPrice,
-    'discounts' => [],
-    'discount_pct' => 0,
-    'discount_total_ars' => 0,
-    'final_price_ars' => $finalPrice,
-    'deposit_pct' => $depositPct,
-    'deposit_ars' => $depositArs,
-    'valid_until' => gmdate('Y-m-d\TH:i:s\Z', time() + (7 * 24 * 60 * 60)),
-    'whatsapp_message' => 'Hola, quiero confirmar la cotizacion ' . $quoteId,
-    'whatsapp_url' => 'https://wa.me/5491100000000?text=' . rawurlencode('Hola, quiero confirmar la cotizacion ' . $quoteId),
-]);
+unset($quoteResult['ok']);
+dmq_json_response(200, dmq_resource_quote($quoteResult));

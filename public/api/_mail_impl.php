@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/_bootstrap.php';
+require_once __DIR__ . '/_services.php';
+require_once __DIR__ . '/_resources.php';
 
 dmq_handle_preflight();
 
@@ -11,10 +13,14 @@ if ($method !== 'POST') {
     exit;
 }
 
-$retryAfter = dmq_enforce_rate_limit('mail', 5, 60);
-if (is_int($retryAfter)) {
-    header('Retry-After: ' . $retryAfter);
-    dmq_error_response(429, 'RATE_LIMITED', 'Too many requests');
+$rateLimit = dmq_service_enforce_bucket_rate_limit('mail', 5, 60);
+if (($rateLimit['ok'] ?? false) !== true) {
+    header('Retry-After: ' . (string)($rateLimit['retry_after'] ?? '1'));
+    dmq_error_response(
+        (int)($rateLimit['status'] ?? 429),
+        (string)($rateLimit['code'] ?? 'RATE_LIMITED'),
+        (string)($rateLimit['message'] ?? 'Too many requests')
+    );
     exit;
 }
 
@@ -25,7 +31,7 @@ if ($payload === null) {
 }
 
 /** @var array{ok:bool,status?:int,code?:string,message?:string} $validation */
-$validation = dmq_validate_contact_payload($payload);
+$validation = dmq_service_validate_contact_like_payload($payload);
 if (($validation['ok'] ?? false) !== true) {
     dmq_error_response(
         (int)($validation['status'] ?? 422),
@@ -35,7 +41,4 @@ if (($validation['ok'] ?? false) !== true) {
     exit;
 }
 
-dmq_json_response(202, [
-    'status' => 'ok',
-    'request_id' => dmq_request_id(),
-]);
+dmq_json_response(202, dmq_resource_contact_accepted());

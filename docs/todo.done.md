@@ -253,3 +253,19 @@
     - `tests/unit/infrastructure/contactResponseFeedback.test.ts`
     - `tests/unit/infrastructure/probeBackendHealth.test.ts`
     - `tests/unit/infrastructure/quoteApiGateway.test.ts`
+- [x] Refactor backend por capas (alineado a Laravel).
+  - [x] Mantener endpoints como adaptadores delgados HTTP.
+  - [x] Extraer reglas de negocio a servicios reutilizables.
+  - [x] Aislar serialización de respuesta en DTO/Resource equivalente.
+  - Evidencia de implementación:
+    - Servicios de dominio/aplicación en `public/api/_services.php`.
+    - Recursos/DTO de salida en `public/api/_resources.php`.
+    - Endpoints adaptadores actualizados:
+      - `public/api/_contact_impl.php`
+      - `public/api/_mail_impl.php`
+      - `public/api/_pricing_impl.php`
+      - `public/api/_health_impl.php`
+      - `public/api/_content_impl.php`
+      - `public/api/quote/_diagnostic_impl.php`
+  - Evidencia de validación:
+    - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (14/14 verde).

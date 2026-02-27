@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/_bootstrap.php';
+require_once __DIR__ . '/_resources.php';
 
 dmq_handle_preflight();
 
@@ -11,12 +12,6 @@ if ($method !== 'GET') {
     exit;
 }
 
-dmq_json_response(200, [
-    'status' => 'ok',
-    'request_id' => dmq_request_id(),
-    'version' => 'v1',
-    'currency' => 'ARS',
-    'data' => [
-        'diagnostico_lista_2h_ars' => 275000
-    ]
-]);
+dmq_json_response(200, dmq_resource_pricing([
+    'diagnostico_lista_2h_ars' => 275000
+]));
