@@ -100,6 +100,10 @@ describe('PHP API contracts', () => {
   it('content endpoint exposes full AppContent contract', async () => {
     const response = await fetch(`${BASE_URL}/content`)
     const payload = (await response.json()) as {
+      request_id?: unknown
+      brand_id?: unknown
+      version?: unknown
+      content_revision?: unknown
       data?: {
         hero?: { title?: unknown; subtitle?: unknown; primaryCta?: { href?: unknown } }
         services?: { cards?: unknown[] }
@@ -121,6 +125,11 @@ describe('PHP API contracts', () => {
     }
 
     expect(response.status).toBe(200)
+    expect(typeof payload.request_id).toBe('string')
+    expect(typeof payload.brand_id).toBe('string')
+    expect(payload.version).toBe('v2')
+    expect(typeof payload.content_revision).toBe('string')
+    expect(String(payload.content_revision)).toMatch(/^[a-f0-9]{64}$/)
     expect(typeof payload.data?.hero?.title).toBe('string')
     expect(String(payload.data?.hero?.title)).not.toHaveLength(0)
     expect(typeof payload.data?.hero?.subtitle).toBe('string')
@@ -141,6 +150,17 @@ describe('PHP API contracts', () => {
     expect(Array.isArray(payload.data?.decisionFlow?.faqItems)).toBe(true)
     expect(typeof payload.data?.thanks?.title).toBe('string')
     expect(typeof payload.data?.thanks?.goHomeButtonLabel).toBe('string')
+  })
+
+  it('content endpoint rejects invalid method with standardized error shape', async () => {
+    const response = await fetch(`${BASE_URL}/content`, { method: 'POST' })
+    const payload = (await response.json()) as Record<string, unknown>
+
+    expect(response.status).toBe(405)
+    expect(payload.status).toBe('error')
+    expect(payload.code).toBe('METHOD_NOT_ALLOWED')
+    expect(payload.error_code).toBe('METHOD_NOT_ALLOWED')
+    expect(typeof payload.request_id).toBe('string')
   })
 
   it('quote/diagnostic endpoint returns expected quote payload', async () => {

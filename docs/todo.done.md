@@ -364,3 +364,18 @@
     - `public/api/_contact_impl.php`
   - Evidencia de compatibilidad de contrato:
     - `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (16/16 verde).
+
+### Hardening contrato `/api/v1/content` - 2026-02-27
+
+- [x] Reforzar pruebas de contrato de `content` con metadatos de respuesta.
+  - Evidencia: `tests/unit/infrastructure/phpApiContracts.test.ts` valida `request_id`, `brand_id` y `version: v2`.
+
+- [x] Cubrir metodo invalido en endpoint `content`.
+  - Evidencia: nuevo test de contrato para `POST /api/v1/content` con `405 METHOD_NOT_ALLOWED` y error estandarizado.
+
+- [x] Verificacion de regresion.
+  - Evidencia: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` verde (17/17).
+- [x] Versionado operativo inicial en `/api/v1/content`.
+  - Evidencia: `public/api/_resources.php` agrega `content_revision` (SHA-256 deterministico del `data` servido).
+  - Evidencia de contrato: `tests/unit/infrastructure/phpApiContracts.test.ts` valida `content_revision` con formato hash.
+  - Evidencia de ejecucion: `npm run test -- tests/unit/infrastructure/phpApiContracts.test.ts` (17/17 verde).

@@ -49,6 +49,8 @@ Compatibilidad transitoria legacy permitida:
 
 - `200`: metadatos + `currency` + `data`
 - `data` incluye al menos `diagnostico_lista_2h_ars` (number)
+- valor backend hardcodeado actual: `275000` (ARS)
+- fuente backend actual: `public/api/_pricing_impl.php` (clave `diagnostico_lista_2h_ars`)
 - `405`: error comun
 
 ### `GET /api/v1/health`

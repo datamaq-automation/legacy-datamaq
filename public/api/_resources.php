@@ -38,8 +38,18 @@ function dmq_resource_content(string $brandId, array $content): array
     return dmq_resource_ok([
         'brand_id' => $brandId,
         'version' => 'v2',
+        'content_revision' => dmq_content_revision($content),
         'data' => $content,
     ]);
+}
+
+function dmq_content_revision(array $content): string
+{
+    $encoded = json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if (!is_string($encoded)) {
+        return 'unknown';
+    }
+    return hash('sha256', $encoded);
 }
 
 function dmq_resource_quote(array $quote): array
@@ -48,4 +58,3 @@ function dmq_resource_quote(array $quote): array
         'request_id' => dmq_request_id(),
     ], $quote);
 }
-
