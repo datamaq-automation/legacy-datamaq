@@ -47,6 +47,7 @@ describe('QuoteApiGateway', () => {
   })
 
   it('creates diagnostic quote successfully', async () => {
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
     const responseBody: DiagnosticQuoteResponse = {
       quote_id: 'Q-20260222-000111',
       list_price_ars: 280000,
@@ -84,6 +85,22 @@ describe('QuoteApiGateway', () => {
 
     expect(result.quote_id).toBe('Q-20260222-000111')
     expect(fetch).toHaveBeenCalledTimes(1)
+    expect(infoSpy).toHaveBeenCalledWith('[quote:gateway] generar propuesta OK', {
+      endpoint: 'https://api.example.com/v1/public/quote/diagnostic',
+      pathname: '/v1/public/quote/diagnostic',
+      transportMode: 'direct',
+      status: 200,
+      quote: {
+        quoteId: 'Q-20260222-000111',
+        listPriceArs: 280000,
+        finalPriceArs: 266000,
+        discountPct: 5,
+        discountCount: 1,
+        depositPct: 50,
+        whatsappEnabled: true,
+        validUntil: '2026-03-01T00:00:00Z'
+      }
+    })
   })
 
   it('throws for non-ok diagnostic response', async () => {
@@ -172,10 +189,12 @@ describe('QuoteApiGateway', () => {
       })
     ).rejects.toBeInstanceOf(QuoteApiError)
 
-    expect(warnSpy).toHaveBeenCalledWith('[quoteApiGateway] createDiagnosticQuote network error', {
+    expect(warnSpy).toHaveBeenCalledWith('[quote:gateway] generar propuesta error de red', {
       endpoint: 'http://localhost:5173/api/v1/quote/diagnostic',
       pathname: '/api/v1/quote/diagnostic',
-      transportMode: 'proxy'
+      transportMode: 'proxy',
+      status: 0,
+      reason: 'network-error'
     })
   })
 
@@ -267,6 +286,7 @@ describe('QuoteApiGateway', () => {
   })
 
   it('fetches quote pdf and extracts filename from content-disposition', async () => {
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
     const blobBody = new Blob(['pdf-bytes'], { type: 'application/pdf' })
     vi.stubGlobal(
       'fetch',
@@ -287,6 +307,18 @@ describe('QuoteApiGateway', () => {
     expect(result.blob.size).toBeGreaterThan(0)
     expect(result.blob.type).toBe('application/pdf')
     expect(result.filename).toBe('quote-Q-20260222-000001.pdf')
+    expect(infoSpy).toHaveBeenCalledWith('[quote:gateway] descargar PDF OK', {
+      endpoint: 'https://api.example.com/v1/public/quote/Q-20260222-000001/pdf',
+      pathname: '/v1/public/quote/Q-20260222-000001/pdf',
+      transportMode: 'direct',
+      status: 200,
+      download: {
+        quoteId: 'Q-20260222-000001',
+        filename: 'quote-Q-20260222-000001.pdf',
+        blobSize: result.blob.size,
+        contentType: 'application/pdf'
+      }
+    })
   })
 
   it('uses explicit quotePdfApiUrl template when configured', async () => {
@@ -420,14 +452,14 @@ describe('QuoteApiGateway', () => {
 
     await expect(gateway.fetchQuotePdf('Q-20260222-000404')).rejects.toBeInstanceOf(QuoteApiError)
 
-    expect(warnSpy).toHaveBeenCalledWith('[quoteApiGateway] fetchQuotePdf non-ok response', {
+    expect(warnSpy).toHaveBeenCalledWith('[quote:gateway] descargar PDF respuesta no OK', {
       endpoint: 'http://localhost:5173/api/v1/quote/pdf?quote_id=Q-20260222-000404',
       pathname: '/api/v1/quote/pdf',
       transportMode: 'proxy',
       quoteId: 'Q-20260222-000404',
       status: 404,
       detail: 'quote not found',
-      retryAfterSeconds: undefined
+      retryAfterSeconds: null
     })
   })
 

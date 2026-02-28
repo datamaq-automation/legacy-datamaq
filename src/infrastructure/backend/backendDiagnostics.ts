@@ -1,3 +1,4 @@
+import { buildRuntimeLogArgs } from '@/application/utils/runtimeConsole'
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 import {
   describeBackendEndpoint,
@@ -97,7 +98,9 @@ export function emitBackendInfo(options: {
     return
   }
 
-  console.info(`[backend:${options.resource}] conexion OK`, buildBackendInfoPayload(options))
+  console.info(
+    ...buildRuntimeLogArgs(`[backend:${options.resource}] conexion OK`, buildBackendInfoPayload(options))
+  )
 }
 
 export function normalizeBackendString(value: unknown): string | null {

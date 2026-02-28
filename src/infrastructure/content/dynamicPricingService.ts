@@ -1,6 +1,6 @@
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
-import { emitRuntimeWarn } from '@/application/utils/runtimeConsole'
+import { buildRuntimeLogArgs, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 import type { CommercialPricingSnapshot, CommercialPriceKey } from '@/infrastructure/content/contentStore'
 import {
   buildBackendEndpointContext,
@@ -314,12 +314,15 @@ function logPricingPayloadDebugOnce(endpoint: string, payload: unknown): void {
   pricingConsoleDebugCache.add(dedupeKey)
 
   const endpointContext = buildBackendEndpointContext(endpoint)
-  console.debug('[backend:pricing] payload sin claves reconocibles', {
-    endpoint: endpointContext.browserUrl,
-    transportMode: endpointContext.transportMode,
-    payloadPreview: getPayloadPreview(payload),
-    scalarKeys: extractDebugScalarKeys(payload)
-  })
+  console.debug(
+    ...buildRuntimeLogArgs('[backend:pricing] payload sin claves reconocibles', {
+      endpoint: endpointContext.browserUrl,
+      pathname: resolveBackendPathname(endpoint),
+      transportMode: endpointContext.transportMode,
+      payloadPreview: getPayloadPreview(payload),
+      scalarKeys: extractDebugScalarKeys(payload)
+    })
+  )
 }
 
 function getPayloadPreview(payload: unknown): string {

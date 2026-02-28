@@ -85,6 +85,7 @@ describe('DynamicPricingService', () => {
 
     expect(debugSpy).toHaveBeenCalledWith('[backend:pricing] payload sin claves reconocibles', {
       endpoint: 'http://127.0.0.1:8899/v1/pricing',
+      pathname: '/v1/pricing',
       transportMode: 'direct',
       payloadPreview: '{"status":"ok","data":{"foo":"bar"}}',
       scalarKeys: ['datafoo', 'foo', 'status']

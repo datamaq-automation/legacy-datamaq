@@ -9,6 +9,17 @@ import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
 import type { ContactFormPayload } from '@/application/dto/contact'
 import {
+  collectInvalidContactFields,
+  summarizeContactDraft,
+  summarizeContactError
+} from '@/application/contact/contactSubmitDiagnostics'
+import {
+  emitRuntimeDebug,
+  emitRuntimeError,
+  emitRuntimeInfo,
+  emitRuntimeWarn
+} from '@/application/utils/runtimeConsole'
+import {
   CONTACT_FORM_FIELDS,
   type ContactFieldErrors,
   type ContactFormField,
@@ -86,38 +97,70 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
 
   async function handleSubmit(): Promise<void> {
     const formElement = formRef.value
+    const payload: ContactFormPayload = {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      company: form.company,
+      email: form.email,
+      phone: form.phone,
+      geographicLocation: form.geographicLocation,
+      comment: form.comment
+    }
     feedback.message = ''
     feedback.success = false
     clearFieldErrors()
 
+    emitRuntimeDebug('[contact:ui] submit iniciado', {
+      channel: backendChannel,
+      sectionId,
+      backendStatus: backendStatus.value,
+      payload: summarizeContactDraft(payload)
+    })
+
     if (!isChannelEnabled.value) {
+      emitRuntimeWarn('[contact:ui] submit bloqueado', {
+        channel: backendChannel,
+        sectionId,
+        backendStatus: backendStatus.value,
+        reason: isCheckingBackend.value ? 'backend-checking' : 'backend-unavailable'
+      })
       return
     }
     if (formElement && !formElement.reportValidity()) {
+      emitRuntimeDebug('[contact:ui] validacion nativa bloqueo el submit', {
+        channel: backendChannel,
+        sectionId
+      })
       return
     }
     isSubmitting.value = true
     try {
-      const payload: ContactFormPayload = {
-        firstName: form.firstName,
-        lastName: form.lastName,
-        company: form.company,
-        email: form.email,
-        phone: form.phone,
-        geographicLocation: form.geographicLocation,
-        comment: form.comment
-      }
       const parsed = validate(payload, backendChannel)
       if (!parsed.ok) {
         applyFieldErrors(parsed.fieldErrors)
+        emitRuntimeWarn('[contact:ui] validacion local fallo', {
+          channel: backendChannel,
+          sectionId,
+          invalidFields: collectInvalidContactFields(parsed.fieldErrors)
+        })
         await announceFeedback(contact.errorMessage, false)
         return
       }
       const result = await props.onSubmit(parsed.data)
       if (result?.ok === true) {
+        emitRuntimeInfo('[contact:ui] submit OK, navegando a thanks', {
+          channel: backendChannel,
+          sectionId,
+          requestId: result.data.requestId ?? null
+        })
         void router.push({ name: 'thanks' })
         return
       } else {
+        emitRuntimeWarn('[contact:ui] submit fallo', {
+          channel: backendChannel,
+          sectionId,
+          error: summarizeContactError(result?.error)
+        })
         await announceFeedback(
           mapContactError(result?.error, {
             unavailable: contact.unavailableMessage,
@@ -126,7 +169,12 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
           false
         )
       }
-    } catch {
+    } catch (error) {
+      emitRuntimeError('[contact:ui] excepcion inesperada durante submit', {
+        channel: backendChannel,
+        sectionId,
+        message: error instanceof Error ? error.message : String(error)
+      })
       await announceFeedback(contact.unexpectedErrorMessage, false)
     } finally {
       isSubmitting.value = false

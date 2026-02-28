@@ -9,7 +9,14 @@ import type {
   DiagnosticQuoteResponse,
   QuoteBureaucracyLevel
 } from '@/application/dto/quote'
+import {
+  summarizeDiagnosticQuoteRequest,
+  summarizeDiagnosticQuoteResponse,
+  summarizeQuoteError,
+  summarizeQuotePdfDownload
+} from '@/application/quote/quoteRuntimeDiagnostics'
 import { QuoteApiError, type QuoteValidationIssue } from '@/application/quote/quoteApiError'
+import { buildRuntimeLogArgs } from '@/application/utils/runtimeConsole'
 import { getWhatsAppEnabled, getWhatsAppHref } from '@/ui/controllers/contactController'
 import { createDiagnosticQuote, fetchQuotePdf } from '@/ui/controllers/quoteController'
 
@@ -92,6 +99,9 @@ async function handleGenerateQuote() {
   errorMessage.value = undefined
 
   if (!validateForm()) {
+    logQuoteUiWarn('generar propuesta validacion local fallo', {
+      invalidFields: collectInvalidQuoteFields()
+    })
     return
   }
 
@@ -123,11 +133,17 @@ async function handleGenerateQuote() {
       payload.notes = normalizedNotes
     }
 
+    logQuoteUiDebug('generar propuesta iniciado', {
+      payload: summarizeDiagnosticQuoteRequest(payload)
+    })
     quote.value = await createDiagnosticQuote(payload)
+    logQuoteUiInfo('generar propuesta OK', {
+      quote: summarizeDiagnosticQuoteResponse(quote.value)
+    })
   } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('[cotizador] error al generar propuesta', error)
-    }
+    logQuoteUiWarn('generar propuesta fallo', {
+      error: summarizeQuoteError(error)
+    })
     quote.value = undefined
     errorMessage.value = buildQuoteCreationErrorMessage(error)
   } finally {
@@ -144,13 +160,19 @@ async function handleDownloadPdf() {
   pdfLoading.value = true
   errorMessage.value = undefined
   try {
-    const { blob, filename } = await fetchQuotePdf(quoteId)
+    logQuoteUiDebug('descargar PDF iniciado', { quoteId })
+    const result = await fetchQuotePdf(quoteId)
+    logQuoteUiInfo('descargar PDF OK', {
+      download: summarizeQuotePdfDownload(quoteId, result)
+    })
+    const { blob, filename } = result
     const safeFilename = filename?.trim() || `quote-${quoteId}.pdf`
     triggerFileDownload(blob, safeFilename)
   } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('[cotizador] error al descargar PDF', { quoteId, error })
-    }
+    logQuoteUiWarn('descargar PDF fallo', {
+      quoteId,
+      error: summarizeQuoteError(error)
+    })
     errorMessage.value = buildQuotePdfErrorMessage(error)
   } finally {
     pdfLoading.value = false
@@ -200,6 +222,10 @@ function clearErrors(): void {
   QUOTE_FORM_FIELDS.forEach((field) => {
     delete errors[field]
   })
+}
+
+function collectInvalidQuoteFields(): QuoteFormField[] {
+  return QUOTE_FORM_FIELDS.filter((field) => Boolean(errors[field]?.trim()))
 }
 
 function buildQuoteCreationErrorMessage(error: unknown): string {
@@ -355,6 +381,27 @@ function triggerFileDownload(blob: Blob, filename: string): void {
   anchor.click()
   document.body.removeChild(anchor)
   window.URL.revokeObjectURL(objectUrl)
+}
+
+function logQuoteUiDebug(event: string, context: Record<string, unknown>): void {
+  if (!import.meta.env.DEV) {
+    return
+  }
+  console.debug(...buildRuntimeLogArgs(`[quote:ui] ${event}`, context))
+}
+
+function logQuoteUiInfo(event: string, context: Record<string, unknown>): void {
+  if (!import.meta.env.DEV) {
+    return
+  }
+  console.info(...buildRuntimeLogArgs(`[quote:ui] ${event}`, context))
+}
+
+function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
+  if (!import.meta.env.DEV) {
+    return
+  }
+  console.warn(...buildRuntimeLogArgs(`[quote:ui] ${event}`, context))
 }
 </script>
 

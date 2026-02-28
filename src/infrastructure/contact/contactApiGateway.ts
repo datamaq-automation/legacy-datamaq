@@ -6,6 +6,8 @@ import type { HttpClient } from '@/application/ports/HttpClient'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { StoragePort } from '@/application/ports/Storage'
+import { summarizeContactSubmitPayload } from '@/application/contact/contactSubmitDiagnostics'
+import { emitRuntimeDebug, emitRuntimeInfo, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 import { submitBackendContact } from './backendContactChannel'
 import { buildContactPayloadBundle } from './contactPayloadBuilder'
 import { mapSubmitResponseError } from './contactSubmissionErrors'
@@ -27,10 +29,22 @@ export class ContactApiGateway implements ContactGateway {
   async submit(payload: ContactSubmitPayload): Promise<Result<ContactSubmitSuccess, ContactError>> {
     const apiUrl = this.channel === 'mail' ? this.config.mailApiUrl : this.config.inquiryApiUrl
     const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
+    const endpointLogContext = buildContactEndpointLogContext(apiUrl)
+    emitRuntimeDebug('[contact:gateway] submit start', {
+      channel: this.channel,
+      ...endpointLogContext,
+      payload: summarizeContactSubmitPayload(payload)
+    })
+
     if (!apiUrl || !endpointPolicy.allowed) {
+      emitRuntimeWarn('[contact:gateway] endpoint invalido para submit', {
+        channel: this.channel,
+        reason: endpointPolicy.reason ?? 'unknown',
+        ...endpointLogContext
+      })
       this.logger.error(`${this.resolveChannelLabel()} no es valida para backend-only`, {
         reason: endpointPolicy.reason ?? 'unknown',
-        ...buildContactEndpointLogContext(apiUrl)
+        ...endpointLogContext
       })
       return { ok: false, error: { type: 'Unavailable' } }
     }
@@ -40,8 +54,16 @@ export class ContactApiGateway implements ContactGateway {
     const feedback = extractContactSubmitFeedback(response)
 
     if (!response.ok) {
+      emitRuntimeWarn('[contact:gateway] response no OK', {
+        channel: this.channel,
+        ...endpointLogContext,
+        status: response.status,
+        requestId: feedback.requestId ?? null,
+        errorCode: feedback.errorCode ?? null,
+        backendMessage: feedback.backendMessage ?? null
+      })
       this.logger.warn('[contactApiGateway] response no OK', {
-        ...buildContactEndpointLogContext(apiUrl),
+        ...endpointLogContext,
         status: response.status,
         requestId: feedback.requestId ?? null,
         errorCode: feedback.errorCode ?? null,
@@ -53,6 +75,12 @@ export class ContactApiGateway implements ContactGateway {
       }
     }
 
+    emitRuntimeInfo('[contact:gateway] response OK', {
+      channel: this.channel,
+      ...endpointLogContext,
+      status: response.status,
+      requestId: feedback.requestId ?? null
+    })
     return {
       ok: true,
       data: feedback

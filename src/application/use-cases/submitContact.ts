@@ -9,6 +9,12 @@ import { ContactSubmitted } from '@/application/contact/events/ContactSubmitted'
 import type { EventBus } from '../ports/EventBus'
 import type { LeadTracking } from '../analytics/leadTracking'
 import { mapContactRequestToSubmitPayload } from '@/application/contact/mappers/contactPayloadMapper'
+import {
+  summarizeContactDraft,
+  summarizeContactError,
+  summarizeContactSubmitPayload
+} from '@/application/contact/contactSubmitDiagnostics'
+import { emitRuntimeDebug, emitRuntimeInfo, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 
 export class SubmitContactUseCase {
   constructor(
@@ -26,6 +32,9 @@ export class SubmitContactUseCase {
     payload: ContactFormPayload
   ): Promise<Result<ContactSubmitSuccess, ContactError>> {
     const normalizedPayload = normalizeContactFormPayload(payload)
+    emitRuntimeDebug('[contact:use-case] payload normalizado', {
+      payload: summarizeContactDraft(normalizedPayload)
+    })
     const fullName = buildContactDisplayName(normalizedPayload)
     const contactInput = {
       id: buildContactId(this.clock.now()),
@@ -44,27 +53,38 @@ export class SubmitContactUseCase {
     const contactResult = this.contactService.createContact(contactInput)
 
     if (!contactResult.ok) {
+      emitRuntimeWarn('[contact:use-case] contacto invalido antes del gateway', {
+        payload: summarizeContactDraft(normalizedPayload)
+      })
       return { ok: false, error: { type: 'ValidationError' } }
     }
 
     const backendStatus = await this.contactBackend.ensureStatus()
+    emitRuntimeDebug('[contact:use-case] backend status resuelto', { backendStatus })
     if (backendStatus !== 'available') {
+      emitRuntimeWarn('[contact:use-case] backend no disponible para submit', { backendStatus })
       return { ok: false, error: { type: 'Unavailable' } }
     }
 
-    const submitResult = await this.contactGateway.submit(
-      mapContactRequestToSubmitPayload(
-        contactResult.data,
-        {
-          pageLocation: this.location.href(),
-          trafficSource: getTrafficSource(this.location),
-          userAgent: this.navigator.userAgent(),
-          createdAt: new Date(this.clock.now()).toISOString()
-        }
-      )
+    const submitPayload = mapContactRequestToSubmitPayload(
+      contactResult.data,
+      {
+        pageLocation: this.location.href(),
+        trafficSource: getTrafficSource(this.location),
+        userAgent: this.navigator.userAgent(),
+        createdAt: new Date(this.clock.now()).toISOString()
+      }
     )
+    emitRuntimeDebug('[contact:use-case] payload listo para gateway', {
+      payload: summarizeContactSubmitPayload(submitPayload)
+    })
+
+    const submitResult = await this.contactGateway.submit(submitPayload)
 
     if (!submitResult.ok) {
+      emitRuntimeWarn('[contact:use-case] gateway rechazo el submit', {
+        error: summarizeContactError(submitResult.error)
+      })
       if (submitResult.error.type === 'BackendError' && submitResult.error.status >= 500) {
         this.contactBackend.markUnavailable()
       } else if (submitResult.error.type !== 'NetworkError') {
@@ -73,6 +93,9 @@ export class SubmitContactUseCase {
       return submitResult
     }
 
+    emitRuntimeInfo('[contact:use-case] submit completado', {
+      requestId: submitResult.data.requestId ?? null
+    })
     this.contactBackend.markAvailable()
     this.leadTracking.registerLeadForThanksPage()
     this.eventBus.publish(new ContactSubmitted(contactResult.data.id))
