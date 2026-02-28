@@ -10,14 +10,14 @@ describe('vite proxy config', () => {
     vi.restoreAllMocks()
   })
 
-  it('ignores the legacy localhost prefix by default', async () => {
+  it('uses the local Laravel bridge on port 8899 by default', async () => {
     process.env.VITE_API_PROXY_PREFIX = '/plantilla-www/public'
 
     const configFactory = (await import('../../../vite.config.js')).default
     const config = configFactory({ mode: 'development' })
     const rewrite = config.server.proxy['/api'].rewrite
 
-    expect(rewrite('/api/v1/health')).toBe('/api/v1/health/')
+    expect(rewrite('/api/v1/health')).toBe('/v1/health')
   })
 
   it('preserves the legacy prefix when explicitly forced', async () => {

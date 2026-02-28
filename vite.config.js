@@ -22,7 +22,7 @@ const LEGACY_LOCAL_PROXY_PREFIX = '/plantilla-www/public'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const proxyTarget = process.env.VITE_API_PROXY_TARGET?.trim() || 'http://localhost'
+  const proxyTarget = process.env.VITE_API_PROXY_TARGET?.trim() || 'http://127.0.0.1:8899'
   const configuredProxyPrefix = process.env.VITE_API_PROXY_PREFIX?.trim()
   // AppServ exposes the local backend contract at `/api/v1/...` from the web root.
   const proxyPrefix = resolveProxyPrefix(configuredProxyPrefix, proxyTarget)
