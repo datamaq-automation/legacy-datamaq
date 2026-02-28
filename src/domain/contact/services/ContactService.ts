@@ -6,8 +6,12 @@ export class ContactService {
   createContact(params: {
     id: string
     name: string
-    email: string
+    email?: string
+    phone?: string
+    firstName?: string
+    lastName?: string
     company?: string
+    geographicLocation?: string
     message?: string
   }): Result<ContactRequest, ContactDomainError> {
     return ContactRequest.createFromPrimitives(params)

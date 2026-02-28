@@ -1,34 +1,76 @@
 import { describe, expect, it } from 'vitest'
-import { validateContactDomainRules } from '@/application/validation/contactSchema'
+import {
+  ContactLeadSchema,
+  EmailContactSchema,
+  validateContactDomainRules
+} from '@/application/validation/contactSchema'
 
-describe('validateContactDomainRules', () => {
-  it('accepts valid contact data', () => {
-    const result = validateContactDomainRules({
+describe('contactSchema', () => {
+  it('accepts contact payload when email is present', () => {
+    const result = ContactLeadSchema.safeParse({
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      company: 'Analytical',
       email: 'ada@example.com',
-      message: 'Necesito cotizar instalacion para una linea industrial.'
+      phone: '',
+      geographicLocation: 'CABA',
+      comment: 'Necesito una propuesta.'
     })
 
-    expect(result.ok).toBe(true)
+    expect(result.success).toBe(true)
   })
 
-  it('rejects invalid email', () => {
+  it('accepts contact payload when phone is present and email is blank', () => {
+    const result = ContactLeadSchema.safeParse({
+      firstName: '',
+      lastName: '',
+      company: '',
+      email: '',
+      phone: '+54 11 5555 4444',
+      geographicLocation: '',
+      comment: ''
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects contact payload when both email and phone are missing', () => {
+    const result = ContactLeadSchema.safeParse({
+      firstName: '',
+      lastName: '',
+      company: '',
+      email: '',
+      phone: '',
+      geographicLocation: '',
+      comment: ''
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects invalid phone in domain validation', () => {
     const result = validateContactDomainRules({
-      email: 'ada-at-example',
-      message: 'Necesito cotizar instalacion para una linea industrial.'
+      email: '',
+      phone: '123'
     })
 
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error.type).toBe('InvalidEmail')
+      expect(result.error.type).toBe('InvalidPhone')
     }
   })
 
-  it('no aplica regla de largo de mensaje en validacion de dominio', () => {
-    const result = validateContactDomainRules({
+  it('requires email and comment for the mail channel', () => {
+    const result = EmailContactSchema.safeParse({
+      firstName: '',
+      lastName: '',
+      company: '',
       email: 'ada@example.com',
-      message: 'Hola'
+      phone: '',
+      geographicLocation: '',
+      comment: 'Necesito una propuesta por correo.'
     })
 
-    expect(result.ok).toBe(true)
+    expect(result.success).toBe(true)
   })
 })

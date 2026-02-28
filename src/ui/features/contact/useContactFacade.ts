@@ -1,4 +1,4 @@
-import type { EmailContactPayload } from '@/application/dto/contact'
+import type { ContactFormPayload } from '@/application/dto/contact'
 import type { Result } from '@/domain/shared/result'
 import type { ContactError } from '@/application/types/errors'
 import type { ContactSubmitSuccess } from '@/application/dto/contact'
@@ -9,14 +9,14 @@ export function useContactFacade() {
 
   function submitContact(
     section: string,
-    payload: EmailContactPayload
+    payload: ContactFormPayload
   ): Promise<Result<ContactSubmitSuccess, ContactError>> {
     return container.useCases.submitContact.execute(section, payload)
   }
 
   function submitMail(
     section: string,
-    payload: EmailContactPayload
+    payload: ContactFormPayload
   ): Promise<Result<ContactSubmitSuccess, ContactError>> {
     return container.useCases.submitMail.execute(section, payload)
   }

@@ -5,7 +5,7 @@ import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
 export interface ContactPayloadBundle {
   backendPayload: {
     name: string
-    email: string
+    email?: string
     message: string
     custom_attributes: Record<string, string>
     meta: {
@@ -24,14 +24,20 @@ export function buildContactPayloadBundle(
 ): ContactPayloadBundle {
   const enrichedPayload = attachAttributionToPayload(payload, storage)
   const customAttributes = sanitizeCustomAttributes({
-    message: payload.message
+    first_name: payload.firstName,
+    last_name: payload.lastName,
+    company: payload.company,
+    phone: payload.phone,
+    geographic_location: payload.geographicLocation,
+    comment: payload.comment,
+    message: payload.comment
   })
 
   return {
     backendPayload: {
       name: enrichedPayload.name,
-      email: enrichedPayload.email,
-      message: payload.message,
+      ...(enrichedPayload.email ? { email: enrichedPayload.email } : {}),
+      message: payload.comment,
       custom_attributes: customAttributes,
       meta: {
         page_location: payload.pageLocation,

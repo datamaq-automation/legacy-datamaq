@@ -1,4 +1,4 @@
-import type { EmailContactPayload } from '@/application/dto/contact'
+import type { ContactFormPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 import { useContactFacade } from '@/ui/features/contact/useContactFacade'
 
@@ -49,11 +49,11 @@ export function trackSectionScroll(sectionHref: string): void {
   engagementTracker.trackSectionScroll(normalizedSection, trafficSource)
 }
 
-export function submitContact(section: string, payload: EmailContactPayload) {
+export function submitContact(section: string, payload: ContactFormPayload) {
   return useContactFacade().submitContact(section, payload)
 }
 
-export function submitMail(section: string, payload: EmailContactPayload) {
+export function submitMail(section: string, payload: ContactFormPayload) {
   return useContactFacade().submitMail(section, payload)
 }
 

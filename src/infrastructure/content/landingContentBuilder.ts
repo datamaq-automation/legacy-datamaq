@@ -108,7 +108,16 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
     contact: {
       title: 'Contacto',
       subtitle: 'Formulario disponible mientras se sincroniza contenido.',
-      labels: { email: 'Email', message: 'Mensaje' },
+      labels: {
+        firstName: 'Nombre',
+        lastName: 'Apellido',
+        company: 'Empresa',
+        email: 'E-mail',
+        phone: 'Nro telefono',
+        geographicLocation: 'Ubicacion geografica',
+        comment: 'Comentario',
+        message: 'Comentario'
+      },
       submitLabel: 'Enviar',
       checkingMessage: 'Verificando backend...',
       unavailableMessage: 'Servicio temporalmente no disponible.',

@@ -4,7 +4,7 @@ Fecha: 2026-02-28
 
 ## Objetivo
 
-Explicar al equipo frontend como funciona hoy el formulario de ingreso de contacto y que debe seguir estable durante una eventual integracion interna con Chatwoot.
+Explicar al equipo frontend como funciona hoy el formulario de ingreso de contacto y que debe seguir estable con la integracion actual de Laravel hacia Chatwoot.
 
 ## Resumen ejecutivo
 
@@ -14,13 +14,20 @@ Debe seguir enviando el formulario exactamente a:
 
 - `POST https://api.datamaq.com.ar/v1/contact`
 
-La integracion con Chatwoot, si se hace, debe ocurrir solo dentro del backend para no romper:
+La integracion con Chatwoot ocurre solo dentro del backend para no romper:
 
 - URL publica
 - metodo
 - payload
 - manejo de errores
 - CORS y `OPTIONS`
+
+Estado actual confirmado por backend:
+
+- Laravel ya integra internamente con Chatwoot Account API
+- la fase actual solo captura contacto en Chatwoot
+- no crea conversacion ni mensaje
+- si Chatwoot falla aguas abajo, el formulario mantiene la respuesta HTTP legacy exitosa
 
 ## Flujo actual del formulario
 
@@ -36,6 +43,7 @@ La integracion con Chatwoot, si se hace, debe ocurrir solo dentro del backend pa
 3. El `POST` se manda como JSON con `Content-Type: application/json`
 4. En success, el frontend tolera cualquier `2xx` o `202`
 5. En error, el frontend intenta leer `request_id`, `error_code|code` y `detail|message`
+6. Hoy backend puede devolver `202 { "status": "ok", "request_id": "req-..." }` aunque la sincronizacion interna con Chatwoot falle
 
 ## Payload actual del formulario
 
@@ -131,26 +139,33 @@ Ejemplo compatible:
 }
 ```
 
-## Que no debe cambiar si backend integra Chatwoot
+## Que no debe cambiar con la integracion actual
 
 - La URL publica debe seguir siendo `https://api.datamaq.com.ar/v1/contact`
 - El metodo debe seguir siendo `OPTIONS` + `POST`
 - El payload debe seguir teniendo `name`, `email`, `message`, `custom_attributes`, `meta`, `attribution`
 - El frontend no debe enviar tokens ni identificadores de Chatwoot
 - El shape de success y error debe seguir siendo compatible con el contrato actual
+- El frontend no debe asumir que exista hoy una conversacion o mensaje creado en Chatwoot por cada submit
 
 ## Recomendacion para frontend
 
 No cambiar el formulario por Chatwoot.
 
-Si backend implementa Chatwoot internamente:
+El frontend no deberia:
 
-- el frontend no deberia llamar `app.chatwoot.com`
-- el frontend no deberia conocer `account_id`, `inbox_id`, `inbox_identifier` ni `api_access_token`
-- el frontend debe seguir usando solo el contrato DataMaq actual
+- llamar `app.chatwoot.com`
+- conocer `account_id`, `inbox_id`, `inbox_identifier` ni `api_access_token`
+- acoplarse al estado interno de Chatwoot
+
+La version correcta hoy es:
+
+- `frontend -> POST /v1/contact -> Laravel -> Chatwoot Account API`
+- con captura de contacto solamente
+- con tolerancia a fallo interno de Chatwoot sin romper la UX actual del formulario
 
 ## Fuentes internas usadas para este brief
 
 - `docs/migracion-laravel-validacion-endpoints-frontend.md`
 - `docs/laravel-parallel-route-matrix.md`
-- `laravel/resources/contracts/content.snapshot.json`
+- respuesta backend del 2026-02-28 sobre `POST /v1/contact` y Chatwoot

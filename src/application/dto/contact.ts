@@ -1,10 +1,22 @@
-export interface EmailContactPayload {
+export interface ContactFormPayload {
+  firstName: string
+  lastName: string
+  company: string
   email: string
-  message: string
+  phone: string
+  geographicLocation: string
+  comment: string
 }
 
-export interface ContactSubmitPayload extends EmailContactPayload {
+export interface ContactSubmitPayload {
   name: string
+  email?: string
+  phone?: string
+  company?: string
+  firstName?: string
+  lastName?: string
+  geographicLocation?: string
+  comment: string
   pageLocation: string
   trafficSource: string
   userAgent: string

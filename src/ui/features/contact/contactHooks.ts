@@ -7,23 +7,53 @@ import {
 } from '@/ui/controllers/contactBackendController'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
-import type { EmailContactPayload } from '@/application/dto/contact'
+import type { ContactFormPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 import { useContactValidation } from './useContactValidation'
 import { useRouter } from 'vue-router'
 
+type ContactFieldErrorState = Record<keyof ContactFormPayload, string>
+
+function createEmptyForm(): ContactFormPayload {
+  return {
+    firstName: '',
+    lastName: '',
+    company: '',
+    email: '',
+    phone: '',
+    geographicLocation: '',
+    comment: ''
+  }
+}
+
+function createEmptyFieldErrors(): ContactFieldErrorState {
+  return {
+    firstName: '',
+    lastName: '',
+    company: '',
+    email: '',
+    phone: '',
+    geographicLocation: '',
+    comment: ''
+  }
+}
+
 export function useContactForm(props: ContactFormProps) {
   const backendChannel = props.backendChannel ?? 'contact'
+  const isLeadChannel = backendChannel === 'contact'
   const sectionId = props.sectionId?.trim() || 'contacto'
   const titleId = `${sectionId}-title`
+  const firstNameId = `${sectionId}-nombre`
+  const lastNameId = `${sectionId}-apellido`
+  const companyId = `${sectionId}-empresa`
   const emailId = `${sectionId}-email`
-  const messageId = `${sectionId}-mensaje`
+  const phoneId = `${sectionId}-telefono`
+  const geographicLocationId = `${sectionId}-ubicacion`
+  const commentId = `${sectionId}-comentario`
   const tecnicoHeadingId = `tecnico-a-cargo-${sectionId}-title`
   const formRef = ref<HTMLFormElement | null>(null)
-  const form = reactive({
-    email: '',
-    message: ''
-  })
+  const form = reactive(createEmptyForm())
+  const fieldErrors = reactive(createEmptyFieldErrors())
   const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus(backendChannel))
   const isBackendAvailable = computed(() => backendStatus.value === 'available')
   const isCheckingBackend = computed(() => backendStatus.value === 'unknown')
@@ -50,6 +80,7 @@ export function useContactForm(props: ContactFormProps) {
     const formElement = formRef.value
     feedback.message = ''
     feedback.success = false
+    clearFieldErrors()
 
     if (!isChannelEnabled.value) {
       return
@@ -59,12 +90,18 @@ export function useContactForm(props: ContactFormProps) {
     }
     isSubmitting.value = true
     try {
-      const payload: EmailContactPayload = {
+      const payload: ContactFormPayload = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        company: form.company,
         email: form.email,
-        message: form.message
+        phone: form.phone,
+        geographicLocation: form.geographicLocation,
+        comment: form.comment
       }
-      const parsed = validate(payload)
+      const parsed = validate(payload, backendChannel)
       if (!parsed.ok) {
+        applyFieldErrors(parsed.fieldErrors)
         await announceFeedback(contact.errorMessage, false)
         return
       }
@@ -81,7 +118,7 @@ export function useContactForm(props: ContactFormProps) {
           false
         )
       }
-    } catch (error) {
+    } catch {
       await announceFeedback(contact.unexpectedErrorMessage, false)
     } finally {
       isSubmitting.value = false
@@ -106,11 +143,18 @@ export function useContactForm(props: ContactFormProps) {
   return {
     formRef,
     form,
+    fieldErrors,
     sectionId,
     titleId,
+    firstNameId,
+    lastNameId,
+    companyId,
     emailId,
-    messageId,
+    phoneId,
+    geographicLocationId,
+    commentId,
     tecnicoHeadingId,
+    isLeadChannel,
     isBackendAvailable,
     isCheckingBackend,
     isChannelEnabled,
@@ -118,6 +162,18 @@ export function useContactForm(props: ContactFormProps) {
     feedback,
     feedbackMessageRef,
     handleSubmit
+  }
+
+  function clearFieldErrors(): void {
+    for (const key of Object.keys(fieldErrors) as Array<keyof ContactFormPayload>) {
+      fieldErrors[key] = ''
+    }
+  }
+
+  function applyFieldErrors(nextErrors: Partial<Record<keyof ContactFormPayload, string>>): void {
+    for (const key of Object.keys(fieldErrors) as Array<keyof ContactFormPayload>) {
+      fieldErrors[key] = nextErrors[key] ?? ''
+    }
   }
 }
 

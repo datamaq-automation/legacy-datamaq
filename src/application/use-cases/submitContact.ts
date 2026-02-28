@@ -3,7 +3,7 @@ import type { ContactBackendMonitor } from '../contact/contactBackendStatus'
 import type { Clock, LocationProvider, NavigatorProvider } from '../ports/Environment'
 import type { ContactError } from '../types/errors'
 import type { Result } from '@/domain/shared/result'
-import type { ContactSubmitSuccess, EmailContactPayload } from '../dto/contact'
+import type { ContactFormPayload, ContactSubmitSuccess } from '../dto/contact'
 import { ContactService } from '@/domain/contact/services/ContactService'
 import { ContactSubmitted } from '@/application/contact/events/ContactSubmitted'
 import type { EventBus } from '../ports/EventBus'
@@ -24,19 +24,22 @@ export class SubmitContactUseCase {
 
   async execute(
     section: string,
-    payload: EmailContactPayload
+    payload: ContactFormPayload
   ): Promise<Result<ContactSubmitSuccess, ContactError>> {
-    const fullName = inferContactNameFromEmail(payload.email)
-    const contactInput: {
-      id: string
-      name: string
-      email: string
-      message?: string
-    } = {
+    const normalizedPayload = normalizeContactFormPayload(payload)
+    const fullName = buildContactDisplayName(normalizedPayload)
+    const contactInput = {
       id: buildContactId(this.clock.now()),
       name: fullName,
-      email: payload.email,
-      message: payload.message
+      ...(normalizedPayload.email ? { email: normalizedPayload.email } : {}),
+      ...(normalizedPayload.phone ? { phone: normalizedPayload.phone } : {}),
+      ...(normalizedPayload.firstName ? { firstName: normalizedPayload.firstName } : {}),
+      ...(normalizedPayload.lastName ? { lastName: normalizedPayload.lastName } : {}),
+      ...(normalizedPayload.company ? { company: normalizedPayload.company } : {}),
+      ...(normalizedPayload.geographicLocation
+        ? { geographicLocation: normalizedPayload.geographicLocation }
+        : {}),
+      ...(normalizedPayload.comment ? { message: normalizedPayload.comment } : {})
     }
 
     const contactResult = this.contactService.createContact(contactInput)
@@ -83,6 +86,66 @@ function inferContactNameFromEmail(email: string): string {
   const normalizedLocalPart = localPart.replace(/[._-]+/g, ' ').trim()
   const fallback = 'Contacto Web'
   return normalizedLocalPart.length >= 2 ? normalizedLocalPart : fallback
+}
+
+function normalizeContactFormPayload(payload: ContactFormPayload): {
+  firstName?: string
+  lastName?: string
+  company?: string
+  email?: string
+  phone?: string
+  geographicLocation?: string
+  comment?: string
+} {
+  const firstName = normalizeOptional(payload.firstName)
+  const lastName = normalizeOptional(payload.lastName)
+  const company = normalizeOptional(payload.company)
+  const email = normalizeOptional(payload.email)
+  const phone = normalizeOptional(payload.phone)
+  const geographicLocation = normalizeOptional(payload.geographicLocation)
+  const comment = normalizeOptional(payload.comment)
+
+  return {
+    ...(firstName ? { firstName } : {}),
+    ...(lastName ? { lastName } : {}),
+    ...(company ? { company } : {}),
+    ...(email ? { email } : {}),
+    ...(phone ? { phone } : {}),
+    ...(geographicLocation ? { geographicLocation } : {}),
+    ...(comment ? { comment } : {})
+  }
+}
+
+function buildContactDisplayName(payload: {
+  firstName?: string
+  lastName?: string
+  company?: string
+  email?: string
+  phone?: string
+}): string {
+  const fullName = [payload.firstName, payload.lastName].filter(Boolean).join(' ').trim()
+  if (fullName.length >= 2) {
+    return fullName
+  }
+
+  if (payload.company && payload.company.length >= 2) {
+    return payload.company
+  }
+
+  if (payload.email) {
+    return inferContactNameFromEmail(payload.email)
+  }
+
+  if (payload.phone) {
+    return `Contacto ${payload.phone}`
+  }
+
+  return 'Contacto Web'
+}
+
+function normalizeOptional(value: string): string | undefined {
+  const trimmed = value.trim()
+  return trimmed || undefined
 }
 
 function buildContactId(now: number): string {

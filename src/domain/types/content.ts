@@ -76,8 +76,14 @@ export interface ContactContent {
   title: string
   subtitle: string
   labels: {
-    email: string
-    message: string
+    firstName?: string
+    lastName?: string
+    company?: string
+    email?: string
+    phone?: string
+    geographicLocation?: string
+    comment?: string
+    message?: string
   }
   submitLabel: string
   checkingMessage: string

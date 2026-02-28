@@ -40,6 +40,12 @@ Fecha de actualizacion: 2026-02-28
   - frontend dev/e2e: `/api/v1/*` via proxy
   - produccion: endpoint canonico configurado por perfil
 
+- Si negocio pide operacion real en bandeja de Chatwoot desde el formulario, alinear con backend una segunda fase de:
+  - deduplicacion
+  - `identifier` canonico
+  - politica de conversaciones por submit
+  - creacion de `conversation` y `message`
+
 ## Hecho
 
 - `ViteConfig` ya resuelve endpoints backend desde un helper compartido en `src/infrastructure/backend/backendConfigEndpoint.ts`.
@@ -48,3 +54,4 @@ Fecha de actualizacion: 2026-02-28
 - `console.info()` de `health`, `content` y `pricing` ya comparte un contrato base comun.
 - `warn/error` ya salen sanitizados para no exponer host, query ni contexto sensible en produccion.
 - CORS local para pruebas directas contra Laravel fue corregido por backend.
+- Backend confirmo que `POST /v1/contact` ya integra internamente con Chatwoot Account API sin cambiar el contrato frontend y que la fase actual es solo captura de contacto.

@@ -25,7 +25,54 @@ Path: src/ui/features/contact/ContactFormSection.vue
                 novalidate
                 @submit.prevent="handleSubmit"
               >
-                <div class="col-12">
+                <template v-if="isLeadChannel">
+                  <div class="col-md-6">
+                    <label class="form-label" :for="firstNameId">{{ contact.labels.firstName }}</label>
+                    <input
+                      :id="firstNameId"
+                      v-model="form.firstName"
+                      type="text"
+                      class="form-control"
+                      name="firstName"
+                      autocomplete="given-name"
+                      maxlength="80"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.firstName)"
+                    />
+                    <small v-if="fieldErrors.firstName" class="text-danger">{{ fieldErrors.firstName }}</small>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" :for="lastNameId">{{ contact.labels.lastName }}</label>
+                    <input
+                      :id="lastNameId"
+                      v-model="form.lastName"
+                      type="text"
+                      class="form-control"
+                      name="lastName"
+                      autocomplete="family-name"
+                      maxlength="80"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.lastName)"
+                    />
+                    <small v-if="fieldErrors.lastName" class="text-danger">{{ fieldErrors.lastName }}</small>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" :for="companyId">{{ contact.labels.company }}</label>
+                    <input
+                      :id="companyId"
+                      v-model="form.company"
+                      type="text"
+                      class="form-control"
+                      name="company"
+                      autocomplete="organization"
+                      maxlength="120"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.company)"
+                    />
+                    <small v-if="fieldErrors.company" class="text-danger">{{ fieldErrors.company }}</small>
+                  </div>
+                </template>
+                <div :class="isLeadChannel ? 'col-md-6' : 'col-12'">
                   <label class="form-label" :for="emailId">{{ contact.labels.email }}</label>
                   <input
                     :id="emailId"
@@ -33,26 +80,67 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     type="email"
                     class="form-control"
                     name="email"
-                    required
                     autocomplete="email"
                     maxlength="160"
                     inputmode="email"
                     :disabled="!isChannelEnabled"
+                    :required="!isLeadChannel"
+                    :aria-invalid="Boolean(fieldErrors.email)"
                   />
+                  <small v-if="fieldErrors.email" class="text-danger">{{ fieldErrors.email }}</small>
+                </div>
+                <div v-if="isLeadChannel" class="col-md-6">
+                  <label class="form-label" :for="phoneId">{{ contact.labels.phone }}</label>
+                  <input
+                    :id="phoneId"
+                    v-model="form.phone"
+                    type="tel"
+                    class="form-control"
+                    name="phone"
+                    autocomplete="tel"
+                    maxlength="40"
+                    inputmode="tel"
+                    :disabled="!isChannelEnabled"
+                    :aria-invalid="Boolean(fieldErrors.phone)"
+                  />
+                  <small class="text-body-secondary d-block mt-1">Completá e-mail o teléfono.</small>
+                  <small v-if="fieldErrors.phone" class="text-danger d-block">{{ fieldErrors.phone }}</small>
+                </div>
+                <div v-if="isLeadChannel" class="col-12">
+                  <label class="form-label" :for="geographicLocationId">{{ contact.labels.geographicLocation }}</label>
+                  <input
+                    :id="geographicLocationId"
+                    v-model="form.geographicLocation"
+                    type="text"
+                    class="form-control"
+                    name="geographicLocation"
+                    autocomplete="address-level2"
+                    maxlength="160"
+                    :disabled="!isChannelEnabled"
+                    :aria-invalid="Boolean(fieldErrors.geographicLocation)"
+                  />
+                  <small
+                    v-if="fieldErrors.geographicLocation"
+                    class="text-danger"
+                  >{{ fieldErrors.geographicLocation }}</small>
                 </div>
                 <div class="col-12">
-                  <label class="form-label" :for="messageId">{{ contact.labels.message }}</label>
+                  <label class="form-label" :for="commentId">{{
+                    contact.labels.comment ?? contact.labels.message
+                  }}</label>
                   <textarea
-                    :id="messageId"
-                    v-model="form.message"
+                    :id="commentId"
+                    v-model="form.comment"
                     class="form-control"
-                    name="message"
+                    name="comment"
                     rows="5"
-                    required
-                    minlength="10"
                     maxlength="2000"
                     :disabled="!isChannelEnabled"
+                    :required="!isLeadChannel"
+                    :minlength="isLeadChannel ? undefined : 10"
+                    :aria-invalid="Boolean(fieldErrors.comment)"
                   />
+                  <small v-if="fieldErrors.comment" class="text-danger">{{ fieldErrors.comment }}</small>
                 </div>
                 <div class="col-12 mt-2">
                   <button
@@ -114,11 +202,18 @@ const {
   contact,
   formRef,
   form,
+  fieldErrors,
   sectionId,
   titleId,
+  firstNameId,
+  lastNameId,
+  companyId,
   emailId,
-  messageId,
+  phoneId,
+  geographicLocationId,
+  commentId,
   tecnicoHeadingId,
+  isLeadChannel,
   isBackendAvailable,
   isCheckingBackend,
   isChannelEnabled,

@@ -65,10 +65,13 @@ export async function submitChatwootPublicContact(
 
 function buildChatwootContactPayload(payloads: ContactPayloadBundle) {
   const payload = payloads.backendPayload
+  const fallbackIdentifier =
+    payload.custom_attributes['phone']?.replace(/\s+/g, '') ?? payload.name.trim()
+
   return {
-    identifier: payload.email.trim().toLowerCase(),
+    identifier: payload.email?.trim().toLowerCase() ?? fallbackIdentifier,
     name: payload.name,
-    email: payload.email,
+    ...(payload.email ? { email: payload.email } : {}),
     custom_attributes: {
       ...payload.custom_attributes,
       source: 'landing_form',
