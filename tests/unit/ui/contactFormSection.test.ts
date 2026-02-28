@@ -159,4 +159,39 @@ describe('ContactFormSection', () => {
     await fireEvent.click(submitButton)
     expect(onSubmit).not.toHaveBeenCalled()
   })
+
+  it('shows backend validation detail when Laravel returns 422', async () => {
+    const onSubmit = vi.fn(async () => ({
+      ok: false as const,
+      error: {
+        type: 'BackendError' as const,
+        status: 422,
+        backendMessage: 'Ingresa e-mail o telefono.',
+        requestId: 'req_422'
+      }
+    }))
+    const router = createTestRouter()
+    await router.push('/')
+    await router.isReady()
+
+    render(ContactFormSection, {
+      props: {
+        contactEmail: 'contacto@example.com',
+        onSubmit
+      },
+      global: {
+        plugins: [router]
+      }
+    })
+
+    await fireEvent.update(screen.getByLabelText('Nombre'), 'Ana')
+    await fireEvent.update(screen.getByLabelText('E-mail'), 'ana@example.com')
+    await fireEvent.click(screen.getByRole('button', { name: 'Registrar contacto' }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'Ingresa e-mail o telefono. Codigo de seguimiento: req_422.'
+      )
+    })
+  })
 })

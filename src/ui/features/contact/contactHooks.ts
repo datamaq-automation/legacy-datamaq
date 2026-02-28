@@ -196,6 +196,9 @@ function mapContactError(
           error.requestId
         )
       }
+      if (error.backendMessage && error.status >= 400 && error.status < 500) {
+        return appendTrackingId(error.backendMessage, error.requestId)
+      }
       return appendTrackingId(
         'No se pudo enviar la consulta. Verifica los datos e intenta nuevamente.',
         error.requestId
