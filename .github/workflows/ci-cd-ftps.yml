@@ -35,6 +35,7 @@ jobs:
             ftps_password_secret: FTPS_DATAMAQ_PASSWORD
             ftps_remote_dir_secret: FTPS_DATAMAQ_REMOTE_DIR
             ftps_port_var: FTPS_DATAMAQ_PORT
+            ftps_mode_var: FTPS_DATAMAQ_MODE
             ftps_remote_dir_var: FTPS_DATAMAQ_REMOTE_DIR
             ftps_allow_insecure_data_channel_var: FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
 
@@ -43,6 +44,7 @@ jobs:
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
+          FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
           FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
@@ -79,7 +81,14 @@ jobs:
             SERVER_PORT_FROM_HOST="${SERVER##*:}"
           fi
 
-          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+          MODE="$(printf '%s' "${FTPS_MODE:-}" | tr -d '\r\n\t ' | tr '[:upper:]' '[:lower:]')"
+          PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-}}"
+          if [ -z "${PORT}" ] && [ "${MODE}" = "implicit" ]; then
+            PORT="990"
+          fi
+          if [ -z "${PORT}" ]; then
+            PORT="21"
+          fi
           REMOTE_DIR="${RAW_REMOTE_DIR}"
           if [ "${REMOTE_DIR#/}" = "${REMOTE_DIR}" ]; then
             REMOTE_DIR="/${REMOTE_DIR}"
@@ -98,12 +107,16 @@ jobs:
             echo "::error::FTPS port is invalid."
             exit 1
           fi
+          if [ -n "${MODE}" ] && ! printf '%s' "${MODE}" | grep -Eq '^(explicit|implicit)$'; then
+            echo "::error::FTPS mode is invalid. Use explicit or implicit."
+            exit 1
+          fi
           if printf '%s' "${REMOTE_DIR}" | grep -q '\\'; then
             echo "::error::FTPS remote dir must use Unix-style slashes."
             exit 1
           fi
 
-          echo "::notice::Deploy target=${{ matrix.target }} host=${SERVER_HOST} port=${PORT} dir=${REMOTE_DIR}"
+          echo "::notice::Deploy target=${{ matrix.target }} host=${SERVER_HOST} port=${PORT} mode=${MODE:-auto} dir=${REMOTE_DIR}"
 
       - name: Preflight / Install lftp client
         run: |
@@ -114,6 +127,7 @@ jobs:
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
+          FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
           FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
@@ -132,7 +146,11 @@ jobs:
           if [ "${SERVER_HOST}" != "${SERVER}" ]; then
             SERVER_PORT_FROM_HOST="${SERVER##*:}"
           fi
+          MODE="$(printf '%s' "${FTPS_MODE:-}" | tr -d '\r\n\t ' | tr '[:upper:]' '[:lower:]')"
           PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-}}"
+          if [ -z "${PORT}" ] && [ "${MODE}" = "implicit" ]; then
+            PORT="990"
+          fi
           if [ -z "${PORT}" ]; then
             PORT="21"
           fi
@@ -141,6 +159,10 @@ jobs:
             REMOTE_DIR="/${REMOTE_DIR}"
           fi
 
+          if [ -n "${MODE}" ] && ! printf '%s' "${MODE}" | grep -Eq '^(explicit|implicit)$'; then
+            echo "::error::FTPS mode is invalid. Use explicit or implicit."
+            exit 1
+          fi
           if printf '%s' "${SERVER_HOST}" | grep -Eq '^(https?|ftps?)$'; then
             echo "::error::FTPS server host is invalid after normalization (host=${SERVER_HOST})."
             echo "::group::FTPS debug"
@@ -202,7 +224,14 @@ jobs:
             return 1
           }
 
-          if [ -n "${FTPS_PORT:-}" ] || [ -n "${SERVER_PORT_FROM_HOST:-}" ]; then
+          if [ -n "${MODE}" ]; then
+            if run_preflight_attempt 1 "${PORT}" "${MODE}" false true; then
+              exit 0
+            fi
+            if run_preflight_attempt 2 "${PORT}" "${MODE}" true false; then
+              exit 0
+            fi
+          elif [ -n "${FTPS_PORT:-}" ] || [ -n "${SERVER_PORT_FROM_HOST:-}" ]; then
             SELECTED_PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST}}"
             SELECTED_MODE="explicit"
             if [ "${SELECTED_PORT}" = "990" ]; then
@@ -256,6 +285,7 @@ jobs:
         env:
           FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
           FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
+          FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
           FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
           FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
           FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
@@ -276,7 +306,11 @@ jobs:
           if [ "${SERVER_HOST}" != "${SERVER}" ]; then
             SERVER_PORT_FROM_HOST="${SERVER##*:}"
           fi
+          MODE="$(printf '%s' "${FTPS_MODE:-}" | tr -d '\r\n\t ' | tr '[:upper:]' '[:lower:]')"
           PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-}}"
+          if [ -z "${PORT}" ] && [ "${MODE}" = "implicit" ]; then
+            PORT="990"
+          fi
           if [ -z "${PORT}" ]; then
             PORT="21"
           fi
@@ -285,6 +319,10 @@ jobs:
             REMOTE_DIR="/${REMOTE_DIR}"
           fi
 
+          if [ -n "${MODE}" ] && ! printf '%s' "${MODE}" | grep -Eq '^(explicit|implicit)$'; then
+            echo "::error::FTPS mode is invalid. Use explicit or implicit."
+            exit 1
+          fi
           if printf '%s' "${SERVER_HOST}" | grep -Eq '^(https?|ftps?)$'; then
             echo "::error::FTPS server host is invalid after normalization (host=${SERVER_HOST})."
             exit 1
@@ -336,7 +374,14 @@ jobs:
             return 1
           }
 
-          if [ -n "${FTPS_PORT:-}" ] || [ -n "${SERVER_PORT_FROM_HOST:-}" ]; then
+          if [ -n "${MODE}" ]; then
+            if run_upload_attempt 1 "${PORT}" "${MODE}" false true true; then
+              exit 0
+            fi
+            if run_upload_attempt 2 "${PORT}" "${MODE}" true false true; then
+              exit 0
+            fi
+          elif [ -n "${FTPS_PORT:-}" ] || [ -n "${SERVER_PORT_FROM_HOST:-}" ]; then
             SELECTED_PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST}}"
             SELECTED_MODE="explicit"
             if [ "${SELECTED_PORT}" = "990" ]; then
@@ -365,10 +410,14 @@ jobs:
 
           if [ "${ALLOW_INSECURE_DATA_CHANNEL}" = "true" ]; then
             echo "::warning::Using insecure data-channel fallback (ssl-protect-data=false)"
-            FALLBACK_PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
-            FALLBACK_MODE="explicit"
-            if [ "${FALLBACK_PORT}" = "990" ]; then
-              FALLBACK_MODE="implicit"
+            FALLBACK_PORT="${PORT}"
+            FALLBACK_MODE="${MODE:-explicit}"
+            if [ -z "${MODE}" ]; then
+              FALLBACK_PORT="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
+              FALLBACK_MODE="explicit"
+              if [ "${FALLBACK_PORT}" = "990" ]; then
+                FALLBACK_MODE="implicit"
+              fi
             fi
             if run_upload_attempt 5 "${FALLBACK_PORT}" "${FALLBACK_MODE}" false true false; then
               exit 0
