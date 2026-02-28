@@ -40,15 +40,20 @@ describe('DynamicContentService', () => {
     await flushAsyncWork()
 
     expect(infoSpy).toHaveBeenCalledWith('[backend:content] conexion OK', {
+      resource: 'content',
       endpoint: 'http://127.0.0.1:8899/v1/content',
+      pathname: '/v1/content',
       transportMode: 'direct',
       status: 200,
-      requestId: 'req-content-123',
-      brandId: 'datamaq',
-      version: 'v2',
-      contentRevision: 'abcd1234',
       backendStatus: 'ok',
-      appliedMode: 'full-snapshot'
+      requestId: 'req-content-123',
+      version: 'v2',
+      brandId: 'datamaq',
+      timestamp: null,
+      details: {
+        appliedMode: 'full-snapshot',
+        contentRevision: 'abcd1234'
+      }
     })
   })
 
@@ -84,15 +89,20 @@ describe('DynamicContentService', () => {
 
     expect(applyHeroTitle).toHaveBeenCalledWith('Titulo parcial remoto')
     expect(infoSpy).toHaveBeenCalledWith('[backend:content] conexion OK', {
+      resource: 'content',
       endpoint: 'http://127.0.0.1:8899/v1/content',
+      pathname: '/v1/content',
       transportMode: 'direct',
       status: 200,
-      requestId: 'req-content-hero',
-      brandId: 'datamaq',
-      version: 'v2',
-      contentRevision: 'rev-hero',
       backendStatus: 'ok',
-      appliedMode: 'hero-title'
+      requestId: 'req-content-hero',
+      version: 'v2',
+      brandId: 'datamaq',
+      timestamp: null,
+      details: {
+        appliedMode: 'hero-title',
+        contentRevision: 'rev-hero'
+      }
     })
   })
 })

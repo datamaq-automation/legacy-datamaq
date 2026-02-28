@@ -2,7 +2,12 @@ import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
 import { emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 import type { CommercialPricingSnapshot, CommercialPriceKey } from '@/infrastructure/content/contentStore'
-import { buildBackendEndpointContext, extractBackendResponseMetadata, isRecord } from '@/infrastructure/backend/backendDiagnostics'
+import {
+  buildBackendEndpointContext,
+  emitBackendInfo,
+  extractBackendResponseMetadata,
+  isRecord
+} from '@/infrastructure/backend/backendDiagnostics'
 import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
 
 const pricingConsoleWarnCache = new Set<string>()
@@ -262,22 +267,16 @@ function logPricingInfo(
   payload: unknown,
   pricingSnapshot: CommercialPricingSnapshot
 ): void {
-  if (!isDevRuntime) {
-    return
-  }
-
   const metadata = extractBackendResponseMetadata(payload)
-  const endpointContext = buildBackendEndpointContext(endpoint)
-
-  console.info('[backend:pricing] conexion OK', {
-    endpoint: endpointContext.browserUrl,
-    transportMode: endpointContext.transportMode,
+  emitBackendInfo({
+    resource: 'pricing',
+    endpoint,
     status,
-    requestId: metadata.requestId ?? null,
-    version: metadata.version ?? null,
-    currency: metadata.currency ?? null,
-    backendStatus: metadata.status ?? null,
-    pricingSnapshot
+    metadata,
+    details: {
+      currency: metadata.currency ?? null,
+      pricingSnapshot
+    }
   })
 }
 

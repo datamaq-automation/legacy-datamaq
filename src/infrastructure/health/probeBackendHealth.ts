@@ -4,14 +4,17 @@ Path: src/infrastructure/health/probeBackendHealth.ts
 
 import type { HttpClient } from '@/application/ports/HttpClient'
 import { emitRuntimeWarn } from '@/application/utils/runtimeConsole'
-import { buildBackendEndpointContext, extractBackendResponseMetadata } from '@/infrastructure/backend/backendDiagnostics'
+import {
+  buildBackendEndpointContext,
+  emitBackendInfo,
+  extractBackendResponseMetadata
+} from '@/infrastructure/backend/backendDiagnostics'
 import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { resolveHealthEndpoint } from '@/infrastructure/health/healthEndpointResolver'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 
 const HEALTH_ENDPOINT = resolveHealthEndpoint()
-const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 export type BackendHealthProbeResult = {
   endpoint: string
@@ -85,19 +88,15 @@ export async function probeBackendHealth(
       health
     }
 
-    if (isDevRuntime) {
-      const endpointContext = buildBackendEndpointContext(endpoint)
-      console.info('[backend:health] conexion OK', {
-        endpoint: endpointContext.browserUrl,
-        transportMode: endpointContext.transportMode,
-        status: response.status,
-        service,
-        brandId,
-        version,
-        timestamp,
-        health
-      })
-    }
+    emitBackendInfo({
+      resource: 'health',
+      endpoint,
+      status: response.status,
+      metadata,
+      details: {
+        service
+      }
+    })
     return result
   } catch (error) {
     const result: BackendHealthProbeResult = {

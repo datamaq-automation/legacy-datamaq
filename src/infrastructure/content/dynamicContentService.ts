@@ -3,12 +3,11 @@ import type { HttpClient } from '@/application/ports/HttpClient'
 import { emitRuntimeError, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 import {
   buildBackendEndpointContext,
+  emitBackendInfo,
   extractBackendResponseMetadata,
   isRecord
 } from '@/infrastructure/backend/backendDiagnostics'
 import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
-
-const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 export class DynamicContentService {
   private contentFetchStarted = false
@@ -162,22 +161,15 @@ function logContentInfo(
   payload: unknown,
   appliedMode: 'full-snapshot' | 'hero-title'
 ): void {
-  if (!isDevRuntime) {
-    return
-  }
-
   const metadata = extractBackendResponseMetadata(payload)
-  const endpointContext = buildBackendEndpointContext(endpoint)
-
-  console.info('[backend:content] conexion OK', {
-    endpoint: endpointContext.browserUrl,
-    transportMode: endpointContext.transportMode,
+  emitBackendInfo({
+    resource: 'content',
+    endpoint,
     status,
-    requestId: metadata.requestId ?? null,
-    brandId: metadata.brandId ?? null,
-    version: metadata.version ?? null,
-    contentRevision: metadata.contentRevision ?? null,
-    backendStatus: metadata.status ?? null,
-    appliedMode
+    metadata,
+    details: {
+      appliedMode,
+      contentRevision: metadata.contentRevision ?? null
+    }
   })
 }

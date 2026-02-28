@@ -44,14 +44,19 @@ describe('probeBackendHealth', () => {
     const result = await probeBackendHealth('/api/v1/health')
 
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
+      resource: 'health',
       endpoint: 'http://localhost:5173/api/v1/health',
+      pathname: '/api/v1/health',
       transportMode: 'proxy',
       status: 200,
-      service: 'datamaq-api',
-      brandId: 'datamaq',
+      backendStatus: 'ok',
+      requestId: null,
       version: 'v1',
+      brandId: 'datamaq',
       timestamp: '2026-02-26T00:00:00Z',
-      health: 'ok'
+      details: {
+        service: 'datamaq-api'
+      }
     })
     expect(result).toEqual({
       endpoint: '/api/v1/health',
@@ -158,14 +163,17 @@ describe('probeBackendHealth', () => {
       })
     )
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
+      resource: 'health',
       endpoint: 'https://api.example.com/v1/health',
+      pathname: '/v1/health',
       transportMode: 'direct',
       status: 200,
-      service: null,
-      brandId: null,
+      backendStatus: 'ok',
+      requestId: null,
       version: null,
+      brandId: null,
       timestamp: null,
-      health: 'ok'
+      details: null
     })
     expect(result).toEqual({
       endpoint: 'https://api.example.com/v1/health',
@@ -230,14 +238,17 @@ describe('probeBackendHealth', () => {
       health: 'ok'
     })
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
+      resource: 'health',
       endpoint: 'http://127.0.0.1:8899/v1/health',
+      pathname: '/v1/health',
       transportMode: 'direct',
       status: 200,
-      service: null,
-      brandId: null,
+      backendStatus: 'ok',
+      requestId: null,
       version: null,
+      brandId: null,
       timestamp: null,
-      health: 'ok'
+      details: null
     })
   })
 
@@ -291,14 +302,17 @@ describe('probeBackendHealth', () => {
       health: 'ok'
     })
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
+      resource: 'health',
       endpoint: 'http://127.0.0.1:4173/api/v1/health',
+      pathname: '/api/v1/health',
       transportMode: 'proxy',
       status: 200,
-      service: null,
-      brandId: null,
+      backendStatus: 'ok',
+      requestId: null,
       version: null,
+      brandId: null,
       timestamp: null,
-      health: 'ok'
+      details: null
     })
   })
 })

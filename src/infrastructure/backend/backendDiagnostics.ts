@@ -1,9 +1,12 @@
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 import {
   describeBackendEndpoint,
+  resolveBackendPathname,
   type BrowserLocationLike,
   type ResolvedBackendEndpoint
 } from '@/infrastructure/backend/backendEndpoint'
+
+const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 const BACKEND_METADATA_KEYS = [
   'status',
@@ -19,6 +22,22 @@ const BACKEND_METADATA_KEYS = [
 export type BackendMetadataKey = (typeof BACKEND_METADATA_KEYS)[number]
 
 export type BackendResponseMetadata = Partial<Record<BackendMetadataKey, string | null>>
+
+export type BackendInfoResource = 'health' | 'content' | 'pricing'
+
+export type BackendInfoPayload = {
+  resource: BackendInfoResource
+  endpoint: string
+  pathname: string | null
+  transportMode: ResolvedBackendEndpoint['transportMode']
+  status: number
+  backendStatus: string | null
+  requestId: string | null
+  version: string | null
+  brandId: string | null
+  timestamp: string | null
+  details: Record<string, unknown> | null
+}
 
 export function extractBackendResponseMetadata(payload: unknown): BackendResponseMetadata {
   if (!isRecord(payload)) {
@@ -38,6 +57,49 @@ export function buildBackendEndpointContext(
   return describeBackendEndpoint(endpoint, currentLocation)
 }
 
+export function buildBackendInfoPayload(options: {
+  resource: BackendInfoResource
+  endpoint: string
+  status: number
+  payload?: unknown
+  metadata?: BackendResponseMetadata
+  details?: Record<string, unknown> | null
+  currentLocation?: BrowserLocationLike
+}): BackendInfoPayload {
+  const metadata = options.metadata ?? extractBackendResponseMetadata(options.payload)
+  const endpointContext = buildBackendEndpointContext(options.endpoint, options.currentLocation)
+
+  return {
+    resource: options.resource,
+    endpoint: endpointContext.browserUrl,
+    pathname: resolveBackendPathname(options.endpoint, options.currentLocation),
+    transportMode: endpointContext.transportMode,
+    status: options.status,
+    backendStatus: metadata.status ?? null,
+    requestId: metadata.requestId ?? null,
+    version: metadata.version ?? null,
+    brandId: metadata.brandId ?? null,
+    timestamp: metadata.timestamp ?? null,
+    details: normalizeBackendInfoDetails(options.details)
+  }
+}
+
+export function emitBackendInfo(options: {
+  resource: BackendInfoResource
+  endpoint: string
+  status: number
+  payload?: unknown
+  metadata?: BackendResponseMetadata
+  details?: Record<string, unknown> | null
+  currentLocation?: BrowserLocationLike
+}): void {
+  if (!isDevRuntime) {
+    return
+  }
+
+  console.info(`[backend:${options.resource}] conexion OK`, buildBackendInfoPayload(options))
+}
+
 export function normalizeBackendString(value: unknown): string | null {
   if (typeof value !== 'string') {
     return null
@@ -49,4 +111,17 @@ export function normalizeBackendString(value: unknown): string | null {
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function normalizeBackendInfoDetails(value: Record<string, unknown> | null | undefined): Record<string, unknown> | null {
+  if (!value) {
+    return null
+  }
+
+  const sanitizedEntries = Object.entries(value).filter(([, entry]) => entry !== undefined && entry !== null)
+  if (sanitizedEntries.length === 0) {
+    return null
+  }
+
+  return Object.fromEntries(sanitizedEntries)
 }

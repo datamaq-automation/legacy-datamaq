@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildBackendEndpointContext,
+  buildBackendInfoPayload,
   extractBackendResponseMetadata,
   normalizeBackendString
 } from '@/infrastructure/backend/backendDiagnostics'
@@ -41,6 +42,51 @@ describe('backendDiagnostics', () => {
       configuredUrl: '/api/v1/pricing',
       browserUrl: 'http://localhost:5173/api/v1/pricing',
       transportMode: 'proxy'
+    })
+  })
+
+  it('builds a unified backend info payload with normalized base fields and details', () => {
+    expect(
+      buildBackendInfoPayload({
+        resource: 'pricing',
+        endpoint: '/api/v1/pricing?token=secret',
+        status: 200,
+        payload: {
+          status: 'ok',
+          request_id: 'req-123',
+          version: 'v1',
+          currency: 'ARS'
+        },
+        details: {
+          currency: 'ARS',
+          pricingSnapshot: {
+            visitaDiagnosticoHasta2hARS: 275000
+          },
+          ignored: null
+        },
+        currentLocation: {
+          protocol: 'http:',
+          hostname: 'localhost',
+          port: '5173'
+        }
+      })
+    ).toEqual({
+      resource: 'pricing',
+      endpoint: 'http://localhost:5173/api/v1/pricing?token=secret',
+      pathname: '/api/v1/pricing',
+      transportMode: 'proxy',
+      status: 200,
+      backendStatus: 'ok',
+      requestId: 'req-123',
+      version: 'v1',
+      brandId: null,
+      timestamp: null,
+      details: {
+        currency: 'ARS',
+        pricingSnapshot: {
+          visitaDiagnosticoHasta2hARS: 275000
+        }
+      }
     })
   })
 

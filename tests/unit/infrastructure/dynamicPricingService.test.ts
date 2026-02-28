@@ -40,15 +40,21 @@ describe('DynamicPricingService', () => {
       visitaDiagnosticoHasta2hARS: 275000
     })
     expect(infoSpy).toHaveBeenCalledWith('[backend:pricing] conexion OK', {
+      resource: 'pricing',
       endpoint: 'http://127.0.0.1:8899/v1/pricing',
+      pathname: '/v1/pricing',
       transportMode: 'direct',
       status: 200,
+      backendStatus: 'ok',
       requestId: 'req-pricing-123',
       version: 'v1',
-      currency: 'ARS',
-      backendStatus: 'ok',
-      pricingSnapshot: {
-        visitaDiagnosticoHasta2hARS: 275000
+      brandId: null,
+      timestamp: null,
+      details: {
+        currency: 'ARS',
+        pricingSnapshot: {
+          visitaDiagnosticoHasta2hARS: 275000
+        }
       }
     })
   })
@@ -111,15 +117,21 @@ describe('DynamicPricingService', () => {
     await flushAsyncWork()
 
     expect(infoSpy).toHaveBeenCalledWith('[backend:pricing] conexion OK', {
+      resource: 'pricing',
       endpoint: 'http://localhost:5173/api/v1/pricing',
+      pathname: '/api/v1/pricing',
       transportMode: 'proxy',
       status: 200,
+      backendStatus: 'ok',
       requestId: 'req-pricing-relative',
       version: 'v1',
-      currency: 'ARS',
-      backendStatus: 'ok',
-      pricingSnapshot: {
-        visitaDiagnosticoHasta2hARS: 275000
+      brandId: null,
+      timestamp: null,
+      details: {
+        currency: 'ARS',
+        pricingSnapshot: {
+          visitaDiagnosticoHasta2hARS: 275000
+        }
       }
     })
   })
