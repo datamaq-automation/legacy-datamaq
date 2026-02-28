@@ -53,4 +53,14 @@ describe('vite proxy config', () => {
 
     expect(rewrite('/api/v1/health')).toBe('/plantilla-php/laravel/public/v1/health')
   })
+
+  it('keeps warn/error in production while stripping log/info/debug calls', async () => {
+    const configFactory = (await import('../../../vite.config.js')).default
+    const config = configFactory({ mode: 'production' })
+
+    expect(config.esbuild).toEqual({
+      pure: ['console.log', 'console.info', 'console.debug'],
+      drop: ['debugger']
+    })
+  })
 })

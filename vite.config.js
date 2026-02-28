@@ -63,7 +63,14 @@ export default defineConfig(({ mode }) => {
       // Keep CI/default behavior for dist; avoid deleting external directories.
       emptyOutDir: !customOutDir
     },
-    esbuild: mode === 'production' ? { drop: ['console', 'debugger'] } : undefined,
+    esbuild:
+      mode === 'production'
+        ? {
+            // Keep warn/error visible in production diagnostics while stripping lower-signal console calls.
+            pure: ['console.log', 'console.info', 'console.debug'],
+            drop: ['debugger']
+          }
+        : undefined,
     test: {
       environment: 'jsdom',
       globals: true,
