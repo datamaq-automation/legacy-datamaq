@@ -3,7 +3,6 @@ import { activeAppTarget } from '@/infrastructure/content/runtimeProfile'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
 import {
   describeBackendEndpoint,
-  isAbsoluteHttpBackendEndpoint,
   normalizeBackendEndpoint,
   type BrowserLocationLike,
   type ResolvedBackendEndpoint
@@ -27,11 +26,6 @@ export function resolveHealthEndpoint(
   const currentLocation = options.currentLocation ?? globalThis.location
 
   if (shouldPreferRelativeHealthEndpoint(appTarget)) {
-    const preferredDirectEndpoint = resolvePreferredDirectEndpoint(runtimeEndpoint, configuredEndpoint)
-    if (preferredDirectEndpoint && shouldUseDirectHealthEndpointForCurrentOrigin(currentLocation)) {
-      return describeBackendEndpoint(preferredDirectEndpoint, currentLocation)
-    }
-
     if (configuredEndpoint?.startsWith('/')) {
       return describeBackendEndpoint(configuredEndpoint, currentLocation)
     }
@@ -50,35 +44,6 @@ export function resolveHealthEndpoint(
   return describeBackendEndpoint(
     configuredEndpoint ?? runtimeEndpoint ?? DEFAULT_HEALTH_ENDPOINT,
     currentLocation
-  )
-}
-
-function resolvePreferredDirectEndpoint(
-  runtimeEndpoint: string | undefined,
-  configuredEndpoint: string | undefined
-): string | undefined {
-  if (isAbsoluteHttpBackendEndpoint(runtimeEndpoint)) {
-    return runtimeEndpoint
-  }
-
-  if (isAbsoluteHttpBackendEndpoint(configuredEndpoint)) {
-    return configuredEndpoint
-  }
-
-  return undefined
-}
-
-function shouldUseDirectHealthEndpointForCurrentOrigin(
-  currentLocation: BrowserLocationLike | undefined
-): boolean {
-  if (!currentLocation) {
-    return false
-  }
-
-  return (
-    currentLocation.protocol === 'http:' &&
-    currentLocation.hostname === 'localhost' &&
-    currentLocation.port === '5173'
   )
 }
 

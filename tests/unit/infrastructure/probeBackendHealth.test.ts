@@ -188,7 +188,7 @@ describe('probeBackendHealth', () => {
     expect(warnSpy).not.toHaveBeenCalled()
   })
 
-  it('uses the integration runtime health endpoint directly on localhost:5173', async () => {
+  it('uses the integration proxy health endpoint on localhost:5173', async () => {
     vi.resetModules()
     vi.stubEnv('VITE_HEALTH_ENDPOINT', 'https://api.example.com/v1/health')
     vi.stubGlobal('location', {
@@ -198,7 +198,7 @@ describe('probeBackendHealth', () => {
     })
     vi.doMock('@/infrastructure/config/publicConfig', () => ({
       publicConfig: {
-        healthApiUrl: 'http://127.0.0.1:8899/v1/health'
+        healthApiUrl: '/api/v1/health'
       }
     }))
     vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
@@ -219,7 +219,7 @@ describe('probeBackendHealth', () => {
     const result = await probeBackendHealthWithDefault()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'http://127.0.0.1:8899/v1/health',
+      '/api/v1/health',
       expect.objectContaining({
         method: 'GET',
         headers: {
@@ -228,7 +228,7 @@ describe('probeBackendHealth', () => {
       })
     )
     expect(result).toEqual({
-      endpoint: 'http://127.0.0.1:8899/v1/health',
+      endpoint: '/api/v1/health',
       ok: true,
       status: 200,
       service: null,
@@ -239,9 +239,9 @@ describe('probeBackendHealth', () => {
     })
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
       resource: 'health',
-      endpoint: 'http://127.0.0.1:8899/v1/health',
-      pathname: '/v1/health',
-      transportMode: 'direct',
+      endpoint: 'http://localhost:5173/api/v1/health',
+      pathname: '/api/v1/health',
+      transportMode: 'proxy',
       status: 200,
       backendStatus: 'ok',
       requestId: null,
@@ -262,7 +262,7 @@ describe('probeBackendHealth', () => {
     })
     vi.doMock('@/infrastructure/config/publicConfig', () => ({
       publicConfig: {
-        healthApiUrl: 'http://127.0.0.1:8899/v1/health'
+        healthApiUrl: '/api/v1/health'
       }
     }))
     vi.doMock('@/infrastructure/content/runtimeProfile', () => ({

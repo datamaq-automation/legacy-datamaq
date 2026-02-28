@@ -6,11 +6,11 @@ describe('runtimeProfile', () => {
     expect(resolveAppTarget(undefined, 'development')).toBe('integration')
   })
 
-  it('uses direct Laravel health/content endpoints in integration while keeping the rest relative to /api/v1', () => {
+  it('keeps integration endpoints behind /api/v1 for local proxy validation', () => {
     const profile = getRuntimeProfile('integration')
 
-    expect(profile.healthApiUrl).toBe('http://127.0.0.1:8899/v1/health')
-    expect(profile.contentApiUrl).toBe('http://127.0.0.1:8899/v1/content')
+    expect(profile.healthApiUrl).toBe('/api/v1/health')
+    expect(profile.contentApiUrl).toBe('/api/v1/content')
     expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
     expect(profile.mailApiUrl).toBe('/api/v1/mail')
     expect(profile.pricingApiUrl).toBe('/api/v1/pricing')
