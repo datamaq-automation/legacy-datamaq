@@ -121,8 +121,9 @@ test.describe('Smoke E2E', () => {
     await leadSection.scrollIntoViewIfNeeded()
     await expect(leadSection).toBeVisible()
     await leadSection.locator('input[name="email"]').fill('ada@example.com')
+    await expect(leadSection.locator('textarea[name="comment"]')).toBeVisible()
     await leadSection
-      .locator('textarea[name="message"]')
+      .locator('textarea[name="comment"]')
       .fill('Necesito una propuesta para mantenimiento industrial.')
 
     await page.getByRole('button', { name: /Registrar contacto/i }).click()
@@ -137,7 +138,8 @@ test.describe('Smoke E2E', () => {
     await mailSection.scrollIntoViewIfNeeded()
     await expect(mailSection).toBeVisible()
     await mailSection.locator('input[name="email"]').fill('ada@example.com')
-    await mailSection.locator('textarea[name="message"]').fill('Necesito enviar una consulta por correo.')
+    await expect(mailSection.locator('textarea[name="comment"]')).toBeVisible()
+    await mailSection.locator('textarea[name="comment"]').fill('Necesito enviar una consulta por correo.')
 
     await page.getByRole('button', { name: /Enviar consulta por correo/i }).click()
 
