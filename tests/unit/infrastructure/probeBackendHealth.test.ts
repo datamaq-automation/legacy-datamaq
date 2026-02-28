@@ -78,10 +78,11 @@ describe('probeBackendHealth', () => {
 
     const result = await probeBackendHealth('/api/v1/health')
 
-    expect(warnSpy).toHaveBeenCalledWith('[backend:health] sin conexion', {
-      endpoint: 'http://localhost:5173/api/v1/health',
+    expect(warnSpy).toHaveBeenCalledWith('[backend:health] error de red', {
+      pathname: '/api/v1/health',
       transportMode: 'proxy',
-      status: 0
+      status: 0,
+      reason: 'network-error'
     })
     expect(result).toEqual({
       endpoint: '/api/v1/health',
@@ -94,6 +95,32 @@ describe('probeBackendHealth', () => {
       health: null
     })
     expect(infoSpy).not.toHaveBeenCalled()
+  })
+
+  it('sanitizes non-ok health warnings to pathname and reason only', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response('backend down', {
+          status: 503
+        })
+      )
+    )
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
+
+    await probeBackendHealth('/api/v1/health?token=secret')
+
+    expect(warnSpy).toHaveBeenCalledWith('[backend:health] sin conexion', {
+      pathname: '/api/v1/health',
+      transportMode: 'proxy',
+      status: 503,
+      reason: 'http-error'
+    })
   })
 
   it('uses runtime-configured health endpoint by default', async () => {

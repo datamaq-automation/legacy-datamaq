@@ -5,6 +5,7 @@ import { routes } from './router/routes'
 import './styles/main.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import { emitRuntimeWarn } from './application/utils/runtimeConsole'
 import { configureAnalytics, enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
 import { probeBackendHealth } from './infrastructure/health/probeBackendHealth'
 
@@ -49,7 +50,7 @@ function applyCriticalCssVariableFallbacks(): void {
   })
 
   if (applied) {
-    console.warn('[ui:css] Fallback de variables CSS criticas aplicado en runtime.')
+    emitRuntimeWarn('[ui:css] Fallback de variables CSS criticas aplicado en runtime.')
   }
 }
 

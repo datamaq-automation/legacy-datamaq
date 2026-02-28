@@ -3,6 +3,7 @@ import {
   describeBackendEndpoint,
   isAbsoluteHttpBackendEndpoint,
   normalizeBackendEndpoint,
+  resolveBackendPathname,
   resolveBrowserOrigin
 } from '@/infrastructure/backend/backendEndpoint'
 
@@ -48,5 +49,10 @@ describe('backendEndpoint', () => {
         port: '4173'
       })
     ).toBe('http://127.0.0.1:4173')
+  })
+
+  it('resolves a safe pathname without host or query string', () => {
+    expect(resolveBackendPathname('https://api.example.com/v1/health?token=secret')).toBe('/v1/health')
+    expect(resolveBackendPathname('/api/v1/pricing?currency=ARS')).toBe('/api/v1/pricing')
   })
 })

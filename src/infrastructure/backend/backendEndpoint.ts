@@ -68,6 +68,35 @@ export function describeBackendEndpoint(
   }
 }
 
+export function resolveBackendPathname(
+  endpoint: string | null | undefined,
+  currentLocation: BrowserLocationLike | undefined = globalThis.location
+): string | null {
+  const normalizedEndpoint = normalizeBackendEndpoint(endpoint ?? undefined)
+  if (!normalizedEndpoint) {
+    return null
+  }
+
+  if (normalizedEndpoint.startsWith('/')) {
+    return stripQueryAndHash(normalizedEndpoint)
+  }
+
+  try {
+    return new URL(normalizedEndpoint).pathname || stripQueryAndHash(normalizedEndpoint)
+  } catch {
+    const browserOrigin = resolveBrowserOrigin(currentLocation)
+    if (!browserOrigin) {
+      return stripQueryAndHash(normalizedEndpoint)
+    }
+
+    try {
+      return new URL(normalizedEndpoint, browserOrigin).pathname || stripQueryAndHash(normalizedEndpoint)
+    } catch {
+      return stripQueryAndHash(normalizedEndpoint)
+    }
+  }
+}
+
 export function resolveBrowserOrigin(
   currentLocation: BrowserLocationLike | undefined = globalThis.location
 ): string | undefined {
@@ -84,4 +113,10 @@ export function resolveBrowserOrigin(
 
   const port = normalizeBackendEndpoint(currentLocation?.port)
   return port ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`
+}
+
+function stripQueryAndHash(value: string): string | null {
+  const [pathWithoutHash = ''] = value.split('#', 1)
+  const [pathname] = pathWithoutHash.split('?', 1)
+  return pathname || null
 }

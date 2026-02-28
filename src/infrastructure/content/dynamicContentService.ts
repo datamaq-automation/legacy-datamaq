@@ -1,10 +1,14 @@
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
+import { emitRuntimeError, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 import {
   buildBackendEndpointContext,
   extractBackendResponseMetadata,
   isRecord
 } from '@/infrastructure/backend/backendDiagnostics'
+import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
+
+const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 export class DynamicContentService {
   private contentFetchStarted = false
@@ -70,9 +74,10 @@ export class DynamicContentService {
           return
         }
         const endpointContext = buildBackendEndpointContext(contentApiUrl)
-        console.warn('[backend:content] snapshot remoto descartado; se mantiene fallback local', {
-          endpoint: endpointContext.browserUrl,
-          transportMode: endpointContext.transportMode
+        emitRuntimeWarn('[backend:content] snapshot remoto descartado; se mantiene fallback local', {
+          pathname: resolveBackendPathname(contentApiUrl),
+          transportMode: endpointContext.transportMode,
+          reason: 'snapshot-discarded'
         })
       }
 
@@ -95,10 +100,10 @@ export class DynamicContentService {
         error
       })
       const endpointContext = buildBackendEndpointContext(contentApiUrl)
-      console.error('[backend:content] error consultando contenido remoto', {
-        endpoint: endpointContext.browserUrl,
+      emitRuntimeError('[backend:content] error consultando contenido remoto', {
+        pathname: resolveBackendPathname(contentApiUrl),
         transportMode: endpointContext.transportMode,
-        error
+        reason: 'network-error'
       })
       this.onUnavailable()
     }
@@ -157,6 +162,10 @@ function logContentInfo(
   payload: unknown,
   appliedMode: 'full-snapshot' | 'hero-title'
 ): void {
+  if (!isDevRuntime) {
+    return
+  }
+
   const metadata = extractBackendResponseMetadata(payload)
   const endpointContext = buildBackendEndpointContext(endpoint)
 

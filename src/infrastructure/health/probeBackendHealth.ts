@@ -3,12 +3,15 @@ Path: src/infrastructure/health/probeBackendHealth.ts
 */
 
 import type { HttpClient } from '@/application/ports/HttpClient'
+import { emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 import { buildBackendEndpointContext, extractBackendResponseMetadata } from '@/infrastructure/backend/backendDiagnostics'
+import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { resolveHealthEndpoint } from '@/infrastructure/health/healthEndpointResolver'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 
 const HEALTH_ENDPOINT = resolveHealthEndpoint()
+const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 export type BackendHealthProbeResult = {
   endpoint: string
@@ -42,6 +45,8 @@ export async function probeBackendHealth(
     })
 
     if (!response.ok) {
+      const reason = response.status === 0 ? 'network-error' : 'http-error'
+      const warningLabel = response.status === 0 ? '[backend:health] error de red' : '[backend:health] sin conexion'
       const result: BackendHealthProbeResult = {
         endpoint,
         ok: false,
@@ -54,10 +59,11 @@ export async function probeBackendHealth(
       }
 
       const endpointContext = buildBackendEndpointContext(endpoint)
-      console.warn('[backend:health] sin conexion', {
-        endpoint: endpointContext.browserUrl,
+      emitRuntimeWarn(warningLabel, {
+        pathname: resolveBackendPathname(endpoint),
         transportMode: endpointContext.transportMode,
-        status: response.status
+        status: response.status,
+        reason
       })
       return result
     }
@@ -79,17 +85,19 @@ export async function probeBackendHealth(
       health
     }
 
-    const endpointContext = buildBackendEndpointContext(endpoint)
-    console.info('[backend:health] conexion OK', {
-      endpoint: endpointContext.browserUrl,
-      transportMode: endpointContext.transportMode,
-      status: response.status,
-      service,
-      brandId,
-      version,
-      timestamp,
-      health
-    })
+    if (isDevRuntime) {
+      const endpointContext = buildBackendEndpointContext(endpoint)
+      console.info('[backend:health] conexion OK', {
+        endpoint: endpointContext.browserUrl,
+        transportMode: endpointContext.transportMode,
+        status: response.status,
+        service,
+        brandId,
+        version,
+        timestamp,
+        health
+      })
+    }
     return result
   } catch (error) {
     const result: BackendHealthProbeResult = {
@@ -104,11 +112,11 @@ export async function probeBackendHealth(
     }
 
     const endpointContext = buildBackendEndpointContext(endpoint)
-    console.warn('[backend:health] error de red', {
-      endpoint: endpointContext.browserUrl,
+    emitRuntimeWarn('[backend:health] error de red', {
+      pathname: resolveBackendPathname(endpoint),
       transportMode: endpointContext.transportMode,
       status: 0,
-      error
+      reason: 'network-error'
     })
     return result
   }

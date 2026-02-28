@@ -1,7 +1,9 @@
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
+import { emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 import type { CommercialPricingSnapshot, CommercialPriceKey } from '@/infrastructure/content/contentStore'
 import { buildBackendEndpointContext, extractBackendResponseMetadata, isRecord } from '@/infrastructure/backend/backendDiagnostics'
+import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
 
 const pricingConsoleWarnCache = new Set<string>()
 const pricingConsoleDebugCache = new Set<string>()
@@ -63,7 +65,11 @@ export class DynamicPricingService {
           pricingApiUrl,
           status: response.status
         })
-        logPricingWarnOnce({ endpoint: pricingApiUrl, status: response.status })
+        logPricingWarnOnce({
+          endpoint: pricingApiUrl,
+          status: response.status,
+          reason: response.status === 0 ? 'network-error' : 'http-error'
+        })
         return
       }
 
@@ -75,7 +81,7 @@ export class DynamicPricingService {
           payloadPreview: getPayloadPreview(payload)
         })
         logPricingPayloadDebugOnce(pricingApiUrl, payload)
-        logPricingWarnOnce({ endpoint: pricingApiUrl })
+        logPricingWarnOnce({ endpoint: pricingApiUrl, reason: 'unusable-payload' })
         return
       }
 
@@ -256,6 +262,10 @@ function logPricingInfo(
   payload: unknown,
   pricingSnapshot: CommercialPricingSnapshot
 ): void {
+  if (!isDevRuntime) {
+    return
+  }
+
   const metadata = extractBackendResponseMetadata(payload)
   const endpointContext = buildBackendEndpointContext(endpoint)
 
@@ -280,16 +290,17 @@ function logPricingWarnOnce(payload: { endpoint: string; status?: number; reason
 
   const endpointContext = buildBackendEndpointContext(payload.endpoint)
   const consolePayload = {
-    ...payload,
-    endpoint: endpointContext.browserUrl,
+    pathname: resolveBackendPathname(payload.endpoint),
+    status: payload.status,
+    reason: payload.reason ?? 'unknown',
     transportMode: endpointContext.transportMode
   }
 
-  if (payload.status === undefined && payload.reason === undefined) {
-    console.warn('[backend:pricing] conexion sin datos utilizables', consolePayload)
+  if (payload.reason === 'unusable-payload') {
+    emitRuntimeWarn('[backend:pricing] conexion sin datos utilizables', consolePayload)
     return
   }
-  console.warn('[backend:pricing] sin conexion', consolePayload)
+  emitRuntimeWarn('[backend:pricing] sin conexion', consolePayload)
 }
 
 function logPricingPayloadDebugOnce(endpoint: string, payload: unknown): void {

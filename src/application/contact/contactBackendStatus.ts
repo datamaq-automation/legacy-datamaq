@@ -2,6 +2,7 @@ import type { ConfigPort } from '../ports/Config'
 import type { RuntimeFlags } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
+import { emitRuntimeWarn } from '../utils/runtimeConsole'
 import { evaluateContactEndpointPolicy } from './contactEndpointPolicy'
 
 export type ContactBackendStatus = 'unknown' | 'available' | 'unavailable'
@@ -113,7 +114,8 @@ export class ContactBackendMonitor {
         this.status = 'unavailable'
         logContactBackendWarnOnce(this.monitorLabel, {
           endpoint: apiUrl,
-          status: response.status
+          status: response.status,
+          reason: response.status === 0 ? 'network-error' : 'http-error'
         })
       }
     } catch (error) {
@@ -150,7 +152,11 @@ function logContactBackendWarnOnce(
     return
   }
   backendConsoleWarnCache.add(dedupeKey)
-  console.warn(`[backend:${monitorLabel}] sin conexion`, payload)
+  emitRuntimeWarn(`[backend:${monitorLabel}] sin conexion`, {
+    pathname: resolveSafePathname(payload.endpoint),
+    status: payload.status,
+    reason: payload.reason ?? 'unknown'
+  })
 }
 
 function resolveEndpointOrigin(endpoint: string | null): string {
@@ -163,4 +169,26 @@ function resolveEndpointOrigin(endpoint: string | null): string {
   } catch {
     return endpoint
   }
+}
+
+function resolveSafePathname(endpoint: string | null): string | null {
+  if (!endpoint) {
+    return null
+  }
+
+  if (endpoint.startsWith('/')) {
+    return stripQueryAndHash(endpoint)
+  }
+
+  try {
+    return new URL(endpoint).pathname || stripQueryAndHash(endpoint)
+  } catch {
+    return stripQueryAndHash(endpoint)
+  }
+}
+
+function stripQueryAndHash(value: string): string | null {
+  const [pathWithoutHash = ''] = value.split('#', 1)
+  const [pathname] = pathWithoutHash.split('?', 1)
+  return pathname || null
 }

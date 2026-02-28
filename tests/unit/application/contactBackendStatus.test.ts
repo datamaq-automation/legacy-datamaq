@@ -111,4 +111,23 @@ describe('ContactBackendMonitor', () => {
 
     expect(endpointNotFoundWarnings).toHaveLength(1)
   })
+
+  it('sanitizes warning payloads to pathname and reason', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const http = createHttpClient(503)
+    const monitor = new ContactBackendMonitor(
+      http,
+      createConfig('https://api.example.com/v1/contact?token=secret'),
+      createRuntime(true),
+      createLogger()
+    )
+
+    await monitor.ensureStatus()
+
+    expect(warnSpy).toHaveBeenCalledWith('[backend:contactBackendStatus] sin conexion', {
+      pathname: '/v1/contact',
+      status: 503,
+      reason: 'http-error'
+    })
+  })
 })
