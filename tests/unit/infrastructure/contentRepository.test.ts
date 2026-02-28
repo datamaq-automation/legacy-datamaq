@@ -337,6 +337,32 @@ describe('ContentRepository', () => {
     expect(logger.warn).toHaveBeenCalled()
   })
 
+  it('marks remote content as unavailable when required content endpoint responds non-ok', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('backend-down', {
+        status: 503
+      })
+    )
+
+    const repository = new ContentRepository(
+      {
+        contentApiUrl: 'https://api.example.com/v1/public/content',
+        requireRemoteContent: true
+      },
+      logger
+    )
+
+    expect(repository.getRemoteContentStatus()).toBe('pending')
+
+    repository.bootstrapRemoteData()
+
+    await flushRuntimePricing()
+
+    expect(repository.getRemoteContentStatus()).toBe('unavailable')
+    expect(logger.warn).toHaveBeenCalled()
+  })
+
   it('does not call fetch when pricing endpoint is missing', async () => {
     const logger = createLoggerSpy()
     const fetchSpy = vi.spyOn(globalThis, 'fetch')

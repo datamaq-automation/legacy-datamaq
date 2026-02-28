@@ -57,6 +57,7 @@ export class DynamicContentService {
           contentApiUrl,
           status: response.status
         })
+        this.onUnavailable()
         return
       }
 

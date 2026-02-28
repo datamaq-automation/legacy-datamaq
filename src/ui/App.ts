@@ -18,6 +18,7 @@ export function useApp() {
   const isContentReady = computed(
     () => remoteContentStatus.value === 'ready' || remoteContentStatus.value === 'not-required'
   )
+  const isContentPending = computed(() => remoteContentStatus.value === 'pending')
   const isContentUnavailable = computed(() => remoteContentStatus.value === 'unavailable')
 
   useHead(() => buildAppHead(seo, route.path, isThanksPage.value, content.getContent()))
@@ -42,6 +43,7 @@ export function useApp() {
 
   return {
     isContentReady,
+    isContentPending,
     isContentUnavailable
   }
 

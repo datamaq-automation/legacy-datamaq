@@ -55,11 +55,7 @@ function applyCriticalCssVariableFallbacks(): void {
 }
 
 async function bootstrapRemoteBackendData(): Promise<void> {
-  const health = await probeBackendHealth()
-  if (!health.ok) {
-    return
-  }
-
+  await probeBackendHealth().catch(() => undefined)
   container.content.bootstrapRemoteData()
 }
 
