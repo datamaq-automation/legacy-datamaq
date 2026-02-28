@@ -1,5 +1,6 @@
 import type { HttpClient } from '@/application/ports/HttpClient'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
+import { activeAppTarget } from '@/infrastructure/content/runtimeProfile'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
@@ -74,12 +75,25 @@ function normalize(value: unknown): string | null {
 }
 
 function resolveHealthEndpoint(): string {
+  const runtimeEndpoint = normalizeEndpoint(publicConfig.healthApiUrl)
   const configuredEndpoint = normalizeEndpoint(import.meta.env.VITE_HEALTH_ENDPOINT)
+
+  if (prefersRelativeHealthEndpoint()) {
+    if (configuredEndpoint?.startsWith('/')) {
+      return configuredEndpoint
+    }
+
+    if (runtimeEndpoint) {
+      return runtimeEndpoint
+    }
+
+    return '/api/v1/health'
+  }
+
   if (configuredEndpoint) {
     return configuredEndpoint
   }
 
-  const runtimeEndpoint = normalizeEndpoint(publicConfig.healthApiUrl)
   if (runtimeEndpoint) {
     return runtimeEndpoint
   }
@@ -90,5 +104,9 @@ function resolveHealthEndpoint(): string {
 function normalizeEndpoint(value: string | undefined): string | undefined {
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
+}
+
+function prefersRelativeHealthEndpoint(): boolean {
+  return activeAppTarget === 'integration' || activeAppTarget === 'e2e'
 }
 

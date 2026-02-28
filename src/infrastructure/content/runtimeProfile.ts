@@ -6,6 +6,10 @@ type NullableStringJson = string | null
 
 const APP_TARGETS = ['datamaq', 'upp', 'example', 'e2e', 'integration'] as const
 const DEFAULT_APP_TARGET = 'datamaq'
+const MODE_TARGET_ALIASES = {
+  // Keep plain `vite dev` on the local integration profile so all API calls stay behind `/api`.
+  development: 'integration'
+} as const
 
 export type AppTarget = (typeof APP_TARGETS)[number]
 
@@ -140,13 +144,16 @@ export function normalizeAppTarget(value: string | undefined): AppTarget | undef
   return undefined
 }
 
-export function resolveAppTarget(explicitTarget?: string): AppTarget {
+export function resolveAppTarget(
+  explicitTarget?: string,
+  currentMode: string | undefined = import.meta.env.MODE
+): AppTarget {
   const fromParam = normalizeAppTarget(explicitTarget)
   if (fromParam) {
     return fromParam
   }
 
-  const fromMode = normalizeAppTarget(import.meta.env.MODE)
+  const fromMode = resolveModeTarget(currentMode)
   if (fromMode) {
     return fromMode
   }
@@ -225,4 +232,18 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
 function normalize(value: string | null | undefined): NullableString {
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
+}
+
+function resolveModeTarget(value: string | undefined): AppTarget | undefined {
+  const directTarget = normalizeAppTarget(value)
+  if (directTarget) {
+    return directTarget
+  }
+
+  const normalizedMode = normalize(value)?.toLowerCase()
+  if (!normalizedMode) {
+    return undefined
+  }
+
+  return MODE_TARGET_ALIASES[normalizedMode as keyof typeof MODE_TARGET_ALIASES]
 }

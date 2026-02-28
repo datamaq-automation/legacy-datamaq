@@ -17,6 +17,7 @@
 
 - `npm run test:e2e:smoke`: smoke con mocks de API (sin dependencia de backend real).
 - `npm run test:e2e:integration`: flujo E2E contra backend PHP real.
+- `validacion-local-frontend-backend-laravel.md`: receta local para validar frontend contra backend Laravel/paralelo.
 
 ## Negocio y politicas
 

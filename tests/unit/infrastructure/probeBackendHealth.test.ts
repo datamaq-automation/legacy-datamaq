@@ -4,10 +4,12 @@ import { probeBackendHealth } from '@/infrastructure/health/probeBackendHealth'
 describe('probeBackendHealth', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllEnvs()
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllEnvs()
   })
 
   it('logs successful backend health connection', async () => {
@@ -67,6 +69,9 @@ describe('probeBackendHealth', () => {
         healthApiUrl: 'https://api.example.com/v1/health'
       }
     }))
+    vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
+      activeAppTarget: 'datamaq'
+    }))
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ status: 'ok' }), {
         status: 200,
@@ -101,6 +106,41 @@ describe('probeBackendHealth', () => {
       health: 'ok'
     })
     expect(warnSpy).not.toHaveBeenCalled()
+  })
+
+  it('ignores absolute health overrides in integration mode', async () => {
+    vi.resetModules()
+    vi.stubEnv('VITE_HEALTH_ENDPOINT', 'https://api.example.com/v1/health')
+    vi.doMock('@/infrastructure/config/publicConfig', () => ({
+      publicConfig: {
+        healthApiUrl: '/api/v1/health'
+      }
+    }))
+    vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
+      activeAppTarget: 'integration'
+    }))
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ status: 'ok' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { probeBackendHealth: probeBackendHealthWithDefault } = await import(
+      '@/infrastructure/health/probeBackendHealth'
+    )
+    await probeBackendHealthWithDefault()
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/v1/health',
+      expect.objectContaining({
+        method: 'GET',
+        headers: {
+          Accept: 'application/json'
+        }
+      })
+    )
   })
 })
 
