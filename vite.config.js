@@ -85,11 +85,12 @@ export default defineConfig(({ mode }) => {
 
 function rewriteProxyPath(requestPath, proxyPrefix, proxyTarget) {
   const [pathname, searchParams] = requestPath.split('?')
+  const proxyTargetPathname = rewriteForProxyTarget(pathname, proxyTarget, proxyPrefix)
   const rewrittenPath =
     shouldUseLegacyLocalAliases(proxyTarget, proxyPrefix) &&
-    Object.prototype.hasOwnProperty.call(LEGACY_LOCAL_PROXY_ALIASES, pathname)
-      ? LEGACY_LOCAL_PROXY_ALIASES[pathname]
-      : pathname
+    Object.prototype.hasOwnProperty.call(LEGACY_LOCAL_PROXY_ALIASES, proxyTargetPathname)
+      ? LEGACY_LOCAL_PROXY_ALIASES[proxyTargetPathname]
+      : proxyTargetPathname
   const normalizedPrefix = proxyPrefix.replace(/\/+$/, '')
   const pathWithQuery = searchParams ? `${rewrittenPath}?${searchParams}` : rewrittenPath
 
@@ -143,6 +144,37 @@ function shouldIgnoreLegacyLocalPrefix(proxyTarget, proxyPrefix) {
       normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
 
     return parsedTarget.protocol === 'http:' && isLoopbackHost
+  } catch {
+    return false
+  }
+}
+
+function rewriteForProxyTarget(requestPath, proxyTarget, proxyPrefix) {
+  if (!shouldUseLaravelLocalApiPrefixBridge(proxyTarget, proxyPrefix)) {
+    return requestPath
+  }
+
+  if (!requestPath.startsWith('/api/v1/')) {
+    return requestPath
+  }
+
+  return requestPath.replace('/api/v1/', '/v1/')
+}
+
+function shouldUseLaravelLocalApiPrefixBridge(proxyTarget, proxyPrefix) {
+  try {
+    const parsedTarget = new URL(proxyTarget)
+    const normalizedHost = parsedTarget.hostname.trim().toLowerCase()
+    const normalizedPort = parsedTarget.port.trim()
+    const isLoopbackHost =
+      normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
+    const usesArtisanServe = parsedTarget.protocol === 'http:' && isLoopbackHost && normalizedPort === '8899'
+    const usesLaravelPublicDir =
+      parsedTarget.protocol === 'http:' &&
+      isLoopbackHost &&
+      proxyPrefix.trim().toLowerCase().endsWith('/laravel/public')
+
+    return usesArtisanServe || usesLaravelPublicDir
   } catch {
     return false
   }
