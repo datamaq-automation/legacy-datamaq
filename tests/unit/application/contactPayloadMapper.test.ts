@@ -7,7 +7,12 @@ describe('mapContactRequestToSubmitPayload', () => {
     const result = ContactRequest.createFromPrimitives({
       id: 'contact_1',
       name: 'Ada Lovelace',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
       email: 'ada@example.com',
+      phone: '+54 11 5555 4444',
+      company: 'Analytical',
+      geographicLocation: 'CABA',
       message: 'Necesito cotizar una instalacion industrial.'
     })
 
@@ -24,8 +29,13 @@ describe('mapContactRequestToSubmitPayload', () => {
 
     expect(payload).toEqual({
       name: 'Ada Lovelace',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
       email: 'ada@example.com',
-      message: 'Necesito cotizar una instalacion industrial.',
+      phone: '+54 11 5555 4444',
+      company: 'Analytical',
+      geographicLocation: 'CABA',
+      comment: 'Necesito cotizar una instalacion industrial.',
       pageLocation: 'https://example.com',
       trafficSource: 'direct',
       userAgent: 'test-agent',
@@ -33,11 +43,11 @@ describe('mapContactRequestToSubmitPayload', () => {
     })
   })
 
-  it('uses empty message when contact has no message', () => {
+  it('uses empty comment when contact has no message', () => {
     const result = ContactRequest.createFromPrimitives({
       id: 'contact_2',
       name: 'Grace Hopper',
-      email: 'grace@example.com'
+      phone: '+54 11 4444 3333'
     })
 
     if (!result.ok) {
@@ -53,8 +63,8 @@ describe('mapContactRequestToSubmitPayload', () => {
 
     expect(payload).toEqual({
       name: 'Grace Hopper',
-      email: 'grace@example.com',
-      message: '',
+      phone: '+54 11 4444 3333',
+      comment: '',
       pageLocation: 'https://example.com',
       trafficSource: 'organic',
       userAgent: 'test-agent',

@@ -30,10 +30,16 @@ vi.mock('@/di/container', () => ({
         title: 'Contacto',
         subtitle: 'Dejanos tu consulta y te contactamos.',
         labels: {
-          email: 'Correo electronico',
-          message: 'Mensaje'
+          firstName: 'Nombre',
+          lastName: 'Apellido',
+          company: 'Empresa',
+          email: 'E-mail',
+          phone: 'Nro telefono',
+          geographicLocation: 'Ubicacion geografica',
+          comment: 'Comentario',
+          message: 'Comentario'
         },
-        submitLabel: 'Enviar consulta por correo',
+        submitLabel: 'Registrar contacto',
         checkingMessage: 'Verificando disponibilidad...',
         unavailableMessage: 'Canal no disponible',
         successMessage: 'Consulta enviada',
@@ -59,16 +65,14 @@ describe('ContactFormSection', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    reportValiditySpy = vi
-      .spyOn(HTMLFormElement.prototype, 'reportValidity')
-      .mockReturnValue(true)
+    reportValiditySpy = vi.spyOn(HTMLFormElement.prototype, 'reportValidity').mockReturnValue(true)
   })
 
   afterEach(() => {
     reportValiditySpy.mockRestore()
   })
 
-  it('submits a valid payload when channel is enabled', async () => {
+  it('submits a valid contact payload when channel is enabled', async () => {
     const onSubmit = vi.fn(async () => ({ ok: true as const, data: {} }))
     const router = createTestRouter()
     await router.push('/')
@@ -84,21 +88,54 @@ describe('ContactFormSection', () => {
       }
     })
 
-    await fireEvent.update(screen.getByLabelText('Correo electronico'), 'ana@example.com')
-    await fireEvent.update(screen.getByLabelText('Mensaje'), 'Necesito una propuesta para mi planta')
-    await fireEvent.click(screen.getByRole('button', { name: 'Enviar consulta por correo' }))
+    await fireEvent.update(screen.getByLabelText('Nombre'), 'Ana')
+    await fireEvent.update(screen.getByLabelText('Apellido'), 'Perez')
+    await fireEvent.update(screen.getByLabelText('Empresa'), 'Acme')
+    await fireEvent.update(screen.getByLabelText('E-mail'), 'ana@example.com')
+    await fireEvent.update(screen.getByLabelText('Nro telefono'), '+54 11 5555 4444')
+    await fireEvent.update(screen.getByLabelText('Ubicacion geografica'), 'Escobar')
+    await fireEvent.update(screen.getByLabelText('Comentario'), 'Necesito una propuesta para mi planta')
+    await fireEvent.click(screen.getByRole('button', { name: 'Registrar contacto' }))
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1)
     })
-      expect(onSubmit).toHaveBeenCalledWith(
+    expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
+        firstName: 'Ana',
+        lastName: 'Perez',
+        company: 'Acme',
         email: 'ana@example.com',
-        message: 'Necesito una propuesta para mi planta'
+        phone: '+54 11 5555 4444',
+        geographicLocation: 'Escobar',
+        comment: 'Necesito una propuesta para mi planta'
       })
     )
     expect(backendMocks.ensureContactBackendStatus).toHaveBeenCalledTimes(1)
     expect(backendMocks.subscribeToContactBackendStatus).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders mail mode with email and comment only', async () => {
+    const onSubmit = vi.fn(async () => ({ ok: true as const, data: {} }))
+    const router = createTestRouter()
+    await router.push('/')
+    await router.isReady()
+
+    render(ContactFormSection, {
+      props: {
+        contactEmail: 'contacto@example.com',
+        backendChannel: 'mail',
+        submitLabel: 'Enviar consulta por correo',
+        onSubmit
+      },
+      global: {
+        plugins: [router]
+      }
+    })
+
+    expect(screen.queryByLabelText('Nombre')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('E-mail')).toBeInTheDocument()
+    expect(screen.getByLabelText('Comentario')).toBeInTheDocument()
   })
 
   it('keeps submit disabled when contact email is not configured', async () => {
@@ -116,7 +153,7 @@ describe('ContactFormSection', () => {
       }
     })
 
-    const submitButton = screen.getByRole('button', { name: 'Enviar consulta por correo' })
+    const submitButton = screen.getByRole('button', { name: 'Registrar contacto' })
     expect(submitButton).toBeDisabled()
 
     await fireEvent.click(submitButton)

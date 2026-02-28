@@ -111,7 +111,15 @@ describe('contactController', () => {
   it('submits contact via facade', async () => {
     mocks.submitContact.mockResolvedValue({ ok: true, data: {} })
 
-    const payload = { email: 'ana@example.com', message: 'Hola' }
+    const payload = {
+      firstName: 'Ana',
+      lastName: 'Perez',
+      company: 'Acme',
+      email: 'ana@example.com',
+      phone: '',
+      geographicLocation: 'Escobar',
+      comment: 'Hola'
+    }
     await submitContact('contacto', payload)
 
     expect(mocks.submitContact).toHaveBeenCalledWith('contacto', payload)
@@ -120,7 +128,15 @@ describe('contactController', () => {
   it('submits mail via facade', async () => {
     mocks.submitMail.mockResolvedValue({ ok: true, data: {} })
 
-    const payload = { email: 'ana@example.com', message: 'Hola' }
+    const payload = {
+      firstName: '',
+      lastName: '',
+      company: '',
+      email: 'ana@example.com',
+      phone: '',
+      geographicLocation: '',
+      comment: 'Hola desde correo'
+    }
     await submitMail('contacto', payload)
 
     expect(mocks.submitMail).toHaveBeenCalledWith('contacto', payload)

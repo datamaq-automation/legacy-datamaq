@@ -10,7 +10,12 @@ function createPayload(overrides: Partial<ContactSubmitPayload> = {}): ContactSu
   return {
     name: 'juan',
     email: 'juan@example.com',
-    message: 'Necesito una propuesta para mantenimiento electrico.',
+    phone: '+54 11 5555 4444',
+    company: 'Acme',
+    firstName: 'Juan',
+    lastName: 'Perez',
+    geographicLocation: 'Escobar',
+    comment: 'Necesito una propuesta para mantenimiento electrico.',
     pageLocation: 'https://www.datamaq.com.ar/contacto',
     trafficSource: 'organic',
     userAgent: 'Vitest',
@@ -105,6 +110,12 @@ describe('ContactApiGateway', () => {
         email: 'juan@example.com',
         message: 'Necesito una propuesta para mantenimiento electrico.',
         custom_attributes: expect.objectContaining({
+          first_name: 'Juan',
+          last_name: 'Perez',
+          company: 'Acme',
+          phone: '+54 11 5555 4444',
+          geographic_location: 'Escobar',
+          comment: 'Necesito una propuesta para mantenimiento electrico.',
           message: 'Necesito una propuesta para mantenimiento electrico.'
         }),
         meta: expect.objectContaining({

@@ -31,10 +31,16 @@ vi.mock('@/di/container', () => ({
         title: 'Contacto',
         subtitle: 'Dejanos tu consulta y te contactamos.',
         labels: {
-          email: 'Correo electronico',
-          message: 'Mensaje'
+          firstName: 'Nombre',
+          lastName: 'Apellido',
+          company: 'Empresa',
+          email: 'E-mail',
+          phone: 'Nro telefono',
+          geographicLocation: 'Ubicacion geografica',
+          comment: 'Comentario',
+          message: 'Comentario'
         },
-        submitLabel: 'Enviar consulta por correo',
+        submitLabel: 'Registrar contacto',
         checkingMessage: 'Verificando disponibilidad...',
         unavailableMessage: 'Canal no disponible',
         successMessage: 'Consulta enviada',
@@ -50,9 +56,7 @@ describe('Contact submit and thanks flow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    reportValiditySpy = vi
-      .spyOn(HTMLFormElement.prototype, 'reportValidity')
-      .mockReturnValue(true)
+    reportValiditySpy = vi.spyOn(HTMLFormElement.prototype, 'reportValidity').mockReturnValue(true)
   })
 
   afterEach(() => {
@@ -103,9 +107,10 @@ describe('Contact submit and thanks flow', () => {
       }
     })
 
-    await fireEvent.update(screen.getByLabelText('Correo electronico'), 'maria@example.com')
-    await fireEvent.update(screen.getByLabelText('Mensaje'), 'Necesito una propuesta para una planta.')
-    await fireEvent.click(screen.getByRole('button', { name: 'Enviar consulta por correo' }))
+    await fireEvent.update(screen.getByLabelText('Nombre'), 'Maria')
+    await fireEvent.update(screen.getByLabelText('E-mail'), 'maria@example.com')
+    await fireEvent.update(screen.getByLabelText('Comentario'), 'Necesito una propuesta para una planta.')
+    await fireEvent.click(screen.getByRole('button', { name: 'Registrar contacto' }))
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1)

@@ -50,10 +50,13 @@ describe('SubmitContactUseCase', () => {
     )
 
     const result = await useCase.execute('hero', {
-      name: 'Test',
-      email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'User',
       company: 'Acme',
-      message: 'Hola'
+      email: 'test@example.com',
+      phone: '',
+      geographicLocation: 'Escobar',
+      comment: 'Hola'
     })
 
     expect(result.ok).toBe(true)
@@ -107,10 +110,13 @@ describe('SubmitContactUseCase', () => {
     )
 
     const result = await useCase.execute('hero', {
-      name: 'A',
-      email: 'invalid',
+      firstName: '',
+      lastName: '',
       company: 'Acme',
-      message: 'Hola'
+      email: 'invalid',
+      phone: '',
+      geographicLocation: '',
+      comment: 'Hola'
     })
 
     expect(result.ok).toBe(false)
@@ -162,10 +168,13 @@ describe('SubmitContactUseCase', () => {
     )
 
     const result = await useCase.execute('hero', {
-      name: 'Test',
-      email: 'test@example.com',
+      firstName: '',
+      lastName: '',
       company: 'Acme',
-      message: 'Hola'
+      email: 'test@example.com',
+      phone: '+54 11 5555 4444',
+      geographicLocation: '',
+      comment: 'Hola'
     })
 
     expect(result.ok).toBe(false)
@@ -220,10 +229,13 @@ describe('SubmitContactUseCase', () => {
     )
 
     const result = await useCase.execute('hero', {
-      name: 'Test',
-      email: 'test@example.com',
+      firstName: '',
+      lastName: '',
       company: 'Acme',
-      message: 'Hola'
+      email: 'test@example.com',
+      phone: '+54 11 5555 4444',
+      geographicLocation: '',
+      comment: 'Hola'
     })
 
     expect(result.ok).toBe(false)
@@ -275,10 +287,13 @@ describe('SubmitContactUseCase', () => {
     )
 
     const result = await useCase.execute('hero', {
-      name: 'Test',
-      email: 'test@example.com',
+      firstName: '',
+      lastName: '',
       company: 'Acme',
-      message: 'Hola'
+      email: 'test@example.com',
+      phone: '+54 11 5555 4444',
+      geographicLocation: '',
+      comment: 'Hola'
     })
 
     expect(result.ok).toBe(false)
@@ -330,10 +345,13 @@ describe('SubmitContactUseCase', () => {
     )
 
     const result = await useCase.execute('hero', {
-      name: 'Test',
-      email: 'test@example.com',
+      firstName: '',
+      lastName: '',
       company: 'Acme',
-      message: 'Hola'
+      email: 'test@example.com',
+      phone: '+54 11 5555 4444',
+      geographicLocation: '',
+      comment: 'Hola'
     })
 
     expect(result.ok).toBe(false)
