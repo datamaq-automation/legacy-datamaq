@@ -363,6 +363,74 @@ describe('ContentRepository', () => {
     expect(logger.warn).toHaveBeenCalled()
   })
 
+  it('notifies subscribers when required remote content becomes unavailable', async () => {
+    const logger = createLoggerSpy()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('backend-down', {
+        status: 503
+      })
+    )
+
+    const repository = new ContentRepository(
+      {
+        contentApiUrl: 'https://api.example.com/v1/public/content',
+        requireRemoteContent: true
+      },
+      logger
+    )
+    const listener = vi.fn()
+    repository.subscribeRemoteContentStatus(listener)
+
+    repository.bootstrapRemoteData()
+
+    await flushRuntimePricing()
+
+    expect(listener).toHaveBeenCalledWith('unavailable')
+  })
+
+  it('notifies subscribers when required remote content becomes ready', async () => {
+    const logger = createLoggerSpy()
+    const baseRepository = new ContentRepository(undefined, logger)
+    const remoteContent = {
+      ...baseRepository.getContent(),
+      hero: {
+        ...baseRepository.getHeroContent(),
+        title: 'Titulo remoto listo'
+      }
+    }
+
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          status: 'ok',
+          data: remoteContent
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    )
+
+    const repository = new ContentRepository(
+      {
+        contentApiUrl: 'https://api.example.com/v1/public/content',
+        requireRemoteContent: true
+      },
+      logger
+    )
+    const listener = vi.fn()
+    repository.subscribeRemoteContentStatus(listener)
+
+    repository.bootstrapRemoteData()
+
+    await flushRuntimePricing()
+    await flushRuntimePricing()
+
+    expect(listener).toHaveBeenCalledWith('ready')
+    expect(repository.getRemoteContentStatus()).toBe('ready')
+  })
+
   it('does not call fetch when pricing endpoint is missing', async () => {
     const logger = createLoggerSpy()
     const fetchSpy = vi.spyOn(globalThis, 'fetch')

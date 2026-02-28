@@ -15,8 +15,15 @@ import type {
   ServicesContent
 } from '@/domain/types/content'
 
+export type RemoteContentStatus = 'pending' | 'ready' | 'unavailable' | 'not-required'
+
 export interface ContentPort {
   getContent(): AppContent
+}
+
+export interface RemoteContentStatusPort {
+  getRemoteContentStatus(): RemoteContentStatus
+  subscribeRemoteContentStatus(listener: (status: RemoteContentStatus) => void): () => void
 }
 
 export interface NavbarContentPort {

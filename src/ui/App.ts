@@ -2,9 +2,10 @@
 Path: src/ui/App.ts
 */
 
-import { computed, nextTick, onMounted, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
+import type { RemoteContentStatus } from '@/application/ports/Content'
 import { getDefaultSeo } from '@/ui/seo/defaultSeo'
 import { buildAppHead } from '@/ui/seo/appSeo'
 import { useContainer } from '@/di/container'
@@ -14,7 +15,8 @@ export function useApp() {
   const seo = getDefaultSeo(content, config, environment)
   const route = useRoute()
   const isThanksPage = computed(() => route.path === '/gracias')
-  const remoteContentStatus = computed(() => content.getRemoteContentStatus())
+  const remoteContentStatus = ref<RemoteContentStatus>(content.getRemoteContentStatus())
+  let unsubscribeRemoteContentStatus: (() => void) | undefined
   const isContentReady = computed(
     () => remoteContentStatus.value === 'ready' || remoteContentStatus.value === 'not-required'
   )
@@ -24,7 +26,16 @@ export function useApp() {
   useHead(() => buildAppHead(seo, route.path, isThanksPage.value, content.getContent()))
 
   onMounted(() => {
+    remoteContentStatus.value = content.getRemoteContentStatus()
+    unsubscribeRemoteContentStatus = content.subscribeRemoteContentStatus((status) => {
+      remoteContentStatus.value = status
+    })
     void logUiDebugSnapshot('mounted')
+  })
+
+  onBeforeUnmount(() => {
+    unsubscribeRemoteContentStatus?.()
+    unsubscribeRemoteContentStatus = undefined
   })
 
   watch(

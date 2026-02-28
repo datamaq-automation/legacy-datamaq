@@ -12,6 +12,8 @@ import type {
   LegalContentPort,
   NavbarContentPort,
   ProfileContentPort,
+  RemoteContentStatus,
+  RemoteContentStatusPort,
   ServicesContentPort
 } from '@/application/ports/Content'
 import type { ConfigPort } from '@/application/ports/Config'
@@ -26,11 +28,10 @@ import { normalizeNavbarContent } from '@/infrastructure/content/navbarNormalize
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import type { AppContent } from '@/domain/types/content'
 
-type RemoteContentStatus = 'pending' | 'ready' | 'unavailable' | 'not-required'
-
 export class ContentRepository
   implements
     ContentPort,
+    RemoteContentStatusPort,
     NavbarContentPort,
     FooterContentPort,
     ContactContentPort,
@@ -44,6 +45,7 @@ export class ContentRepository
   private readonly contentStore: ContentStore
   private readonly dynamicContentService: DynamicContentService
   private readonly dynamicPricingService: DynamicPricingService
+  private readonly remoteContentStatusListeners = new Set<(status: RemoteContentStatus) => void>()
   private remoteBootstrapStarted = false
   private remoteContentStatus: RemoteContentStatus
 
@@ -62,11 +64,11 @@ export class ContentRepository
       (snapshot) => this.contentStore.applyRemoteContentSnapshot(snapshot, this.logger),
       (title) => this.contentStore.applyHeroTitle(title, this.logger),
       () => {
-        this.remoteContentStatus = 'ready'
+        this.setRemoteContentStatus('ready')
       },
       () => {
         if (requiresRemoteContent) {
-          this.remoteContentStatus = 'unavailable'
+          this.setRemoteContentStatus('unavailable')
         }
       }
     )
@@ -80,6 +82,14 @@ export class ContentRepository
 
   getRemoteContentStatus(): RemoteContentStatus {
     return this.remoteContentStatus
+  }
+
+  subscribeRemoteContentStatus(listener: (status: RemoteContentStatus) => void): () => void {
+    this.remoteContentStatusListeners.add(listener)
+
+    return () => {
+      this.remoteContentStatusListeners.delete(listener)
+    }
   }
 
   bootstrapRemoteData(): void {
@@ -134,5 +144,14 @@ export class ContentRepository
 
   getServicesContent() {
     return this.contentStore.getParsedContent().services
+  }
+
+  private setRemoteContentStatus(status: RemoteContentStatus): void {
+    if (this.remoteContentStatus === status) {
+      return
+    }
+
+    this.remoteContentStatus = status
+    this.remoteContentStatusListeners.forEach((listener) => listener(status))
   }
 }
