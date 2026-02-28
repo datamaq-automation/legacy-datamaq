@@ -1,47 +1,50 @@
 # Listado de Tareas
 
-## Backend endpoints y observabilidad
+Fecha de actualizacion: 2026-02-28
 
-- Unificar la politica de resolucion de endpoints backend en un modulo de infraestructura compartido.
-  Hoy la decision entre URL directa, relativa o dependiente del origen esta distribuida entre `runtimeProfiles.json`, `probeBackendHealth.ts` y los servicios remotos.
+## Prioridad Alta
 
-- Extraer la seleccion de endpoint de `health` a un resolver dedicado.
-  `probeBackendHealth.ts` no deberia mezclar chequeo de salud con reglas de transporte por origen.
+- Extender el uso del resolver compartido de endpoints backend a diagnostico y gateways que todavia no consumen contexto comun.
+  `ViteConfig` ya resuelve `inquiry`, `mail`, `pricing`, `content`, `quoteDiagnostic` y `quotePdf` desde un helper compartido, pero todavia quedan consumidores con normalizacion local.
 
-- Estandarizar el formato de logs tecnicos de backend.
-  `health`, `content` y `pricing` ya emiten `console.info`, pero cada uno arma y normaliza metadatos por separado.
+- Mantener `integration` y `e2e` con politica unica `proxy + /api/v1/*`.
+  No deben reintroducirse endpoints directos en esos perfiles salvo excepcion documentada y testeada.
 
-- Crear un helper compartido para diagnostico de backend.
-  Debe resolver endpoint loggable, normalizar metadatos (`requestId`, `version`, `brandId`, `backendStatus`) y evitar duplicacion entre servicios.
+- Agregar tests de regresion del resolver compartido para todos los endpoints publicos.
+  Deben cubrir `localhost:5173`, `127.0.0.1:4173`, endpoints relativos y endpoints absolutos.
 
-## Contratos de infraestructura
+## Prioridad Media
 
-- Extender `LoggerPort` para soportar `info(...)`.
-  Hoy la infraestructura cae en `console.info` directo porque el puerto de logging solo expone `debug`, `warn` y `error`.
+- Consolidar el helper comun de diagnostico backend como API unica para `console.info()` de integracion.
+  Debe seguir manteniendo un shape estable con `resource`, `endpoint`, `pathname`, `transportMode`, `status`, metadatos comunes y `details`.
 
-- Revisar si corresponde introducir un puerto especifico de diagnostico tecnico.
-  Si el logger de aplicacion no debe absorber logs operativos de backend, conviene separar responsabilidades con un `DiagnosticsPort`.
+- Revisar si conviene agregar tambien `upstreamEndpoint` al diagnostico de desarrollo.
+  El objetivo es poder ver, cuando el transporte es `proxy`, tanto la URL del navegador como el destino real esperado de Laravel sin romper la politica de no exponer informacion sensible en produccion.
 
-## Configuracion y perfiles
+- Estandarizar el contrato de metadatos backend consumidos por frontend.
+  El shape objetivo para respuestas JSON, cuando aplique, es:
+  - `status`
+  - `request_id`
+  - `version`
+  - `brand_id`
+  - `timestamp`
 
-- Definir y documentar una convencion unica por perfil para consumo backend.
-  Cada perfil debe dejar explicito si usa acceso directo al backend, proxy de Vite o una excepcion puntual documentada.
+## Prioridad Baja
 
-- Documentar por que `integration` mezcla endpoints directos y proxiados.
-  En el estado actual `health` y `content` usan URL absoluta, mientras `pricing` sigue relativo por compatibilidad de red.
+- Definir la estrategia final para logs tecnicos de desarrollo.
+  Evaluar si `console.info()` de integracion debe seguir como helper de infraestructura o migrar a `LoggerPort.info(...)` cuando exista una implementacion real de logger en desarrollo.
 
-## Tipado y mantenibilidad
+- Documentar la convencion definitiva de transporte por entorno.
+  Debe quedar explicito:
+  - backend canonico: `/v1/*`
+  - frontend dev/e2e: `/api/v1/*` via proxy
+  - produccion: endpoint canonico configurado por perfil
 
-- Introducir un tipo compartido para metadatos de respuestas backend.
-  Evita repetir estructuras parciales y casts locales en `health`, `content` y `pricing`.
+## Hecho
 
-- Modelar explicitamente el resultado de resolucion de endpoint.
-  En lugar de pasar solo `string`, usar un tipo con `configuredUrl`, `browserUrl` y `transportMode` para hacer el flujo mas claro y testeable.
-
-## Cobertura y regresion
-
-- Agregar tests unitarios del resolver compartido de endpoints cuando exista.
-  Deben cubrir origen `localhost:5173`, origen `127.0.0.1:4173`, endpoints absolutos y endpoints relativos.
-
-- Agregar tests unitarios del helper compartido de diagnostico cuando exista.
-  Deben validar formato de logs, normalizacion de metadatos y deduplicacion donde aplique.
+- `ViteConfig` ya resuelve endpoints backend desde un helper compartido en `src/infrastructure/backend/backendConfigEndpoint.ts`.
+- `integration` y `e2e` ya tienen blindaje por tests para mantener `health`, `content`, `pricing`, `contact`, `mail` y `quote` detras de `/api/v1/*`.
+- `integration` ya no mezcla `direct` y `proxy` entre `health`, `content` y `pricing`.
+- `console.info()` de `health`, `content` y `pricing` ya comparte un contrato base comun.
+- `warn/error` ya salen sanitizados para no exponer host, query ni contexto sensible en produccion.
+- CORS local para pruebas directas contra Laravel fue corregido por backend.

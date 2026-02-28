@@ -11,6 +11,7 @@ import { buildContactPayloadBundle } from './contactPayloadBuilder'
 import { mapSubmitResponseError } from './contactSubmissionErrors'
 import { evaluateContactEndpointPolicy } from '@/application/contact/contactEndpointPolicy'
 import { extractContactSubmitFeedback } from './contactResponseFeedback'
+import { describeBackendEndpoint, resolveBackendPathname } from '@/shared/backend/backendEndpoint'
 
 type GatewayChannel = 'contact' | 'mail'
 
@@ -28,7 +29,8 @@ export class ContactApiGateway implements ContactGateway {
     const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
     if (!apiUrl || !endpointPolicy.allowed) {
       this.logger.error(`${this.resolveChannelLabel()} no es valida para backend-only`, {
-        reason: endpointPolicy.reason ?? 'unknown'
+        reason: endpointPolicy.reason ?? 'unknown',
+        ...buildContactEndpointLogContext(apiUrl)
       })
       return { ok: false, error: { type: 'Unavailable' } }
     }
@@ -39,6 +41,7 @@ export class ContactApiGateway implements ContactGateway {
 
     if (!response.ok) {
       this.logger.warn('[contactApiGateway] response no OK', {
+        ...buildContactEndpointLogContext(apiUrl),
         status: response.status,
         requestId: feedback.requestId ?? null,
         errorCode: feedback.errorCode ?? null,
@@ -58,5 +61,23 @@ export class ContactApiGateway implements ContactGateway {
 
   private resolveChannelLabel(): string {
     return this.channel === 'mail' ? 'MAIL_API_URL' : 'INQUIRY_API_URL'
+  }
+}
+
+function buildContactEndpointLogContext(apiUrl: string | undefined): {
+  pathname: string | null
+  transportMode: 'direct' | 'proxy' | null
+} {
+  if (!apiUrl) {
+    return {
+      pathname: null,
+      transportMode: null
+    }
+  }
+
+  const endpointContext = describeBackendEndpoint(apiUrl)
+  return {
+    pathname: resolveBackendPathname(apiUrl),
+    transportMode: endpointContext.transportMode
   }
 }

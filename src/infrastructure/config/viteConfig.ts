@@ -1,11 +1,14 @@
 import type { ConfigPort } from '@/application/ports/Config'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
+import {
+  ensureBackendConfigBaseUrl,
+  ensureBackendConfigEndpointUrl,
+  resolveBackendConfigEndpoint
+} from '@/infrastructure/backend/backendConfigEndpoint'
 
 type NullableString = string | undefined
 
 const CONTACT_EMAIL_FALLBACK = 'contacto@example.com'
-const ALLOW_INSECURE_BACKEND_FLAG = 'runtimeProfile.allowInsecureBackend'
-const E2E_BUILD_MODE = 'e2e'
 
 export class ViteConfig implements ConfigPort {
   brandId: NullableString
@@ -46,52 +49,60 @@ export class ViteConfig implements ConfigPort {
     this.storageNamespace = normalize(publicConfig.storageNamespace)
     this.contactEmail = normalize(publicConfig.contactEmail) ?? CONTACT_EMAIL_FALLBACK
     const allowInsecureBackend = publicConfig.allowInsecureBackend
-    const backendBaseUrl = ensureApiBaseUrl(
+    const endpointOptions = {
+      allowInsecureBackend,
+      isDev: import.meta.env.DEV,
+      mode: import.meta.env.MODE,
+      warn: (message: string) => console.warn(message)
+    }
+    const backendBaseUrl = ensureBackendConfigBaseUrl(
       normalize(publicConfig.backendBaseUrl),
-      'backendBaseUrl',
-      allowInsecureBackend
+      {
+        configKey: 'backendBaseUrl',
+        ...endpointOptions
+      }
     )
-    this.inquiryApiUrl = resolveApiEndpoint(
-      normalize(publicConfig.inquiryApiUrl),
-      backendBaseUrl,
-      '/v1/contact',
-      'inquiryApiUrl',
-      allowInsecureBackend
-    )
-    this.mailApiUrl = resolveApiEndpoint(
-      normalize(publicConfig.mailApiUrl),
-      backendBaseUrl,
-      '/v1/mail',
-      'mailApiUrl',
-      allowInsecureBackend
-    )
-    this.pricingApiUrl = resolveApiEndpoint(
-      normalize(publicConfig.pricingApiUrl),
-      backendBaseUrl,
-      '/v1/public/pricing',
-      'pricingApiUrl',
-      allowInsecureBackend
-    )
-    this.contentApiUrl = resolveApiEndpoint(
-      normalize(publicConfig.contentApiUrl),
-      backendBaseUrl,
-      '/v1/public/content',
-      'contentApiUrl',
-      allowInsecureBackend
-    )
+    this.inquiryApiUrl = resolveBackendConfigEndpoint({
+      directUrl: normalize(publicConfig.inquiryApiUrl),
+      baseUrl: backendBaseUrl,
+      path: '/v1/contact',
+      configKey: 'inquiryApiUrl',
+      ...endpointOptions
+    })
+    this.mailApiUrl = resolveBackendConfigEndpoint({
+      directUrl: normalize(publicConfig.mailApiUrl),
+      baseUrl: backendBaseUrl,
+      path: '/v1/mail',
+      configKey: 'mailApiUrl',
+      ...endpointOptions
+    })
+    this.pricingApiUrl = resolveBackendConfigEndpoint({
+      directUrl: normalize(publicConfig.pricingApiUrl),
+      baseUrl: backendBaseUrl,
+      path: '/v1/public/pricing',
+      configKey: 'pricingApiUrl',
+      ...endpointOptions
+    })
+    this.contentApiUrl = resolveBackendConfigEndpoint({
+      directUrl: normalize(publicConfig.contentApiUrl),
+      baseUrl: backendBaseUrl,
+      path: '/v1/public/content',
+      configKey: 'contentApiUrl',
+      ...endpointOptions
+    })
     this.requireRemoteContent = Boolean(publicConfig.requireRemoteContent)
-    this.quoteDiagnosticApiUrl = resolveApiEndpoint(
-      normalize(publicConfig.quoteDiagnosticApiUrl),
-      backendBaseUrl,
-      '/v1/public/quote/diagnostic',
-      'quoteDiagnosticApiUrl',
-      allowInsecureBackend
-    )
-    this.quotePdfApiUrl = ensureEndpointUrl(
-      normalize(publicConfig.quotePdfApiUrl),
-      'quotePdfApiUrl',
-      allowInsecureBackend
-    )
+    this.quoteDiagnosticApiUrl = resolveBackendConfigEndpoint({
+      directUrl: normalize(publicConfig.quoteDiagnosticApiUrl),
+      baseUrl: backendBaseUrl,
+      path: '/v1/public/quote/diagnostic',
+      configKey: 'quoteDiagnosticApiUrl',
+      ...endpointOptions
+    })
+    this.quotePdfApiUrl = ensureBackendConfigEndpointUrl({
+      value: normalize(publicConfig.quotePdfApiUrl),
+      configKey: 'quotePdfApiUrl',
+      ...endpointOptions
+    })
     this.contactFormActive = publicConfig.contactFormActive
     this.emailFormActive = publicConfig.emailFormActive
     this.analyticsEnabled = publicConfig.analyticsEnabled
@@ -120,87 +131,4 @@ export class ViteConfig implements ConfigPort {
 function normalize(value: string | undefined): NullableString {
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
-}
-
-function resolveApiEndpoint(
-  directUrl: NullableString,
-  baseUrl: NullableString,
-  path: string,
-  configKey: string,
-  allowInsecureBackend: boolean
-): NullableString {
-  const normalizedEndpoint = ensureEndpointUrl(directUrl, configKey, allowInsecureBackend)
-  if (normalizedEndpoint) {
-    return normalizedEndpoint
-  }
-  return buildEndpointUrl(baseUrl, path)
-}
-
-function ensureApiBaseUrl(
-  value: NullableString,
-  configKey: string,
-  allowInsecureBackend: boolean
-): NullableString {
-  if (!value) {
-    return undefined
-  }
-
-  if (import.meta.env.DEV) {
-    if (!value.startsWith('http://') && !value.startsWith('https://')) {
-      console.warn(
-        `[config] El campo ${configKey} debe comenzar con "http://" o "https://" en desarrollo. Valor recibido: ${value}`
-      )
-      return undefined
-    }
-    return value
-  }
-
-  if (!value.startsWith('https://')) {
-    const canUseLocalBypass = allowInsecureBackend && import.meta.env.MODE === E2E_BUILD_MODE
-    if (canUseLocalBypass) {
-      try {
-        const parsedUrl = new URL(value)
-        const normalizedHost = parsedUrl.hostname.trim().toLowerCase()
-        const isLoopbackHost =
-          normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
-
-        if (parsedUrl.protocol === 'http:' && isLoopbackHost) {
-          console.warn(
-            `[config] Se habilito bypass local para ${configKey} via ${ALLOW_INSECURE_BACKEND_FLAG}=true. Valor recibido: ${value}`
-          )
-          return value
-        }
-      } catch {
-        // No-op: si URL no parsea, cae en validacion estricta de produccion.
-      }
-    }
-    console.warn(
-      `[config] El campo ${configKey} debe comenzar con "https://" en produccion. Valor recibido: ${value}`
-    )
-    return undefined
-  }
-  return value
-}
-
-function ensureEndpointUrl(
-  value: NullableString,
-  configKey: string,
-  allowInsecureBackend: boolean
-): NullableString {
-  if (!value) {
-    return undefined
-  }
-
-  if (value.startsWith('/')) {
-    return value
-  }
-
-  return ensureApiBaseUrl(value, configKey, allowInsecureBackend)
-}
-
-function buildEndpointUrl(baseUrl: NullableString, path: string): NullableString {
-  if (!baseUrl) {
-    return undefined
-  }
-  return `${baseUrl.replace(/\/+$/, '')}${path}`
 }

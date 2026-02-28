@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ContactSubmitPayload } from '@/application/dto/contact'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { HttpClient } from '@/application/ports/HttpClient'
@@ -63,6 +63,11 @@ describe('ContactApiGateway', () => {
     vi.clearAllMocks()
   })
 
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
   it('returns unavailable when contact API URL is not configured', async () => {
     const http = createHttpClient()
     const logger = createLogger()
@@ -72,7 +77,9 @@ describe('ContactApiGateway', () => {
 
     expect(result).toEqual({ ok: false, error: { type: 'Unavailable' } })
     expect(logger.error).toHaveBeenCalledWith('INQUIRY_API_URL no es valida para backend-only', {
-      reason: 'missing'
+      reason: 'missing',
+      pathname: null,
+      transportMode: null
     })
     expect(http.postJson).not.toHaveBeenCalled()
   })
@@ -129,6 +136,8 @@ describe('ContactApiGateway', () => {
       }
     })
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
+      pathname: '/contact',
+      transportMode: 'direct',
       status: 0,
       requestId: null,
       errorCode: null,
@@ -157,6 +166,8 @@ describe('ContactApiGateway', () => {
       }
     })
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
+      pathname: '/contact',
+      transportMode: 'direct',
       status: 503,
       requestId: null,
       errorCode: null,
@@ -179,7 +190,9 @@ describe('ContactApiGateway', () => {
 
     expect(result).toEqual({ ok: false, error: { type: 'Unavailable' } })
     expect(logger.error).toHaveBeenCalledWith('INQUIRY_API_URL no es valida para backend-only', {
-      reason: 'chatwoot-public-api-disallowed'
+      reason: 'chatwoot-public-api-disallowed',
+      pathname: '/public/api/v1/inboxes/inbox_1/contacts',
+      transportMode: 'direct'
     })
     expect(http.postJson).not.toHaveBeenCalled()
   })
@@ -266,10 +279,42 @@ describe('ContactApiGateway', () => {
       }
     })
     expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
+      pathname: '/contact',
+      transportMode: 'direct',
       status: 429,
       requestId: 'req_hdr_429',
       errorCode: 'RATE_LIMITED',
       backendMessage: 'Too many requests'
+    })
+  })
+
+  it('logs proxied endpoint context without host for relative contact endpoints', async () => {
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
+    const http = createHttpClient()
+    vi.mocked(http.postJson).mockResolvedValueOnce({ ok: false, status: 503 })
+    const logger = createLogger()
+    const gateway = new ContactApiGateway(http, createConfig('/api/v1/contact'), createStorage(), logger)
+
+    const result = await gateway.submit(createPayload())
+
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        type: 'BackendError',
+        status: 503
+      }
+    })
+    expect(logger.warn).toHaveBeenCalledWith('[contactApiGateway] response no OK', {
+      pathname: '/api/v1/contact',
+      transportMode: 'proxy',
+      status: 503,
+      requestId: null,
+      errorCode: null,
+      backendMessage: null
     })
   })
 })

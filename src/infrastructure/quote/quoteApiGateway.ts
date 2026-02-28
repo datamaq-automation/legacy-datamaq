@@ -11,6 +11,7 @@ import { isValidQuoteId } from '@/application/quote/quoteId'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
+import { describeBackendEndpoint, resolveBackendPathname } from '@/shared/backend/backendEndpoint'
 
 export class QuoteApiGateway implements QuoteGateway {
   constructor(
@@ -305,7 +306,18 @@ function debugQuote(message: string, context: Record<string, unknown>): void {
   if (!import.meta.env.DEV) {
     return
   }
-  console.warn(`[quoteApiGateway] ${message}`, context)
+
+  const endpointValue = context['endpoint']
+  const endpoint = typeof endpointValue === 'string' ? endpointValue : undefined
+  const endpointContext = endpoint ? describeBackendEndpoint(endpoint) : null
+  const { endpoint: _ignoredEndpoint, ...restContext } = context
+
+  console.warn(`[quoteApiGateway] ${message}`, {
+    endpoint: endpointContext?.browserUrl ?? endpoint ?? null,
+    pathname: resolveBackendPathname(endpoint),
+    transportMode: endpointContext?.transportMode ?? null,
+    ...restContext
+  })
 }
 
 function isQuotePdfPayload(value: unknown): value is { blob: Blob } {

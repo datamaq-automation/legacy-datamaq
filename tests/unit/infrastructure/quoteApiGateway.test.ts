@@ -43,6 +43,7 @@ describe('QuoteApiGateway', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
   it('creates diagnostic quote successfully', async () => {
@@ -141,6 +142,40 @@ describe('QuoteApiGateway', () => {
       expect(error.message).toBe('Error de red al generar cotizacion')
       expect(error.status).toBe(0)
       expect(error.kind).toBe('network')
+    })
+  })
+
+  it('logs browser endpoint context for proxied diagnostic quote failures in development', async () => {
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    const gateway = new QuoteApiGateway(
+      createConfig({
+        quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic'
+      })
+    )
+
+    await expect(
+      gateway.createDiagnosticQuote({
+        company: 'ACME',
+        contact_name: 'Juan',
+        locality: 'Escobar',
+        scheduled: true,
+        access_ready: true,
+        safe_window_confirmed: true,
+        bureaucracy: 'medium'
+      })
+    ).rejects.toBeInstanceOf(QuoteApiError)
+
+    expect(warnSpy).toHaveBeenCalledWith('[quoteApiGateway] createDiagnosticQuote network error', {
+      endpoint: 'http://localhost:5173/api/v1/quote/diagnostic',
+      pathname: '/api/v1/quote/diagnostic',
+      transportMode: 'proxy'
     })
   })
 
@@ -355,6 +390,44 @@ describe('QuoteApiGateway', () => {
       }
       expect(error.status).toBe(404)
       expect(error.detail).toBe('quote not found')
+    })
+  })
+
+  it('logs browser endpoint context for proxied quote PDF failures in development', async () => {
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ detail: 'quote not found' }), {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+      )
+    )
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const gateway = new QuoteApiGateway(
+      createConfig({
+        quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
+        quotePdfApiUrl: '/api/v1/quote/pdf?quote_id={quote_id}'
+      })
+    )
+
+    await expect(gateway.fetchQuotePdf('Q-20260222-000404')).rejects.toBeInstanceOf(QuoteApiError)
+
+    expect(warnSpy).toHaveBeenCalledWith('[quoteApiGateway] fetchQuotePdf non-ok response', {
+      endpoint: 'http://localhost:5173/api/v1/quote/pdf?quote_id=Q-20260222-000404',
+      pathname: '/api/v1/quote/pdf',
+      transportMode: 'proxy',
+      quoteId: 'Q-20260222-000404',
+      status: 404,
+      detail: 'quote not found',
+      retryAfterSeconds: undefined
     })
   })
 

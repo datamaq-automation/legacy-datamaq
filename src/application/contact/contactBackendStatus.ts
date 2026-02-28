@@ -3,6 +3,11 @@ import type { RuntimeFlags } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
 import { emitRuntimeWarn } from '../utils/runtimeConsole'
+import {
+  describeBackendEndpoint,
+  resolveBackendOrigin,
+  resolveBackendPathname
+} from '@/shared/backend/backendEndpoint'
 import { evaluateContactEndpointPolicy } from './contactEndpointPolicy'
 
 export type ContactBackendStatus = 'unknown' | 'available' | 'unavailable'
@@ -146,49 +151,17 @@ function logContactBackendWarnOnce(
   const reason = payload.reason ?? 'na'
   const dedupeKey =
     reason === 'network-error' || reason === 'endpoint-not-found'
-      ? `${resolveEndpointOrigin(payload.endpoint)}|${reason}`
+      ? `${resolveBackendOrigin(payload.endpoint)}|${reason}`
       : `${monitorLabel}|${payload.endpoint ?? 'null'}|${payload.status ?? 'na'}|${reason}`
   if (backendConsoleWarnCache.has(dedupeKey)) {
     return
   }
   backendConsoleWarnCache.add(dedupeKey)
+  const endpointContext = payload.endpoint ? describeBackendEndpoint(payload.endpoint) : null
   emitRuntimeWarn(`[backend:${monitorLabel}] sin conexion`, {
-    pathname: resolveSafePathname(payload.endpoint),
+    pathname: resolveBackendPathname(payload.endpoint),
+    transportMode: endpointContext?.transportMode ?? null,
     status: payload.status,
     reason: payload.reason ?? 'unknown'
   })
-}
-
-function resolveEndpointOrigin(endpoint: string | null): string {
-  if (!endpoint) {
-    return 'null'
-  }
-
-  try {
-    return new URL(endpoint).origin
-  } catch {
-    return endpoint
-  }
-}
-
-function resolveSafePathname(endpoint: string | null): string | null {
-  if (!endpoint) {
-    return null
-  }
-
-  if (endpoint.startsWith('/')) {
-    return stripQueryAndHash(endpoint)
-  }
-
-  try {
-    return new URL(endpoint).pathname || stripQueryAndHash(endpoint)
-  } catch {
-    return stripQueryAndHash(endpoint)
-  }
-}
-
-function stripQueryAndHash(value: string): string | null {
-  const [pathWithoutHash = ''] = value.split('#', 1)
-  const [pathname] = pathWithoutHash.split('?', 1)
-  return pathname || null
 }

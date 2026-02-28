@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { RuntimeFlags } from '@/application/ports/Environment'
@@ -38,6 +38,11 @@ function createLogger(): LoggerPort {
 }
 
 describe('ContactBackendMonitor', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
   it('uses OPTIONS probe for configured backend endpoint', async () => {
     const http = createHttpClient(204)
     const monitor = new ContactBackendMonitor(
@@ -112,6 +117,38 @@ describe('ContactBackendMonitor', () => {
     expect(endpointNotFoundWarnings).toHaveLength(1)
   })
 
+  it('deduplicates equivalent 404 warnings across relative contact and mail endpoints on the same browser origin', async () => {
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const http = createHttpClient(404)
+    const config = createConfig('/api/v1/contact', '/api/v1/mail')
+    const runtime = createRuntime(true)
+    const logger = createLogger()
+    const contactMonitor = new ContactBackendMonitor(http, config, runtime, logger)
+    const mailMonitor = new ContactBackendMonitor(
+      http,
+      config,
+      runtime,
+      logger,
+      (cfg) => cfg.mailApiUrl,
+      'mailBackendStatus'
+    )
+
+    await contactMonitor.ensureStatus()
+    await mailMonitor.ensureStatus()
+
+    const endpointNotFoundWarnings = warnSpy.mock.calls.filter(([, payload]) => {
+      const candidate = payload as { reason?: string } | undefined
+      return candidate?.reason === 'endpoint-not-found'
+    })
+
+    expect(endpointNotFoundWarnings).toHaveLength(1)
+  })
+
   it('sanitizes warning payloads to pathname and reason', async () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     const http = createHttpClient(503)
@@ -126,6 +163,7 @@ describe('ContactBackendMonitor', () => {
 
     expect(warnSpy).toHaveBeenCalledWith('[backend:contactBackendStatus] sin conexion', {
       pathname: '/v1/contact',
+      transportMode: 'direct',
       status: 503,
       reason: 'http-error'
     })

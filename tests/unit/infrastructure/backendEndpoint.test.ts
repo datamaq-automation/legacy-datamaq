@@ -3,6 +3,7 @@ import {
   describeBackendEndpoint,
   isAbsoluteHttpBackendEndpoint,
   normalizeBackendEndpoint,
+  resolveBackendOrigin,
   resolveBackendPathname,
   resolveBrowserOrigin
 } from '@/infrastructure/backend/backendEndpoint'
@@ -54,5 +55,16 @@ describe('backendEndpoint', () => {
   it('resolves a safe pathname without host or query string', () => {
     expect(resolveBackendPathname('https://api.example.com/v1/health?token=secret')).toBe('/v1/health')
     expect(resolveBackendPathname('/api/v1/pricing?currency=ARS')).toBe('/api/v1/pricing')
+  })
+
+  it('resolves origins for absolute and relative backend endpoints', () => {
+    expect(resolveBackendOrigin('https://api.example.com/v1/health?token=secret')).toBe('https://api.example.com')
+    expect(
+      resolveBackendOrigin('/api/v1/contact', {
+        protocol: 'http:',
+        hostname: 'localhost',
+        port: '5173'
+      })
+    ).toBe('http://localhost:5173')
   })
 })

@@ -17,4 +17,16 @@ describe('runtimeProfile', () => {
     expect(profile.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
     expect(profile.quotePdfApiUrl).toBe('/api/v1/quote/pdf?quote_id={quote_id}')
   })
+
+  it('keeps e2e endpoints behind /api/v1 for local proxy validation', () => {
+    const profile = getRuntimeProfile('e2e')
+
+    expect(profile.healthApiUrl).toBe('/api/v1/health')
+    expect(profile.contentApiUrl).toBe('/api/v1/content')
+    expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
+    expect(profile.mailApiUrl).toBe('/api/v1/mail')
+    expect(profile.pricingApiUrl).toBe('/api/v1/pricing')
+    expect(profile.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
+    expect(profile.quotePdfApiUrl).toBe('/api/v1/quote/pdf?quote_id={quote_id}')
+  })
 })
