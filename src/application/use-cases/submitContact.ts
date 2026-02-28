@@ -23,7 +23,6 @@ export class SubmitContactUseCase {
   ) {}
 
   async execute(
-    section: string,
     payload: ContactFormPayload
   ): Promise<Result<ContactSubmitSuccess, ContactError>> {
     const normalizedPayload = normalizeContactFormPayload(payload)

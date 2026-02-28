@@ -75,7 +75,6 @@ describe('Contact submit and thanks flow', () => {
       },
       template: `
         <ContactFormSection
-          contactEmail="contacto@example.com"
           :on-submit="onSubmit"
         />
       `

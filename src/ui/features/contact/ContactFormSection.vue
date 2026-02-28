@@ -23,13 +23,14 @@ Path: src/ui/features/contact/ContactFormSection.vue
                 ref="formRef"
                 class="row g-3"
                 novalidate
+                :aria-busy="isSubmitting"
                 @submit.prevent="handleSubmit"
               >
                 <template v-if="isLeadChannel">
                   <div class="col-md-6">
-                    <label class="form-label" :for="firstNameId">{{ contact.labels.firstName }}</label>
+                    <label class="form-label" :for="fieldMeta.firstName.inputId">{{ contact.labels.firstName }}</label>
                     <input
-                      :id="firstNameId"
+                      :id="fieldMeta.firstName.inputId"
                       v-model="form.firstName"
                       type="text"
                       class="form-control"
@@ -38,13 +39,18 @@ Path: src/ui/features/contact/ContactFormSection.vue
                       maxlength="80"
                       :disabled="!isChannelEnabled"
                       :aria-invalid="Boolean(fieldErrors.firstName)"
+                      :aria-describedby="fieldErrors.firstName ? fieldMeta.firstName.errorId : undefined"
                     />
-                    <small v-if="fieldErrors.firstName" class="text-danger">{{ fieldErrors.firstName }}</small>
+                    <small
+                      v-if="fieldErrors.firstName"
+                      :id="fieldMeta.firstName.errorId"
+                      class="text-danger"
+                    >{{ fieldErrors.firstName }}</small>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label" :for="lastNameId">{{ contact.labels.lastName }}</label>
+                    <label class="form-label" :for="fieldMeta.lastName.inputId">{{ contact.labels.lastName }}</label>
                     <input
-                      :id="lastNameId"
+                      :id="fieldMeta.lastName.inputId"
                       v-model="form.lastName"
                       type="text"
                       class="form-control"
@@ -53,13 +59,18 @@ Path: src/ui/features/contact/ContactFormSection.vue
                       maxlength="80"
                       :disabled="!isChannelEnabled"
                       :aria-invalid="Boolean(fieldErrors.lastName)"
+                      :aria-describedby="fieldErrors.lastName ? fieldMeta.lastName.errorId : undefined"
                     />
-                    <small v-if="fieldErrors.lastName" class="text-danger">{{ fieldErrors.lastName }}</small>
+                    <small
+                      v-if="fieldErrors.lastName"
+                      :id="fieldMeta.lastName.errorId"
+                      class="text-danger"
+                    >{{ fieldErrors.lastName }}</small>
                   </div>
                   <div class="col-12">
-                    <label class="form-label" :for="companyId">{{ contact.labels.company }}</label>
+                    <label class="form-label" :for="fieldMeta.company.inputId">{{ contact.labels.company }}</label>
                     <input
-                      :id="companyId"
+                      :id="fieldMeta.company.inputId"
                       v-model="form.company"
                       type="text"
                       class="form-control"
@@ -68,14 +79,19 @@ Path: src/ui/features/contact/ContactFormSection.vue
                       maxlength="120"
                       :disabled="!isChannelEnabled"
                       :aria-invalid="Boolean(fieldErrors.company)"
+                      :aria-describedby="fieldErrors.company ? fieldMeta.company.errorId : undefined"
                     />
-                    <small v-if="fieldErrors.company" class="text-danger">{{ fieldErrors.company }}</small>
+                    <small
+                      v-if="fieldErrors.company"
+                      :id="fieldMeta.company.errorId"
+                      class="text-danger"
+                    >{{ fieldErrors.company }}</small>
                   </div>
                 </template>
                 <div :class="isLeadChannel ? 'col-md-6' : 'col-12'">
-                  <label class="form-label" :for="emailId">{{ contact.labels.email }}</label>
+                  <label class="form-label" :for="fieldMeta.email.inputId">{{ contact.labels.email }}</label>
                   <input
-                    :id="emailId"
+                    :id="fieldMeta.email.inputId"
                     v-model="form.email"
                     type="email"
                     class="form-control"
@@ -86,13 +102,18 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     :disabled="!isChannelEnabled"
                     :required="!isLeadChannel"
                     :aria-invalid="Boolean(fieldErrors.email)"
+                    :aria-describedby="fieldErrors.email ? fieldMeta.email.errorId : undefined"
                   />
-                  <small v-if="fieldErrors.email" class="text-danger">{{ fieldErrors.email }}</small>
+                  <small
+                    v-if="fieldErrors.email"
+                    :id="fieldMeta.email.errorId"
+                    class="text-danger"
+                  >{{ fieldErrors.email }}</small>
                 </div>
                 <div v-if="isLeadChannel" class="col-md-6">
-                  <label class="form-label" :for="phoneId">{{ contact.labels.phone }}</label>
+                  <label class="form-label" :for="fieldMeta.phone.inputId">{{ contact.labels.phone }}</label>
                   <input
-                    :id="phoneId"
+                    :id="fieldMeta.phone.inputId"
                     v-model="form.phone"
                     type="tel"
                     class="form-control"
@@ -102,14 +123,27 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     inputmode="tel"
                     :disabled="!isChannelEnabled"
                     :aria-invalid="Boolean(fieldErrors.phone)"
+                    :aria-describedby="[
+                      fieldMeta.phone.helperId,
+                      fieldErrors.phone ? fieldMeta.phone.errorId : undefined
+                    ].filter(Boolean).join(' ') || undefined"
                   />
-                  <small class="text-body-secondary d-block mt-1">Completá e-mail o teléfono.</small>
-                  <small v-if="fieldErrors.phone" class="text-danger d-block">{{ fieldErrors.phone }}</small>
+                  <small
+                    :id="fieldMeta.phone.helperId"
+                    class="text-body-secondary d-block mt-1"
+                  >Completá e-mail o teléfono.</small>
+                  <small
+                    v-if="fieldErrors.phone"
+                    :id="fieldMeta.phone.errorId"
+                    class="text-danger d-block"
+                  >{{ fieldErrors.phone }}</small>
                 </div>
                 <div v-if="isLeadChannel" class="col-12">
-                  <label class="form-label" :for="geographicLocationId">{{ contact.labels.geographicLocation }}</label>
+                  <label class="form-label" :for="fieldMeta.geographicLocation.inputId">{{
+                    contact.labels.geographicLocation
+                  }}</label>
                   <input
-                    :id="geographicLocationId"
+                    :id="fieldMeta.geographicLocation.inputId"
                     v-model="form.geographicLocation"
                     type="text"
                     class="form-control"
@@ -118,18 +152,22 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     maxlength="160"
                     :disabled="!isChannelEnabled"
                     :aria-invalid="Boolean(fieldErrors.geographicLocation)"
+                    :aria-describedby="
+                      fieldErrors.geographicLocation ? fieldMeta.geographicLocation.errorId : undefined
+                    "
                   />
                   <small
                     v-if="fieldErrors.geographicLocation"
+                    :id="fieldMeta.geographicLocation.errorId"
                     class="text-danger"
                   >{{ fieldErrors.geographicLocation }}</small>
                 </div>
                 <div class="col-12">
-                  <label class="form-label" :for="commentId">{{
+                  <label class="form-label" :for="fieldMeta.comment.inputId">{{
                     contact.labels.comment ?? contact.labels.message
                   }}</label>
                   <textarea
-                    :id="commentId"
+                    :id="fieldMeta.comment.inputId"
                     v-model="form.comment"
                     class="form-control"
                     name="comment"
@@ -139,8 +177,13 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     :required="!isLeadChannel"
                     :minlength="isLeadChannel ? undefined : 10"
                     :aria-invalid="Boolean(fieldErrors.comment)"
+                    :aria-describedby="fieldErrors.comment ? fieldMeta.comment.errorId : undefined"
                   />
-                  <small v-if="fieldErrors.comment" class="text-danger">{{ fieldErrors.comment }}</small>
+                  <small
+                    v-if="fieldErrors.comment"
+                    :id="fieldMeta.comment.errorId"
+                    class="text-danger"
+                  >{{ fieldErrors.comment }}</small>
                 </div>
                 <div class="col-12 mt-2">
                   <button
@@ -149,6 +192,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
                     :class="isChannelEnabled ? 'c-ui-btn--primary' : 'c-ui-btn--outline disabled-channel'"
                     :disabled="!isChannelEnabled || isSubmitting"
                     :aria-disabled="!isChannelEnabled || isSubmitting"
+                    :aria-busy="isSubmitting"
                   >
                     <span v-if="isSubmitting">
                       Enviando...
@@ -163,12 +207,14 @@ Path: src/ui/features/contact/ContactFormSection.vue
                   <p
                     v-if="isCheckingBackend"
                     class="text-info-emphasis bg-info-subtle border border-info-subtle rounded-3 px-3 py-2 small"
+                    role="status"
                   >
                     {{ contact.checkingMessage }}
                   </p>
                   <p
                     v-else-if="!isBackendAvailable"
                     class="text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-3 px-3 py-2 small c-contact__alert"
+                    role="status"
                   >
                     {{ contact.unavailableMessage }}
                   </p>
@@ -205,13 +251,7 @@ const {
   fieldErrors,
   sectionId,
   titleId,
-  firstNameId,
-  lastNameId,
-  companyId,
-  emailId,
-  phoneId,
-  geographicLocationId,
-  commentId,
+  fieldMeta,
   tecnicoHeadingId,
   isLeadChannel,
   isBackendAvailable,

@@ -16,7 +16,6 @@ type StatusListener = (status: ContactBackendStatus) => void
 type ApiUrlSelector = (config: ConfigPort) => string | undefined
 
 const backendConsoleWarnCache = new Set<string>()
-const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 export class ContactBackendMonitor {
   private listeners = new Set<StatusListener>()

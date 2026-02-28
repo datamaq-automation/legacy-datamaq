@@ -1,6 +1,5 @@
 import {
   getWhatsAppEnabled,
-  getContactEmail,
   getContactFormActive,
   getEmailFormActive,
   openWhatsApp,
@@ -12,7 +11,6 @@ import { onMounted, onUnmounted } from 'vue'
 
 export function useHomePage() {
   const contactCtaEnabled = getWhatsAppEnabled()
-  const contactEmail = getContactEmail()
   const isContactFormActive = getContactFormActive()
   const isEmailFormActive = getEmailFormActive()
 
@@ -20,13 +18,13 @@ export function useHomePage() {
     openWhatsApp(section, href)
   }
 
-  function handleEmailSubmit(payload: Parameters<typeof submitMail>[1]) {
+  function handleEmailSubmit(payload: Parameters<typeof submitMail>[0]) {
     // El componente espera una promesa para feedback, asi que retornamos la llamada
-    return submitMail('contacto-formulario', payload)
+    return submitMail(payload)
   }
 
-  function handleContactSubmit(payload: Parameters<typeof submitContact>[1]) {
-    return submitContact('contacto-lead-formulario', payload)
+  function handleContactSubmit(payload: Parameters<typeof submitContact>[0]) {
+    return submitContact(payload)
   }
 
   function handleHashChange() {
@@ -55,7 +53,6 @@ export function useHomePage() {
 
   return {
     contactCtaEnabled,
-    contactEmail,
     isContactFormActive,
     isEmailFormActive,
     handleChat,

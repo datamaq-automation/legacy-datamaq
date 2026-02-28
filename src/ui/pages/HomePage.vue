@@ -15,7 +15,6 @@ import { useHomePage } from './HomePage'
 
 const {
   contactCtaEnabled,
-  contactEmail,
   isContactFormActive,
   isEmailFormActive,
   handleChat,
@@ -38,7 +37,6 @@ const {
       <DecisionFlowSection />
       <ContactFormSection
         v-if="isContactFormActive"
-        v-bind="contactEmail ? { contactEmail } : {}"
         section-id="contacto-lead"
         title="Ingreso de contacto"
         subtitle="Dejanos tus datos y te contactamos por el canal más adecuado."
@@ -48,7 +46,6 @@ const {
       />
       <ContactFormSection
         v-if="isEmailFormActive"
-        v-bind="contactEmail ? { contactEmail } : {}"
         section-id="contacto-mail"
         title="Enviar e-mail"
         subtitle="Enviá tu consulta por correo y te respondemos por email."

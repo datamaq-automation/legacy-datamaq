@@ -1,11 +1,11 @@
 import { useContainer } from '@/di/container'
 import { useContactForm } from './contactHooks'
-import type { ContactFormProps } from './contactTypes'
+import type { ContactFormProps, ResolvedContactFormContent } from './contactTypes'
 
 export function useContactFormSection(props: ContactFormProps) {
   const { content } = useContainer()
   const contactContent = content.getContactContent()
-  const contact = {
+  const contact: ResolvedContactFormContent = {
     ...contactContent,
     labels: {
       firstName: 'Nombre',
@@ -29,13 +29,7 @@ export function useContactFormSection(props: ContactFormProps) {
     fieldErrors,
     sectionId,
     titleId,
-    firstNameId,
-    lastNameId,
-    companyId,
-    emailId,
-    phoneId,
-    geographicLocationId,
-    commentId,
+    fieldMeta,
     tecnicoHeadingId,
     isLeadChannel,
     isBackendAvailable,
@@ -45,7 +39,7 @@ export function useContactFormSection(props: ContactFormProps) {
     feedback,
     feedbackMessageRef,
     handleSubmit
-  } = useContactForm(props)
+  } = useContactForm(props, contact)
 
   return {
     contact,
@@ -54,13 +48,7 @@ export function useContactFormSection(props: ContactFormProps) {
     fieldErrors,
     sectionId,
     titleId,
-    firstNameId,
-    lastNameId,
-    companyId,
-    emailId,
-    phoneId,
-    geographicLocationId,
-    commentId,
+    fieldMeta,
     tecnicoHeadingId,
     isLeadChannel,
     isBackendAvailable,

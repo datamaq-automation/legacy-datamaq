@@ -120,9 +120,9 @@ describe('contactController', () => {
       geographicLocation: 'Escobar',
       comment: 'Hola'
     }
-    await submitContact('contacto', payload)
+    await submitContact(payload)
 
-    expect(mocks.submitContact).toHaveBeenCalledWith('contacto', payload)
+    expect(mocks.submitContact).toHaveBeenCalledWith(payload)
   })
 
   it('submits mail via facade', async () => {
@@ -137,8 +137,8 @@ describe('contactController', () => {
       geographicLocation: '',
       comment: 'Hola desde correo'
     }
-    await submitMail('contacto', payload)
+    await submitMail(payload)
 
-    expect(mocks.submitMail).toHaveBeenCalledWith('contacto', payload)
+    expect(mocks.submitMail).toHaveBeenCalledWith(payload)
   })
 })

@@ -49,7 +49,7 @@ describe('SubmitContactUseCase', () => {
       clock
     )
 
-    const result = await useCase.execute('hero', {
+    const result = await useCase.execute({
       firstName: 'Test',
       lastName: 'User',
       company: 'Acme',
@@ -109,7 +109,7 @@ describe('SubmitContactUseCase', () => {
       clock
     )
 
-    const result = await useCase.execute('hero', {
+    const result = await useCase.execute({
       firstName: '',
       lastName: '',
       company: 'Acme',
@@ -167,7 +167,7 @@ describe('SubmitContactUseCase', () => {
       clock
     )
 
-    const result = await useCase.execute('hero', {
+    const result = await useCase.execute({
       firstName: '',
       lastName: '',
       company: 'Acme',
@@ -228,7 +228,7 @@ describe('SubmitContactUseCase', () => {
       clock
     )
 
-    const result = await useCase.execute('hero', {
+    const result = await useCase.execute({
       firstName: '',
       lastName: '',
       company: 'Acme',
@@ -286,7 +286,7 @@ describe('SubmitContactUseCase', () => {
       clock
     )
 
-    const result = await useCase.execute('hero', {
+    const result = await useCase.execute({
       firstName: '',
       lastName: '',
       company: 'Acme',
@@ -344,7 +344,7 @@ describe('SubmitContactUseCase', () => {
       clock
     )
 
-    const result = await useCase.execute('hero', {
+    const result = await useCase.execute({
       firstName: '',
       lastName: '',
       company: 'Acme',

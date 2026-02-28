@@ -8,11 +8,14 @@ import {
 import type { ContactFormProps } from './contactTypes'
 import type { ContactError } from '@/application/types/errors'
 import type { ContactFormPayload } from '@/application/dto/contact'
-import { useContainer } from '@/di/container'
+import {
+  CONTACT_FORM_FIELDS,
+  type ContactFieldErrors,
+  type ContactFormField,
+  type ResolvedContactFormContent
+} from './contactTypes'
 import { useContactValidation } from './useContactValidation'
 import { useRouter } from 'vue-router'
-
-type ContactFieldErrorState = Record<keyof ContactFormPayload, string>
 
 function createEmptyForm(): ContactFormPayload {
   return {
@@ -26,7 +29,7 @@ function createEmptyForm(): ContactFormPayload {
   }
 }
 
-function createEmptyFieldErrors(): ContactFieldErrorState {
+function createEmptyFieldErrors(): ContactFieldErrors {
   return {
     firstName: '',
     lastName: '',
@@ -38,18 +41,25 @@ function createEmptyFieldErrors(): ContactFieldErrorState {
   }
 }
 
-export function useContactForm(props: ContactFormProps) {
+type ContactFormFieldMeta = {
+  inputId: string
+  errorId: string
+  helperId?: string
+}
+
+type ContactFormFieldMetaMap = Record<ContactFormField, ContactFormFieldMeta>
+
+type ContactSubmitFeedbackState = {
+  message: string
+  success: boolean
+}
+
+export function useContactForm(props: ContactFormProps, contact: ResolvedContactFormContent) {
   const backendChannel = props.backendChannel ?? 'contact'
   const isLeadChannel = backendChannel === 'contact'
   const sectionId = props.sectionId?.trim() || 'contacto'
   const titleId = `${sectionId}-title`
-  const firstNameId = `${sectionId}-nombre`
-  const lastNameId = `${sectionId}-apellido`
-  const companyId = `${sectionId}-empresa`
-  const emailId = `${sectionId}-email`
-  const phoneId = `${sectionId}-telefono`
-  const geographicLocationId = `${sectionId}-ubicacion`
-  const commentId = `${sectionId}-comentario`
+  const fieldMeta = createFieldMeta(sectionId)
   const tecnicoHeadingId = `tecnico-a-cargo-${sectionId}-title`
   const formRef = ref<HTMLFormElement | null>(null)
   const form = reactive(createEmptyForm())
@@ -57,12 +67,10 @@ export function useContactForm(props: ContactFormProps) {
   const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus(backendChannel))
   const isBackendAvailable = computed(() => backendStatus.value === 'available')
   const isCheckingBackend = computed(() => backendStatus.value === 'unknown')
-  const isChannelEnabled = computed(() => Boolean(props.contactEmail) && isBackendAvailable.value)
+  const isChannelEnabled = computed(() => isBackendAvailable.value)
   const isSubmitting = ref(false)
-  const feedback = reactive<{ message: string; success: boolean }>({ message: '', success: false })
+  const feedback = reactive<ContactSubmitFeedbackState>({ message: '', success: false })
   const feedbackMessageRef = ref<HTMLParagraphElement | null>(null)
-  const { content } = useContainer()
-  const contact = content.getContactContent()
   let unsubscribeFromStatus: (() => void) | undefined
 
   async function announceFeedback(message: string, success: boolean): Promise<void> {
@@ -146,13 +154,7 @@ export function useContactForm(props: ContactFormProps) {
     fieldErrors,
     sectionId,
     titleId,
-    firstNameId,
-    lastNameId,
-    companyId,
-    emailId,
-    phoneId,
-    geographicLocationId,
-    commentId,
+    fieldMeta,
     tecnicoHeadingId,
     isLeadChannel,
     isBackendAvailable,
@@ -165,15 +167,37 @@ export function useContactForm(props: ContactFormProps) {
   }
 
   function clearFieldErrors(): void {
-    for (const key of Object.keys(fieldErrors) as Array<keyof ContactFormPayload>) {
+    for (const key of CONTACT_FORM_FIELDS) {
       fieldErrors[key] = ''
     }
   }
 
-  function applyFieldErrors(nextErrors: Partial<Record<keyof ContactFormPayload, string>>): void {
-    for (const key of Object.keys(fieldErrors) as Array<keyof ContactFormPayload>) {
+  function applyFieldErrors(nextErrors: Partial<ContactFieldErrors>): void {
+    for (const key of CONTACT_FORM_FIELDS) {
       fieldErrors[key] = nextErrors[key] ?? ''
     }
+  }
+}
+
+function createFieldMeta(sectionId: string): ContactFormFieldMetaMap {
+  return {
+    firstName: createFieldEntry(sectionId, 'nombre'),
+    lastName: createFieldEntry(sectionId, 'apellido'),
+    company: createFieldEntry(sectionId, 'empresa'),
+    email: createFieldEntry(sectionId, 'email'),
+    phone: createFieldEntry(sectionId, 'telefono', 'ayuda'),
+    geographicLocation: createFieldEntry(sectionId, 'ubicacion'),
+    comment: createFieldEntry(sectionId, 'comentario')
+  }
+}
+
+function createFieldEntry(sectionId: string, suffix: string, helperSuffix?: string): ContactFormFieldMeta {
+  const inputId = `${sectionId}-${suffix}`
+
+  return {
+    inputId,
+    errorId: `${inputId}-error`,
+    ...(helperSuffix ? { helperId: `${inputId}-${helperSuffix}` } : {})
   }
 }
 

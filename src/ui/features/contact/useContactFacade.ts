@@ -8,22 +8,19 @@ export function useContactFacade() {
   const container = useContainer()
 
   function submitContact(
-    section: string,
     payload: ContactFormPayload
   ): Promise<Result<ContactSubmitSuccess, ContactError>> {
-    return container.useCases.submitContact.execute(section, payload)
+    return container.useCases.submitContact.execute(payload)
   }
 
   function submitMail(
-    section: string,
     payload: ContactFormPayload
   ): Promise<Result<ContactSubmitSuccess, ContactError>> {
-    return container.useCases.submitMail.execute(section, payload)
+    return container.useCases.submitMail.execute(payload)
   }
 
   return {
     submitContact,
-    submitMail,
-    contactBackend: container.contactBackend
+    submitMail
   }
 }

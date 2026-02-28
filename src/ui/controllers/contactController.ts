@@ -49,12 +49,12 @@ export function trackSectionScroll(sectionHref: string): void {
   engagementTracker.trackSectionScroll(normalizedSection, trafficSource)
 }
 
-export function submitContact(section: string, payload: ContactFormPayload) {
-  return useContactFacade().submitContact(section, payload)
+export function submitContact(payload: ContactFormPayload) {
+  return useContactFacade().submitContact(payload)
 }
 
-export function submitMail(section: string, payload: ContactFormPayload) {
-  return useContactFacade().submitMail(section, payload)
+export function submitMail(payload: ContactFormPayload) {
+  return useContactFacade().submitMail(payload)
 }
 
 function getTrafficSource(location: { search(): string; referrer(): string }): string {

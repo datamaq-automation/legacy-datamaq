@@ -3,13 +3,21 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
 
-const backendMocks = vi.hoisted(() => ({
-  subscribeToContactBackendStatus: vi.fn(() => () => {}),
-  ensureContactBackendStatus: vi.fn(async () => 'available')
-}))
+const backendMocks = vi.hoisted(() => {
+  let currentStatus: 'available' | 'unknown' | 'unavailable' = 'available'
+
+  return {
+    getCurrentStatus: () => currentStatus,
+    setCurrentStatus: (nextStatus: 'available' | 'unknown' | 'unavailable') => {
+      currentStatus = nextStatus
+    },
+    subscribeToContactBackendStatus: vi.fn(() => () => {}),
+    ensureContactBackendStatus: vi.fn(async () => currentStatus)
+  }
+})
 
 vi.mock('@/ui/controllers/contactBackendController', () => ({
-  getContactBackendStatus: () => 'available',
+  getContactBackendStatus: () => backendMocks.getCurrentStatus(),
   subscribeToContactBackendStatus: backendMocks.subscribeToContactBackendStatus,
   ensureContactBackendStatus: backendMocks.ensureContactBackendStatus
 }))
@@ -65,6 +73,7 @@ describe('ContactFormSection', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    backendMocks.setCurrentStatus('available')
     reportValiditySpy = vi.spyOn(HTMLFormElement.prototype, 'reportValidity').mockReturnValue(true)
   })
 
@@ -80,7 +89,6 @@ describe('ContactFormSection', () => {
 
     render(ContactFormSection, {
       props: {
-        contactEmail: 'contacto@example.com',
         onSubmit
       },
       global: {
@@ -123,7 +131,6 @@ describe('ContactFormSection', () => {
 
     render(ContactFormSection, {
       props: {
-        contactEmail: 'contacto@example.com',
         backendChannel: 'mail',
         submitLabel: 'Enviar consulta por correo',
         onSubmit
@@ -138,8 +145,9 @@ describe('ContactFormSection', () => {
     expect(screen.getByLabelText('Comentario')).toBeInTheDocument()
   })
 
-  it('keeps submit disabled when contact email is not configured', async () => {
+  it('keeps submit disabled when backend channel is unavailable', async () => {
     const onSubmit = vi.fn(async () => ({ ok: true as const, data: {} }))
+    backendMocks.setCurrentStatus('unavailable')
     const router = createTestRouter()
     await router.push('/')
     await router.isReady()
@@ -176,7 +184,6 @@ describe('ContactFormSection', () => {
 
     render(ContactFormSection, {
       props: {
-        contactEmail: 'contacto@example.com',
         onSubmit
       },
       global: {

@@ -1,6 +1,5 @@
 import {
   getWhatsAppEnabled,
-  getContactEmail,
   getContactFormActive,
   getEmailFormActive,
   openWhatsApp,
@@ -41,7 +40,6 @@ export function useMedicionConsumoEscobar() {
   })
 
   const contactCtaEnabled = getWhatsAppEnabled()
-  const contactEmail = getContactEmail()
   const isContactFormActive = getContactFormActive()
   const isEmailFormActive = getEmailFormActive()
 
@@ -49,19 +47,18 @@ export function useMedicionConsumoEscobar() {
     openWhatsApp(section, href)
   }
 
-  function handleEmailSubmit(payload: Parameters<typeof submitMail>[1]) {
-    return submitMail('landing-escobar-contacto', payload)
+  function handleEmailSubmit(payload: Parameters<typeof submitMail>[0]) {
+    return submitMail(payload)
   }
 
-  function handleContactSubmit(payload: Parameters<typeof submitContact>[1]) {
-    return submitContact('landing-escobar-lead', payload)
+  function handleContactSubmit(payload: Parameters<typeof submitContact>[0]) {
+    return submitContact(payload)
   }
 
   return {
     pageContent,
     contactContent,
     contactCtaEnabled,
-    contactEmail,
     isContactFormActive,
     isEmailFormActive,
     handleChat,

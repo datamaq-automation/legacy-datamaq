@@ -10,7 +10,6 @@ const {
   pageContent,
   contactContent,
   contactCtaEnabled,
-  contactEmail,
   isContactFormActive,
   isEmailFormActive,
   handleChat,
@@ -100,7 +99,6 @@ const {
 
       <ContactFormSection
         v-if="isContactFormActive"
-        v-bind="contactEmail ? { contactEmail } : {}"
         section-id="landing-escobar-lead"
         :title="contactContent.title"
         :subtitle="contactContent.subtitle"
@@ -110,7 +108,6 @@ const {
       />
       <ContactFormSection
         v-if="isEmailFormActive"
-        v-bind="contactEmail ? { contactEmail } : {}"
         section-id="landing-escobar-mail"
         :title="contactContent.title"
         :subtitle="contactContent.subtitle"

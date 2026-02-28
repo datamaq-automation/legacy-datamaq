@@ -5,18 +5,20 @@ import {
 } from '@/application/validation/contactSchema'
 import type { ContactFormPayload } from '@/application/dto/contact'
 import type { ContactBackendChannel } from '@/ui/controllers/contactBackendController'
+import type { ContactFieldErrors, ContactFormField } from './contactTypes'
+
+export type ContactValidationResult =
+  | {
+      ok: true
+      data: ContactFormPayload
+    }
+  | {
+      ok: false
+      fieldErrors: Partial<ContactFieldErrors>
+    }
 
 export function useContactValidation() {
-  function validate(
-    payload: ContactFormPayload,
-    channel: ContactBackendChannel
-  ): {
-    ok: true
-    data: ContactFormPayload
-  } | {
-    ok: false
-    fieldErrors: Partial<Record<keyof ContactFormPayload, string>>
-  } {
+  function validate(payload: ContactFormPayload, channel: ContactBackendChannel): ContactValidationResult {
     const schema = channel === 'mail' ? EmailContactSchema : ContactLeadSchema
     const parsed = schema.safeParse(payload)
     if (!parsed.success) {
@@ -56,20 +58,20 @@ export function useContactValidation() {
 
 function flattenFieldErrors(
   errors: Record<string, string[] | undefined>
-): Partial<Record<keyof ContactFormPayload, string>> {
+): Partial<ContactFieldErrors> {
   return Object.fromEntries(
     Object.entries(errors)
       .map(([field, messages]) => {
         const message = messages?.[0]?.trim()
         return message ? [field, message] : null
       })
-      .filter(Boolean) as Array<[keyof ContactFormPayload, string]>
+      .filter(Boolean) as Array<[ContactFormField, string]>
   )
 }
 
 function buildDomainFieldErrors(
   errorType: string
-): Partial<Record<keyof ContactFormPayload, string>> {
+): Partial<ContactFieldErrors> {
   switch (errorType) {
     case 'InvalidEmail':
       return { email: 'Ingresa un e-mail valido.' }
