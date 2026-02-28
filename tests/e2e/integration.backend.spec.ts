@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 let backendAvailable = false
-const BACKEND_HEALTH_URL = process.env.PHP_API_HEALTH_URL ?? 'http://127.0.0.1:8899/api/v1/health'
+const BACKEND_HEALTH_URL = process.env.PHP_API_HEALTH_URL ?? 'http://127.0.0.1:8899/v1/health'
 
 test.describe('Integration E2E (real backend)', () => {
   test.beforeAll(async ({ request }) => {

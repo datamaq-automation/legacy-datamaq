@@ -1,5 +1,10 @@
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
+import {
+  buildBackendEndpointContext,
+  extractBackendResponseMetadata,
+  isRecord
+} from '@/infrastructure/backend/backendDiagnostics'
 
 export class DynamicContentService {
   private contentFetchStarted = false
@@ -57,14 +62,17 @@ export class DynamicContentService {
       if (fullSnapshot) {
         const applied = this.applyContentSnapshot(fullSnapshot)
         if (applied) {
+          logContentInfo(contentApiUrl, response.status, payload, 'full-snapshot')
           this.logger.debug('[content] snapshot remoto completo aplicado', {
             contentApiUrl
           })
           this.onReady()
           return
         }
+        const endpointContext = buildBackendEndpointContext(contentApiUrl)
         console.warn('[backend:content] snapshot remoto descartado; se mantiene fallback local', {
-          endpoint: contentApiUrl
+          endpoint: endpointContext.browserUrl,
+          transportMode: endpointContext.transportMode
         })
       }
 
@@ -76,6 +84,7 @@ export class DynamicContentService {
       }
 
       this.applyHeroTitle(heroTitle)
+      logContentInfo(contentApiUrl, response.status, payload, 'hero-title')
       this.logger.debug('[content] hero.title remoto aplicado', {
         contentApiUrl
       })
@@ -85,8 +94,10 @@ export class DynamicContentService {
         contentApiUrl,
         error
       })
+      const endpointContext = buildBackendEndpointContext(contentApiUrl)
       console.error('[backend:content] error consultando contenido remoto', {
-        endpoint: contentApiUrl,
+        endpoint: endpointContext.browserUrl,
+        transportMode: endpointContext.transportMode,
         error
       })
       this.onUnavailable()
@@ -140,6 +151,24 @@ function normalizeUrl(url: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
+function logContentInfo(
+  endpoint: string,
+  status: number,
+  payload: unknown,
+  appliedMode: 'full-snapshot' | 'hero-title'
+): void {
+  const metadata = extractBackendResponseMetadata(payload)
+  const endpointContext = buildBackendEndpointContext(endpoint)
+
+  console.info('[backend:content] conexion OK', {
+    endpoint: endpointContext.browserUrl,
+    transportMode: endpointContext.transportMode,
+    status,
+    requestId: metadata.requestId ?? null,
+    brandId: metadata.brandId ?? null,
+    version: metadata.version ?? null,
+    contentRevision: metadata.contentRevision ?? null,
+    backendStatus: metadata.status ?? null,
+    appliedMode
+  })
 }

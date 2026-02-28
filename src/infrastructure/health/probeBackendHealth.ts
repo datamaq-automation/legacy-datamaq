@@ -3,11 +3,10 @@ Path: src/infrastructure/health/probeBackendHealth.ts
 */
 
 import type { HttpClient } from '@/application/ports/HttpClient'
-import { publicConfig } from '@/infrastructure/config/publicConfig'
-import { activeAppTarget } from '@/infrastructure/content/runtimeProfile'
+import { buildBackendEndpointContext, extractBackendResponseMetadata } from '@/infrastructure/backend/backendDiagnostics'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
+import { resolveHealthEndpoint } from '@/infrastructure/health/healthEndpointResolver'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
-import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
 const HEALTH_ENDPOINT = resolveHealthEndpoint()
 
@@ -23,7 +22,7 @@ export type BackendHealthProbeResult = {
 }
 
 export async function probeBackendHealth(
-  endpoint: string = HEALTH_ENDPOINT,
+  endpoint: string = HEALTH_ENDPOINT.configuredUrl,
   http: HttpClient = new FetchHttpClient(new NoopLogger())
 ): Promise<BackendHealthProbeResult> {
   try {
@@ -54,26 +53,21 @@ export async function probeBackendHealth(
         health: null
       }
 
+      const endpointContext = buildBackendEndpointContext(endpoint)
       console.warn('[backend:health] sin conexion', {
-        endpoint,
+        endpoint: endpointContext.browserUrl,
+        transportMode: endpointContext.transportMode,
         status: response.status
       })
       return result
     }
 
-    const payload = mapKeysToCamelCase<{
-      status?: unknown
-      service?: unknown
-      brandId?: unknown
-      version?: unknown
-      timestamp?: unknown
-    }>(response.data)
-
-    const service = normalize(payload?.service)
-    const brandId = normalize(payload?.brandId)
-    const version = normalize(payload?.version)
-    const timestamp = normalize(payload?.timestamp)
-    const health = normalize(payload?.status)
+    const metadata = extractBackendResponseMetadata(response.data)
+    const service = metadata.service ?? null
+    const brandId = metadata.brandId ?? null
+    const version = metadata.version ?? null
+    const timestamp = metadata.timestamp ?? null
+    const health = metadata.status ?? null
     const result: BackendHealthProbeResult = {
       endpoint,
       ok: true,
@@ -85,8 +79,10 @@ export async function probeBackendHealth(
       health
     }
 
+    const endpointContext = buildBackendEndpointContext(endpoint)
     console.info('[backend:health] conexion OK', {
-      endpoint,
+      endpoint: endpointContext.browserUrl,
+      transportMode: endpointContext.transportMode,
       status: response.status,
       service,
       brandId,
@@ -107,54 +103,13 @@ export async function probeBackendHealth(
       health: null
     }
 
+    const endpointContext = buildBackendEndpointContext(endpoint)
     console.warn('[backend:health] error de red', {
-      endpoint,
+      endpoint: endpointContext.browserUrl,
+      transportMode: endpointContext.transportMode,
+      status: 0,
       error
     })
     return result
   }
-}
-
-function normalize(value: unknown): string | null {
-  if (typeof value !== 'string') {
-    return null
-  }
-  const trimmed = value.trim()
-  return trimmed ? trimmed : null
-}
-
-function resolveHealthEndpoint(): string {
-  const runtimeEndpoint = normalizeEndpoint(publicConfig.healthApiUrl)
-  const configuredEndpoint = normalizeEndpoint(import.meta.env.VITE_HEALTH_ENDPOINT)
-
-  if (prefersRelativeHealthEndpoint()) {
-    if (configuredEndpoint?.startsWith('/')) {
-      return configuredEndpoint
-    }
-
-    if (runtimeEndpoint) {
-      return runtimeEndpoint
-    }
-
-    return '/api/v1/health'
-  }
-
-  if (configuredEndpoint) {
-    return configuredEndpoint
-  }
-
-  if (runtimeEndpoint) {
-    return runtimeEndpoint
-  }
-
-  return '/api/v1/health'
-}
-
-function normalizeEndpoint(value: string | undefined): string | undefined {
-  const trimmed = value?.trim()
-  return trimmed ? trimmed : undefined
-}
-
-function prefersRelativeHealthEndpoint(): boolean {
-  return activeAppTarget === 'integration' || activeAppTarget === 'e2e'
 }

@@ -1,7 +1,7 @@
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
 import type { CommercialPricingSnapshot, CommercialPriceKey } from '@/infrastructure/content/contentStore'
-import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
+import { buildBackendEndpointContext, extractBackendResponseMetadata, isRecord } from '@/infrastructure/backend/backendDiagnostics'
 
 const pricingConsoleWarnCache = new Set<string>()
 const pricingConsoleDebugCache = new Set<string>()
@@ -246,21 +246,8 @@ function normalizeUrl(url: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined
 }
 
-function normalizeString(value: unknown): string | null {
-  if (typeof value !== 'string') {
-    return null
-  }
-
-  const trimmed = value.trim()
-  return trimmed ? trimmed : null
-}
-
 function normalizeAliasKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, '')
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
 function logPricingInfo(
@@ -269,22 +256,17 @@ function logPricingInfo(
   payload: unknown,
   pricingSnapshot: CommercialPricingSnapshot
 ): void {
-  const metadata = isRecord(payload)
-    ? mapKeysToCamelCase<{
-        status?: unknown
-        requestId?: unknown
-        version?: unknown
-        currency?: unknown
-      }>(payload)
-    : {}
+  const metadata = extractBackendResponseMetadata(payload)
+  const endpointContext = buildBackendEndpointContext(endpoint)
 
   console.info('[backend:pricing] conexion OK', {
-    endpoint,
+    endpoint: endpointContext.browserUrl,
+    transportMode: endpointContext.transportMode,
     status,
-    requestId: normalizeString(metadata.requestId),
-    version: normalizeString(metadata.version),
-    currency: normalizeString(metadata.currency),
-    backendStatus: normalizeString(metadata.status),
+    requestId: metadata.requestId ?? null,
+    version: metadata.version ?? null,
+    currency: metadata.currency ?? null,
+    backendStatus: metadata.status ?? null,
     pricingSnapshot
   })
 }
@@ -296,11 +278,18 @@ function logPricingWarnOnce(payload: { endpoint: string; status?: number; reason
   }
   pricingConsoleWarnCache.add(dedupeKey)
 
+  const endpointContext = buildBackendEndpointContext(payload.endpoint)
+  const consolePayload = {
+    ...payload,
+    endpoint: endpointContext.browserUrl,
+    transportMode: endpointContext.transportMode
+  }
+
   if (payload.status === undefined && payload.reason === undefined) {
-    console.warn('[backend:pricing] conexion sin datos utilizables', payload)
+    console.warn('[backend:pricing] conexion sin datos utilizables', consolePayload)
     return
   }
-  console.warn('[backend:pricing] sin conexion', payload)
+  console.warn('[backend:pricing] sin conexion', consolePayload)
 }
 
 function logPricingPayloadDebugOnce(endpoint: string, payload: unknown): void {
@@ -314,8 +303,10 @@ function logPricingPayloadDebugOnce(endpoint: string, payload: unknown): void {
   }
   pricingConsoleDebugCache.add(dedupeKey)
 
+  const endpointContext = buildBackendEndpointContext(endpoint)
   console.debug('[backend:pricing] payload sin claves reconocibles', {
-    endpoint,
+    endpoint: endpointContext.browserUrl,
+    transportMode: endpointContext.transportMode,
     payloadPreview: getPayloadPreview(payload),
     scalarKeys: extractDebugScalarKeys(payload)
   })

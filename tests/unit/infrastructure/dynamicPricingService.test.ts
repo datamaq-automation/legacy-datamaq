@@ -41,6 +41,7 @@ describe('DynamicPricingService', () => {
     })
     expect(infoSpy).toHaveBeenCalledWith('[backend:pricing] conexion OK', {
       endpoint: 'http://127.0.0.1:8899/v1/pricing',
+      transportMode: 'direct',
       status: 200,
       requestId: 'req-pricing-123',
       version: 'v1',
@@ -78,8 +79,48 @@ describe('DynamicPricingService', () => {
 
     expect(debugSpy).toHaveBeenCalledWith('[backend:pricing] payload sin claves reconocibles', {
       endpoint: 'http://127.0.0.1:8899/v1/pricing',
+      transportMode: 'direct',
       payloadPreview: '{"status":"ok","data":{"foo":"bar"}}',
       scalarKeys: ['datafoo', 'foo', 'status']
+    })
+  })
+
+  it('logs a full browser URL when pricing endpoint is configured as relative', async () => {
+    vi.stubGlobal('location', {
+      origin: 'http://localhost:5173'
+    })
+    const logger = createLoggerSpy()
+    const http = createHttpClientMock({
+      ok: true,
+      status: 200,
+      data: {
+        status: 'ok',
+        request_id: 'req-pricing-relative',
+        version: 'v1',
+        currency: 'ARS',
+        data: {
+          diagnostico_lista_2h_ars: 275000
+        }
+      }
+    })
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
+
+    const service = new DynamicPricingService(http, '/api/v1/pricing', logger, vi.fn())
+
+    service.bootstrap()
+    await flushAsyncWork()
+
+    expect(infoSpy).toHaveBeenCalledWith('[backend:pricing] conexion OK', {
+      endpoint: 'http://localhost:5173/api/v1/pricing',
+      transportMode: 'proxy',
+      status: 200,
+      requestId: 'req-pricing-relative',
+      version: 'v1',
+      currency: 'ARS',
+      backendStatus: 'ok',
+      pricingSnapshot: {
+        visitaDiagnosticoHasta2hARS: 275000
+      }
     })
   })
 })
@@ -104,6 +145,7 @@ function createHttpClientMock(response: HttpResponse): HttpClient {
     options: vi.fn()
   }
 }
+
 
 async function flushAsyncWork(): Promise<void> {
   await Promise.resolve()

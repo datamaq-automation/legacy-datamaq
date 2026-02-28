@@ -5,11 +5,13 @@ describe('probeBackendHealth', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
     vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
     vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
   })
 
   it('logs successful backend health connection', async () => {
@@ -33,11 +35,17 @@ describe('probeBackendHealth', () => {
         )
       )
     )
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
 
     const result = await probeBackendHealth('/api/v1/health')
 
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
-      endpoint: '/api/v1/health',
+      endpoint: 'http://localhost:5173/api/v1/health',
+      transportMode: 'proxy',
       status: 200,
       service: 'datamaq-api',
       brandId: 'datamaq',
@@ -62,11 +70,17 @@ describe('probeBackendHealth', () => {
     const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
 
     const result = await probeBackendHealth('/api/v1/health')
 
     expect(warnSpy).toHaveBeenCalledWith('[backend:health] sin conexion', {
-      endpoint: '/api/v1/health',
+      endpoint: 'http://localhost:5173/api/v1/health',
+      transportMode: 'proxy',
       status: 0
     })
     expect(result).toEqual({
@@ -118,6 +132,7 @@ describe('probeBackendHealth', () => {
     )
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
       endpoint: 'https://api.example.com/v1/health',
+      transportMode: 'direct',
       status: 200,
       service: null,
       brandId: null,
@@ -138,9 +153,14 @@ describe('probeBackendHealth', () => {
     expect(warnSpy).not.toHaveBeenCalled()
   })
 
-  it('uses the integration runtime health endpoint directly in integration mode', async () => {
+  it('uses the integration runtime health endpoint directly on localhost:5173', async () => {
     vi.resetModules()
     vi.stubEnv('VITE_HEALTH_ENDPOINT', 'https://api.example.com/v1/health')
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: 'localhost',
+      port: '5173'
+    })
     vi.doMock('@/infrastructure/config/publicConfig', () => ({
       publicConfig: {
         healthApiUrl: 'http://127.0.0.1:8899/v1/health'
@@ -156,6 +176,7 @@ describe('probeBackendHealth', () => {
       })
     )
     vi.stubGlobal('fetch', fetchMock)
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
 
     const { probeBackendHealth: probeBackendHealthWithDefault } = await import(
       '@/infrastructure/health/probeBackendHealth'
@@ -174,6 +195,77 @@ describe('probeBackendHealth', () => {
     expect(result).toEqual({
       endpoint: 'http://127.0.0.1:8899/v1/health',
       ok: true,
+      status: 200,
+      service: null,
+      brandId: null,
+      version: null,
+      timestamp: null,
+      health: 'ok'
+    })
+    expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
+      endpoint: 'http://127.0.0.1:8899/v1/health',
+      transportMode: 'direct',
+      status: 200,
+      service: null,
+      brandId: null,
+      version: null,
+      timestamp: null,
+      health: 'ok'
+    })
+  })
+
+  it('keeps the proxy health endpoint on 127.0.0.1 integration origins', async () => {
+    vi.resetModules()
+    vi.stubEnv('VITE_HEALTH_ENDPOINT', 'https://api.example.com/v1/health')
+    vi.stubGlobal('location', {
+      protocol: 'http:',
+      hostname: '127.0.0.1',
+      port: '4173'
+    })
+    vi.doMock('@/infrastructure/config/publicConfig', () => ({
+      publicConfig: {
+        healthApiUrl: 'http://127.0.0.1:8899/v1/health'
+      }
+    }))
+    vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
+      activeAppTarget: 'integration'
+    }))
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ status: 'ok' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined)
+
+    const { probeBackendHealth: probeBackendHealthWithDefault } = await import(
+      '@/infrastructure/health/probeBackendHealth'
+    )
+    const result = await probeBackendHealthWithDefault()
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/v1/health',
+      expect.objectContaining({
+        method: 'GET',
+        headers: {
+          Accept: 'application/json'
+        }
+      })
+    )
+    expect(result).toEqual({
+      endpoint: '/api/v1/health',
+      ok: true,
+      status: 200,
+      service: null,
+      brandId: null,
+      version: null,
+      timestamp: null,
+      health: 'ok'
+    })
+    expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
+      endpoint: 'http://127.0.0.1:4173/api/v1/health',
+      transportMode: 'proxy',
       status: 200,
       service: null,
       brandId: null,
