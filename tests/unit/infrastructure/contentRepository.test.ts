@@ -39,6 +39,22 @@ describe('ContentRepository', () => {
     expect(() => repository.getContent()).toThrowError('Invalid content schema')
   })
 
+  it('does not fetch remote content or pricing until bootstrapRemoteData is called', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+    new ContentRepository(
+      {
+        pricingApiUrl: 'https://api.example.com/v1/public/pricing',
+        contentApiUrl: 'https://api.example.com/v1/public/content'
+      },
+      createLoggerSpy()
+    )
+
+    await flushRuntimePricing()
+
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+
   it('exposes navbar anchors for the landing decision flow sections', () => {
     const repository = new ContentRepository()
 
@@ -77,6 +93,7 @@ describe('ContentRepository', () => {
       { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
       logger
     )
+    repository.bootstrapRemoteData()
 
     const heroRef = repository.getHeroContent()
     const servicesRef = repository.getServicesContent()
@@ -112,6 +129,7 @@ describe('ContentRepository', () => {
       { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
       logger
     )
+    repository.bootstrapRemoteData()
 
     await flushRuntimePricing()
     await flushRuntimePricing()
@@ -143,7 +161,8 @@ describe('ContentRepository', () => {
       )
     )
 
-    new ContentRepository({ pricingApiUrl: 'https://api.example.com/v1/public/pricing' }, logger)
+    const repository = new ContentRepository({ pricingApiUrl: 'https://api.example.com/v1/public/pricing' }, logger)
+    repository.bootstrapRemoteData()
 
     await flushRuntimePricing()
     await flushRuntimePricing()
@@ -184,6 +203,7 @@ describe('ContentRepository', () => {
       },
       logger
     )
+    repository.bootstrapRemoteData()
 
     await flushRuntimePricing()
 
@@ -221,6 +241,7 @@ describe('ContentRepository', () => {
       },
       logger
     )
+    repository.bootstrapRemoteData()
     const localTitle = repository.getHeroContent().title
 
     await flushRuntimePricing()
@@ -264,6 +285,7 @@ describe('ContentRepository', () => {
       },
       logger
     )
+    remoteRepository.bootstrapRemoteData()
 
     await flushRuntimePricing()
     await flushRuntimePricing()
@@ -285,6 +307,7 @@ describe('ContentRepository', () => {
       { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
       logger
     )
+    repository.bootstrapRemoteData()
     const heroRef = repository.getHeroContent()
 
     await flushRuntimePricing()
@@ -306,6 +329,7 @@ describe('ContentRepository', () => {
       { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
       logger
     )
+    repository.bootstrapRemoteData()
 
     await flushRuntimePricing()
 
@@ -317,7 +341,8 @@ describe('ContentRepository', () => {
     const logger = createLoggerSpy()
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
 
-    new ContentRepository({ pricingApiUrl: '   ' }, logger)
+    const repository = new ContentRepository({ pricingApiUrl: '   ' }, logger)
+    repository.bootstrapRemoteData()
 
     await flushRuntimePricing()
 

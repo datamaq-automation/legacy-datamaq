@@ -1,3 +1,7 @@
+/*
+Path: src/infrastructure/health/probeBackendHealth.ts
+*/
+
 import type { HttpClient } from '@/application/ports/HttpClient'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
 import { activeAppTarget } from '@/infrastructure/content/runtimeProfile'
@@ -7,10 +11,21 @@ import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
 const HEALTH_ENDPOINT = resolveHealthEndpoint()
 
+export type BackendHealthProbeResult = {
+  endpoint: string
+  ok: boolean
+  status: number
+  service: string | null
+  brandId: string | null
+  version: string | null
+  timestamp: string | null
+  health: string | null
+}
+
 export async function probeBackendHealth(
   endpoint: string = HEALTH_ENDPOINT,
   http: HttpClient = new FetchHttpClient(new NoopLogger())
-): Promise<void> {
+): Promise<BackendHealthProbeResult> {
   try {
     const response = await http.get<{
       status?: unknown
@@ -28,11 +43,22 @@ export async function probeBackendHealth(
     })
 
     if (!response.ok) {
+      const result: BackendHealthProbeResult = {
+        endpoint,
+        ok: false,
+        status: response.status,
+        service: null,
+        brandId: null,
+        version: null,
+        timestamp: null,
+        health: null
+      }
+
       console.warn('[backend:health] sin conexion', {
         endpoint,
         status: response.status
       })
-      return
+      return result
     }
 
     const payload = mapKeysToCamelCase<{
@@ -48,6 +74,16 @@ export async function probeBackendHealth(
     const version = normalize(payload?.version)
     const timestamp = normalize(payload?.timestamp)
     const health = normalize(payload?.status)
+    const result: BackendHealthProbeResult = {
+      endpoint,
+      ok: true,
+      status: response.status,
+      service,
+      brandId,
+      version,
+      timestamp,
+      health
+    }
 
     console.info('[backend:health] conexion OK', {
       endpoint,
@@ -58,11 +94,24 @@ export async function probeBackendHealth(
       timestamp,
       health
     })
+    return result
   } catch (error) {
+    const result: BackendHealthProbeResult = {
+      endpoint,
+      ok: false,
+      status: 0,
+      service: null,
+      brandId: null,
+      version: null,
+      timestamp: null,
+      health: null
+    }
+
     console.warn('[backend:health] error de red', {
       endpoint,
       error
     })
+    return result
   }
 }
 
@@ -109,4 +158,3 @@ function normalizeEndpoint(value: string | undefined): string | undefined {
 function prefersRelativeHealthEndpoint(): boolean {
   return activeAppTarget === 'integration' || activeAppTarget === 'e2e'
 }
-

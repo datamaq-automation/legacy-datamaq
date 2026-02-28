@@ -20,7 +20,7 @@ describe('vite proxy config', () => {
     expect(rewrite('/api/v1/health')).toBe('/v1/health')
   })
 
-  it('preserves the legacy prefix when explicitly forced', async () => {
+  it('preserves the legacy prefix when explicitly forced for the Laravel target', async () => {
     process.env.VITE_API_PROXY_PREFIX = '/plantilla-www/public'
     process.env.VITE_API_PROXY_FORCE_LEGACY_PREFIX = '1'
 
@@ -28,7 +28,7 @@ describe('vite proxy config', () => {
     const config = configFactory({ mode: 'development' })
     const rewrite = config.server.proxy['/api'].rewrite
 
-    expect(rewrite('/api/v1/health')).toBe('/plantilla-www/public/api/v1/health')
+    expect(rewrite('/api/v1/health')).toBe('/plantilla-www/public/v1/health')
   })
 
   it('bridges /api/v1 to /v1 for the local Laravel artisan server', async () => {

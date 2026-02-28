@@ -44,6 +44,7 @@ export class ContentRepository
   private readonly contentStore: ContentStore
   private readonly dynamicContentService: DynamicContentService
   private readonly dynamicPricingService: DynamicPricingService
+  private remoteBootstrapStarted = false
   private remoteContentStatus: RemoteContentStatus
 
   constructor(
@@ -75,12 +76,20 @@ export class ContentRepository
       this.logger,
       (snapshot) => this.contentStore.applyCommercialPricingSnapshot(snapshot, this.logger)
     )
-    this.dynamicContentService.bootstrap()
-    this.dynamicPricingService.bootstrap()
   }
 
   getRemoteContentStatus(): RemoteContentStatus {
     return this.remoteContentStatus
+  }
+
+  bootstrapRemoteData(): void {
+    if (this.remoteBootstrapStarted) {
+      return
+    }
+
+    this.remoteBootstrapStarted = true
+    this.dynamicContentService.bootstrap()
+    this.dynamicPricingService.bootstrap()
   }
 
   getContent(): AppContent {

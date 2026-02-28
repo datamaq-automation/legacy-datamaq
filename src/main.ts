@@ -53,6 +53,15 @@ function applyCriticalCssVariableFallbacks(): void {
   }
 }
 
+async function bootstrapRemoteBackendData(): Promise<void> {
+  const health = await probeBackendHealth()
+  if (!health.ok) {
+    return
+  }
+
+  container.content.bootstrapRemoteData()
+}
+
 export const createApp = ViteSSG(
   App,
   { routes },
@@ -67,7 +76,7 @@ export const createApp = ViteSSG(
 
     if (isClient) {
       applyCriticalCssVariableFallbacks()
-      void probeBackendHealth()
+      void bootstrapRemoteBackendData()
       configureAnalytics(container.config)
       initAttribution(container.storage)
       syncAnalyticsConsent(container.consentManager.getStatus())

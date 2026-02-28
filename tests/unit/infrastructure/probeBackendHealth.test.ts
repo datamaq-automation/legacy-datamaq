@@ -34,10 +34,20 @@ describe('probeBackendHealth', () => {
       )
     )
 
-    await probeBackendHealth('/api/v1/health')
+    const result = await probeBackendHealth('/api/v1/health')
 
     expect(infoSpy).toHaveBeenCalledWith('[backend:health] conexion OK', {
       endpoint: '/api/v1/health',
+      status: 200,
+      service: 'datamaq-api',
+      brandId: 'datamaq',
+      version: 'v1',
+      timestamp: '2026-02-26T00:00:00Z',
+      health: 'ok'
+    })
+    expect(result).toEqual({
+      endpoint: '/api/v1/health',
+      ok: true,
       status: 200,
       service: 'datamaq-api',
       brandId: 'datamaq',
@@ -53,11 +63,21 @@ describe('probeBackendHealth', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
 
-    await probeBackendHealth('/api/v1/health')
+    const result = await probeBackendHealth('/api/v1/health')
 
     expect(warnSpy).toHaveBeenCalledWith('[backend:health] sin conexion', {
       endpoint: '/api/v1/health',
       status: 0
+    })
+    expect(result).toEqual({
+      endpoint: '/api/v1/health',
+      ok: false,
+      status: 0,
+      service: null,
+      brandId: null,
+      version: null,
+      timestamp: null,
+      health: null
     })
     expect(infoSpy).not.toHaveBeenCalled()
   })
@@ -85,7 +105,7 @@ describe('probeBackendHealth', () => {
     const { probeBackendHealth: probeBackendHealthWithDefault } = await import(
       '@/infrastructure/health/probeBackendHealth'
     )
-    await probeBackendHealthWithDefault()
+    const result = await probeBackendHealthWithDefault()
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://api.example.com/v1/health',
@@ -105,15 +125,25 @@ describe('probeBackendHealth', () => {
       timestamp: null,
       health: 'ok'
     })
+    expect(result).toEqual({
+      endpoint: 'https://api.example.com/v1/health',
+      ok: true,
+      status: 200,
+      service: null,
+      brandId: null,
+      version: null,
+      timestamp: null,
+      health: 'ok'
+    })
     expect(warnSpy).not.toHaveBeenCalled()
   })
 
-  it('ignores absolute health overrides in integration mode', async () => {
+  it('uses the integration runtime health endpoint directly in integration mode', async () => {
     vi.resetModules()
     vi.stubEnv('VITE_HEALTH_ENDPOINT', 'https://api.example.com/v1/health')
     vi.doMock('@/infrastructure/config/publicConfig', () => ({
       publicConfig: {
-        healthApiUrl: '/api/v1/health'
+        healthApiUrl: 'http://127.0.0.1:8899/v1/health'
       }
     }))
     vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
@@ -130,10 +160,10 @@ describe('probeBackendHealth', () => {
     const { probeBackendHealth: probeBackendHealthWithDefault } = await import(
       '@/infrastructure/health/probeBackendHealth'
     )
-    await probeBackendHealthWithDefault()
+    const result = await probeBackendHealthWithDefault()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      '/api/v1/health',
+      'http://127.0.0.1:8899/v1/health',
       expect.objectContaining({
         method: 'GET',
         headers: {
@@ -141,6 +171,16 @@ describe('probeBackendHealth', () => {
         }
       })
     )
+    expect(result).toEqual({
+      endpoint: 'http://127.0.0.1:8899/v1/health',
+      ok: true,
+      status: 200,
+      service: null,
+      brandId: null,
+      version: null,
+      timestamp: null,
+      health: 'ok'
+    })
   })
 })
 

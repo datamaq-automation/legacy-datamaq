@@ -1,6 +1,7 @@
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
 import type { CommercialPricingSnapshot, CommercialPriceKey } from '@/infrastructure/content/contentStore'
+import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
 const pricingConsoleWarnCache = new Set<string>()
 const pricingConsoleDebugCache = new Set<string>()
@@ -79,6 +80,7 @@ export class DynamicPricingService {
       }
 
       this.applySnapshot(pricingSnapshot)
+      logPricingInfo(pricingApiUrl, response.status, payload, pricingSnapshot)
       this.logger.debug('[content] precios dinamicos aplicados', pricingSnapshot)
     } catch (error) {
       this.logger.warn('[content] error consultando precios dinamicos; se mantiene fallback.', {
@@ -244,12 +246,47 @@ function normalizeUrl(url: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined
 }
 
+function normalizeString(value: unknown): string | null {
+  if (typeof value !== 'string') {
+    return null
+  }
+
+  const trimmed = value.trim()
+  return trimmed ? trimmed : null
+}
+
 function normalizeAliasKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function logPricingInfo(
+  endpoint: string,
+  status: number,
+  payload: unknown,
+  pricingSnapshot: CommercialPricingSnapshot
+): void {
+  const metadata = isRecord(payload)
+    ? mapKeysToCamelCase<{
+        status?: unknown
+        requestId?: unknown
+        version?: unknown
+        currency?: unknown
+      }>(payload)
+    : {}
+
+  console.info('[backend:pricing] conexion OK', {
+    endpoint,
+    status,
+    requestId: normalizeString(metadata.requestId),
+    version: normalizeString(metadata.version),
+    currency: normalizeString(metadata.currency),
+    backendStatus: normalizeString(metadata.status),
+    pricingSnapshot
+  })
 }
 
 function logPricingWarnOnce(payload: { endpoint: string; status?: number; reason?: string }): void {
@@ -276,6 +313,12 @@ function logPricingPayloadDebugOnce(endpoint: string, payload: unknown): void {
     return
   }
   pricingConsoleDebugCache.add(dedupeKey)
+
+  console.debug('[backend:pricing] payload sin claves reconocibles', {
+    endpoint,
+    payloadPreview: getPayloadPreview(payload),
+    scalarKeys: extractDebugScalarKeys(payload)
+  })
 }
 
 function getPayloadPreview(payload: unknown): string {
