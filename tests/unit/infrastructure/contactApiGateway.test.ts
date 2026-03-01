@@ -271,14 +271,14 @@ describe('ContactApiGateway', () => {
     })
   })
 
-  it('maps request_id and error_code from backend error response', async () => {
+  it('maps canonical backend error response fields', async () => {
     const http = createHttpClient()
     vi.mocked(http.postJson).mockResolvedValueOnce({
       ok: false,
       status: 429,
       data: {
         request_id: 'req_err_429',
-        error_code: 'RATE_LIMITED',
+        code: 'RATE_LIMITED',
         status: 'rejected',
         processing_status: 'failed',
         detail: 'Too many requests'

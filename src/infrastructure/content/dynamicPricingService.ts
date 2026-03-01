@@ -1,7 +1,7 @@
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
 import { buildRuntimeLogArgs, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
-import type { CommercialPricingSnapshot, CommercialPriceKey } from '@/infrastructure/content/contentStore'
+import type { CommercialPricingSnapshot } from '@/infrastructure/content/contentStore'
 import {
   buildBackendEndpointContext,
   emitBackendInfo,
@@ -13,18 +13,7 @@ import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint
 const pricingConsoleWarnCache = new Set<string>()
 const pricingConsoleDebugCache = new Set<string>()
 const isDevRuntime = Boolean(import.meta.env?.DEV)
-
-const PRICE_KEY_ALIASES: Record<CommercialPriceKey, string[]> = {
-  visitaDiagnosticoHasta2hARS: [
-    'diagnostico_lista_2h_ars',
-    'visitaDiagnosticoHasta2hARS',
-    'visita_diagnostico_hasta2h_ars',
-    'visita_diagnostico_hasta_2h_ars',
-    'visita_diagnostico_2h_ars',
-    'visita_diagnostico_2h',
-    'visita_diagnostico_ars'
-  ]
-}
+const CANONICAL_DIAGNOSTIC_PRICE_KEY = 'diagnostico_lista_2h_ars'
 
 export class DynamicPricingService {
   private dynamicPricingFetchStarted = false
@@ -116,105 +105,18 @@ function readPricingPayload(response: { data?: unknown; text?: string }): unknow
 }
 
 function extractCommercialPricingSnapshot(payload: unknown): CommercialPricingSnapshot | undefined {
-  const scalarMap = new Map<string, unknown>()
-
-  if (typeof payload === 'string') {
-    collectScalarPairsFromText(payload, scalarMap)
-  }
-  collectScalarPairs(payload, scalarMap)
-
-  const snapshot: CommercialPricingSnapshot = {}
-  ;(Object.keys(PRICE_KEY_ALIASES) as CommercialPriceKey[]).forEach((key) => {
-    const resolved = resolveAmountByAliases(scalarMap, PRICE_KEY_ALIASES[key])
-    if (typeof resolved === 'number') {
-      snapshot[key] = resolved
-    }
-  })
-
-  return Object.keys(snapshot).length > 0 ? snapshot : undefined
-}
-
-function collectScalarPairsFromText(rawText: string, target: Map<string, unknown>): void {
-  const pairPattern = /([A-Za-z_][A-Za-z0-9_]*)\s*[:=]\s*([0-9][0-9.,\s]*)/g
-  let match = pairPattern.exec(rawText)
-  while (match) {
-    const key = normalizeAliasKey(match[1] ?? '')
-    const value = match[2]?.trim()
-    if (key && value && !target.has(key)) {
-      target.set(key, value)
-    }
-    match = pairPattern.exec(rawText)
-  }
-}
-
-function collectScalarPairs(
-  value: unknown,
-  target: Map<string, unknown>,
-  depth: number = 0,
-  parentPath: string[] = []
-): void {
-  if (depth > 6 || value === null || value === undefined) {
-    return
+  const root = asRecord(payload)
+  const data = asRecord(root?.['data'])
+  const diagnosticPrice = parseAmount(data?.[CANONICAL_DIAGNOSTIC_PRICE_KEY])
+  if (typeof diagnosticPrice !== 'number') {
+    return undefined
   }
 
-  if (Array.isArray(value)) {
-    value.forEach((entry, index) => collectScalarPairs(entry, target, depth + 1, [...parentPath, String(index)]))
-    return
+  const snapshot: CommercialPricingSnapshot = {
+    visitaDiagnosticoHasta2hARS: diagnosticPrice
   }
 
-  if (!isRecord(value)) {
-    return
-  }
-
-  Object.entries(value).forEach(([key, entry]) => {
-    const currentPath = [...parentPath, key]
-    if (isRecord(entry) || Array.isArray(entry)) {
-      collectScalarPairs(entry, target, depth + 1, currentPath)
-      return
-    }
-
-    const normalizedKey = normalizeAliasKey(key)
-    if (!normalizedKey || target.has(normalizedKey)) {
-      // no-op; try path-based key below
-    } else {
-      target.set(normalizedKey, entry)
-    }
-
-    const normalizedPathKey = normalizeAliasKey(currentPath.join('_'))
-    if (!normalizedPathKey || target.has(normalizedPathKey)) {
-      return
-    }
-    target.set(normalizedPathKey, entry)
-  })
-}
-
-function resolveAmountByAliases(source: Map<string, unknown>, aliases: readonly string[]): number | undefined {
-  for (const alias of aliases) {
-    const normalizedAlias = normalizeAliasKey(alias)
-    if (!normalizedAlias) {
-      continue
-    }
-
-    if (source.has(normalizedAlias)) {
-      const parsedAmount = parseAmount(source.get(normalizedAlias))
-      if (typeof parsedAmount === 'number') {
-        return parsedAmount
-      }
-    }
-
-    for (const [key, value] of Array.from(source.entries())) {
-      if (!key.includes(normalizedAlias)) {
-        continue
-      }
-
-      const parsedAmount = parseAmount(value)
-      if (typeof parsedAmount === 'number') {
-        return parsedAmount
-      }
-    }
-  }
-
-  return undefined
+  return snapshot
 }
 
 function parseAmount(value: unknown): number | null {
@@ -225,40 +127,12 @@ function parseAmount(value: unknown): number | null {
     return Math.round(value)
   }
 
-  if (typeof value !== 'string') {
-    return null
-  }
-
-  const sanitized = value.replace(/[^\d.,-]/g, '').trim()
-  if (!sanitized || sanitized.startsWith('-')) {
-    return null
-  }
-
-  const decimalMatch = sanitized.match(/^(.*)[.,](\d{1,2})$/)
-  if (decimalMatch) {
-    const integerPart = (decimalMatch[1] ?? '').replace(/[.,]/g, '')
-    if (/^\d+$/.test(integerPart)) {
-      const parsedInteger = Number.parseInt(integerPart, 10)
-      return Number.isFinite(parsedInteger) ? parsedInteger : null
-    }
-  }
-
-  const integerCandidate = sanitized.replace(/[.,]/g, '')
-  if (!/^\d+$/.test(integerCandidate)) {
-    return null
-  }
-
-  const parsedValue = Number.parseInt(integerCandidate, 10)
-  return Number.isFinite(parsedValue) ? parsedValue : null
+  return null
 }
 
 function normalizeUrl(url: string | undefined): string | undefined {
   const trimmed = url?.trim()
   return trimmed ? trimmed : undefined
-}
-
-function normalizeAliasKey(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
 
 function logPricingInfo(
@@ -320,7 +194,7 @@ function logPricingPayloadDebugOnce(endpoint: string, payload: unknown): void {
       pathname: resolveBackendPathname(endpoint),
       transportMode: endpointContext.transportMode,
       payloadPreview: getPayloadPreview(payload),
-      scalarKeys: extractDebugScalarKeys(payload)
+      expectedKey: CANONICAL_DIAGNOSTIC_PRICE_KEY
     })
   )
 }
@@ -342,11 +216,9 @@ function getPayloadPreview(payload: unknown): string {
   }
 }
 
-function extractDebugScalarKeys(payload: unknown): string[] {
-  const scalarMap = new Map<string, unknown>()
-  if (typeof payload === 'string') {
-    collectScalarPairsFromText(payload, scalarMap)
+function asRecord(value: unknown): Record<string, unknown> | undefined {
+  if (!isRecord(value)) {
+    return undefined
   }
-  collectScalarPairs(payload, scalarMap)
-  return Array.from(scalarMap.keys()).sort()
+  return value
 }

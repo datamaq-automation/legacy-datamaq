@@ -344,18 +344,10 @@ function parseFilenameFromContentDisposition(value: string | null): string | und
 
 function buildQuotePdfUrlFromTemplate(template: string, quoteId: string): string {
   const encodedQuoteId = encodeURIComponent(quoteId)
-  if (template.includes('{quote_id}')) {
-    return template.replace(/\{quote_id\}/g, encodedQuoteId)
+  if (!template.includes('{quote_id}')) {
+    throw new Error('quotePdfApiUrl debe incluir el placeholder {quote_id}')
   }
-  return appendQueryParam(template, 'quote_id', encodedQuoteId)
-}
-
-function appendQueryParam(url: string, key: string, encodedValue: string): string {
-  const hashIndex = url.indexOf('#')
-  const baseWithQuery = hashIndex >= 0 ? url.slice(0, hashIndex) : url
-  const hashSuffix = hashIndex >= 0 ? url.slice(hashIndex) : ''
-  const separator = baseWithQuery.includes('?') ? '&' : '?'
-  return `${baseWithQuery}${separator}${encodeURIComponent(key)}=${encodedValue}${hashSuffix}`
+  return template.replace(/\{quote_id\}/g, encodedQuoteId)
 }
 
 function logQuoteGatewayWarn(event: string, context: Record<string, unknown>): void {

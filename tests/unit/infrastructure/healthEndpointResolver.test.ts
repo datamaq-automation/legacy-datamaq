@@ -43,7 +43,7 @@ describe('healthEndpointResolver', () => {
   it('falls back to the relative proxy contract on integration targets even if only absolute endpoints are configured', () => {
     expect(
       resolveHealthEndpoint({
-        runtimeEndpoint: 'http://127.0.0.1:8899/v1/health',
+        runtimeEndpoint: 'http://127.0.0.1:8000/v1/health',
         configuredEndpoint: 'https://api.example.com/v1/health',
         appTarget: 'integration',
         currentLocation: {

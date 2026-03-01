@@ -30,7 +30,7 @@ describe('DynamicContentService', () => {
 
     const service = new DynamicContentService(
       http,
-      'http://127.0.0.1:8899/v1/content',
+      'http://127.0.0.1:8000/v1/content',
       logger,
       vi.fn().mockReturnValue(true),
       vi.fn()
@@ -41,7 +41,7 @@ describe('DynamicContentService', () => {
 
     expect(infoSpy).toHaveBeenCalledWith('[backend:content] conexion OK', {
       resource: 'content',
-      endpoint: 'http://127.0.0.1:8899/v1/content',
+      endpoint: 'http://127.0.0.1:8000/v1/content',
       pathname: '/v1/content',
       transportMode: 'direct',
       status: 200,
@@ -78,7 +78,7 @@ describe('DynamicContentService', () => {
 
     const service = new DynamicContentService(
       http,
-      'http://127.0.0.1:8899/v1/content',
+      'http://127.0.0.1:8000/v1/content',
       logger,
       vi.fn().mockReturnValue(false),
       applyHeroTitle
@@ -90,7 +90,7 @@ describe('DynamicContentService', () => {
     expect(applyHeroTitle).toHaveBeenCalledWith('Titulo parcial remoto')
     expect(infoSpy).toHaveBeenCalledWith('[backend:content] conexion OK', {
       resource: 'content',
-      endpoint: 'http://127.0.0.1:8899/v1/content',
+      endpoint: 'http://127.0.0.1:8000/v1/content',
       pathname: '/v1/content',
       transportMode: 'direct',
       status: 200,

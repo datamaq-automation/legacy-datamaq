@@ -39,7 +39,6 @@ export interface RuntimeProfile {
   contactEmail: NullableString
   contactFormActive: boolean
   emailFormActive: boolean
-  backendBaseUrl: NullableString
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
@@ -48,7 +47,6 @@ export interface RuntimeProfile {
   requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
-  allowInsecureBackend: boolean
   whatsappUrl: NullableString
   whatsappQrPhoneE164: NullableString
   whatsappQrMessage: NullableString
@@ -88,7 +86,6 @@ type RuntimeProfileJson = {
   contactEmail: NullableStringJson
   contactFormActive: boolean
   emailFormActive: boolean
-  backendBaseUrl: NullableStringJson
   inquiryApiUrl: NullableStringJson
   mailApiUrl: NullableStringJson
   pricingApiUrl: NullableStringJson
@@ -97,7 +94,6 @@ type RuntimeProfileJson = {
   requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableStringJson
   quotePdfApiUrl: NullableStringJson
-  allowInsecureBackend: boolean
   whatsappUrl: NullableStringJson
   whatsappQrPhoneE164: NullableStringJson
   whatsappQrMessage: NullableStringJson
@@ -195,7 +191,6 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
     contactEmail: normalize(profile.contactEmail),
     contactFormActive: profile.contactFormActive,
     emailFormActive: profile.emailFormActive,
-    backendBaseUrl: normalize(profile.backendBaseUrl),
     inquiryApiUrl: normalize(profile.inquiryApiUrl),
     mailApiUrl: normalize(profile.mailApiUrl),
     pricingApiUrl: normalize(profile.pricingApiUrl),
@@ -204,7 +199,6 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
     requireRemoteContent: profile.requireRemoteContent,
     quoteDiagnosticApiUrl: normalize(profile.quoteDiagnosticApiUrl),
     quotePdfApiUrl: normalize(profile.quotePdfApiUrl),
-    allowInsecureBackend: profile.allowInsecureBackend,
     whatsappUrl: normalize(profile.whatsappUrl),
     whatsappQrPhoneE164: normalize(profile.whatsappQrPhoneE164),
     whatsappQrMessage: normalize(profile.whatsappQrMessage),

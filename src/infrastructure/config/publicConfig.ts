@@ -33,7 +33,6 @@ export type PublicConfig = {
   contactEmail: NullableString
   contactFormActive: boolean
   emailFormActive: boolean
-  backendBaseUrl: NullableString
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
@@ -42,7 +41,6 @@ export type PublicConfig = {
   requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
-  allowInsecureBackend: boolean
   whatsappUrl: NullableString
   whatsappQrPhoneE164: NullableString
   whatsappQrMessage: NullableString
@@ -75,7 +73,6 @@ export const publicConfig: PublicConfig = {
   contactEmail: activeRuntimeProfile.contactEmail,
   contactFormActive: activeRuntimeProfile.contactFormActive,
   emailFormActive: activeRuntimeProfile.emailFormActive,
-  backendBaseUrl: activeRuntimeProfile.backendBaseUrl,
   inquiryApiUrl: activeRuntimeProfile.inquiryApiUrl,
   mailApiUrl: activeRuntimeProfile.mailApiUrl,
   pricingApiUrl: activeRuntimeProfile.pricingApiUrl,
@@ -84,7 +81,6 @@ export const publicConfig: PublicConfig = {
   requireRemoteContent: activeRuntimeProfile.requireRemoteContent,
   quoteDiagnosticApiUrl: activeRuntimeProfile.quoteDiagnosticApiUrl,
   quotePdfApiUrl: activeRuntimeProfile.quotePdfApiUrl,
-  allowInsecureBackend: activeRuntimeProfile.allowInsecureBackend,
   whatsappUrl: activeRuntimeProfile.whatsappUrl,
   whatsappQrPhoneE164: activeRuntimeProfile.whatsappQrPhoneE164,
   whatsappQrMessage: activeRuntimeProfile.whatsappQrMessage,

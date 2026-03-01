@@ -3,13 +3,13 @@ import type { HttpResponse } from '@/application/ports/HttpClient'
 import { extractContactSubmitFeedback } from '@/infrastructure/contact/contactResponseFeedback'
 
 describe('extractContactSubmitFeedback', () => {
-  it('extracts request_id, error_code and detail from JSON body', () => {
+  it('extracts request_id, code and detail from JSON body', () => {
     const response: HttpResponse = {
       ok: false,
       status: 422,
       data: {
         request_id: 'req_body_1',
-        error_code: 'INVALID_PAYLOAD',
+        code: 'INVALID_PAYLOAD',
         detail: 'email is invalid'
       }
     }
@@ -51,7 +51,7 @@ describe('extractContactSubmitFeedback', () => {
       status: 429,
       data: {
         request_id: 'req_body_2',
-        error_code: 'RATE_LIMITED',
+        code: 'RATE_LIMITED',
         status: 'accepted',
         processing_status: 'queued'
       },
@@ -65,18 +65,6 @@ describe('extractContactSubmitFeedback', () => {
       submitStatus: 'accepted',
       processingStatus: 'queued',
       errorCode: 'RATE_LIMITED'
-    })
-  })
-
-  it('falls back to raw text when backend message is plain text', () => {
-    const response: HttpResponse = {
-      ok: false,
-      status: 500,
-      text: 'smtp timeout while sending'
-    }
-
-    expect(extractContactSubmitFeedback(response)).toEqual({
-      backendMessage: 'smtp timeout while sending'
     })
   })
 })

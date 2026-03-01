@@ -28,10 +28,10 @@ Ejecucion:
 
 ### Settings
 
-- definir variables para `backendBaseUrl`, `content`, `pricing`, `contact`, `mail` y `quote`
+- definir variables explicitas para `health`, `content`, `pricing`, `contact`, `mail`, `quoteDiagnostic` y `quotePdf`
 - separar configuracion por ambiente: local, integration, production
 - mantener `/v1/*` como contrato publico canonico
-- evitar aliases legacy tipo `/v1/public/*`
+- no reintroducir rutas removidas como `/v1/public/*`
 
 ### CORS
 
@@ -95,7 +95,7 @@ Fuente de verdad:
 - devolver `200 OK`
 - incluir `status`, `request_id`, `version`, `currency`
 - emitir `data.diagnostico_lista_2h_ars` como clave canonica
-- no depender de aliases legacy para el contrato final
+- no exponer aliases alternativos para pricing
 - validar payload numerico utilizable por frontend
 - validar metodo no permitido con `405`
 
@@ -184,9 +184,9 @@ Fuente de verdad:
 
 ### Contratos
 
-- reemplazar gradualmente la suite `phpApiContracts` por una suite equivalente para FastAPI
-- mantener durante la transicion la suite PHP solo como snapshot del backend actual
-- no tomar la suite PHP como contrato objetivo final
+- usar `tests/integration/fastApiContracts.test.ts` como suite de contrato objetivo
+- ejecutar la suite con `FASTAPI_CONTRACT_BASE_URL`
+- mantener cualquier test unitario de frontend alineado a ese mismo contrato
 
 ### Integracion frontend
 

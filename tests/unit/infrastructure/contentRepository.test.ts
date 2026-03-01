@@ -76,10 +76,7 @@ describe('ContentRepository', () => {
       new Response(
         JSON.stringify({
           data: {
-            tarifa_base_desde_ars: '410000',
-            traslado_minimo_ars: '15000',
-            diagnostico_lista_2h_ars: '275000',
-            diagnostico_hora_adicional_ars: '130000'
+            diagnostico_lista_2h_ars: 275000
           }
         }),
         {
@@ -113,64 +110,6 @@ describe('ContentRepository', () => {
     expect(logger.debug).toHaveBeenCalled()
   })
 
-  it('supports plain-text payloads for diagnostic list field aliases', async () => {
-    const logger = createLoggerSpy()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(
-        'tarifa_base_desde_ars=380.000,00 diagnostico_lista_2h_ars=260.000,00 diagnostico_hora_adicional_ars=130.000,00',
-        {
-          status: 200,
-          headers: { 'Content-Type': 'text/plain' }
-        }
-      )
-    )
-
-    const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
-      logger
-    )
-    repository.bootstrapRemoteData()
-
-    await flushRuntimePricing()
-    await flushRuntimePricing()
-
-    expect(repository.getHeroContent().responseNote).toContain('Base operativa')
-    expect(repository.getServicesContent().cards[1].note).toContain('Contenido no disponible temporalmente.')
-    expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(260000)
-    expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
-    expect(commercialConfig.trasladoMinimoARS).toBeNull()
-    expect(commercialConfig.diagnosticoHoraAdicionalARS).toBeNull()
-    expect(logger.debug).toHaveBeenCalled()
-  })
-
-  it('supports nested pricing payload shapes with value wrappers', async () => {
-    const logger = createLoggerSpy()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          data: {
-            diagnostico_lista_2h_ars: {
-              value: 285000
-            }
-          }
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    )
-
-    const repository = new ContentRepository({ pricingApiUrl: 'https://api.example.com/v1/pricing' }, logger)
-    repository.bootstrapRemoteData()
-
-    await flushRuntimePricing()
-    await flushRuntimePricing()
-
-    expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(285000)
-    expect(logger.debug).toHaveBeenCalled()
-  })
-
   it('hydrates hero.title from content backend payload', async () => {
     const logger = createLoggerSpy()
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
@@ -190,7 +129,7 @@ describe('ContentRepository', () => {
         )
       }
       return Promise.resolve(
-        new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: '275000' } }), {
+        new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: 275000 } }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' }
         })
@@ -228,7 +167,7 @@ describe('ContentRepository', () => {
         )
       }
       return Promise.resolve(
-        new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: '275000' } }), {
+        new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: 275000 } }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' }
         })

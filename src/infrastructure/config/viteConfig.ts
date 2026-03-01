@@ -1,7 +1,6 @@
 import type { ConfigPort } from '@/application/ports/Config'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
 import {
-  ensureBackendConfigBaseUrl,
   ensureBackendConfigEndpointUrl,
   resolveBackendConfigEndpoint
 } from '@/infrastructure/backend/backendConfigEndpoint'
@@ -48,53 +47,33 @@ export class ViteConfig implements ConfigPort {
     this.brandId = normalize(publicConfig.brandId)
     this.storageNamespace = normalize(publicConfig.storageNamespace)
     this.contactEmail = normalize(publicConfig.contactEmail) ?? CONTACT_EMAIL_FALLBACK
-    const allowInsecureBackend = publicConfig.allowInsecureBackend
     const endpointOptions = {
-      allowInsecureBackend,
       isDev: import.meta.env.DEV,
-      mode: import.meta.env.MODE,
       warn: (message: string) => console.warn(message)
     }
-    const backendBaseUrl = ensureBackendConfigBaseUrl(
-      normalize(publicConfig.backendBaseUrl),
-      {
-        configKey: 'backendBaseUrl',
-        ...endpointOptions
-      }
-    )
     this.inquiryApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.inquiryApiUrl),
-      baseUrl: backendBaseUrl,
-      path: '/v1/contact',
       configKey: 'inquiryApiUrl',
       ...endpointOptions
     })
     this.mailApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.mailApiUrl),
-      baseUrl: backendBaseUrl,
-      path: '/v1/mail',
       configKey: 'mailApiUrl',
       ...endpointOptions
     })
     this.pricingApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.pricingApiUrl),
-      baseUrl: backendBaseUrl,
-      path: '/v1/pricing',
       configKey: 'pricingApiUrl',
       ...endpointOptions
     })
     this.contentApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.contentApiUrl),
-      baseUrl: backendBaseUrl,
-      path: '/v1/content',
       configKey: 'contentApiUrl',
       ...endpointOptions
     })
     this.requireRemoteContent = Boolean(publicConfig.requireRemoteContent)
     this.quoteDiagnosticApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.quoteDiagnosticApiUrl),
-      baseUrl: backendBaseUrl,
-      path: '/v1/quote/diagnostic',
       configKey: 'quoteDiagnosticApiUrl',
       ...endpointOptions
     })

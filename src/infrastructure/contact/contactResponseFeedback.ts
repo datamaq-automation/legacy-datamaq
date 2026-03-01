@@ -3,30 +3,17 @@ import type { HttpResponse } from '@/application/ports/HttpClient'
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 
 const REQUEST_ID_PATHS: string[][] = [
-  ['requestId'],
-  ['request', 'id'],
-  ['meta', 'requestId']
+  ['requestId']
 ]
 const SUBMISSION_ID_PATHS: string[][] = [
-  ['submissionId'],
-  ['submission', 'id'],
-  ['meta', 'submissionId']
+  ['submissionId']
 ]
 const ERROR_CODE_PATHS: string[][] = [
-  ['errorCode'],
-  ['code'],
-  ['error', 'code']
+  ['code']
 ]
 const SUBMIT_STATUS_PATHS: string[][] = [['status']]
 const PROCESSING_STATUS_PATHS: string[][] = [['processingStatus']]
-const MESSAGE_PATHS: string[][] = [
-  ['detail'],
-  ['message'],
-  ['error'],
-  ['errorMessage'],
-  ['description'],
-  ['error', 'message']
-]
+const MESSAGE_PATHS: string[][] = [['detail']]
 const REQUEST_ID_HEADER_KEYS = ['x-request-id', 'request-id', 'x-correlation-id']
 
 export function extractContactSubmitFeedback(response: HttpResponse): ContactSubmitFeedback {
@@ -71,7 +58,8 @@ function resolveBackendMessage(
   if (fromRecord) {
     return fromRecord
   }
-  return normalizeString(text, 240)
+  void text
+  return undefined
 }
 
 function extractByPaths(

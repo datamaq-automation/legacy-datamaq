@@ -143,7 +143,7 @@ Aliases que el frontend todavia tolera:
 Regla recomendada:
 
 - FastAPI debe emitir una sola clave canonica
-- la tolerancia a aliases legacy debe considerarse transitoria
+- el frontend ya consume solo esa clave canonica
 
 ### Headers y transporte
 
@@ -183,4 +183,4 @@ Campos visibles en logs:
 - schema de contenido: `src/domain/schemas/contentSchema.ts`
 - cliente de contenido: `src/infrastructure/content/dynamicContentService.ts`
 - cliente de pricing: `src/infrastructure/content/dynamicPricingService.ts`
-- tests de contrato PHP actuales: `tests/unit/infrastructure/phpApiContracts.test.ts`
+- tests de contrato FastAPI: `tests/integration/fastApiContracts.test.ts`

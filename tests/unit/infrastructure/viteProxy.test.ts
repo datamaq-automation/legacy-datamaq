@@ -4,54 +4,29 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 describe('vite proxy config', () => {
   afterEach(() => {
     delete process.env.VITE_API_PROXY_TARGET
-    delete process.env.VITE_API_PROXY_PREFIX
-    delete process.env.VITE_API_PROXY_FORCE_LEGACY_PREFIX
     vi.resetModules()
     vi.restoreAllMocks()
   })
 
-  it('uses the local Laravel bridge on port 8899 by default', async () => {
-    process.env.VITE_API_PROXY_PREFIX = '/plantilla-www/public'
+  it('uses the local FastAPI bridge on port 8000 by default', async () => {
+    const configFactory = (await import('../../../vite.config.js')).default
+    const config = configFactory({ mode: 'development' })
+    const proxy = config.server.proxy['/api']
+    const rewrite = config.server.proxy['/api'].rewrite
+
+    expect(proxy.target).toBe('http://127.0.0.1:8000')
+    expect(rewrite('/api/v1/health')).toBe('/v1/health')
+  })
+
+  it('bridges /api/v1 to /v1 for explicit FastAPI local targets', async () => {
+    process.env.VITE_API_PROXY_TARGET = 'http://127.0.0.1:8000'
 
     const configFactory = (await import('../../../vite.config.js')).default
     const config = configFactory({ mode: 'development' })
     const rewrite = config.server.proxy['/api'].rewrite
 
     expect(rewrite('/api/v1/health')).toBe('/v1/health')
-  })
-
-  it('preserves the legacy prefix when explicitly forced for the Laravel target', async () => {
-    process.env.VITE_API_PROXY_PREFIX = '/plantilla-www/public'
-    process.env.VITE_API_PROXY_FORCE_LEGACY_PREFIX = '1'
-
-    const configFactory = (await import('../../../vite.config.js')).default
-    const config = configFactory({ mode: 'development' })
-    const rewrite = config.server.proxy['/api'].rewrite
-
-    expect(rewrite('/api/v1/health')).toBe('/plantilla-www/public/v1/health')
-  })
-
-  it('bridges /api/v1 to /v1 for the local Laravel artisan server', async () => {
-    process.env.VITE_API_PROXY_TARGET = 'http://127.0.0.1:8899'
-    process.env.VITE_API_PROXY_PREFIX = ''
-
-    const configFactory = (await import('../../../vite.config.js')).default
-    const config = configFactory({ mode: 'development' })
-    const rewrite = config.server.proxy['/api'].rewrite
-
-    expect(rewrite('/api/v1/health')).toBe('/v1/health')
-    expect(rewrite('/api/v1/quote/pdf?quote_id=test')).toBe('/v1/quote/pdf?quote_id=test')
-  })
-
-  it('bridges /api/v1 to /v1 for the local Laravel AppServ public directory', async () => {
-    process.env.VITE_API_PROXY_TARGET = 'http://localhost'
-    process.env.VITE_API_PROXY_PREFIX = '/plantilla-php/laravel/public'
-
-    const configFactory = (await import('../../../vite.config.js')).default
-    const config = configFactory({ mode: 'development' })
-    const rewrite = config.server.proxy['/api'].rewrite
-
-    expect(rewrite('/api/v1/health')).toBe('/plantilla-php/laravel/public/v1/health')
+    expect(rewrite('/api/v1/quote/Q-20260222-000321/pdf')).toBe('/v1/quote/Q-20260222-000321/pdf')
   })
 
   it('keeps warn/error in production while stripping log/info/debug calls', async () => {

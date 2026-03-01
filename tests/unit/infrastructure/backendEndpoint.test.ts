@@ -15,15 +15,15 @@ describe('backendEndpoint', () => {
   })
 
   it('detects absolute http endpoints', () => {
-    expect(isAbsoluteHttpBackendEndpoint('http://127.0.0.1:8899/v1/health')).toBe(true)
+    expect(isAbsoluteHttpBackendEndpoint('http://127.0.0.1:8000/v1/health')).toBe(true)
     expect(isAbsoluteHttpBackendEndpoint('https://api.example.com/v1/health')).toBe(true)
     expect(isAbsoluteHttpBackendEndpoint('/api/v1/health')).toBe(false)
   })
 
   it('describes direct backend endpoints', () => {
-    expect(describeBackendEndpoint('http://127.0.0.1:8899/v1/content')).toEqual({
-      configuredUrl: 'http://127.0.0.1:8899/v1/content',
-      browserUrl: 'http://127.0.0.1:8899/v1/content',
+    expect(describeBackendEndpoint('http://127.0.0.1:8000/v1/content')).toEqual({
+      configuredUrl: 'http://127.0.0.1:8000/v1/content',
+      browserUrl: 'http://127.0.0.1:8000/v1/content',
       transportMode: 'direct'
     })
   })

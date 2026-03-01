@@ -336,13 +336,13 @@ describe('QuoteApiGateway', () => {
     const gateway = new QuoteApiGateway(
       createConfig({
         quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
-        quotePdfApiUrl: '/api/v1/quote/pdf?quote_id={quote_id}'
+        quotePdfApiUrl: '/api/v1/quote/{quote_id}/pdf'
       })
     )
     await gateway.fetchQuotePdf('Q-20260222-000321')
 
     expect(fetchMock).toHaveBeenCalledWith(
-      '/api/v1/quote/pdf?quote_id=Q-20260222-000321',
+      '/api/v1/quote/Q-20260222-000321/pdf',
       expect.objectContaining({
         method: 'GET'
       })
@@ -446,15 +446,15 @@ describe('QuoteApiGateway', () => {
     const gateway = new QuoteApiGateway(
       createConfig({
         quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
-        quotePdfApiUrl: '/api/v1/quote/pdf?quote_id={quote_id}'
+        quotePdfApiUrl: '/api/v1/quote/{quote_id}/pdf'
       })
     )
 
     await expect(gateway.fetchQuotePdf('Q-20260222-000404')).rejects.toBeInstanceOf(QuoteApiError)
 
     expect(warnSpy).toHaveBeenCalledWith('[quote:gateway] descargar PDF respuesta no OK', {
-      endpoint: 'http://localhost:5173/api/v1/quote/pdf?quote_id=Q-20260222-000404',
-      pathname: '/api/v1/quote/pdf',
+      endpoint: 'http://localhost:5173/api/v1/quote/Q-20260222-000404/pdf',
+      pathname: '/api/v1/quote/Q-20260222-000404/pdf',
       transportMode: 'proxy',
       quoteId: 'Q-20260222-000404',
       status: 404,

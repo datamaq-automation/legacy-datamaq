@@ -99,4 +99,4 @@ El frontend ya esta preparado para:
 - parsear `processing_status`
 - mostrar trazabilidad en logs sin exponer datos sensibles
 
-La compatibilidad con aliases legacy debe considerarse transitoria y eliminarse cuando FastAPI quede estable.
+El frontend ya consume solo el envelope canonico de FastAPI y no debe reintroducir aliases alternativos.

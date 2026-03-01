@@ -9,23 +9,9 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-const LEGACY_LOCAL_PROXY_ALIASES = {
-  '/api/v1/health': '/api/v1/health/',
-  '/api/v1/pricing': '/api/v1/pricing/',
-  '/api/v1/content': '/api/v1/content/',
-  '/api/v1/contact': '/api/v1/contact/',
-  '/api/v1/mail': '/api/v1/mail/',
-  '/api/v1/quote/diagnostic': '/api/v1/quote/diagnostic/',
-  '/api/v1/quote/pdf': '/api/v1/quote/pdf/'
-}
-const LEGACY_LOCAL_PROXY_PREFIX = '/plantilla-www/public'
-
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const proxyTarget = process.env.VITE_API_PROXY_TARGET?.trim() || 'http://127.0.0.1:8899'
-  const configuredProxyPrefix = process.env.VITE_API_PROXY_PREFIX?.trim()
-  // AppServ exposes the local backend contract at `/api/v1/...` from the web root.
-  const proxyPrefix = resolveProxyPrefix(configuredProxyPrefix, proxyTarget)
+  const proxyTarget = process.env.VITE_API_PROXY_TARGET?.trim() || 'http://127.0.0.1:8000'
   const plugins = [vue()]
   const customOutDir = process.env.BUILD_OUT_DIR?.trim()
   const defaultOutDir = 'dist'
@@ -35,13 +21,6 @@ export default defineConfig(({ mode }) => {
     plugins.push(vueDevTools())
   }
 
-  if (configuredProxyPrefix && configuredProxyPrefix !== proxyPrefix) {
-    console.warn(
-      `[vite:proxy] Ignorando VITE_API_PROXY_PREFIX=${configuredProxyPrefix} para target local ${proxyTarget}. ` +
-        'Usa VITE_API_PROXY_FORCE_LEGACY_PREFIX=1 si realmente necesitas /plantilla-www/public.'
-    )
-  }
-
   return {
     plugins,
     server: {
@@ -49,7 +28,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: proxyTarget,
           changeOrigin: true,
-          rewrite: (requestPath) => rewriteProxyPath(requestPath, proxyPrefix, proxyTarget)
+          rewrite: (requestPath) => rewriteProxyPath(requestPath)
         }
       }
     },
@@ -90,99 +69,10 @@ export default defineConfig(({ mode }) => {
   }
 })
 
-function rewriteProxyPath(requestPath, proxyPrefix, proxyTarget) {
-  const [pathname, searchParams] = requestPath.split('?')
-  const proxyTargetPathname = rewriteForProxyTarget(pathname, proxyTarget, proxyPrefix)
-  const rewrittenPath =
-    shouldUseLegacyLocalAliases(proxyTarget, proxyPrefix) &&
-    Object.prototype.hasOwnProperty.call(LEGACY_LOCAL_PROXY_ALIASES, proxyTargetPathname)
-      ? LEGACY_LOCAL_PROXY_ALIASES[proxyTargetPathname]
-      : proxyTargetPathname
-  const normalizedPrefix = proxyPrefix.replace(/\/+$/, '')
-  const pathWithQuery = searchParams ? `${rewrittenPath}?${searchParams}` : rewrittenPath
-
-  return `${normalizedPrefix}${pathWithQuery}`
-}
-
-function shouldUseLegacyLocalAliases(proxyTarget, proxyPrefix) {
-  if (proxyPrefix) {
-    return false
-  }
-
-  try {
-    const parsedTarget = new URL(proxyTarget)
-    const normalizedHost = parsedTarget.hostname.trim().toLowerCase()
-    const normalizedPort = parsedTarget.port.trim()
-    const isLoopbackHost =
-      normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
-    const isDefaultHttpPort = normalizedPort === '' || normalizedPort === '80'
-
-    return parsedTarget.protocol === 'http:' && isLoopbackHost && isDefaultHttpPort
-  } catch {
-    return false
-  }
-}
-
-function resolveProxyPrefix(configuredProxyPrefix, proxyTarget) {
-  if (!configuredProxyPrefix) {
-    return ''
-  }
-
-  if (shouldIgnoreLegacyLocalPrefix(proxyTarget, configuredProxyPrefix)) {
-    return ''
-  }
-
-  return configuredProxyPrefix
-}
-
-function shouldIgnoreLegacyLocalPrefix(proxyTarget, proxyPrefix) {
-  if (proxyPrefix !== LEGACY_LOCAL_PROXY_PREFIX) {
-    return false
-  }
-
-  if (process.env.VITE_API_PROXY_FORCE_LEGACY_PREFIX?.trim() === '1') {
-    return false
-  }
-
-  try {
-    const parsedTarget = new URL(proxyTarget)
-    const normalizedHost = parsedTarget.hostname.trim().toLowerCase()
-    const isLoopbackHost =
-      normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
-
-    return parsedTarget.protocol === 'http:' && isLoopbackHost
-  } catch {
-    return false
-  }
-}
-
-function rewriteForProxyTarget(requestPath, proxyTarget, proxyPrefix) {
-  if (!shouldUseLaravelLocalApiPrefixBridge(proxyTarget, proxyPrefix)) {
-    return requestPath
-  }
-
+function rewriteProxyPath(requestPath) {
   if (!requestPath.startsWith('/api/v1/')) {
     return requestPath
   }
 
   return requestPath.replace('/api/v1/', '/v1/')
-}
-
-function shouldUseLaravelLocalApiPrefixBridge(proxyTarget, proxyPrefix) {
-  try {
-    const parsedTarget = new URL(proxyTarget)
-    const normalizedHost = parsedTarget.hostname.trim().toLowerCase()
-    const normalizedPort = parsedTarget.port.trim()
-    const isLoopbackHost =
-      normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
-    const usesArtisanServe = parsedTarget.protocol === 'http:' && isLoopbackHost && normalizedPort === '8899'
-    const usesLaravelPublicDir =
-      parsedTarget.protocol === 'http:' &&
-      isLoopbackHost &&
-      proxyPrefix.trim().toLowerCase().endsWith('/laravel/public')
-
-    return usesArtisanServe || usesLaravelPublicDir
-  } catch {
-    return false
-  }
 }

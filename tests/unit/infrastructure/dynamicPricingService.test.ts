@@ -28,7 +28,7 @@ describe('DynamicPricingService', () => {
 
     const service = new DynamicPricingService(
       http,
-      'http://127.0.0.1:8899/v1/pricing',
+      'http://127.0.0.1:8000/v1/pricing',
       logger,
       applySnapshot
     )
@@ -41,7 +41,7 @@ describe('DynamicPricingService', () => {
     })
     expect(infoSpy).toHaveBeenCalledWith('[backend:pricing] conexion OK', {
       resource: 'pricing',
-      endpoint: 'http://127.0.0.1:8899/v1/pricing',
+      endpoint: 'http://127.0.0.1:8000/v1/pricing',
       pathname: '/v1/pricing',
       transportMode: 'direct',
       status: 200,
@@ -75,7 +75,7 @@ describe('DynamicPricingService', () => {
 
     const service = new DynamicPricingService(
       http,
-      'http://127.0.0.1:8899/v1/pricing',
+      'http://127.0.0.1:8000/v1/pricing',
       logger,
       vi.fn()
     )
@@ -84,11 +84,11 @@ describe('DynamicPricingService', () => {
     await flushAsyncWork()
 
     expect(debugSpy).toHaveBeenCalledWith('[backend:pricing] payload sin claves reconocibles', {
-      endpoint: 'http://127.0.0.1:8899/v1/pricing',
+      endpoint: 'http://127.0.0.1:8000/v1/pricing',
       pathname: '/v1/pricing',
       transportMode: 'direct',
       payloadPreview: '{"status":"ok","data":{"foo":"bar"}}',
-      scalarKeys: ['datafoo', 'foo', 'status']
+      expectedKey: 'diagnostico_lista_2h_ars'
     })
   })
 

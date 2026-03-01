@@ -7,14 +7,12 @@ type PublicConfigStub = {
   contactFormActive?: boolean
   emailFormActive?: boolean
   analyticsEnabled?: boolean
-  backendBaseUrl?: string
   inquiryApiUrl?: string
   mailApiUrl?: string
   pricingApiUrl?: string
   contentApiUrl?: string
   quoteDiagnosticApiUrl?: string
   quotePdfApiUrl?: string
-  allowInsecureBackend?: boolean
 }
 
 describe('ViteConfig', () => {
@@ -29,7 +27,7 @@ describe('ViteConfig', () => {
       pricingApiUrl: '/api/v1/pricing',
       contentApiUrl: '/api/v1/content',
       quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
-      quotePdfApiUrl: '/api/v1/quote/pdf?quote_id={quote_id}'
+      quotePdfApiUrl: '/api/v1/quote/{quote_id}/pdf'
     })
     const config = new ViteConfig()
 
@@ -38,7 +36,7 @@ describe('ViteConfig', () => {
     expect(config.pricingApiUrl).toBe('/api/v1/pricing')
     expect(config.contentApiUrl).toBe('/api/v1/content')
     expect(config.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
-    expect(config.quotePdfApiUrl).toBe('/api/v1/quote/pdf?quote_id={quote_id}')
+    expect(config.quotePdfApiUrl).toBe('/api/v1/quote/{quote_id}/pdf')
   })
 
   it('accepts explicit https endpoints', async () => {
@@ -48,7 +46,7 @@ describe('ViteConfig', () => {
       pricingApiUrl: 'https://api.example.com/pricing',
       contentApiUrl: 'https://api.example.com/content',
       quoteDiagnosticApiUrl: 'https://api.example.com/quote/diagnostic',
-      quotePdfApiUrl: 'https://api.example.com/quote/pdf?quote_id={quote_id}'
+      quotePdfApiUrl: 'https://api.example.com/quote/{quote_id}/pdf'
     })
     const config = new ViteConfig()
 
@@ -57,20 +55,18 @@ describe('ViteConfig', () => {
     expect(config.pricingApiUrl).toBe('https://api.example.com/pricing')
     expect(config.contentApiUrl).toBe('https://api.example.com/content')
     expect(config.quoteDiagnosticApiUrl).toBe('https://api.example.com/quote/diagnostic')
-    expect(config.quotePdfApiUrl).toBe('https://api.example.com/quote/pdf?quote_id={quote_id}')
+    expect(config.quotePdfApiUrl).toBe('https://api.example.com/quote/{quote_id}/pdf')
   })
 
-  it('falls back to backendBaseUrl when direct endpoints are missing', async () => {
-    const ViteConfig = await importViteConfigWithPublicConfig({
-      backendBaseUrl: 'https://legacy.example.com'
-    })
+  it('returns undefined when direct endpoints are missing', async () => {
+    const ViteConfig = await importViteConfigWithPublicConfig({})
     const config = new ViteConfig()
 
-    expect(config.inquiryApiUrl).toBe('https://legacy.example.com/v1/contact')
-    expect(config.mailApiUrl).toBe('https://legacy.example.com/v1/mail')
-    expect(config.pricingApiUrl).toBe('https://legacy.example.com/v1/pricing')
-    expect(config.contentApiUrl).toBe('https://legacy.example.com/v1/content')
-    expect(config.quoteDiagnosticApiUrl).toBe('https://legacy.example.com/v1/quote/diagnostic')
+    expect(config.inquiryApiUrl).toBeUndefined()
+    expect(config.mailApiUrl).toBeUndefined()
+    expect(config.pricingApiUrl).toBeUndefined()
+    expect(config.contentApiUrl).toBeUndefined()
+    expect(config.quoteDiagnosticApiUrl).toBeUndefined()
     expect(config.quotePdfApiUrl).toBeUndefined()
   })
 })
@@ -84,7 +80,6 @@ async function importViteConfigWithPublicConfig(overrides: PublicConfigStub) {
       contactFormActive: true,
       emailFormActive: true,
       analyticsEnabled: false,
-      allowInsecureBackend: false,
       ...overrides
     }
   }))

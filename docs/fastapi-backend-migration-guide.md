@@ -39,7 +39,7 @@ Documento complementario ya creado:
 La recomendacion de buenas practicas para esta migracion es:
 
 - tomar `/v1/*` como contrato publico canonico
-- no usar `/v1/public/*` como convencion principal
+- considerar `/v1/public/*` eliminado del frontend y fuera del contrato objetivo
 
 Contrato objetivo recomendado:
 
@@ -73,7 +73,7 @@ Quedan fijadas estas decisiones para la migracion:
 Impacto directo:
 
 - `/v1/*` pasa a ser el contrato objetivo
-- `/v1/public/*` no debe mantenerse como compatibilidad de largo plazo
+- `/v1/public/*` fue eliminado del frontend y no debe reaparecer
 - el frontend ya no se considera congelado respecto del contrato actual de Laravel
 
 ## Normalizacion ya decidida para frontend
@@ -81,16 +81,16 @@ Impacto directo:
 Con las decisiones tomadas, el frontend debe normalizarse en estos puntos:
 
 1. usar solo `/v1/*` como contrato backend objetivo
-2. dejar de construir fallbacks con `/v1/public/*`
+2. exigir endpoints explicitos en configuracion, sin `backendBaseUrl` ni fallbacks por path
 3. derivar el PDF del cotizador desde `/v1/quote/diagnostic` hacia `/v1/quote/{quote_id}/pdf`
 4. alinear fixtures, tests y configuracion a los paths canonicos
-5. normalizar el parsing de `contact` y `mail` hacia un envelope canonical con `request_id`, `submission_id`, `status`, `processing_status`, `detail` y `code`
+5. consumir `contact` y `mail` solo con el envelope canonical `request_id`, `submission_id`, `status`, `processing_status`, `detail` y `code`
 
 Lo que ya se puede cambiar con certeza:
 
 - resolucion de endpoints en `ViteConfig`
 - derivacion de endpoint PDF en `QuoteApiGateway`
-- tests y fixtures que todavia fijan `/v1/public/*`
+- tests y fixtures alineados solo a `/v1/*`
 
 Lo que todavia depende de decision backend:
 
@@ -144,7 +144,6 @@ En entornos locales de integracion tambien consume equivalentes same-origin:
 
 Las claves backend que el frontend ya usa hoy son:
 
-- `backendBaseUrl`
 - `inquiryApiUrl`
 - `mailApiUrl`
 - `pricingApiUrl`
@@ -153,7 +152,6 @@ Las claves backend que el frontend ya usa hoy son:
 - `quoteDiagnosticApiUrl`
 - `quotePdfApiUrl`
 - `requireRemoteContent`
-- `allowInsecureBackend`
 
 Puertos de configuracion relevantes:
 
@@ -359,20 +357,14 @@ Headers y metadata que frontend intenta leer de la respuesta:
 - `request-id`
 - `x-correlation-id`
 
-Claves de body que frontend intenta leer hoy:
+Claves de body que frontend consume hoy:
 
-- `requestId`
-- `request.id`
-- `meta.requestId`
-- `errorCode`
-- `code`
-- `error.code`
+- `request_id`
+- `submission_id`
+- `status`
+- `processing_status`
 - `detail`
-- `message`
-- `error`
-- `errorMessage`
-- `description`
-- `error.message`
+- `code`
 
 Claves canonical recomendadas para FastAPI:
 
@@ -391,8 +383,8 @@ Contrato minimo de exito:
 Contrato minimo de error:
 
 - status HTTP correcto
-- `detail` o `message`
-- opcionalmente `code` o `error_code`
+- `detail`
+- `code`
 
 Contrato objetivo recomendado para FastAPI:
 
@@ -516,12 +508,12 @@ Vistas que dependen directamente del backend:
 
 ## Decision importante ya cerrada en frontend
 
-Habia una inconsistencia real entre runtime profiles y fallbacks legacy construidos desde `backendBaseUrl`.
+Habia una inconsistencia real entre runtime profiles y fallbacks construidos desde `backendBaseUrl`.
 
 Estado actual:
 
 - el frontend ya fue normalizado para converger a `/v1/*`
-- `/v1/public/*` queda como referencia historica, no como contrato objetivo
+- `/v1/public/*` fue removido del runtime del frontend
 - tests y configuracion deben seguir consolidando esa misma convencion
 
 Contrato objetivo:
@@ -570,15 +562,15 @@ Recomendacion:
 Decision operativa en frontend:
 
 - `contact` y `mail` deben converger al envelope canonical `request_id` + `submission_id` + `status` + `processing_status` + `detail` + `code`
-- la tolerancia a aliases legacy debe considerarse transitoria y eliminarse una vez consolidado FastAPI
+- el frontend ya fue normalizado para consumir solo ese envelope
 
 ## 4. Respuestas de error legibles
 
 Para que el frontend pueda mostrar errores utiles, FastAPI deberia devolver al menos:
 
 - status HTTP correcto
-- `detail` o `message`
-- `code` o `error_code` cuando aplique
+- `detail`
+- `code` cuando aplique
 - `request_id` si existe
 
 ## 5. Semantica del submit de `contact`
@@ -654,10 +646,9 @@ Para una migracion segura, tambien hay que mirar:
 
 Nota importante sobre tests actuales:
 
-- `tests/unit/infrastructure/phpApiContracts.test.ts` describe el snapshot del backend PHP actual
-- no debe tomarse como contrato objetivo final de FastAPI
-- durante la migracion conviene reemplazarlo gradualmente por una suite equivalente para FastAPI
-- esa suite base ya existe en `tests/integration/fastApiContracts.test.ts` y se ejecuta con `FASTAPI_CONTRACT_BASE_URL`
+- `tests/integration/fastApiContracts.test.ts` es la suite base de contrato para FastAPI
+- se ejecuta con `FASTAPI_CONTRACT_BASE_URL`
+- cualquier suite anterior de PHP debe considerarse retirada y fuera del contrato objetivo
 
 Conclusion:
 
