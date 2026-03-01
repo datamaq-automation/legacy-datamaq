@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataMaq Home - Tech-Focused Industrial Layout</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff8c00",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#0A192F",
+                        "navy-light": "#112240",
+                        "navy-dark": "#020c1b",
+                        "charcoal-accent": "#1a2a44",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            min-height: max(884px, 100dvh);
+        }
+        .glass-effect {
+            backdrop-filter: blur(8px);
+            background-color: rgba(10, 25, 47, 0.8);
+        }
+        .faq-item input:checked ~ .faq-content,
+        .service-card input:checked ~ .service-content {
+            max-height: 500px;
+            padding-bottom: 1.25rem;
+            opacity: 1;
+        }
+        .faq-item input:checked ~ label .icon-plus,
+        .service-card input:checked ~ label .icon-expand {
+            transform: rotate(180deg);
+        }
+        .faq-content, .service-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        .icon-plus, .icon-expand {
+            transition: transform 0.3s ease;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .brand-logo {
+            filter: grayscale(100%) brightness(0.8);
+            transition: all 0.3s ease;
+        }
+        .brand-logo:active {
+            filter: grayscale(0%) brightness(1);
+        }
+        .service-card {
+            background-color: #112240;
+            border-top: 3px solid #ff8c00;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display selection:bg-primary selection:text-white">
+<header class="sticky top-0 z-50 glass-effect border-b border-slate-700/50">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">terminal</span>
+<h1 class="text-xl font-black tracking-tight text-slate-100">DataMaq</h1>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-300">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 text-slate-300">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto pb-32">
+<section class="relative @container">
+<div class="flex min-h-[520px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-start justify-end px-6 pb-12" style='background-image: linear-gradient(rgba(10, 25, 47, 0.4), rgba(2, 12, 27, 0.95)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCpWGOeeoPJpI_wQXkCPxjBUcAmfHyz4zMWAec5gkjwKVBLZgoVmrgpufknF5enJf33ZuvOv4QRTx23TBJ3KW4h0UOjOARIRrd5S9nd-J7SAik9pYn4NeGPyS2zhnwTwveUmIH3BiJroHLYqBw32m9juU9BBHxDL-obakGlHL3u-42eygK01x0XuaW28WCumQaM800egx-ALPQEEHWavBI7FrKHmLTp2SO5Elmu7nyXGlhV8tawPiEmZblHi5thGviHKwu_pkov-w");'>
+<div class="flex flex-col gap-3">
+<span class="px-3 py-1 bg-primary/20 text-primary text-xs font-bold uppercase tracking-widest rounded-full w-fit">
+                    Expertise Industrial
+                </span>
+<h1 class="text-slate-100 text-4xl font-black leading-tight tracking-tight">
+                    Soluciones Técnicas de Alto Impacto
+                </h1>
+<p class="text-slate-400 text-base font-normal leading-relaxed max-w-[90%]">
+                    Especialistas en consultoría y servicios técnicos para la industria moderna y automatización avanzada.
+                </p>
+</div>
+<button class="flex w-full items-center justify-center rounded-xl h-14 bg-primary text-navy-dark text-base font-bold tracking-wide shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+<span>Solicitar Servicio</span>
+<span class="material-symbols-outlined ml-2">arrow_forward</span>
+</button>
+</div>
+</section>
+<section class="py-8 bg-charcoal-accent/40 border-y border-slate-800/50">
+<div class="px-6 mb-4">
+<h2 class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">Marcas que Confían en Nosotros</h2>
+</div>
+<div class="flex overflow-x-auto gap-8 px-6 hide-scrollbar items-center py-2">
+<div class="flex-shrink-0"><img alt="Brand" class="h-6 w-auto brand-logo object-contain opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz4414taB4CQG8g04ktHt9qAClryQbnTaaXrC_Kron0SRSgbw82eKMqwriHgqzKSnta5JjGJY7zHen163clWCtrLlQXu-dKTK7JN71wnNpXO_JNYJ74ScBLTiGpxj-1MiFpXBisGX223iG1rYA0pzOWc473utmVr8du8rFBN0HkY3t_YhKs-3F649cCDWKYVutKjFsoy9Pa_oyElr6DYUJaZZZIVLZN1l98vGs7aZbKueg7nOUv84dF_WW0YWviKHUA5QJ0kGsuQ"/></div>
+<div class="flex-shrink-0"><img alt="Brand" class="h-6 w-auto brand-logo object-contain opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjPH5CfJ2dfDq-GSoDOALWMt2t8NdVTkXBLZa6GcLZn6iKzHcbg851niof_I-dqMGbySU8M77ZOcidrr4XrN-AZbIfbx7FqsdhpoIgeQ3uketp_jG4byj7kCXd-y40NC4QKXinHxlAJvxk6GWB9QXo-fiRVFKoTLJptM2Ehy55e4mWQgQd5DOcFjUloSrWO53L8VMf34c4o4JC1MmDTiUICxQ2osnB8qkAQBKvoQfQ08utmWJxXIMzE9Lvreao0MDddu9nxdH1hA"/></div>
+<div class="flex-shrink-0"><img alt="Brand" class="h-5 w-auto brand-logo object-contain opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh-klq3vASLSrWws9-_0RNM2zjTjEhITai5zRX0s77CytXx2eCoRvNvu7-iFtSol83DR0F1Z99bVN79IoLio7VUSaMBLaUSecc2cZOKYQCyio_rgNHtMqOlrG3zjIXTZsCfi5U6i8vVeBmj9FJwgdIa0NwLCSX_bB3nHLCwA4NzkEPKXpr2a5np8NKThAMJ2EwkbGrFT1ipDvABvGEvLDdDxVkBE74vIifuunvPemK-XUEFIDHUJ0QPnK2kTjZjSiWtobQom9g0Q"/></div>
+<div class="flex-shrink-0"><img alt="Brand" class="h-7 w-auto brand-logo object-contain opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-zpLvvQMVwBv4-94J18909nCppxDhYEtPQUOJq8gjXrsycdQjCNR9bI9ILbTGqKWF3Ot7DY_loqKmsbKDY0o9E9mc-X9Dp4H2uVJ2vYKATr1FTUlihKalTMVehjM_IhRx4OLn1jnGf29lfnRL13o3OoQgYaU9c0fU2w1ICbtLuZjxsalgmKIRNtheDF-Y7nbqTsz5npnkuFYcpXr7y4HCfQOYpvb3ByjrJ-seFeUw7HWjb-u2k_tCMJO-PsQM3msbKlJ2t80wQQ"/></div>
+<div class="flex-shrink-0"><img alt="Brand" class="h-7 w-auto brand-logo object-contain opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnZXKHBeFFoQbZH_xYiwXfWGJ8f68MAUYhDp7riAJJauHeS7vyww5bWN2vuObnd6qay7TKXlylbw7_bHZ86Z1Uc82JgnEWmMkkMEaMZqRs9jSBW9AvX3jVXTNrvjNFjYJuYXvp-8dziXSYb8lzldINAKOiB3LG_ADPmrLT3Roh5XxF4tRgd-4IxPWsiZfaV1BgzLpvn2Dod25pm2wbG5Ou8EuG_PLI63moW84RHvb7y5jPDi2LPVhBzCiDIFT6cfFkLXEz2F4OoQ"/></div>
+<div class="flex-shrink-0"><img alt="Brand" class="h-6 w-auto brand-logo object-contain opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyx0vjjWeGfjQX7OrrurvCsj21RktxTSrrDt4fSNv5tXPCtMNAC_3d0qvAynKYOva-RWHevppMtWPJdzVBL6Q9yR2Jjha01aJrGuEIj4pkqsw2wL5ig_1rZ4kTxpYRK2cQu2qw9AbmYmp5ogZsWAVKHQuf7BZMfnhPUhAdUUJcRzWcmfeSNZDjpbtWD7P0FlumQg-2cPT5wnjkM4HpIo8h8wl8UW1Ki2K6iWm3iOAjqjKveGmcgJoLYCJzVlAn_j0iF9X0y9hduw"/></div>
+</div>
+</section>
+<section class="px-6 py-10 bg-navy-dark/50">
+<h2 class="text-slate-100 text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">verified</span>
+            Perfil Profesional
+        </h2>
+<div class="bg-navy-light/40 border border-slate-700/50 rounded-2xl p-6 shadow-xl">
+<div class="flex flex-col gap-6 items-center text-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 border-2 border-primary p-1" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBXjcIFaCnVgt1Y3HU3ryL7bKEfjFzwPfeDUXStszrScotKXab6ZjUSnqUtMVT26sqc7QKxIDar5-xH_s9Q76Yan4A8n4VipC-sHeDPhoINfnK7xW5TsRu-Y7YK4Zw3-5uhtcgd9quAHRZ2zIbzL4UPKXS9HnIA603TK35IIMa2fMZvBbNIs0DrPS91931eYGZ_mp4Leh7nQeAgcg52fxoTyq0ZYy2C7c3ZfSnI44SFNgMT9506QUUp4FDupNeDlMRrO9O9I118og");'></div>
+<div class="absolute bottom-0 right-0 bg-primary rounded-full p-1 border-2 border-navy-light">
+<span class="material-symbols-outlined text-xs text-navy-dark font-bold">check</span>
+</div>
+</div>
+<div>
+<p class="text-slate-100 text-2xl font-bold tracking-tight">Agustín Bustos</p>
+<p class="text-primary text-sm font-semibold uppercase tracking-wider mt-1">Consultor Técnico Senior</p>
+<p class="text-slate-400 text-sm mt-3 leading-relaxed">
+                        Especialista en Automatización e Ingeniería Industrial con más de 12 años optimizando procesos complejos.
+                    </p>
+</div>
+<a class="flex w-full items-center justify-center gap-2 rounded-xl h-12 bg-green-600 hover:bg-green-500 text-white text-sm font-bold transition-colors" href="https://wa.me/yournumber">
+<span class="material-symbols-outlined">chat</span>
+                    Contacto WhatsApp Directo
+                </a>
+</div>
+</div>
+</section>
+<section class="px-6 py-12 bg-navy-dark/30">
+<h2 class="text-slate-100 text-2xl font-black mb-8">Nuestros Servicios</h2>
+<div class="space-y-6">
+<div class="service-card rounded-xl overflow-hidden shadow-2xl">
+<input class="hidden" id="service-1" name="service-accordion" type="radio"/>
+<label class="block p-5 cursor-pointer active:bg-navy-light/60 transition-colors" for="service-1">
+<div class="flex items-start gap-4">
+<div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">cleaning</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-100 font-bold text-lg">Mantenimiento</h3>
+<span class="material-symbols-outlined text-primary icon-expand">expand_more</span>
+</div>
+<p class="text-slate-400 text-sm mt-1 line-clamp-1">Optimización y cuidado preventivo de activos industriales.</p>
+</div>
+</div>
+</label>
+<div class="service-content px-5 border-t border-slate-700/30">
+<ul class="pt-4 space-y-3">
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Calibración de sensores y actuadores
+                        </li>
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Diagnóstico remoto de sistemas
+                        </li>
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Planes de mantenimiento preventivo
+                        </li>
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Limpieza técnica de componentes
+                        </li>
+</ul>
+<div class="mt-6">
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                            Cotizar Servicio <span class="material-symbols-outlined text-sm">arrow_outward</span>
+</a>
+</div>
+</div>
+</div>
+<div class="service-card rounded-xl overflow-hidden shadow-2xl">
+<input class="hidden" id="service-2" name="service-accordion" type="radio"/>
+<label class="block p-5 cursor-pointer active:bg-navy-light/60 transition-colors" for="service-2">
+<div class="flex items-start gap-4">
+<div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-100 font-bold text-lg">Reparación</h3>
+<span class="material-symbols-outlined text-primary icon-expand">expand_more</span>
+</div>
+<p class="text-slate-400 text-sm mt-1 line-clamp-1">Restauración técnica de equipos y sistemas críticos.</p>
+</div>
+</div>
+</label>
+<div class="service-content px-5 border-t border-slate-700/30">
+<ul class="pt-4 space-y-3">
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Reparación de circuitos electrónicos
+                        </li>
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Sustitución de componentes críticos
+                        </li>
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Pruebas de estrés y funcionamiento
+                        </li>
+</ul>
+<div class="mt-6">
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                            Saber más <span class="material-symbols-outlined text-sm">arrow_outward</span>
+</a>
+</div>
+</div>
+</div>
+<div class="service-card rounded-xl overflow-hidden shadow-2xl">
+<input class="hidden" id="service-3" name="service-accordion" type="radio"/>
+<label class="block p-5 cursor-pointer active:bg-navy-light/60 transition-colors" for="service-3">
+<div class="flex items-start gap-4">
+<div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">insights</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-100 font-bold text-lg">Consultoría</h3>
+<span class="material-symbols-outlined text-primary icon-expand">expand_more</span>
+</div>
+<p class="text-slate-400 text-sm mt-1 line-clamp-1">Asesoramiento estratégico para procesos industriales.</p>
+</div>
+</div>
+</label>
+<div class="service-content px-5 border-t border-slate-700/30">
+<ul class="pt-4 space-y-3">
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Auditorías de eficiencia energética
+                        </li>
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Diseño de arquitectura de control
+                        </li>
+<li class="flex items-center gap-3 text-slate-300 text-sm">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                            Optimización de procesos operativos
+                        </li>
+</ul>
+<div class="mt-6">
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                            Saber más <span class="material-symbols-outlined text-sm">arrow_outward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="px-6 py-12 bg-navy-dark/40 border-y border-slate-800/50">
+<h2 class="text-slate-100 text-2xl font-black mb-8">Preguntas Frecuentes</h2>
+<div class="space-y-4">
+<div class="faq-item bg-navy-light border-l-2 border-primary/60 rounded-r-xl overflow-hidden shadow-lg">
+<input checked="" class="hidden" id="faq-1" name="faq-accordion" type="radio"/>
+<label class="flex items-center justify-between p-5 cursor-pointer active:bg-navy-light/80" for="faq-1">
+<span class="text-slate-100 font-bold text-sm leading-snug pr-4">¿Cuál es el tiempo de respuesta?</span>
+<span class="material-symbols-outlined text-primary icon-plus text-2xl">add</span>
+</label>
+<div class="faq-content px-5">
+<p class="text-slate-400 text-sm leading-relaxed border-t border-slate-800 pt-3">
+                        Nuestro equipo técnico garantiza una respuesta inicial en menos de 24 horas hábiles. Para emergencias críticas, disponemos de protocolos de intervención inmediata para minimizar paradas de planta.
+                    </p>
+</div>
+</div>
+<div class="faq-item bg-navy-light border-l-2 border-primary/60 rounded-r-xl overflow-hidden shadow-lg">
+<input class="hidden" id="faq-2" name="faq-accordion" type="radio"/>
+<label class="flex items-center justify-between p-5 cursor-pointer active:bg-navy-light/80" for="faq-2">
+<span class="text-slate-100 font-bold text-sm leading-snug pr-4">¿Cómo se determinan los costos?</span>
+<span class="material-symbols-outlined text-primary icon-plus text-2xl">add</span>
+</label>
+<div class="faq-content px-5">
+<p class="text-slate-400 text-sm leading-relaxed border-t border-slate-800 pt-3">
+                        Los costos se basan en la complejidad del proyecto, el tiempo estimado de ejecución y los recursos técnicos especializados requeridos.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<section class="px-6 py-10 bg-navy-dark">
+<div class="mb-6">
+<h2 class="text-slate-100 text-2xl font-bold">Inicia tu Proyecto</h2>
+<p class="text-slate-400 text-sm mt-1">Déjanos tus datos y nos pondremos en contacto en menos de 24hs.</p>
+</div>
+<form class="space-y-4">
+<div>
+<label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Nombre Completo</label>
+<input class="w-full bg-navy-light border-slate-700 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg h-12 text-slate-100 text-sm px-4 outline-none transition-all" placeholder="Ej: Juan Pérez" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Email Corporativo</label>
+<input class="w-full bg-navy-light border-slate-700 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg h-12 text-slate-100 text-sm px-4 outline-none transition-all" placeholder="email@empresa.com" type="email"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Mensaje</label>
+<textarea class="w-full bg-navy-light border-slate-700 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg text-slate-100 text-sm p-4 outline-none transition-all" placeholder="Cuéntanos sobre tu necesidad técnica..." rows="4"></textarea>
+</div>
+<button class="w-full bg-primary text-navy-dark font-bold h-14 rounded-xl shadow-lg active:scale-95 transition-transform uppercase tracking-widest text-sm" type="submit">
+                Enviar Solicitud
+            </button>
+</form>
+</section>
+</main>
+<a class="fixed bottom-24 right-6 z-40 size-14 bg-green-500 rounded-full flex items-center justify-center text-white shadow-2xl shadow-green-500/30" href="https://wa.me/yournumber">
+<span class="material-symbols-outlined text-3xl">chat</span>
+</a>
+<div class="fixed bottom-20 left-4 right-4 z-50 p-4 bg-navy-light border border-slate-700 rounded-2xl shadow-2xl flex flex-col gap-3">
+<p class="text-slate-300 text-xs leading-relaxed">
+        Utilizamos cookies para mejorar tu experiencia técnica en nuestro sitio. ¿Aceptas nuestra política de datos?
+    </p>
+<div class="flex gap-2">
+<button class="flex-1 h-10 rounded-lg bg-primary text-navy-dark text-xs font-bold">Aceptar</button>
+<button class="flex-1 h-10 rounded-lg border border-slate-600 text-slate-300 text-xs font-medium">Configurar</button>
+</div>
+</div>
+<nav class="fixed bottom-0 left-0 right-0 z-50 glass-effect border-t border-slate-700/50">
+<div class="flex gap-2 px-4 pb-4 pt-2 max-w-md mx-auto">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl font-fill">home</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Inicio</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined text-2xl">construction</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Servicios</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Perfil</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined text-2xl">mail</span>
+<p class="text-[10px] font-bold uppercase tracking-tighter">Contacto</p>
+</a>
+</div>
+</nav>
+
+</body></html>

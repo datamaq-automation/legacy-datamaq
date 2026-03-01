@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Navbar from '@/ui/layout/Navbar.vue'
 import Footer from '@/ui/layout/Footer.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
@@ -19,6 +20,7 @@ import { QuoteApiError, type QuoteValidationIssue } from '@/application/quote/qu
 import { buildRuntimeLogArgs } from '@/application/utils/runtimeConsole'
 import { getWhatsAppEnabled, getWhatsAppHref } from '@/ui/controllers/contactController'
 import { createDiagnosticQuote, fetchQuotePdf } from '@/ui/controllers/quoteController'
+import { saveQuoteWebSnapshot } from './quoteWebState'
 
 type BinaryChoice = boolean | null
 const QUOTE_FORM_FIELDS = [
@@ -59,6 +61,7 @@ interface QuoteDiscountView {
 }
 
 const contactCtaEnabled = getWhatsAppEnabled()
+const router = useRouter()
 const fallbackWhatsAppUrl = computed(() => getWhatsAppHref() ?? '#contacto')
 const isFallbackWhatsAppExternal = computed(() => /^https?:\/\//.test(fallbackWhatsAppUrl.value))
 
@@ -84,6 +87,7 @@ const errors = reactive<QuoteFormErrors>({})
 
 const canDownloadPdf = computed(() => Boolean(quote.value?.quote_id))
 const canOpenWhatsapp = computed(() => Boolean(quote.value?.whatsapp_url))
+const canOpenWebView = computed(() => Boolean(quote.value?.quote_id))
 const normalizedDiscounts = computed<QuoteDiscountView[]>(() => {
   const discounts = quote.value?.discounts ?? []
   return discounts.map((discount, index) => ({
@@ -137,6 +141,7 @@ async function handleGenerateQuote() {
       payload: summarizeDiagnosticQuoteRequest(payload)
     })
     quote.value = await createDiagnosticQuote(payload)
+    saveQuoteWebSnapshot(quote.value)
     logQuoteUiInfo('generar propuesta OK', {
       quote: summarizeDiagnosticQuoteResponse(quote.value)
     })
@@ -185,6 +190,20 @@ function handleOpenWhatsapp() {
     return
   }
   window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+}
+
+function handleOpenWebView() {
+  const currentQuote = quote.value
+  if (!currentQuote) {
+    return
+  }
+  saveQuoteWebSnapshot(currentQuote)
+  void router.push({
+    name: 'cotizador-web',
+    params: {
+      quoteId: currentQuote.quote_id
+    }
+  })
 }
 
 function validateForm(): boolean {
@@ -581,6 +600,14 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
+                  <button
+                    v-if="canOpenWebView"
+                    type="button"
+                    class="btn c-ui-btn c-ui-btn--outline"
+                    @click="handleOpenWebView"
+                  >
+                    Ver version web
+                  </button>
                   <button
                     v-if="canDownloadPdf"
                     type="button"

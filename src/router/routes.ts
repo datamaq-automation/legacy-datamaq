@@ -7,6 +7,7 @@ const homeMeta = metadataByName.get('home')
 const thanksMeta = metadataByName.get('thanks')
 const medicionEscobarMeta = metadataByName.get('medicion-consumo-escobar')
 const quoteMeta = metadataByName.get('cotizador')
+const quoteWebMeta = metadataByName.get('cotizador-web')
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -43,6 +44,15 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       indexable: quoteMeta?.indexable ?? true,
       name: quoteMeta?.name
+    }
+  },
+  {
+    path: quoteWebMeta?.path ?? '/cotizador/:quoteId/web',
+    name: 'cotizador-web',
+    component: () => import('@/ui/pages/QuoteWebPage.vue'),
+    meta: {
+      indexable: quoteWebMeta?.indexable ?? false,
+      name: quoteWebMeta?.name
     }
   }
 ]
