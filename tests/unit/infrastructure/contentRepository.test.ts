@@ -44,8 +44,8 @@ describe('ContentRepository', () => {
 
     new ContentRepository(
       {
-        pricingApiUrl: 'https://api.example.com/v1/public/pricing',
-        contentApiUrl: 'https://api.example.com/v1/public/content'
+        pricingApiUrl: 'https://api.example.com/v1/pricing',
+        contentApiUrl: 'https://api.example.com/v1/content'
       },
       createLoggerSpy()
     )
@@ -90,7 +90,7 @@ describe('ContentRepository', () => {
     )
 
     const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
       logger
     )
     repository.bootstrapRemoteData()
@@ -126,7 +126,7 @@ describe('ContentRepository', () => {
     )
 
     const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
       logger
     )
     repository.bootstrapRemoteData()
@@ -161,7 +161,7 @@ describe('ContentRepository', () => {
       )
     )
 
-    const repository = new ContentRepository({ pricingApiUrl: 'https://api.example.com/v1/public/pricing' }, logger)
+    const repository = new ContentRepository({ pricingApiUrl: 'https://api.example.com/v1/pricing' }, logger)
     repository.bootstrapRemoteData()
 
     await flushRuntimePricing()
@@ -199,7 +199,7 @@ describe('ContentRepository', () => {
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/public/content'
+        contentApiUrl: 'https://api.example.com/v1/content'
       },
       logger
     )
@@ -209,7 +209,7 @@ describe('ContentRepository', () => {
 
     expect(repository.getHeroContent().title).toBe('Titulo remoto por marca')
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://api.example.com/v1/public/content',
+      'https://api.example.com/v1/content',
       expect.objectContaining({ method: 'GET' })
     )
     expect(logger.debug).toHaveBeenCalled()
@@ -237,7 +237,7 @@ describe('ContentRepository', () => {
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/public/content'
+        contentApiUrl: 'https://api.example.com/v1/content'
       },
       logger
     )
@@ -281,7 +281,7 @@ describe('ContentRepository', () => {
 
     const remoteRepository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/public/content'
+        contentApiUrl: 'https://api.example.com/v1/content'
       },
       logger
     )
@@ -304,7 +304,7 @@ describe('ContentRepository', () => {
     )
 
     const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
       logger
     )
     repository.bootstrapRemoteData()
@@ -326,7 +326,7 @@ describe('ContentRepository', () => {
     )
 
     const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/public/pricing' },
+      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
       logger
     )
     repository.bootstrapRemoteData()
@@ -347,7 +347,7 @@ describe('ContentRepository', () => {
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/public/content',
+        contentApiUrl: 'https://api.example.com/v1/content',
         requireRemoteContent: true
       },
       logger
@@ -373,7 +373,7 @@ describe('ContentRepository', () => {
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/public/content',
+        contentApiUrl: 'https://api.example.com/v1/content',
         requireRemoteContent: true
       },
       logger
@@ -414,7 +414,7 @@ describe('ContentRepository', () => {
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/public/content',
+        contentApiUrl: 'https://api.example.com/v1/content',
         requireRemoteContent: true
       },
       logger

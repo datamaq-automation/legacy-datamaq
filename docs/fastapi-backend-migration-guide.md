@@ -1,0 +1,671 @@
+# FastAPI Backend Migration Guide
+
+Estado: documento vivo
+Objetivo: servir como referencia principal para migrar el backend actual a FastAPI sin romper el frontend
+
+## Nombre recomendado del archivo
+
+El nombre recomendado para este documento maestro es:
+
+`docs/fastapi-backend-migration-guide.md`
+
+Motivo:
+
+- es estable
+- describe claramente el objetivo
+- no depende de una fecha
+- funciona mejor como documento vivo que se va actualizando durante la migracion
+
+Convencion recomendada:
+
+- usar nombres sin fecha para documentos vivos
+- usar sufijo con fecha solo para snapshots o informes puntuales
+
+Ejemplos:
+
+- documento vivo: `docs/fastapi-backend-migration-guide.md`
+- snapshot puntual: `docs/frontend-to-backend-verification-2026-03-01.md`
+
+## Decision recomendada de paths
+
+La recomendacion de buenas practicas para esta migracion es:
+
+- tomar `/v1/*` como contrato publico canonico
+- no usar `/v1/public/*` como convencion principal
+
+Contrato objetivo recomendado:
+
+- `/v1/health`
+- `/v1/content`
+- `/v1/pricing`
+- `/v1/contact`
+- `/v1/mail`
+- `/v1/quote/diagnostic`
+- `/v1/quote/pdf?quote_id={quote_id}`
+
+Motivo:
+
+- `public` es redundante si el host ya representa la API publica
+- el path debe describir el recurso o caso de uso, no el nivel de exposicion
+- una convencion corta y estable reduce friccion en frontend, tests, proxies y documentacion
+
+Regla recomendada:
+
+- publico: `/v1/*`
+- interno o administrativo, si alguna vez existe: `/v1/internal/*` o `/v1/admin/*`
+
+## Decisiones ya tomadas
+
+Quedan fijadas estas decisiones para la migracion:
+
+1. se acepta normalizar contratos backend y adaptar el frontend en consecuencia
+2. el corte a FastAPI sera directo, sin mantener rutas viejas
+3. se aprovecha la migracion para redefinir la semantica del submit de `contact`
+
+Impacto directo:
+
+- `/v1/*` pasa a ser el contrato objetivo
+- `/v1/public/*` no debe mantenerse como compatibilidad de largo plazo
+- el frontend ya no se considera congelado respecto del contrato actual de Laravel
+
+## Normalizacion ya decidida para frontend
+
+Con las decisiones tomadas, el frontend debe normalizarse en estos puntos:
+
+1. usar solo `/v1/*` como contrato backend objetivo
+2. dejar de construir fallbacks con `/v1/public/*`
+3. derivar el PDF del cotizador desde `/v1/quote/diagnostic` hacia `/v1/quote/{quote_id}/pdf`
+4. alinear fixtures, tests y configuracion a los paths canonicos
+5. preparar el parsing de respuestas para un contrato canonical nuevo cuando se defina FastAPI
+
+Lo que ya se puede cambiar con certeza:
+
+- resolucion de endpoints en `ViteConfig`
+- derivacion de endpoint PDF en `QuoteApiGateway`
+- tests y fixtures que todavia fijan `/v1/public/*`
+
+Lo que todavia depende de decision backend:
+
+- envelope final de exito y error para `contact` y `mail`
+- uso final de `200/201` vs `202`
+
+## Resumen del repositorio
+
+Este repositorio es un frontend Vue 3 + Vite multi-target.
+
+Targets declarados en `README.md`:
+
+- `datamaq`
+- `upp`
+- `example`
+- `e2e`
+
+La configuracion runtime centralizada vive en:
+
+- `src/infrastructure/content/runtimeProfiles.json`
+
+El frontend resuelve dependencias de backend principalmente desde:
+
+- `src/infrastructure/config/publicConfig.ts`
+- `src/infrastructure/config/viteConfig.ts`
+- `src/di/container.ts`
+
+## Superficie actual de backend consumida por el frontend
+
+El frontend depende hoy de estas capacidades backend:
+
+- `GET /v1/health`
+- `GET /v1/content`
+- `GET /v1/pricing`
+- `POST /v1/contact`
+- `POST /v1/mail`
+- `POST /v1/quote/diagnostic` o `POST /v1/public/quote/diagnostic`
+- `GET /v1/quote/pdf?quote_id={quote_id}` o endpoint derivado desde quote diagnostic
+
+En entornos locales de integracion tambien consume equivalentes same-origin:
+
+- `/api/v1/health`
+- `/api/v1/content`
+- `/api/v1/pricing`
+- `/api/v1/contact`
+- `/api/v1/mail`
+- `/api/v1/quote/diagnostic`
+- `/api/v1/quote/pdf?quote_id={quote_id}`
+
+## Configuracion runtime que debe preservarse
+
+Las claves backend que el frontend ya usa hoy son:
+
+- `backendBaseUrl`
+- `inquiryApiUrl`
+- `mailApiUrl`
+- `pricingApiUrl`
+- `contentApiUrl`
+- `healthApiUrl`
+- `quoteDiagnosticApiUrl`
+- `quotePdfApiUrl`
+- `requireRemoteContent`
+- `allowInsecureBackend`
+
+Puertos de configuracion relevantes:
+
+- `src/application/ports/Config.ts`
+- `src/infrastructure/config/publicConfig.ts`
+- `src/infrastructure/config/viteConfig.ts`
+
+Conclusion operativa:
+
+- cambiar Laravel por FastAPI no exige cambiar el wiring base del frontend si se preservan estas claves
+- los contratos HTTP si pueden normalizarse, porque ya esta aceptada la adaptacion del frontend
+
+## Contratos backend que el frontend ya espera
+
+## 1. Health
+
+Fuente principal:
+
+- `src/infrastructure/health/probeBackendHealth.ts`
+
+Endpoint esperado:
+
+- `healthApiUrl`
+
+Headers enviados:
+
+- `Accept: application/json`
+
+Campos de respuesta utilizados por frontend:
+
+- `status`
+- `service`
+- `brand_id` o `brandId`
+- `version`
+- `timestamp`
+
+Comportamiento esperado:
+
+- `200` indica backend disponible
+- `status: "ok"` se usa como metadata observable
+- si falla, frontend registra `network-error` o `http-error`
+
+## 2. Content
+
+Fuentes principales:
+
+- `src/infrastructure/content/contentRepository.ts`
+- `src/infrastructure/content/dynamicContentService.ts`
+- `src/domain/schemas/contentSchema.ts`
+
+Endpoint esperado:
+
+- `contentApiUrl`
+
+Headers enviados:
+
+- `Accept: application/json, text/plain;q=0.9, */*;q=0.8`
+
+Contrato minimo:
+
+- respuesta HTTP `200`
+- payload JSON utilizable
+
+Contrato ideal:
+
+- objeto con metadata superior
+- contenido real dentro de `data`
+
+Forma de contenido que el frontend valida:
+
+- `hero`
+- `services`
+- `about`
+- `profile`
+- `navbar`
+- `footer`
+- `legal`
+- `contact`
+- `consent`
+- `decisionFlow`
+- `thanks`
+
+Fallback tolerado por frontend:
+
+- si no hay snapshot completo, igual puede aprovechar `hero.title`
+
+## 3. Pricing
+
+Fuentes principales:
+
+- `src/infrastructure/content/dynamicPricingService.ts`
+
+Endpoint esperado:
+
+- `pricingApiUrl`
+
+Headers enviados:
+
+- `Accept: application/json, text/plain;q=0.9, */*;q=0.8`
+
+Contrato minimo util:
+
+- payload que contenga algun valor reconocible para precio comercial
+
+Alias de clave que hoy reconoce frontend:
+
+- `diagnostico_lista_2h_ars`
+- `visitaDiagnosticoHasta2hARS`
+- `visita_diagnostico_hasta2h_ars`
+- `visita_diagnostico_hasta_2h_ars`
+- `visita_diagnostico_2h_ars`
+- `visita_diagnostico_2h`
+- `visita_diagnostico_ars`
+
+Observacion:
+
+- FastAPI no necesita mantener todos esos aliases si el contrato se estabiliza
+- mientras dure la migracion conviene mantener al menos `diagnostico_lista_2h_ars`
+
+## 4. Contact
+
+Fuentes principales:
+
+- `src/application/dto/contact.ts`
+- `src/application/validation/contactSchema.ts`
+- `src/application/contact/mappers/contactPayloadMapper.ts`
+- `src/infrastructure/contact/contactPayloadBuilder.ts`
+- `src/infrastructure/contact/contactResponseFeedback.ts`
+- `src/infrastructure/contact/contactApiGateway.ts`
+
+Endpoint esperado:
+
+- `inquiryApiUrl`
+
+Validacion funcional en frontend para canal `contact`:
+
+- requiere `email` o `phone`
+- `comment` es opcional
+
+Payload de dominio previo al backend:
+
+```json
+{
+  "name": "string",
+  "email": "string opcional",
+  "phone": "string opcional",
+  "company": "string opcional",
+  "firstName": "string opcional",
+  "lastName": "string opcional",
+  "geographicLocation": "string opcional",
+  "comment": "string",
+  "pageLocation": "string",
+  "trafficSource": "string",
+  "userAgent": "string",
+  "createdAt": "string ISO",
+  "attribution": {
+    "utmSource": "string opcional",
+    "utmMedium": "string opcional",
+    "utmCampaign": "string opcional",
+    "utmTerm": "string opcional",
+    "utmContent": "string opcional",
+    "gclid": "string opcional"
+  }
+}
+```
+
+Payload backend efectivo que hoy se envia:
+
+```json
+{
+  "name": "string",
+  "email": "string opcional",
+  "message": "string",
+  "custom_attributes": {
+    "first_name": "string opcional",
+    "last_name": "string opcional",
+    "company": "string opcional",
+    "phone": "string opcional",
+    "geographic_location": "string opcional",
+    "comment": "string opcional",
+    "message": "string opcional"
+  },
+  "meta": {
+    "page_location": "string",
+    "traffic_source": "string",
+    "user_agent": "string",
+    "created_at": "string ISO"
+  },
+  "attribution": {
+    "utmSource": "string opcional",
+    "utmMedium": "string opcional",
+    "utmCampaign": "string opcional",
+    "utmTerm": "string opcional",
+    "utmContent": "string opcional",
+    "gclid": "string opcional"
+  }
+}
+```
+
+Headers y metadata que frontend intenta leer de la respuesta:
+
+- `x-request-id`
+- `request-id`
+- `x-correlation-id`
+
+Claves de body que frontend intenta leer:
+
+- `requestId`
+- `request.id`
+- `meta.requestId`
+- `errorCode`
+- `code`
+- `error.code`
+- `detail`
+- `message`
+- `error`
+- `errorMessage`
+- `description`
+- `error.message`
+
+Contrato minimo de exito:
+
+- status HTTP `2xx`
+- idealmente `request_id` o header equivalente
+
+Contrato minimo de error:
+
+- status HTTP correcto
+- `detail` o `message`
+- opcionalmente `code` o `error_code`
+
+Contrato objetivo recomendado para FastAPI:
+
+```json
+{
+  "request_id": "string",
+  "status": "accepted | completed | error",
+  "processing_status": "accepted | completed | failed",
+  "detail": "string opcional",
+  "code": "string opcional"
+}
+```
+
+## 5. Mail
+
+Fuentes principales:
+
+- mismas que `contact`
+- mismo caso de uso con otro canal en `src/di/container.ts`
+
+Endpoint esperado:
+
+- `mailApiUrl`
+
+Validacion funcional en frontend para canal `mail`:
+
+- `email` obligatorio
+- `comment` obligatorio
+- `comment` minimo 10 caracteres
+
+Observacion:
+
+- FastAPI puede reutilizar gran parte del contrato de `contact`
+- pero `mail` no tiene la misma regla de validacion que `contact`
+- conviene que comparta el mismo envelope de respuesta que `contact`
+
+## 6. Quote
+
+Fuentes principales:
+
+- `src/application/dto/quote.ts`
+- `src/infrastructure/quote/quoteApiGateway.ts`
+- `src/ui/pages/QuotePage.vue`
+
+Endpoints esperados:
+
+- `quoteDiagnosticApiUrl`
+- `quotePdfApiUrl`
+
+Request para generar propuesta:
+
+```json
+{
+  "company": "string",
+  "contact_name": "string",
+  "locality": "string",
+  "scheduled": true,
+  "access_ready": true,
+  "safe_window_confirmed": true,
+  "bureaucracy": "low | medium | high",
+  "email": "string opcional",
+  "phone": "string opcional",
+  "notes": "string opcional"
+}
+```
+
+Response esperada para generar propuesta:
+
+```json
+{
+  "quote_id": "string",
+  "list_price_ars": 0,
+  "discounts": [
+    {
+      "code": "string",
+      "label": "string",
+      "amount_ars": 0
+    }
+  ],
+  "discount_pct": 0,
+  "discount_total_ars": 0,
+  "final_price_ars": 0,
+  "deposit_pct": 0,
+  "deposit_ars": 0,
+  "valid_until": "string ISO",
+  "whatsapp_message": "string",
+  "whatsapp_url": "string"
+}
+```
+
+PDF:
+
+- frontend admite `quotePdfApiUrl` explicito con template `{quote_id}`
+- si no existe, deriva el endpoint a partir de `quoteDiagnosticApiUrl`
+- intenta leer `Content-Disposition` para el nombre de archivo
+- acepta `filename*` en UTF-8
+
+## Puntos de integracion frontend que no deben romperse
+
+Los puntos de consumo backend se instancian desde:
+
+- `src/di/container.ts`
+
+La logica principal esta distribuida asi:
+
+- salud backend: `src/infrastructure/health/probeBackendHealth.ts`
+- contenido remoto: `src/infrastructure/content/dynamicContentService.ts`
+- pricing remoto: `src/infrastructure/content/dynamicPricingService.ts`
+- submit contacto: `src/application/use-cases/submitContact.ts`
+- gateway contacto/mail: `src/infrastructure/contact/contactApiGateway.ts`
+- gateway cotizador: `src/infrastructure/quote/quoteApiGateway.ts`
+
+Vistas que dependen directamente del backend:
+
+- `src/ui/pages/HomePage.vue`
+- `src/ui/pages/MedicionConsumoEscobar.vue`
+- `src/ui/pages/QuotePage.vue`
+- `src/ui/views/ThanksView.vue`
+
+## Decision importante que hoy esta inconsistente en el codigo
+
+Hay una inconsistencia real entre runtime profiles y fallback por `backendBaseUrl`.
+
+En `runtimeProfiles.json` hoy aparecen rutas directas como:
+
+- `/v1/content`
+- `/v1/pricing`
+- `/v1/quote/diagnostic`
+
+Pero en `ViteConfig` los fallbacks con `backendBaseUrl` construyen:
+
+- `/v1/public/content`
+- `/v1/public/pricing`
+- `/v1/public/quote/diagnostic`
+
+Esto significa que antes de migrar a FastAPI conviene decidir una sola convencion de paths publicos.
+
+Decision recomendada para cerrar esta inconsistencia:
+
+- preservar y consolidar `/v1/*` como contrato objetivo
+- eliminar `/v1/public/*` del contrato final
+- adaptar frontend, tests y configuracion al corte directo
+
+Si no se decide, puede pasar que:
+
+- produccion funcione con una convencion
+- integracion local use otra
+- tests y runtime queden desalineados
+
+## Requisitos no negociables para FastAPI
+
+## 1. CORS de navegador
+
+Para entornos browser cross-origin, FastAPI debe responder correctamente con CORS en:
+
+- `GET`
+- `POST`
+- `OPTIONS`
+
+En especial para:
+
+- `/v1/contact`
+- `/v1/mail`
+
+## 2. Correlacion por request id
+
+FastAPI deberia emitir y exponer un `request id` consistente.
+
+Opciones compatibles con el frontend actual:
+
+- header `X-Request-Id`
+- header `Request-Id`
+- header `X-Correlation-Id`
+- body `request_id` o equivalente legible
+
+## 3. Contratos JSON estables
+
+El frontend ya tolera cierta variacion de nombres en `contact`, pero no conviene ampliar esa variacion.
+
+Recomendacion:
+
+- definir una sola forma canonical por endpoint
+- no mantener compatibilidad temporal innecesaria si el corte sera directo
+- adaptar frontend y tests al contrato canonical nuevo
+
+## 4. Respuestas de error legibles
+
+Para que el frontend pueda mostrar errores utiles, FastAPI deberia devolver al menos:
+
+- status HTTP correcto
+- `detail` o `message`
+- `code` o `error_code` cuando aplique
+- `request_id` si existe
+
+## 5. Semantica del submit de `contact`
+
+La semantica actual puede redefinirse en FastAPI.
+
+Recomendacion:
+
+- no usar `202` por inercia
+- elegir el status code segun el modelo real de procesamiento
+
+Regla recomendada:
+
+- si el procesamiento real termina antes de responder: `200` o `201`
+- si el procesamiento real continua fuera de banda: `202`
+
+En ambos casos conviene devolver:
+
+- `request_id`
+- `status`
+- `processing_status`
+
+## Recomendacion de estructura FastAPI
+
+Una estructura razonable para reemplazar Laravel sin romper el frontend seria:
+
+- router `health`
+- router `content`
+- router `pricing`
+- router `contact`
+- router `mail`
+- router `quote`
+- middleware de CORS
+- middleware de request id
+- capa de settings para mapear variables de entorno
+- capa de servicios para integraciones externas
+
+## Checklist de migracion backend
+
+Antes de cambiar el endpoint productivo a FastAPI, validar:
+
+1. que todos los endpoints configurados en `runtimeProfiles.json` sigan respondiendo
+2. que la convencion final de paths quede definida y reflejada en `ViteConfig`
+3. que `contact` preserve CORS, `OPTIONS`, request id y shape de error
+4. que `mail` preserve validacion diferenciada respecto de `contact`
+5. que `content` siga entregando un `data` compatible con `AppContentSchema`
+6. que `pricing` siga entregando al menos una clave reconocible para precio
+7. que `quote` preserve response JSON y descarga PDF con filename
+8. que `integration` y `e2e` queden alineados con el backend local de FastAPI
+9. que `contact` y `mail` usen el nuevo status code de forma consistente con su modelo real
+
+## Cobertura de este documento
+
+Este documento contiene la mayor parte de la informacion funcional y contractual que el frontend necesita del backend.
+
+Pero no reemplaza por completo a las fuentes de verdad del repositorio.
+
+Para una migracion segura, tambien hay que mirar:
+
+- configuracion runtime: `src/infrastructure/content/runtimeProfiles.json`
+- configuracion expuesta al frontend: `src/infrastructure/config/publicConfig.ts`
+- resolucion final de endpoints: `src/infrastructure/config/viteConfig.ts`
+- DTOs de `contact`: `src/application/dto/contact.ts`
+- validacion frontend de `contact` y `mail`: `src/application/validation/contactSchema.ts`
+- gateway de `contact` y parsing de respuestas: `src/infrastructure/contact/*.ts`
+- DTOs de `quote`: `src/application/dto/quote.ts`
+- gateway de `quote`: `src/infrastructure/quote/quoteApiGateway.ts`
+- shape del contenido remoto: `src/domain/schemas/contentSchema.ts`
+- tests que fijan contrato observable: `tests/unit/infrastructure/*.test.ts`
+
+Conclusion:
+
+- este archivo ya sirve como documento maestro para la migracion
+- pero el source of truth final sigue siendo codigo + tests
+- si la migracion avanza, conviene seguir enriqueciendo este documento en lugar de duplicar informacion dispersa
+
+## Preguntas abiertas
+
+## 1. Semantica final de `contact` y `mail`
+
+Falta definir si FastAPI va a procesar `contact` y `mail` de forma:
+
+- sincronica
+- asincronica con cola o job
+
+Esta decision define:
+
+- `200/201` vs `202`
+- el valor de `processing_status`
+- el nivel de trazabilidad necesario post-respuesta
+
+## 2. Estrategia documental futura
+
+Si este documento crece demasiado, la division natural seria:
+
+- `docs/fastapi-backend-migration-guide.md`
+- `docs/fastapi-contact-contract.md`
+- `docs/fastapi-content-pricing-contract.md`
+- `docs/fastapi-quote-contract.md`
+
+Por ahora conviene mantener un solo documento maestro.

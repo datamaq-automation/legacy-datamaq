@@ -11,6 +11,10 @@ Frontend Vue 3 + Vite con configuracion multi-target desde un solo repositorio.
 
 Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfiles.json`.
 
+## Documentacion
+
+- Guia principal para migracion de backend a FastAPI: `docs/fastapi-backend-migration-guide.md`
+
 ## Comandos
 
 ```bash

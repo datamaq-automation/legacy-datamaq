@@ -176,8 +176,8 @@ export class QuoteApiGateway implements QuoteGateway {
       return buildQuotePdfUrlFromTemplate(explicitPdfEndpoint, normalizedQuoteId)
     }
     return endpoint
-      .replace(/\/v1\/public\/quote\/diagnostic\/?$/, '')
-      .concat(`/v1/public/quote/${encodeURIComponent(normalizedQuoteId)}/pdf`)
+      .replace(/\/v1\/quote\/diagnostic\/?$/, '')
+      .concat(`/v1/quote/${encodeURIComponent(normalizedQuoteId)}/pdf`)
   }
 }
 

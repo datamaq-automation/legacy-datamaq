@@ -12,7 +12,7 @@ describe('backendConfigEndpoint', () => {
       resolveBackendConfigEndpoint({
         directUrl: '/api/v1/content',
         baseUrl: 'https://legacy.example.com',
-        path: '/v1/public/content',
+        path: '/v1/content',
         configKey: 'contentApiUrl',
         allowInsecureBackend: false,
         isDev: true
@@ -25,7 +25,7 @@ describe('backendConfigEndpoint', () => {
       resolveBackendConfigEndpoint({
         directUrl: 'https://api.example.com/v1/pricing',
         baseUrl: undefined,
-        path: '/v1/public/pricing',
+        path: '/v1/pricing',
         configKey: 'pricingApiUrl',
         allowInsecureBackend: false,
         isDev: false

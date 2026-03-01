@@ -68,9 +68,9 @@ describe('ViteConfig', () => {
 
     expect(config.inquiryApiUrl).toBe('https://legacy.example.com/v1/contact')
     expect(config.mailApiUrl).toBe('https://legacy.example.com/v1/mail')
-    expect(config.pricingApiUrl).toBe('https://legacy.example.com/v1/public/pricing')
-    expect(config.contentApiUrl).toBe('https://legacy.example.com/v1/public/content')
-    expect(config.quoteDiagnosticApiUrl).toBe('https://legacy.example.com/v1/public/quote/diagnostic')
+    expect(config.pricingApiUrl).toBe('https://legacy.example.com/v1/pricing')
+    expect(config.contentApiUrl).toBe('https://legacy.example.com/v1/content')
+    expect(config.quoteDiagnosticApiUrl).toBe('https://legacy.example.com/v1/quote/diagnostic')
     expect(config.quotePdfApiUrl).toBeUndefined()
   })
 })

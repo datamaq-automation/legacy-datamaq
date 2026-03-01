@@ -79,14 +79,14 @@ export class ViteConfig implements ConfigPort {
     this.pricingApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.pricingApiUrl),
       baseUrl: backendBaseUrl,
-      path: '/v1/public/pricing',
+      path: '/v1/pricing',
       configKey: 'pricingApiUrl',
       ...endpointOptions
     })
     this.contentApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.contentApiUrl),
       baseUrl: backendBaseUrl,
-      path: '/v1/public/content',
+      path: '/v1/content',
       configKey: 'contentApiUrl',
       ...endpointOptions
     })
@@ -94,7 +94,7 @@ export class ViteConfig implements ConfigPort {
     this.quoteDiagnosticApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.quoteDiagnosticApiUrl),
       baseUrl: backendBaseUrl,
-      path: '/v1/public/quote/diagnostic',
+      path: '/v1/quote/diagnostic',
       configKey: 'quoteDiagnosticApiUrl',
       ...endpointOptions
     })

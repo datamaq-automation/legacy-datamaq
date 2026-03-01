@@ -9,7 +9,7 @@ function createConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
     inquiryApiUrl: undefined,
     mailApiUrl: undefined,
     pricingApiUrl: undefined,
-    quoteDiagnosticApiUrl: 'https://api.example.com/v1/public/quote/diagnostic',
+    quoteDiagnosticApiUrl: 'https://api.example.com/v1/quote/diagnostic',
     quotePdfApiUrl: undefined,
     contactEmail: undefined,
     contactFormActive: true,
@@ -86,8 +86,8 @@ describe('QuoteApiGateway', () => {
     expect(result.quote_id).toBe('Q-20260222-000111')
     expect(fetch).toHaveBeenCalledTimes(1)
     expect(infoSpy).toHaveBeenCalledWith('[quote:gateway] generar propuesta OK', {
-      endpoint: 'https://api.example.com/v1/public/quote/diagnostic',
-      pathname: '/v1/public/quote/diagnostic',
+      endpoint: 'https://api.example.com/v1/quote/diagnostic',
+      pathname: '/v1/quote/diagnostic',
       transportMode: 'direct',
       status: 200,
       quote: {
@@ -308,8 +308,8 @@ describe('QuoteApiGateway', () => {
     expect(result.blob.type).toBe('application/pdf')
     expect(result.filename).toBe('quote-Q-20260222-000001.pdf')
     expect(infoSpy).toHaveBeenCalledWith('[quote:gateway] descargar PDF OK', {
-      endpoint: 'https://api.example.com/v1/public/quote/Q-20260222-000001/pdf',
-      pathname: '/v1/public/quote/Q-20260222-000001/pdf',
+      endpoint: 'https://api.example.com/v1/quote/Q-20260222-000001/pdf',
+      pathname: '/v1/quote/Q-20260222-000001/pdf',
       transportMode: 'direct',
       status: 200,
       download: {
