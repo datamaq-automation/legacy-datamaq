@@ -32,11 +32,49 @@ npm run test:contracts:fastapi
 npm run test:e2e:smoke
 ```
 
-`npm run build:local` limpia solo los artefactos del frontend en `C:\AppServ\www`, compila ahi y fuerza los endpoints backend a `http://127.0.0.1:8899/v1/...`.
+`npm run build:local` limpia solo los artefactos del frontend en `C:\AppServ\www`, compila ahi en modo `local-preview` y fuerza los endpoints backend a `http://127.0.0.1:8899/v1/...`.
+
+## Flujo Local Recomendado
+
+Para desarrollo interactivo:
+
+```bash
+npm run dev
+```
+
+- usa el perfil local de integracion
+- mantiene las llamadas API detras de `/api/v1/*`
+- deja el proxy de Vite resolver el backend local
+
+Para preview local compilado sobre Apache/AppServ:
+
+```bash
+npm run build:local
+```
+
+- limpia solo los artefactos del frontend en `C:\AppServ\www`
+- genera el bundle directamente en `C:\AppServ\www`
+- aplica politica `local-preview`
+- permite `https://` y solo `http://localhost...` o `http://127.0.0.1...`
+- por defecto apunta al backend `http://127.0.0.1:8899`
+
+Overrides disponibles:
+
+```powershell
+$env:LOCAL_BUILD_OUT_DIR='C:\AppServ\www\mi-sitio'
+$env:LOCAL_BACKEND_BASE_URL='http://127.0.0.1:8899'
+```
+
+Ejemplos:
+
+```bash
+npm run build:local
+npm run build:local -- upp
+```
+
+`npm run build -- <target>` sigue reservado para el build estandar del proyecto. No usa la politica `local-preview`.
 
 ## CI/CD
 
 - CI: `.github/workflows/ci-quality.yml`
 - CD FTPS: `.github/workflows/ci-cd-ftps.yml`
-
-Runbook: `docs/multi-target-deploy-runbook.md`.

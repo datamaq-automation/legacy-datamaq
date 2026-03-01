@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
   ensureBackendConfigEndpointUrl,
-  resolveBackendConfigEndpoint
+  resolveBackendConfigEndpoint,
+  resolveBackendEndpointPolicyMode
 } from '@/infrastructure/backend/backendConfigEndpoint'
 
 describe('backendConfigEndpoint', () => {
@@ -23,6 +24,17 @@ describe('backendConfigEndpoint', () => {
         isDev: false
       })
     ).toBe('https://api.example.com/v1/pricing')
+  })
+
+  it('preserves loopback http endpoints when policy mode is local-preview', () => {
+    expect(
+      resolveBackendConfigEndpoint({
+        directUrl: 'http://127.0.0.1:8899/v1/pricing',
+        configKey: 'pricingApiUrl',
+        isDev: false,
+        policyMode: 'local-preview'
+      })
+    ).toBe('http://127.0.0.1:8899/v1/pricing')
   })
 
   it('returns undefined when direct endpoint is missing', () => {
@@ -49,5 +61,60 @@ describe('backendConfigEndpoint', () => {
     expect(warn).toHaveBeenCalledWith(
       '[config] El campo contentApiUrl debe comenzar con "https://" en produccion. Valor recibido: http://api.example.com/v1/content'
     )
+  })
+
+  it('accepts loopback http endpoints in local-preview mode', () => {
+    expect(
+      ensureBackendConfigEndpointUrl({
+        value: 'http://127.0.0.1:8899/v1/content',
+        configKey: 'contentApiUrl',
+        isDev: false,
+        policyMode: 'local-preview'
+      })
+    ).toBe('http://127.0.0.1:8899/v1/content')
+
+    expect(
+      ensureBackendConfigEndpointUrl({
+        value: 'http://localhost:8899/v1/content',
+        configKey: 'contentApiUrl',
+        isDev: false,
+        policyMode: 'local-preview'
+      })
+    ).toBe('http://localhost:8899/v1/content')
+  })
+
+  it('rejects arbitrary http hosts in local-preview mode', () => {
+    const warn = vi.fn()
+
+    expect(
+      ensureBackendConfigEndpointUrl({
+        value: 'http://192.168.1.20:8899/v1/content',
+        configKey: 'contentApiUrl',
+        isDev: false,
+        policyMode: 'local-preview',
+        warn
+      })
+    ).toBeUndefined()
+
+    expect(warn).toHaveBeenCalledWith(
+      '[config] El campo contentApiUrl debe comenzar con "https://" o apuntar a loopback local ("http://localhost" o "http://127.0.0.1") en local-preview. Valor recibido: http://192.168.1.20:8899/v1/content'
+    )
+  })
+
+  it('derives production policy by default for non-dev builds', () => {
+    expect(
+      resolveBackendEndpointPolicyMode({
+        isDev: false
+      })
+    ).toBe('production')
+  })
+
+  it('keeps explicit local-preview policy separate from build type', () => {
+    expect(
+      resolveBackendEndpointPolicyMode({
+        isDev: false,
+        policyMode: 'local-preview'
+      })
+    ).toBe('local-preview')
   })
 })

@@ -1,8 +1,11 @@
 type NullableString = string | undefined
 type WarnFn = (message: string) => void
 
+export type BackendEndpointPolicyMode = 'development' | 'local-preview' | 'production'
+
 export type BackendConfigRuntimeOptions = {
   isDev: boolean
+  policyMode?: BackendEndpointPolicyMode | undefined
   warn?: WarnFn | undefined
 }
 
@@ -16,6 +19,7 @@ export function resolveBackendConfigEndpoint(options: ResolveBackendConfigEndpoi
     value: options.directUrl,
     configKey: options.configKey,
     isDev: options.isDev,
+    policyMode: options.policyMode,
     warn: options.warn
   })
 }
@@ -31,12 +35,24 @@ export function ensureBackendConfigEndpointUrl(
     return options.value
   }
 
-  if (options.isDev) {
+  const policyMode = resolveBackendEndpointPolicyMode(options)
+
+  if (policyMode === 'development') {
     if (options.value.startsWith('http://') || options.value.startsWith('https://')) {
       return options.value
     }
     options.warn?.(
       `[config] El campo ${options.configKey} debe comenzar con "http://" o "https://" en desarrollo. Valor recibido: ${options.value}`
+    )
+    return undefined
+  }
+
+  if (policyMode === 'local-preview') {
+    if (options.value.startsWith('https://') || isLoopbackHttpEndpoint(options.value)) {
+      return options.value
+    }
+    options.warn?.(
+      `[config] El campo ${options.configKey} debe comenzar con "https://" o apuntar a loopback local ("http://localhost" o "http://127.0.0.1") en local-preview. Valor recibido: ${options.value}`
     )
     return undefined
   }
@@ -49,4 +65,23 @@ export function ensureBackendConfigEndpointUrl(
   }
 
   return options.value
+}
+
+export function resolveBackendEndpointPolicyMode(
+  options: Pick<BackendConfigRuntimeOptions, 'isDev' | 'policyMode'>
+): BackendEndpointPolicyMode {
+  if (options.policyMode) {
+    return options.policyMode
+  }
+
+  return options.isDev ? 'development' : 'production'
+}
+
+function isLoopbackHttpEndpoint(value: string): boolean {
+  try {
+    const parsed = new URL(value)
+    return parsed.protocol === 'http:' && (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1')
+  } catch {
+    return false
+  }
 }

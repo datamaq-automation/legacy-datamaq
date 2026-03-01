@@ -2,7 +2,8 @@ import type { ConfigPort } from '@/application/ports/Config'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
 import {
   ensureBackendConfigEndpointUrl,
-  resolveBackendConfigEndpoint
+  resolveBackendConfigEndpoint,
+  resolveBackendEndpointPolicyMode
 } from '@/infrastructure/backend/backendConfigEndpoint'
 
 type NullableString = string | undefined
@@ -49,6 +50,10 @@ export class ViteConfig implements ConfigPort {
     this.contactEmail = normalize(publicConfig.contactEmail) ?? CONTACT_EMAIL_FALLBACK
     const endpointOptions = {
       isDev: import.meta.env.DEV,
+      policyMode: resolveBackendEndpointPolicyMode({
+        isDev: import.meta.env.DEV,
+        policyMode: normalizePolicyMode(import.meta.env.VITE_BACKEND_POLICY_MODE)
+      }),
       warn: (message: string) => console.warn(message)
     }
     this.inquiryApiUrl = resolveBackendConfigEndpoint({
@@ -110,4 +115,17 @@ export class ViteConfig implements ConfigPort {
 function normalize(value: string | undefined): NullableString {
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
+}
+
+function normalizePolicyMode(value: string | undefined) {
+  const normalizedValue = normalize(value)?.toLowerCase()
+  if (
+    normalizedValue === 'development' ||
+    normalizedValue === 'local-preview' ||
+    normalizedValue === 'production'
+  ) {
+    return normalizedValue
+  }
+
+  return undefined
 }

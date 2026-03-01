@@ -50,7 +50,8 @@ function main() {
   run(process.execPath, ['scripts/build-target.mjs', ...process.argv.slice(2)], {
     ...process.env,
     BUILD_OUT_DIR: outputDir,
-    VITE_BACKEND_BASE_URL: backendBaseUrl
+    VITE_BACKEND_BASE_URL: backendBaseUrl,
+    VITE_BACKEND_POLICY_MODE: 'local-preview'
   })
 }
 
