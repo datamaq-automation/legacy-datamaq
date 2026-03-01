@@ -115,10 +115,12 @@ const props = withDefaults(
   }
 )
 
+const { content, engagementTracker, environment } = useContainer()
+
 const whatsappHref = computed(() => getWhatsAppHref())
 const isSection = computed(() => props.variant === 'section')
 const headingId = computed(() => props.headingId)
-const technician = computed(() => useContainer().content.getBrandContent().technician)
+const technician = computed(() => content.getBrandContent().technician)
 
 function handleWhatsAppClick(): void {
   if (!whatsappHref.value) {
@@ -127,7 +129,6 @@ function handleWhatsAppClick(): void {
 
   window.open(whatsappHref.value, '_blank')
 
-  const { engagementTracker, environment } = useContainer()
   const params = new URLSearchParams(environment.search())
   const utmSource = params.get('utm_source')
   const trafficSource = utmSource || environment.referrer() || 'direct'
