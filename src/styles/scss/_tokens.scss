@@ -13,8 +13,9 @@
   --bs-emphasis-color: var(--dm-text-0);
   --bs-secondary-color: rgba(var(--dm-text-0-rgb), 0.75);
   --ui-color-bg: var(--dm-bg-0);
-  --ui-color-surface: rgba(var(--dm-bg-0-rgb), 0.86);
-  --ui-color-surface-elevated: rgba(var(--dm-bg-0-rgb), 0.92);
+  --ui-color-surface: rgba(var(--dm-bg-0-rgb), 0.65); /* Glassmorphism Base */
+  --ui-surface-blur: blur(12px); /* Glassmorphism Blur */
+  --ui-color-surface-elevated: rgba(var(--dm-bg-0-rgb), 0.75);
   --ui-color-text: var(--dm-text-0);
   --ui-color-text-muted: rgba(var(--dm-text-0-rgb), 0.72);
   --ui-color-primary: var(--dm-data-cyan);
@@ -25,12 +26,14 @@
   --ui-neutral-100-15: rgba(var(--dm-text-0-rgb), 0.15);
   --ui-neutral-100-60: rgba(var(--dm-text-0-rgb), 0.6);
   --ui-neutral-100-72: rgba(var(--dm-text-0-rgb), 0.72);
+  --ui-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
   --ui-font-size-body: 1rem;
   --ui-line-height-body: 1.6;
   --ui-font-size-title: clamp(1.7rem, 1.2rem + 1.5vw, 2.2rem);
-  --ui-line-height-title: 1.2;
-  --ui-font-size-label: 0.82rem;
-  --ui-line-height-label: 1.35;
+  --ui-line-height-title: 1.25;
+  --ui-font-weight-title: 700;
+  --ui-font-size-label: 0.85rem;
+  --ui-line-height-label: 1.4;
   --ui-space-2: 0.5rem;
   --ui-space-3: 0.75rem;
   --ui-space-4: 1rem;

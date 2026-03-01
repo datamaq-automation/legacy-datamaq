@@ -15,3 +15,30 @@
 .bg-body-tertiary {
   background-color: rgba(var(--dm-bg-0-rgb), 0.78) !important;
 }
+
+/* Forms UX Aesthetics */
+.form-control {
+  background-color: rgba(var(--dm-text-0-rgb), 0.05);
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
+  color: var(--ui-color-text);
+  border-radius: var(--ui-radius-sm);
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  background-color: rgba(var(--dm-text-0-rgb), 0.08);
+  border-color: rgba(var(--dm-data-cyan-rgb), 0.6);
+  box-shadow: 0 0 0 0.25rem rgba(var(--dm-data-cyan-rgb), 0.25);
+  color: var(--ui-color-text);
+}
+
+.form-control::placeholder {
+  color: var(--ui-color-text-muted);
+  opacity: 0.6;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: rgba(var(--dm-bg-0-rgb), 0.5);
+  opacity: 0.7;
+}

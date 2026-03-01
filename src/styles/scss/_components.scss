@@ -1,9 +1,12 @@
 .c-ui-card {
   background-color: var(--ui-color-surface);
+  backdrop-filter: var(--ui-surface-blur);
+  -webkit-backdrop-filter: var(--ui-surface-blur);
   color: var(--ui-color-text);
   border: 1px solid var(--ui-color-border);
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .c-ui-card--elevated {
@@ -11,31 +14,30 @@
   box-shadow: var(--ui-shadow-md);
 }
 
-.c-ui-card--interactive {
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
 .c-ui-card--interactive:hover {
-  border-color: rgba(var(--dm-data-cyan-rgb), 0.35);
-  box-shadow: var(--ui-shadow-md);
-  transform: translateY(-1px);
+  border-color: rgba(var(--dm-data-cyan-rgb), 0.45);
+  box-shadow: 0 1.5rem 3rem rgba(var(--dm-data-cyan-rgb), 0.15);
+  transform: translateY(-4px);
 }
 
 .btn.c-ui-btn {
+  font-family: var(--ui-font-family-base);
   font-weight: 600;
   letter-spacing: var(--ui-letter-spacing-sm);
   border-radius: var(--ui-radius-md);
-  padding: 0.7rem 1.1rem;
+  padding: 0.75rem 1.25rem;
   transition:
-    transform 0.2s ease,
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
     background-color 0.2s ease,
     border-color 0.2s ease,
+    box-shadow 0.3s ease,
     color 0.2s ease;
   @include focus-ring(var(--ui-color-primary), 3px);
 }
 
 .btn.c-ui-btn:hover:not(:disabled):not([aria-disabled='true']) {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--bs-warning-rgb), 0.25);
 }
 
 .btn.c-ui-btn:disabled,

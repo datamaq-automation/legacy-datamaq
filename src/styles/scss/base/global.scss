@@ -1,4 +1,5 @@
 body {
+  font-family: var(--ui-font-family-base);
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
   font-size: var(--ui-font-size-body);
@@ -43,6 +44,7 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
