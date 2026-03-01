@@ -16,6 +16,14 @@ Orden de lectura:
 
 Luego ejecutar esta checklist.
 
+Suite base ya disponible en este repositorio:
+
+- `tests/integration/fastApiContracts.test.ts`
+
+Ejecucion:
+
+- `FASTAPI_CONTRACT_BASE_URL=http://127.0.0.1:8000 npm run test:contracts:fastapi`
+
 ## Capas transversales
 
 ### Settings

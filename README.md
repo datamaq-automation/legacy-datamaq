@@ -27,6 +27,7 @@ npm run dev
 npm run build -- <target>
 npm run typecheck
 npm run test
+npm run test:contracts:fastapi
 npm run test:e2e:smoke
 ```
 

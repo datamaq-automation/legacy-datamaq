@@ -19,6 +19,7 @@
     "build:publish:upp": "npm run build -- upp && (robocopy .\\dist C:\\AppServ\\www /E /R:1 /W:1 /NFL /NDL /NJH /NJS /NP & IF %ERRORLEVEL% LEQ 7 exit /B 0)",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:contracts:fastapi": "vitest run tests/integration/fastApiContracts.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts --project=chromium",
     "test:e2e:integration": "playwright test tests/e2e/integration.backend.spec.ts --project=chromium",

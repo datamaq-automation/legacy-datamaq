@@ -32,6 +32,7 @@ Documento complementario ya creado:
 - contrato canonico de `content` y `pricing`: `docs/fastapi-content-pricing-contract.md`
 - contrato canonico de `quote`: `docs/fastapi-quote-contract.md`
 - checklist operativa por router: `docs/fastapi-router-implementation-checklist.md`
+- suite base de contratos para FastAPI: `tests/integration/fastApiContracts.test.ts`
 
 ## Decision recomendada de paths
 
@@ -656,6 +657,7 @@ Nota importante sobre tests actuales:
 - `tests/unit/infrastructure/phpApiContracts.test.ts` describe el snapshot del backend PHP actual
 - no debe tomarse como contrato objetivo final de FastAPI
 - durante la migracion conviene reemplazarlo gradualmente por una suite equivalente para FastAPI
+- esa suite base ya existe en `tests/integration/fastApiContracts.test.ts` y se ejecuta con `FASTAPI_CONTRACT_BASE_URL`
 
 Conclusion:
 
