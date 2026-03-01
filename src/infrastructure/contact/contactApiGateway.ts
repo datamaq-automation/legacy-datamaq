@@ -59,6 +59,8 @@ export class ContactApiGateway implements ContactGateway {
         ...endpointLogContext,
         status: response.status,
         requestId: feedback.requestId ?? null,
+        submitStatus: feedback.submitStatus ?? null,
+        processingStatus: feedback.processingStatus ?? null,
         errorCode: feedback.errorCode ?? null,
         backendMessage: feedback.backendMessage ?? null
       })
@@ -66,6 +68,8 @@ export class ContactApiGateway implements ContactGateway {
         ...endpointLogContext,
         status: response.status,
         requestId: feedback.requestId ?? null,
+        submitStatus: feedback.submitStatus ?? null,
+        processingStatus: feedback.processingStatus ?? null,
         errorCode: feedback.errorCode ?? null,
         backendMessage: feedback.backendMessage ?? null
       })
@@ -79,7 +83,9 @@ export class ContactApiGateway implements ContactGateway {
       channel: this.channel,
       ...endpointLogContext,
       status: response.status,
-      requestId: feedback.requestId ?? null
+      requestId: feedback.requestId ?? null,
+      submitStatus: feedback.submitStatus ?? null,
+      processingStatus: feedback.processingStatus ?? null
     })
     return {
       ok: true,

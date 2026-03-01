@@ -12,6 +12,8 @@ const ERROR_CODE_PATHS: string[][] = [
   ['code'],
   ['error', 'code']
 ]
+const SUBMIT_STATUS_PATHS: string[][] = [['status']]
+const PROCESSING_STATUS_PATHS: string[][] = [['processingStatus']]
 const MESSAGE_PATHS: string[][] = [
   ['detail'],
   ['message'],
@@ -28,11 +30,19 @@ export function extractContactSubmitFeedback(response: HttpResponse): ContactSub
   const requestIdFromHeaders = extractHeader(response.headers, REQUEST_ID_HEADER_KEYS)
   const requestId = requestIdFromHeaders ?? requestIdFromBody
   const errorCode = extractByPaths(record, ERROR_CODE_PATHS)
+  const submitStatus = extractByPaths(record, SUBMIT_STATUS_PATHS)
+  const processingStatus = extractByPaths(record, PROCESSING_STATUS_PATHS)
   const backendMessage = resolveBackendMessage(record, response.text)
 
   const feedback: ContactSubmitFeedback = {}
   if (requestId) {
     feedback.requestId = requestId
+  }
+  if (submitStatus) {
+    feedback.submitStatus = submitStatus
+  }
+  if (processingStatus) {
+    feedback.processingStatus = processingStatus
   }
   if (errorCode) {
     feedback.errorCode = errorCode

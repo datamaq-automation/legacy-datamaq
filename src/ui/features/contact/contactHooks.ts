@@ -151,7 +151,9 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
         emitRuntimeInfo('[contact:ui] submit OK, navegando a thanks', {
           channel: backendChannel,
           sectionId,
-          requestId: result.data.requestId ?? null
+          requestId: result.data.requestId ?? null,
+          submitStatus: result.data.submitStatus ?? null,
+          processingStatus: result.data.processingStatus ?? null
         })
         void router.push({ name: 'thanks' })
         return

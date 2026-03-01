@@ -151,6 +151,8 @@ describe('ContactApiGateway', () => {
       transportMode: 'direct',
       status: 0,
       requestId: null,
+      submitStatus: null,
+      processingStatus: null,
       errorCode: null,
       backendMessage: null
     })
@@ -181,6 +183,8 @@ describe('ContactApiGateway', () => {
       transportMode: 'direct',
       status: 503,
       requestId: null,
+      submitStatus: null,
+      processingStatus: null,
       errorCode: null,
       backendMessage: null
     })
@@ -232,12 +236,16 @@ describe('ContactApiGateway', () => {
     )
   })
 
-  it('extracts request_id from success body and returns it to the UI flow', async () => {
+  it('extracts canonical submit feedback from success body and returns it to the UI flow', async () => {
     const http = createHttpClient()
     vi.mocked(http.postJson).mockResolvedValueOnce({
       ok: true,
       status: 202,
-      data: { request_id: 'req_body_123' }
+      data: {
+        request_id: 'req_body_123',
+        status: 'accepted',
+        processing_status: 'accepted'
+      }
     })
     const logger = createLogger()
     const gateway = new ContactApiGateway(
@@ -251,7 +259,11 @@ describe('ContactApiGateway', () => {
 
     expect(result).toEqual({
       ok: true,
-      data: { requestId: 'req_body_123' }
+      data: {
+        requestId: 'req_body_123',
+        submitStatus: 'accepted',
+        processingStatus: 'accepted'
+      }
     })
   })
 
@@ -263,6 +275,8 @@ describe('ContactApiGateway', () => {
       data: {
         request_id: 'req_err_429',
         error_code: 'RATE_LIMITED',
+        status: 'rejected',
+        processing_status: 'failed',
         detail: 'Too many requests'
       },
       headers: {
@@ -294,6 +308,8 @@ describe('ContactApiGateway', () => {
       transportMode: 'direct',
       status: 429,
       requestId: 'req_hdr_429',
+      submitStatus: 'rejected',
+      processingStatus: 'failed',
       errorCode: 'RATE_LIMITED',
       backendMessage: 'Too many requests'
     })
@@ -324,6 +340,8 @@ describe('ContactApiGateway', () => {
       transportMode: 'proxy',
       status: 503,
       requestId: null,
+      submitStatus: null,
+      processingStatus: null,
       errorCode: null,
       backendMessage: null
     })

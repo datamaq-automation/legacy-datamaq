@@ -33,6 +33,8 @@ export interface ContactSubmitPayload {
 
 export interface ContactSubmitFeedback {
   requestId?: string
+  submitStatus?: string
+  processingStatus?: string
   errorCode?: string
   backendMessage?: string
 }

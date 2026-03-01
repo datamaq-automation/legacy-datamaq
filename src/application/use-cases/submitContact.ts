@@ -94,7 +94,9 @@ export class SubmitContactUseCase {
     }
 
     emitRuntimeInfo('[contact:use-case] submit completado', {
-      requestId: submitResult.data.requestId ?? null
+      requestId: submitResult.data.requestId ?? null,
+      submitStatus: submitResult.data.submitStatus ?? null,
+      processingStatus: submitResult.data.processingStatus ?? null
     })
     this.contactBackend.markAvailable()
     this.leadTracking.registerLeadForThanksPage()

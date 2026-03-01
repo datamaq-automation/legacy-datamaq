@@ -41,7 +41,7 @@ Contrato objetivo recomendado:
 - `/v1/contact`
 - `/v1/mail`
 - `/v1/quote/diagnostic`
-- `/v1/quote/pdf?quote_id={quote_id}`
+- `/v1/quote/{quote_id}/pdf`
 
 Motivo:
 
@@ -76,7 +76,7 @@ Con las decisiones tomadas, el frontend debe normalizarse en estos puntos:
 2. dejar de construir fallbacks con `/v1/public/*`
 3. derivar el PDF del cotizador desde `/v1/quote/diagnostic` hacia `/v1/quote/{quote_id}/pdf`
 4. alinear fixtures, tests y configuracion a los paths canonicos
-5. preparar el parsing de respuestas para un contrato canonical nuevo cuando se defina FastAPI
+5. normalizar el parsing de `contact` y `mail` hacia un envelope canonical con `request_id`, `status`, `processing_status`, `detail` y `code`
 
 Lo que ya se puede cambiar con certeza:
 
@@ -86,8 +86,8 @@ Lo que ya se puede cambiar con certeza:
 
 Lo que todavia depende de decision backend:
 
-- envelope final de exito y error para `contact` y `mail`
 - uso final de `200/201` vs `202`
+- si `processing_status` representa aceptacion, completitud real o estado de job
 
 ## Resumen del repositorio
 
@@ -119,8 +119,8 @@ El frontend depende hoy de estas capacidades backend:
 - `GET /v1/pricing`
 - `POST /v1/contact`
 - `POST /v1/mail`
-- `POST /v1/quote/diagnostic` o `POST /v1/public/quote/diagnostic`
-- `GET /v1/quote/pdf?quote_id={quote_id}` o endpoint derivado desde quote diagnostic
+- `POST /v1/quote/diagnostic`
+- `GET /v1/quote/{quote_id}/pdf`
 
 En entornos locales de integracion tambien consume equivalentes same-origin:
 
@@ -130,7 +130,7 @@ En entornos locales de integracion tambien consume equivalentes same-origin:
 - `/api/v1/contact`
 - `/api/v1/mail`
 - `/api/v1/quote/diagnostic`
-- `/api/v1/quote/pdf?quote_id={quote_id}`
+- `/api/v1/quote/{quote_id}/pdf`
 
 ## Configuracion runtime que debe preservarse
 
@@ -351,7 +351,7 @@ Headers y metadata que frontend intenta leer de la respuesta:
 - `request-id`
 - `x-correlation-id`
 
-Claves de body que frontend intenta leer:
+Claves de body que frontend intenta leer hoy:
 
 - `requestId`
 - `request.id`
@@ -365,6 +365,14 @@ Claves de body que frontend intenta leer:
 - `errorMessage`
 - `description`
 - `error.message`
+
+Claves canonical recomendadas para FastAPI:
+
+- `request_id`
+- `status`
+- `processing_status`
+- `detail`
+- `code`
 
 Contrato minimo de exito:
 
@@ -469,7 +477,8 @@ Response esperada para generar propuesta:
 PDF:
 
 - frontend admite `quotePdfApiUrl` explicito con template `{quote_id}`
-- si no existe, deriva el endpoint a partir de `quoteDiagnosticApiUrl`
+- contrato canonical recomendado: `/v1/quote/{quote_id}/pdf`
+- si no existe `quotePdfApiUrl`, deriva el endpoint a partir de `quoteDiagnosticApiUrl`
 - intenta leer `Content-Disposition` para el nombre de archivo
 - acepta `filename*` en UTF-8
 
@@ -495,35 +504,22 @@ Vistas que dependen directamente del backend:
 - `src/ui/pages/QuotePage.vue`
 - `src/ui/views/ThanksView.vue`
 
-## Decision importante que hoy esta inconsistente en el codigo
+## Decision importante ya cerrada en frontend
 
-Hay una inconsistencia real entre runtime profiles y fallback por `backendBaseUrl`.
+Habia una inconsistencia real entre runtime profiles y fallbacks legacy construidos desde `backendBaseUrl`.
 
-En `runtimeProfiles.json` hoy aparecen rutas directas como:
+Estado actual:
+
+- el frontend ya fue normalizado para converger a `/v1/*`
+- `/v1/public/*` queda como referencia historica, no como contrato objetivo
+- tests y configuracion deben seguir consolidando esa misma convencion
+
+Contrato objetivo:
 
 - `/v1/content`
 - `/v1/pricing`
 - `/v1/quote/diagnostic`
-
-Pero en `ViteConfig` los fallbacks con `backendBaseUrl` construyen:
-
-- `/v1/public/content`
-- `/v1/public/pricing`
-- `/v1/public/quote/diagnostic`
-
-Esto significa que antes de migrar a FastAPI conviene decidir una sola convencion de paths publicos.
-
-Decision recomendada para cerrar esta inconsistencia:
-
-- preservar y consolidar `/v1/*` como contrato objetivo
-- eliminar `/v1/public/*` del contrato final
-- adaptar frontend, tests y configuracion al corte directo
-
-Si no se decide, puede pasar que:
-
-- produccion funcione con una convencion
-- integracion local use otra
-- tests y runtime queden desalineados
+- `/v1/quote/{quote_id}/pdf`
 
 ## Requisitos no negociables para FastAPI
 
@@ -560,6 +556,11 @@ Recomendacion:
 - definir una sola forma canonical por endpoint
 - no mantener compatibilidad temporal innecesaria si el corte sera directo
 - adaptar frontend y tests al contrato canonical nuevo
+
+Decision operativa en frontend:
+
+- `contact` y `mail` deben converger al envelope canonical `request_id` + `status` + `processing_status` + `detail` + `code`
+- la tolerancia a aliases legacy debe considerarse transitoria y eliminarse una vez consolidado FastAPI
 
 ## 4. Respuestas de error legibles
 
