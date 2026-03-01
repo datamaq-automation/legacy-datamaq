@@ -18,7 +18,11 @@ Path: src/ui/features/contact/ContactFormSection.vue
               <p class="text-body mb-4 c-contact__subtitle">
                 {{ contact.subtitle }}
               </p>
-              <TecnicoACargo variant="embedded" :heading-id="tecnicoHeadingId" />
+              <TecnicoACargo
+                v-if="props.showTechnicianCard"
+                variant="embedded"
+                :heading-id="tecnicoHeadingId"
+              />
               <form
                 ref="formRef"
                 class="row g-3"
@@ -242,7 +246,9 @@ import TecnicoACargo from '@/components/TecnicoACargo.vue'
 import type { ContactFormProps } from './contactTypes'
 import { useContactFormSection } from './ContactFormSection'
 
-const props = defineProps<ContactFormProps>()
+const props = withDefaults(defineProps<ContactFormProps>(), {
+  showTechnicianCard: true
+})
 
 const {
   contact,

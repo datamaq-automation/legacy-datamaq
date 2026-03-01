@@ -33,4 +33,5 @@ export interface ContactFormProps {
   title?: string
   subtitle?: string
   submitLabel?: string
+  showTechnicianCard?: boolean
 }
