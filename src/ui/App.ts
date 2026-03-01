@@ -9,6 +9,11 @@ import type { RemoteContentStatus } from '@/application/ports/Content'
 import { getDefaultSeo } from '@/ui/seo/defaultSeo'
 import { buildAppHead } from '@/ui/seo/appSeo'
 import { useContainer } from '@/di/container'
+import {
+  getDevBackendAvailability,
+  subscribeDevBackendAvailability,
+  type DevBackendAvailability
+} from '@/application/backend/devBackendAvailability'
 
 export function useApp() {
   const { content, config, environment } = useContainer()
@@ -22,6 +27,11 @@ export function useApp() {
   )
   const isContentPending = computed(() => remoteContentStatus.value === 'pending')
   const isContentUnavailable = computed(() => remoteContentStatus.value === 'unavailable')
+  const devBackendAvailability = ref<DevBackendAvailability>(getDevBackendAvailability())
+  const showDevBackendOfflineBanner = computed(
+    () => import.meta.env.DEV && !devBackendAvailability.value.reachable
+  )
+  let unsubscribeDevBackendAvailability: (() => void) | undefined
 
   useHead(() => buildAppHead(seo, route.path, isThanksPage.value, content.getContent()))
 
@@ -30,12 +40,17 @@ export function useApp() {
     unsubscribeRemoteContentStatus = content.subscribeRemoteContentStatus((status) => {
       remoteContentStatus.value = status
     })
+    unsubscribeDevBackendAvailability = subscribeDevBackendAvailability((state) => {
+      devBackendAvailability.value = state
+    })
     void logUiDebugSnapshot('mounted')
   })
 
   onBeforeUnmount(() => {
     unsubscribeRemoteContentStatus?.()
     unsubscribeRemoteContentStatus = undefined
+    unsubscribeDevBackendAvailability?.()
+    unsubscribeDevBackendAvailability = undefined
   })
 
   watch(
@@ -55,7 +70,9 @@ export function useApp() {
   return {
     isContentReady,
     isContentPending,
-    isContentUnavailable
+    isContentUnavailable,
+    showDevBackendOfflineBanner,
+    devBackendAvailability
   }
 
   async function logUiDebugSnapshot(reason: string): Promise<void> {

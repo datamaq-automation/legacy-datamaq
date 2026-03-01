@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: proxyTarget,
           changeOrigin: true,
+          configure: (proxy) => attachBackendProxyDiagnostics(proxy, proxyTarget),
           rewrite: (requestPath) => rewriteProxyPath(requestPath)
         }
       }
@@ -75,4 +76,35 @@ function rewriteProxyPath(requestPath) {
   }
 
   return requestPath.replace('/api/v1/', '/v1/')
+}
+
+export function attachBackendProxyDiagnostics(proxy, proxyTarget) {
+  const requestFailures = new Map()
+
+  proxy.on('error', (error, request) => {
+    const code = typeof error?.code === 'string' ? error.code : 'UNKNOWN'
+    const method = typeof request?.method === 'string' ? request.method : 'GET'
+    const requestUrl = typeof request?.url === 'string' ? request.url : '/unknown'
+    const bucketKey = `${method} ${requestUrl} ${code}`
+    const nextCount = (requestFailures.get(bucketKey) ?? 0) + 1
+
+    requestFailures.set(bucketKey, nextCount)
+
+    const suffix = nextCount > 1 ? ` (x${nextCount})` : ''
+    const target = normalizeProxyTarget(proxyTarget)
+    const reason = code === 'ECONNREFUSED' ? 'backend-offline' : 'proxy-error'
+    console.warn(`[vite:proxy] ${method} ${requestUrl} -> ${target} ${reason}${suffix}`, {
+      code,
+      target
+    })
+  })
+}
+
+function normalizeProxyTarget(value) {
+  if (typeof value !== 'string') {
+    return 'unknown-target'
+  }
+
+  const trimmed = value.trim()
+  return trimmed || 'unknown-target'
 }

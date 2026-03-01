@@ -5,7 +5,8 @@ import { routes } from './router/routes'
 import './styles/main.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import { emitRuntimeWarn } from './application/utils/runtimeConsole'
+import { emitRuntimeInfo, emitRuntimeWarn } from './application/utils/runtimeConsole'
+import { setDevBackendAvailability } from './application/backend/devBackendAvailability'
 import { configureAnalytics, enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
 import { probeBackendHealth } from './infrastructure/health/probeBackendHealth'
 
@@ -55,7 +56,21 @@ function applyCriticalCssVariableFallbacks(): void {
 }
 
 async function bootstrapRemoteBackendData(): Promise<void> {
-  await probeBackendHealth().catch(() => undefined)
+  const health = await probeBackendHealth().catch(() => undefined)
+  if (import.meta.env.DEV) {
+    setDevBackendAvailability({
+      reachable: Boolean(health?.ok),
+      endpoint: health?.endpoint ?? null,
+      status: health?.status ?? null
+    })
+  }
+  if (import.meta.env.DEV && health && !health.ok) {
+    emitRuntimeInfo('[backend:bootstrap] backend no disponible en dev; se omite content/pricing remoto', {
+      endpoint: health.endpoint,
+      status: health.status
+    })
+    return
+  }
   container.content.bootstrapRemoteData()
 }
 

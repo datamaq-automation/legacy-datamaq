@@ -1,0 +1,23 @@
+.c-dev-backend-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  background: rgba(var(--dm-accent-orange-rgb), 0.16);
+  border-bottom: 1px solid rgba(var(--dm-accent-orange-rgb), 0.35);
+  color: var(--bs-emphasis-color);
+  font-size: 0.95rem;
+  line-height: 1.35;
+  backdrop-filter: blur(10px);
+}
+
+.c-dev-backend-banner__meta {
+  opacity: 0.85;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.85rem;
+}
