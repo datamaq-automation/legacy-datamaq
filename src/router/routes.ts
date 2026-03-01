@@ -5,6 +5,7 @@ const metadataByName = new Map(routeMetadata.map((route) => [route.name, route])
 
 const homeMeta = metadataByName.get('home')
 const thanksMeta = metadataByName.get('thanks')
+const contactMeta = metadataByName.get('contact')
 const medicionEscobarMeta = metadataByName.get('medicion-consumo-escobar')
 const quoteMeta = metadataByName.get('cotizador')
 const quoteWebMeta = metadataByName.get('cotizador-web')
@@ -17,6 +18,15 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       indexable: homeMeta?.indexable ?? true,
       name: homeMeta?.name
+    }
+  },
+  {
+    path: contactMeta?.path ?? '/contact',
+    name: 'contact',
+    component: () => import('@/ui/pages/ContactPage.vue'),
+    meta: {
+      indexable: contactMeta?.indexable ?? true,
+      name: contactMeta?.name
     }
   },
   {

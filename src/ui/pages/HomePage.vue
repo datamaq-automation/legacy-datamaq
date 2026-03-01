@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
@@ -39,51 +40,50 @@ const {
 
     <header class="c-home-header" role="banner">
       <div class="container c-home-header__inner">
-        <a class="c-home-header__brand" href="#top" :aria-label="navbar.brandAriaLabel">
+        <RouterLink class="c-home-header__brand" to="/" :aria-label="navbar.brandAriaLabel">
           <span class="c-home-header__brand-icon" aria-hidden="true">
             <i class="bi bi-terminal-fill"></i>
           </span>
           <span class="c-home-header__brand-copy">{{ navbar.brand }}</span>
-        </a>
+        </RouterLink>
 
         <nav class="c-home-header__nav d-none d-lg-flex" aria-label="Navegacion principal">
-          <a
+          <RouterLink
             v-for="link in headerLinks"
-            :key="link.href"
+            :key="link.label"
             class="c-home-header__nav-link"
-            :href="link.href"
+            :to="link.to"
           >
             {{ link.label }}
-          </a>
+          </RouterLink>
         </nav>
 
         <div class="c-home-header__actions">
-          <a
+          <RouterLink
             v-for="link in quickLinks"
-            :key="link.href"
+            :key="link.label"
             class="c-home-header__icon-link d-lg-none"
-            :href="link.href"
+            :to="link.to"
             :aria-label="link.label"
             :title="link.label"
           >
             <i :class="['bi', link.icon]" aria-hidden="true"></i>
-          </a>
+          </RouterLink>
 
-          <button
+          <RouterLink
             v-if="contactCtaEnabled"
-            type="button"
             class="btn c-ui-btn c-ui-btn--primary c-home-header__cta d-none d-lg-inline-flex"
-            @click="handleChat('header', whatsappHref)"
-          >
-            {{ navbar.contactLabel }}
-          </button>
-          <a
-            v-else
-            class="btn c-ui-btn c-ui-btn--outline c-home-header__cta d-none d-lg-inline-flex"
-            href="#contacto"
+            to="/contact"
           >
             Contacto
-          </a>
+          </RouterLink>
+          <RouterLink
+            v-else
+            class="btn c-ui-btn c-ui-btn--outline c-home-header__cta d-none d-lg-inline-flex"
+            to="/contact"
+          >
+            Contacto
+          </RouterLink>
         </div>
       </div>
     </header>
@@ -125,9 +125,9 @@ const {
                     Iniciar contacto
                   </a>
 
-                  <a class="btn c-ui-btn c-ui-btn--outline c-home-hero__secondary" href="#servicios">
+                  <RouterLink class="btn c-ui-btn c-ui-btn--outline c-home-hero__secondary" :to="{ path: '/', hash: '#servicios' }">
                     {{ hero.secondaryCta.label }}
-                  </a>
+                  </RouterLink>
                 </div>
 
                 <ul class="c-home-hero__signals" aria-label="Condiciones operativas">
@@ -200,13 +200,13 @@ const {
                 >
                   Contacto directo por WhatsApp
                 </button>
-                <a
-                  v-else
-                  class="btn c-ui-btn c-ui-btn--outline c-home-profile__cta"
-                  href="#contacto"
-                >
-                  Ir al formulario
-                </a>
+                  <RouterLink
+                    v-else
+                    class="btn c-ui-btn c-ui-btn--outline c-home-profile__cta"
+                    to="/contact"
+                  >
+                    Ir al formulario
+                  </RouterLink>
               </article>
             </div>
 
@@ -278,13 +278,13 @@ const {
                 >
                   {{ card.cta.label }}
                 </button>
-                <a
+                <RouterLink
                   v-else
                   class="btn c-ui-btn c-ui-btn--outline c-home-service-card__cta"
-                  :href="card.cta.href || '#contacto'"
+                  :to="card.cta.href === '#contacto' ? '/contact' : { path: '/', hash: card.cta.href || '#contacto' }"
                 >
                   {{ card.cta.label }}
-                </a>
+                </RouterLink>
               </div>
             </details>
           </div>
@@ -368,15 +368,15 @@ const {
     <WhatsAppFab />
 
     <nav class="c-home-dock d-lg-none" aria-label="Navegacion rapida">
-      <a
+      <RouterLink
         v-for="link in dockLinks"
-        :key="link.href"
+        :key="link.label"
         class="c-home-dock__link"
-        :href="link.href"
+        :to="link.to"
       >
         <i :class="['bi', link.icon]" aria-hidden="true"></i>
         <span>{{ link.label }}</span>
-      </a>
+      </RouterLink>
     </nav>
   </div>
 </template>

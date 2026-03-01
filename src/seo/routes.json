@@ -5,6 +5,11 @@
     "indexable": true
   },
   {
+    "name": "contact",
+    "path": "/contact",
+    "indexable": true
+  },
+  {
     "name": "thanks",
     "path": "/gracias",
     "indexable": false

@@ -76,7 +76,28 @@ async function bootstrapRemoteBackendData(): Promise<void> {
 
 export const createApp = ViteSSG(
   App,
-  { routes },
+  {
+    routes,
+    scrollBehavior(to, _from, savedPosition) {
+      if (savedPosition) {
+        return savedPosition
+      }
+
+      if (!to.hash) {
+        return { top: 0, behavior: 'smooth' }
+      }
+
+      return new Promise((resolve) => {
+        window.requestAnimationFrame(() => {
+          resolve({
+            el: to.hash,
+            top: 88,
+            behavior: 'smooth'
+          })
+        })
+      })
+    }
+  },
   ({ app, isClient }) => {
     const provides = (app as unknown as { _context?: { provides?: Record<string, unknown> } })._context
       ?.provides

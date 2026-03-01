@@ -10,6 +10,7 @@ import {
   trackSectionScroll
 } from '@/ui/controllers/contactController'
 import { computed, onMounted, onUnmounted } from 'vue'
+import { mapNavbarLinks, toHomeSectionRoute } from './landingNavigation'
 
 const HOME_SECTION_ORDER = ['#servicios', '#perfil', '#faq', '#contacto']
 const SERVICE_ICON_BY_KEYWORD: Array<{ keyword: string; icon: string }> = [
@@ -44,16 +45,18 @@ export function useHomePage() {
   const whatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
   const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(whatsappHref.value))
   const heroConditions = buildHeroConditions(hero.responseNote)
-  const headerLinks = navbar.links.filter((link) => HOME_SECTION_ORDER.includes(link.href)).slice(0, 4)
+  const headerLinks = mapNavbarLinks(navbar).filter((link) => HOME_SECTION_ORDER.includes(link.href)).slice(0, 4)
   const quickLinks = [
     {
       href: '#servicios',
+      to: toHomeSectionRoute('#servicios'),
       label: 'Explorar servicios',
       shortLabel: 'Servicios',
       icon: 'bi-search'
     },
     {
       href: '#perfil',
+      to: toHomeSectionRoute('#perfil'),
       label: 'Ver perfil tecnico',
       shortLabel: 'Perfil',
       icon: 'bi-person-circle'
@@ -63,9 +66,10 @@ export function useHomePage() {
     { href: '#top', label: 'Inicio' },
     { href: '#servicios', label: 'Servicios' },
     { href: '#perfil', label: 'Perfil' },
-    { href: '#contacto', label: 'Contacto' }
+    { href: '#contacto', label: 'Contacto', to: { path: '/contact' } }
   ].map((link) => ({
     ...link,
+    to: 'to' in link ? link.to : toHomeSectionRoute(link.href),
     icon: DOCK_ICON_BY_HREF[link.href] ?? 'bi-circle-fill'
   }))
   const trustSignals = dedupeSignals([
