@@ -11,6 +11,7 @@ import Footer from '@/ui/layout/Footer.vue'
 import LegalSection from '@/ui/sections/LegalSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
+import CaseStudiesSection from '@/ui/sections/CaseStudiesSection.vue'
 import { useHomePage } from './HomePage'
 
 const {
@@ -33,6 +34,7 @@ const {
         :contactCtaEnabled="contactCtaEnabled"
         @contact="handleChat($event.section, $event.href)"
       />
+      <CaseStudiesSection />
       <TecnicoACargo />
       <DecisionFlowSection />
       <ContactFormSection
