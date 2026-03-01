@@ -1,31 +1,48 @@
 import { reactive } from 'vue'
 import { AppContentSchema } from '@/domain/schemas/contentSchema'
+import { SiteSnapshotSchema } from '@/domain/schemas/siteSchema'
 import type { AppContent, CommercialConfig } from '@/domain/types/content'
+import type { BrandContent, SeoContent, SiteSnapshot } from '@/domain/types/site'
 import type { LoggerPort } from '@/application/ports/Logger'
 
 export type CommercialPriceKey = 'visitaDiagnosticoHasta2hARS'
 export type CommercialPricingSnapshot = Partial<Pick<CommercialConfig, CommercialPriceKey>>
 
 export class ContentStore {
-  private parsedContentCache: AppContent | undefined
+  private parsedSiteCache: SiteSnapshot | undefined
   private hasRemoteSnapshotApplied = false
 
   constructor(
     private commercialConfig: CommercialConfig,
-    private buildAppContent: (config: CommercialConfig) => AppContent
+    private buildContent: (config: CommercialConfig) => AppContent,
+    private buildBrand: (config: CommercialConfig) => BrandContent,
+    private buildSeo: () => SeoContent
   ) {}
 
-  getParsedContent(): AppContent {
-    if (this.parsedContentCache) {
-      return this.parsedContentCache
+  getParsedSiteSnapshot(): SiteSnapshot {
+    if (this.parsedSiteCache) {
+      return this.parsedSiteCache
     }
 
-    const parsed = AppContentSchema.safeParse(this.buildAppContent(this.commercialConfig))
+    const parsed = SiteSnapshotSchema.safeParse(this.buildFallbackSiteSnapshot())
     if (!parsed.success) {
-      throw new Error('Invalid content schema')
+      throw new Error('Invalid site schema')
     }
-    this.parsedContentCache = reactive(parsed.data as AppContent) as AppContent
-    return this.parsedContentCache
+
+    this.parsedSiteCache = reactive(parsed.data as SiteSnapshot) as SiteSnapshot
+    return this.parsedSiteCache
+  }
+
+  getParsedContent(): AppContent {
+    return this.getParsedSiteSnapshot().content
+  }
+
+  getParsedBrand(): BrandContent {
+    return this.getParsedSiteSnapshot().brand
+  }
+
+  getParsedSeo(): SeoContent {
+    return this.getParsedSiteSnapshot().seo
   }
 
   applyCommercialPricingSnapshot(snapshot: CommercialPricingSnapshot, logger: LoggerPort): void {
@@ -35,79 +52,73 @@ export class ContentStore {
 
     Object.assign(this.commercialConfig, snapshot)
     if (this.hasRemoteSnapshotApplied) {
-      logger.debug('[content] pricing snapshot recibido; se conserva contenido remoto aplicado.')
+      logger.debug('[site] pricing snapshot recibido; se conserva site remoto aplicado.')
       return
     }
 
-    const parsed = AppContentSchema.safeParse(this.buildAppContent(this.commercialConfig))
+    const parsed = SiteSnapshotSchema.safeParse(this.buildFallbackSiteSnapshot())
     if (!parsed.success) {
-      logger.error('[content] precios dinamicos invalidan schema de contenido; se ignora update.')
+      logger.error('[site] precios dinamicos invalidan schema de site; se ignora update.')
       return
     }
 
     patchObjectInPlace(
-      this.getParsedContent() as unknown as Record<string, unknown>,
+      this.getParsedSiteSnapshot() as unknown as Record<string, unknown>,
       parsed.data as unknown as Record<string, unknown>
     )
   }
 
-  applyHeroTitle(title: string, logger: LoggerPort): void {
-    const normalizedTitle = title.trim()
-    if (!normalizedTitle) {
-      return
-    }
-
-    const currentContent = this.getParsedContent()
-    const candidate = {
-      ...currentContent,
-      hero: {
-        ...currentContent.hero,
-        title: normalizedTitle
-      }
-    }
-    const parsed = AppContentSchema.safeParse(candidate)
-    if (!parsed.success) {
-      logger.error('[content] hero.title remoto invalida schema; se ignora update.')
-      return
-    }
-
-    patchObjectInPlace(
-      currentContent as unknown as Record<string, unknown>,
-      parsed.data as unknown as Record<string, unknown>
-    )
-  }
-
-  applyRemoteContentSnapshot(snapshot: unknown, logger: LoggerPort): boolean {
+  applyRemoteSiteSnapshot(snapshot: unknown, logger: LoggerPort): boolean {
     if (!isRecord(snapshot)) {
       return false
     }
 
-    const parsed = AppContentSchema.safeParse(snapshot)
+    const parsed = SiteSnapshotSchema.safeParse(snapshot)
     if (!parsed.success) {
-      logger.warn('[content] snapshot remoto no cumple AppContentSchema; se ignora.')
+      logger.warn('[site] snapshot remoto no cumple SiteSnapshotSchema; se ignora.')
+      
+      // Solo mostrar en desarrollo: errores de validación del schema
+      if (import.meta.env.DEV) {
+        console.warn('⚠️ [site] Validación del schema falló. Campos faltantes o inválidos:', {
+          errores: parsed.error.errors.map(e => ({
+            campo: e.path.join('.'),
+            esperado: 'expected' in e ? e.expected : 'unknown',
+            recibido: 'received' in e ? e.received : 'unknown',
+            mensaje: e.message
+          }))
+        })
+      }
       return false
     }
-    if (!hasRequiredTextContent(parsed.data as AppContent)) {
-      logger.warn('[content] snapshot remoto con textos criticos vacios; se ignora y se mantiene fallback local.')
+
+    const remoteContent = parsed.data.content as AppContent
+    if (!hasRequiredTextContent(remoteContent)) {
+      logger.warn('[site] snapshot remoto con textos criticos vacios; se ignora y se mantiene fallback local.')
       return false
     }
 
     patchObjectInPlace(
-      this.getParsedContent() as unknown as Record<string, unknown>,
+      this.getParsedSiteSnapshot() as unknown as Record<string, unknown>,
       parsed.data as unknown as Record<string, unknown>
     )
     this.hasRemoteSnapshotApplied = true
     return true
   }
+
+  private buildFallbackSiteSnapshot(): SiteSnapshot {
+    return {
+      content: this.buildContent(this.commercialConfig),
+      brand: this.buildBrand(this.commercialConfig),
+      seo: this.buildSeo()
+    }
+  }
 }
 
 function patchObjectInPlace(target: Record<string, unknown>, source: Record<string, unknown>): void {
-  for (const key of Object.keys(target)) {
-    if (!(key in source)) {
-      delete target[key]
-    }
-  }
-
+  // No eliminar campos del target que no están en source
+  // Esto permite preservar campos opcionales del fallback local
+  // cuando el backend remoto no los incluye
+  
   for (const [key, sourceValue] of Object.entries(source)) {
     const targetValue = target[key]
 
@@ -156,12 +167,21 @@ function hasRequiredTextContent(content: AppContent): boolean {
     content.services.title,
     content.contact.title,
     content.contact.subtitle,
-    content.decisionFlow.processTitle,
-    content.thanks.title
+    content.decisionFlow.processTitle
   ]
 
-  const hasEmptyRequiredText = requiredTexts.some((value) => value.trim().length === 0)
-  if (hasEmptyRequiredText) {
+  // Validar campos opcionales solo si están presentes
+  if (content.thanks?.title) {
+    requiredTexts.push(content.thanks.title)
+  }
+  if (content.homePage?.faqTitle) {
+    requiredTexts.push(content.homePage.faqTitle)
+  }
+  if (content.contactPage?.supportTitle) {
+    requiredTexts.push(content.contactPage.supportTitle)
+  }
+
+  if (requiredTexts.some((value) => value.trim().length === 0)) {
     return false
   }
 
@@ -169,10 +189,5 @@ function hasRequiredTextContent(content: AppContent): boolean {
     return false
   }
 
-  const hasEmptyServiceTitle = content.services.cards.some((card) => card.title.trim().length === 0)
-  if (hasEmptyServiceTitle) {
-    return false
-  }
-
-  return true
+  return !content.services.cards.some((card) => card.title.trim().length === 0)
 }

@@ -1,6 +1,7 @@
 import type { CommercialConfig } from '@/domain/types/content'
 import { activeRuntimeProfile } from '@/infrastructure/content/runtimeProfile'
 import { buildLandingAppContent } from '@/infrastructure/content/landingContentBuilder'
+import { buildFallbackBrandContent, buildFallbackSeoContent } from '@/infrastructure/content/siteFallback'
 
 const { brandName, brandAriaLabel, baseOperativa, whatsappUrl } = activeRuntimeProfile
 
@@ -13,3 +14,5 @@ export const commercialConfig: CommercialConfig = {
 }
 
 export const buildAppContent = buildLandingAppContent
+export const buildBrandContent = buildFallbackBrandContent
+export const buildSeoContent = buildFallbackSeoContent

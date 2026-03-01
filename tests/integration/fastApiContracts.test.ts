@@ -22,10 +22,10 @@ describe.skipIf(!FASTAPI_CONTRACT_BASE_URL)('FastAPI contracts', () => {
     expectRequestId(payload)
   })
 
-  it('content endpoint exposes full AppContent snapshot inside data', async () => {
-    const response = await fetchWithTimeout(apiUrl('/v1/content'))
+  it('site endpoint exposes full content, brand and seo snapshot inside data', async () => {
+    const response = await fetchWithTimeout(apiUrl('/v1/site'))
     const payload = (await response.json()) as JsonRecord
-    const data = payload['data']
+    const data = asRecord(payload['data'])
 
     expect(response.status).toBe(200)
     expect(payload.status).toBe('ok')
@@ -33,7 +33,13 @@ describe.skipIf(!FASTAPI_CONTRACT_BASE_URL)('FastAPI contracts', () => {
     expect(typeof payload.version).toBe('string')
     expect(typeof payload.content_revision).toBe('string')
     expectRequestId(payload)
-    expectRecordWithKeys(data, [
+    expectRecordWithKeys(data, ['content', 'brand', 'seo'])
+
+    const content = asRecord(data?.['content'])
+    const brand = asRecord(data?.['brand'])
+    const seo = asRecord(data?.['seo'])
+
+    expectRecordWithKeys(content, [
       'hero',
       'services',
       'about',
@@ -44,8 +50,12 @@ describe.skipIf(!FASTAPI_CONTRACT_BASE_URL)('FastAPI contracts', () => {
       'contact',
       'consent',
       'decisionFlow',
-      'thanks'
+      'thanks',
+      'homePage',
+      'contactPage'
     ])
+    expectRecordWithKeys(brand, ['brandId', 'brandName', 'brandAriaLabel', 'technician', 'whatsappQr'])
+    expectRecordWithKeys(seo, ['siteUrl', 'siteName', 'siteDescription', 'siteOgImage', 'siteLocale', 'business'])
   })
 
   it('pricing endpoint exposes canonical ARS diagnostic price key', async () => {

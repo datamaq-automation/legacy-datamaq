@@ -16,8 +16,7 @@ import {
 } from '@/application/backend/devBackendAvailability'
 
 export function useApp() {
-  const { content, config, environment } = useContainer()
-  const seo = getDefaultSeo(content, config, environment)
+  const { content, environment } = useContainer()
   const route = useRoute()
   const isThanksPage = computed(() => route.path === '/gracias')
   const remoteContentStatus = ref<RemoteContentStatus>(content.getRemoteContentStatus())
@@ -33,7 +32,7 @@ export function useApp() {
   )
   let unsubscribeDevBackendAvailability: (() => void) | undefined
 
-  useHead(() => buildAppHead(seo, route.path, isThanksPage.value, content.getContent()))
+  useHead(() => buildAppHead(getDefaultSeo(content, environment), route.path, isThanksPage.value, content.getContent()))
 
   onMounted(() => {
     remoteContentStatus.value = content.getRemoteContentStatus()

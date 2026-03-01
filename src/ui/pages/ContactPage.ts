@@ -17,6 +17,7 @@ export function useContactPage() {
   const footer = content.getFooterContent()
   const legal = content.getLegalContent()
   const contact = content.getContactContent()
+  const contactPage = content.getContactPageContent()
   const contactCtaEnabled = getWhatsAppEnabled()
   const isContactFormActive = getContactFormActive()
   const isEmailFormActive = getEmailFormActive()
@@ -26,9 +27,9 @@ export function useContactPage() {
   const whatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
   const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(whatsappHref.value))
   const contactIntroLinks = [
-    { label: 'Servicios', to: toHomeSectionRoute('#servicios') },
-    { label: 'Perfil tecnico', to: toHomeSectionRoute('#perfil') },
-    { label: 'FAQ', to: toHomeSectionRoute('#faq') }
+    { label: contactPage.introLinks.services, to: toHomeSectionRoute('#servicios') },
+    { label: contactPage.introLinks.profile, to: toHomeSectionRoute('#perfil') },
+    { label: contactPage.introLinks.faq, to: toHomeSectionRoute('#faq') }
   ]
 
   function handleChat(section: string, href?: string) {
@@ -48,6 +49,7 @@ export function useContactPage() {
     footer,
     legal,
     contact,
+    contactPage,
     contactCtaEnabled,
     isContactFormActive,
     isEmailFormActive,

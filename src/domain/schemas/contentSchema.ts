@@ -140,11 +140,68 @@ const DecisionFlowSchema = z.object({
 })
 
 const ThanksSchema = z.object({
-  badge: z.string(),
+  badge: z.string().optional(),
+  topbarTitle: z.string().optional(),
   title: z.string(),
   subtitle: z.string(),
-  whatsappButtonLabel: z.string(),
-  goHomeButtonLabel: z.string()
+  whatsappButtonLabel: z.string().optional(),
+  goHomeButtonLabel: z.string().optional(),
+  closeButtonAriaLabel: z.string().optional()
+})
+
+const HomePageSchema = z.object({
+  headerContactLabel: z.string(),
+  heroFallbackContactLabel: z.string(),
+  heroMediaLabel: z.string(),
+  trustTitle: z.string(),
+  profileEyebrow: z.string(),
+  profileName: z.string(),
+  profileWhatsappLabel: z.string(),
+  profileFormLabel: z.string(),
+  profileSectionLabel: z.string(),
+  servicesEyebrow: z.string(),
+  servicesIntro: z.string(),
+  faqEyebrow: z.string(),
+  faqTitle: z.string(),
+  quickLinks: z.object({
+    services: z.string(),
+    profile: z.string()
+  }),
+  dockLabels: z.object({
+    home: z.string(),
+    services: z.string(),
+    profile: z.string(),
+    contact: z.string()
+  }),
+  primaryContactForm: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    submitLabel: z.string()
+  }),
+  secondaryEmailForm: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    submitLabel: z.string()
+  })
+})
+
+const ContactPageSchema = z.object({
+  eyebrow: z.string(),
+  homeButtonLabel: z.string(),
+  supportTitle: z.string(),
+  supportItems: z.array(z.string()),
+  supportBackHomeLabel: z.string(),
+  introLinks: z.object({
+    services: z.string(),
+    profile: z.string(),
+    faq: z.string()
+  }),
+  primaryFormSubmitLabel: z.string(),
+  secondaryEmailForm: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    submitLabel: z.string()
+  })
 })
 
 export const AppContentSchema = z.object({
@@ -158,5 +215,7 @@ export const AppContentSchema = z.object({
   contact: ContactSchema,
   consent: ConsentSchema,
   decisionFlow: DecisionFlowSchema,
-  thanks: ThanksSchema
+  thanks: ThanksSchema.optional(),
+  homePage: HomePageSchema.optional(),
+  contactPage: ContactPageSchema.optional()
 })

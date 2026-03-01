@@ -4,22 +4,32 @@ Path: src/infrastructure/content/contentRepository.ts
 
 import type {
   AboutContentPort,
+  BrandContentPort,
+  ContactPageContentPort,
   ConsentContentPort,
   ContactContentPort,
   ContentPort,
   FooterContentPort,
   HeroContentPort,
+  HomePageContentPort,
   LegalContentPort,
   NavbarContentPort,
   ProfileContentPort,
   RemoteContentStatus,
   RemoteContentStatusPort,
+  SeoContentPort,
+  SiteSnapshotPort,
   ServicesContentPort
 } from '@/application/ports/Content'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { HttpClient } from '@/application/ports/HttpClient'
-import { buildAppContent, commercialConfig } from '@/infrastructure/content/Appcontent.active'
+import {
+  buildAppContent,
+  buildBrandContent,
+  buildSeoContent,
+  commercialConfig
+} from '@/infrastructure/content/Appcontent.active'
 import { ContentStore } from '@/infrastructure/content/contentStore'
 import { DynamicContentService } from '@/infrastructure/content/dynamicContentService'
 import { DynamicPricingService } from '@/infrastructure/content/dynamicPricingService'
@@ -27,10 +37,12 @@ import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { normalizeNavbarContent } from '@/infrastructure/content/navbarNormalizer'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import type { AppContent } from '@/domain/types/content'
+import type { SiteSnapshot } from '@/domain/types/site'
 
 export class ContentRepository
   implements
     ContentPort,
+    SiteSnapshotPort,
     RemoteContentStatusPort,
     NavbarContentPort,
     FooterContentPort,
@@ -40,7 +52,11 @@ export class ContentRepository
     ProfileContentPort,
     LegalContentPort,
     ConsentContentPort,
-    ServicesContentPort
+    ServicesContentPort,
+    BrandContentPort,
+    SeoContentPort,
+    HomePageContentPort,
+    ContactPageContentPort
 {
   private readonly contentStore: ContentStore
   private readonly dynamicContentService: DynamicContentService
@@ -50,19 +66,18 @@ export class ContentRepository
   private remoteContentStatus: RemoteContentStatus
 
   constructor(
-    private config?: Pick<ConfigPort, 'pricingApiUrl' | 'contentApiUrl' | 'requireRemoteContent'>,
+    private config?: Pick<ConfigPort, 'pricingApiUrl' | 'siteApiUrl' | 'requireRemoteContent'>,
     private logger: LoggerPort = new NoopLogger(),
     private http: HttpClient = new FetchHttpClient(logger)
   ) {
-    this.contentStore = new ContentStore(commercialConfig, buildAppContent)
+    this.contentStore = new ContentStore(commercialConfig, buildAppContent, buildBrandContent, buildSeoContent)
     const requiresRemoteContent = Boolean(this.config?.requireRemoteContent)
-    this.remoteContentStatus = this.config?.contentApiUrl && requiresRemoteContent ? 'pending' : 'not-required'
+    this.remoteContentStatus = this.config?.siteApiUrl && requiresRemoteContent ? 'pending' : 'not-required'
     this.dynamicContentService = new DynamicContentService(
       this.http,
-      this.config?.contentApiUrl,
+      this.config?.siteApiUrl,
       this.logger,
-      (snapshot) => this.contentStore.applyRemoteContentSnapshot(snapshot, this.logger),
-      (title) => this.contentStore.applyHeroTitle(title, this.logger),
+      (snapshot) => this.contentStore.applyRemoteSiteSnapshot(snapshot, this.logger),
       () => {
         this.setRemoteContentStatus('ready')
       },
@@ -110,6 +125,14 @@ export class ContentRepository
     }
   }
 
+  getSiteSnapshot(): SiteSnapshot {
+    const snapshot = this.contentStore.getParsedSiteSnapshot()
+    return {
+      ...snapshot,
+      content: this.getContent()
+    }
+  }
+
   getNavbarContent() {
     return normalizeNavbarContent(this.contentStore.getParsedContent().navbar)
   }
@@ -144,6 +167,22 @@ export class ContentRepository
 
   getServicesContent() {
     return this.contentStore.getParsedContent().services
+  }
+
+  getBrandContent() {
+    return this.contentStore.getParsedBrand()
+  }
+
+  getSeoContent() {
+    return this.contentStore.getParsedSeo()
+  }
+
+  getHomePageContent() {
+    return this.contentStore.getParsedContent().homePage
+  }
+
+  getContactPageContent() {
+    return this.contentStore.getParsedContent().contactPage
   }
 
   private setRemoteContentStatus(status: RemoteContentStatus): void {

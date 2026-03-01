@@ -9,6 +9,17 @@ export function useThanksView() {
   const { leadTracking, content } = useContainer()
   const router = useRouter()
   const thanksContent = content.getContent().thanks
+  
+  // Proporcionar valores por defecto para campos opcionales
+  const thanksContentWithDefaults = {
+    badge: thanksContent?.badge ?? '¡Gracias!',
+    topbarTitle: thanksContent?.topbarTitle ?? 'Mensaje enviado',
+    title: thanksContent?.title ?? '¡Listo! Recibimos tu mensaje',
+    subtitle: thanksContent?.subtitle ?? 'Te contactaremos a la brevedad',
+    whatsappButtonLabel: thanksContent?.whatsappButtonLabel ?? 'Continuar por WhatsApp',
+    goHomeButtonLabel: thanksContent?.goHomeButtonLabel ?? 'Volver al inicio',
+    closeButtonAriaLabel: thanksContent?.closeButtonAriaLabel ?? 'Cerrar y volver al inicio'
+  }
 
   function handleChat() {
     openWhatsApp('gracias')
@@ -25,7 +36,7 @@ export function useThanksView() {
 
   return {
     contactCtaEnabled,
-    thanksContent,
+    thanksContent: thanksContentWithDefaults,
     handleChat,
     handleGoHome
   }

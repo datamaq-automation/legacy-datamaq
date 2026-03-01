@@ -37,6 +37,7 @@ export function useHomePage() {
   const about = content.getAboutContent()
   const profile = content.getProfileContent()
   const decisionFlow = content.getContent().decisionFlow
+  const homePage = content.getHomePageContent()
   const footer = content.getFooterContent()
   const legal = content.getLegalContent()
   const contactCtaEnabled = getWhatsAppEnabled()
@@ -50,23 +51,23 @@ export function useHomePage() {
     {
       href: '#servicios',
       to: toHomeSectionRoute('#servicios'),
-      label: 'Explorar servicios',
+      label: homePage.quickLinks.services,
       shortLabel: 'Servicios',
       icon: 'bi-search'
     },
     {
       href: '#perfil',
       to: toHomeSectionRoute('#perfil'),
-      label: 'Ver perfil tecnico',
+      label: homePage.quickLinks.profile,
       shortLabel: 'Perfil',
       icon: 'bi-person-circle'
     }
   ] as const
   const dockLinks = [
-    { href: '#top', label: 'Inicio' },
-    { href: '#servicios', label: 'Servicios' },
-    { href: '#perfil', label: 'Perfil' },
-    { href: '#contacto', label: 'Contacto', to: { path: '/contact' } }
+    { href: '#top', label: homePage.dockLabels.home },
+    { href: '#servicios', label: homePage.dockLabels.services },
+    { href: '#perfil', label: homePage.dockLabels.profile },
+    { href: '#contacto', label: homePage.dockLabels.contact, to: { path: '/contact' } }
   ].map((link) => ({
     ...link,
     to: 'to' in link ? link.to : toHomeSectionRoute(link.href),
@@ -133,6 +134,7 @@ export function useHomePage() {
     about,
     profile,
     decisionFlow,
+    homePage,
     footer,
     legal,
     contactCtaEnabled,

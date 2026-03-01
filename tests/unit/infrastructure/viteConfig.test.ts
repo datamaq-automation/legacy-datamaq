@@ -10,7 +10,7 @@ type PublicConfigStub = {
   inquiryApiUrl?: string
   mailApiUrl?: string
   pricingApiUrl?: string
-  contentApiUrl?: string
+  siteApiUrl?: string
   quoteDiagnosticApiUrl?: string
   quotePdfApiUrl?: string
 }
@@ -25,7 +25,7 @@ describe('ViteConfig', () => {
       inquiryApiUrl: '/api/v1/contact',
       mailApiUrl: '/api/v1/mail',
       pricingApiUrl: '/api/v1/pricing',
-      contentApiUrl: '/api/v1/content',
+      siteApiUrl: '/api/v1/site',
       quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
       quotePdfApiUrl: '/api/v1/quote/{quote_id}/pdf'
     })
@@ -34,7 +34,7 @@ describe('ViteConfig', () => {
     expect(config.inquiryApiUrl).toBe('/api/v1/contact')
     expect(config.mailApiUrl).toBe('/api/v1/mail')
     expect(config.pricingApiUrl).toBe('/api/v1/pricing')
-    expect(config.contentApiUrl).toBe('/api/v1/content')
+    expect(config.siteApiUrl).toBe('/api/v1/site')
     expect(config.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
     expect(config.quotePdfApiUrl).toBe('/api/v1/quote/{quote_id}/pdf')
   })
@@ -44,7 +44,7 @@ describe('ViteConfig', () => {
       inquiryApiUrl: 'https://api.example.com/contact',
       mailApiUrl: 'https://api.example.com/mail',
       pricingApiUrl: 'https://api.example.com/pricing',
-      contentApiUrl: 'https://api.example.com/content',
+      siteApiUrl: 'https://api.example.com/site',
       quoteDiagnosticApiUrl: 'https://api.example.com/quote/diagnostic',
       quotePdfApiUrl: 'https://api.example.com/quote/{quote_id}/pdf'
     })
@@ -53,7 +53,7 @@ describe('ViteConfig', () => {
     expect(config.inquiryApiUrl).toBe('https://api.example.com/contact')
     expect(config.mailApiUrl).toBe('https://api.example.com/mail')
     expect(config.pricingApiUrl).toBe('https://api.example.com/pricing')
-    expect(config.contentApiUrl).toBe('https://api.example.com/content')
+    expect(config.siteApiUrl).toBe('https://api.example.com/site')
     expect(config.quoteDiagnosticApiUrl).toBe('https://api.example.com/quote/diagnostic')
     expect(config.quotePdfApiUrl).toBe('https://api.example.com/quote/{quote_id}/pdf')
   })
@@ -65,7 +65,7 @@ describe('ViteConfig', () => {
     expect(config.inquiryApiUrl).toBeUndefined()
     expect(config.mailApiUrl).toBeUndefined()
     expect(config.pricingApiUrl).toBeUndefined()
-    expect(config.contentApiUrl).toBeUndefined()
+    expect(config.siteApiUrl).toBeUndefined()
     expect(config.quoteDiagnosticApiUrl).toBeUndefined()
     expect(config.quotePdfApiUrl).toBeUndefined()
   })

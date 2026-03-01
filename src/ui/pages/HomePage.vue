@@ -11,6 +11,7 @@ const {
   services,
   about,
   profile,
+  homePage,
   footer,
   legal,
   contactCtaEnabled,
@@ -75,14 +76,14 @@ const {
             class="btn c-ui-btn c-ui-btn--primary c-home-header__cta d-none d-lg-inline-flex"
             to="/contact"
           >
-            Contacto
+            {{ homePage.headerContactLabel }}
           </RouterLink>
           <RouterLink
             v-else
             class="btn c-ui-btn c-ui-btn--outline c-home-header__cta d-none d-lg-inline-flex"
             to="/contact"
           >
-            Contacto
+            {{ homePage.headerContactLabel }}
           </RouterLink>
         </div>
       </div>
@@ -122,7 +123,7 @@ const {
                     class="btn c-ui-btn c-ui-btn--primary c-home-hero__primary"
                     href="#contacto"
                   >
-                    Iniciar contacto
+                    {{ homePage.heroFallbackContactLabel }}
                   </a>
 
                   <RouterLink class="btn c-ui-btn c-ui-btn--outline c-home-hero__secondary" :to="{ path: '/', hash: '#servicios' }">
@@ -140,7 +141,7 @@ const {
 
             <div class="col-12 col-lg-5">
               <article class="c-home-hero__media-card">
-                <p class="c-home-hero__media-label">Cobertura tecnica activa</p>
+                <p class="c-home-hero__media-label">{{ homePage.heroMediaLabel }}</p>
                 <img
                   :src="hero.image.src"
                   :alt="hero.image.alt"
@@ -160,7 +161,7 @@ const {
       <section class="c-home-trust" aria-labelledby="trust-title">
         <div class="container">
           <div class="c-home-trust__shell">
-            <p id="trust-title" class="c-home-trust__label">Senales de confianza</p>
+            <p id="trust-title" class="c-home-trust__label">{{ homePage.trustTitle }}</p>
             <div class="c-home-trust__rail" role="list" aria-label="Capacidades destacadas">
               <span v-for="signal in trustSignals" :key="signal" class="c-home-trust__item" role="listitem">
                 {{ signal }}
@@ -175,7 +176,7 @@ const {
           <div class="row g-4 align-items-stretch">
             <div class="col-12 col-lg-5">
               <article class="c-home-panel c-home-profile__card">
-                <span class="c-home-eyebrow">Perfil profesional</span>
+                <span class="c-home-eyebrow">{{ homePage.profileEyebrow }}</span>
                 <div class="c-home-profile__avatar-wrap">
                   <img
                     :src="about.image.src"
@@ -187,7 +188,7 @@ const {
                     decoding="async"
                   />
                 </div>
-                <h2 id="perfil-title" class="c-home-profile__name">Agustin Bustos</h2>
+                <h2 id="perfil-title" class="c-home-profile__name">{{ homePage.profileName }}</h2>
                 <p class="c-home-profile__role">{{ about.title }}</p>
                 <p class="c-home-profile__lead">
                   {{ profileLead }}
@@ -198,21 +199,21 @@ const {
                   class="btn c-ui-btn c-ui-btn--primary c-home-profile__cta"
                   @click="handleChat('profile-card', whatsappHref)"
                 >
-                  Contacto directo por WhatsApp
+                  {{ homePage.profileWhatsappLabel }}
                 </button>
                   <RouterLink
                     v-else
                     class="btn c-ui-btn c-ui-btn--outline c-home-profile__cta"
                     to="/contact"
                   >
-                    Ir al formulario
-                  </RouterLink>
+                    {{ homePage.profileFormLabel }}
+                   </RouterLink>
               </article>
             </div>
 
             <div class="col-12 col-lg-7">
               <article class="c-home-panel c-home-profile__details">
-                <p class="c-home-profile__section-label">Enfoque tecnico</p>
+                <p class="c-home-profile__section-label">{{ homePage.profileSectionLabel }}</p>
                 <p class="c-home-profile__detail-copy">
                   {{ profileDetail }}
                 </p>
@@ -231,12 +232,12 @@ const {
       <section id="servicios" class="section-mobile c-home-services" aria-labelledby="servicios-title">
         <div class="container">
           <div class="c-home-section-head">
-            <span class="c-home-eyebrow">Servicios</span>
+            <span class="c-home-eyebrow">{{ homePage.servicesEyebrow }}</span>
             <h2 id="servicios-title" class="c-home-section-title">
               {{ services.title }}
             </h2>
             <p class="c-home-section-copy">
-              Soluciones tecnicas orientadas a planta, mantenimiento y mejora continua.
+              {{ homePage.servicesIntro }}
             </p>
           </div>
 
@@ -294,8 +295,8 @@ const {
       <section id="faq" class="section-mobile c-home-faq" aria-labelledby="faq-title">
         <div class="container">
           <div class="c-home-section-head">
-            <span class="c-home-eyebrow">Ayuda</span>
-            <h2 id="faq-title" class="c-home-section-title">Preguntas frecuentes</h2>
+            <span class="c-home-eyebrow">{{ homePage.faqEyebrow }}</span>
+            <h2 id="faq-title" class="c-home-section-title">{{ homePage.faqTitle }}</h2>
           </div>
 
           <div class="c-home-faq__stack">
@@ -322,9 +323,9 @@ const {
       <ContactFormSection
         v-if="isContactFormActive"
         section-id="contacto"
-        title="Inicia tu proyecto"
-        subtitle="Dejanos tus datos y te contactamos en menos de 24 horas."
-        submit-label="Enviar solicitud"
+        :title="homePage.primaryContactForm.title"
+        :subtitle="homePage.primaryContactForm.subtitle"
+        :submit-label="homePage.primaryContactForm.submitLabel"
         backend-channel="contact"
         :on-submit="handleContactSubmit"
         :show-technician-card="false"
@@ -333,9 +334,9 @@ const {
       <ContactFormSection
         v-if="isEmailFormActive"
         section-id="contacto-mail"
-        title="Canal alternativo por email"
-        subtitle="Si preferis correo, tambien podes enviarnos tu consulta por este canal."
-        submit-label="Enviar por email"
+        :title="homePage.secondaryEmailForm.title"
+        :subtitle="homePage.secondaryEmailForm.subtitle"
+        :submit-label="homePage.secondaryEmailForm.submitLabel"
         backend-channel="mail"
         :on-submit="handleEmailSubmit"
         :show-technician-card="false"

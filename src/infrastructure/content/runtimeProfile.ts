@@ -42,7 +42,7 @@ export interface RuntimeProfile {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
-  contentApiUrl: NullableString
+  siteApiUrl: NullableString
   healthApiUrl: NullableString
   requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableString
@@ -89,7 +89,7 @@ type RuntimeProfileJson = {
   inquiryApiUrl: NullableStringJson
   mailApiUrl: NullableStringJson
   pricingApiUrl: NullableStringJson
-  contentApiUrl: NullableStringJson
+  siteApiUrl: NullableStringJson
   healthApiUrl: NullableStringJson
   requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableStringJson
@@ -194,7 +194,7 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
     inquiryApiUrl: normalize(profile.inquiryApiUrl),
     mailApiUrl: normalize(profile.mailApiUrl),
     pricingApiUrl: normalize(profile.pricingApiUrl),
-    contentApiUrl: normalize(profile.contentApiUrl),
+    siteApiUrl: normalize(profile.siteApiUrl),
     healthApiUrl: normalize(profile.healthApiUrl),
     requireRemoteContent: profile.requireRemoteContent,
     quoteDiagnosticApiUrl: normalize(profile.quoteDiagnosticApiUrl),

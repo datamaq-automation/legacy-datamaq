@@ -16,7 +16,7 @@ export class ViteConfig implements ConfigPort {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
-  contentApiUrl: NullableString
+  siteApiUrl: NullableString
   healthApiUrl: NullableString
   requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableString
@@ -72,9 +72,9 @@ export class ViteConfig implements ConfigPort {
       configKey: 'pricingApiUrl',
       ...endpointOptions
     })
-    this.contentApiUrl = resolveBackendConfigEndpoint({
-      directUrl: normalize(publicConfig.contentApiUrl),
-      configKey: 'contentApiUrl',
+    this.siteApiUrl = resolveBackendConfigEndpoint({
+      directUrl: normalize(publicConfig.siteApiUrl),
+      configKey: 'siteApiUrl',
       ...endpointOptions
     })
     this.healthApiUrl = resolveBackendConfigEndpoint({

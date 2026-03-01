@@ -11,16 +11,16 @@ export function getWhatsAppHref(): string | undefined {
 }
 
 export function getContactEmail(): string | undefined {
-  const value = useContainer().config.contactEmail
+  const value = useContainer().content.getBrandContent().contactEmail
   return value?.trim() ? value : undefined
 }
 
 export function getContactFormActive(): boolean {
-  return useContainer().config.contactFormActive
+  return useContainer().content.getBrandContent().contactFormActive
 }
 
 export function getEmailFormActive(): boolean {
-  return useContainer().config.emailFormActive
+  return useContainer().content.getBrandContent().emailFormActive
 }
 
 export function openWhatsApp(section: string = 'whatsapp', href?: string): void {

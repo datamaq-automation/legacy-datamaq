@@ -15,11 +15,11 @@ Path: src/components/TecnicoACargo.vue
             <div class="card-body p-4 text-center">
               <div class="c-tecnico-avatar mx-auto mb-3">
                 <img
-                  :src="tecnicoAvatar"
-                  alt="Foto del tecnico a cargo"
+                  :src="technician.photo.src"
+                  :alt="technician.photo.alt"
                   class="c-tecnico-avatar__image rounded-circle"
-                  width="100"
-                  height="100"
+                  :width="technician.photo.width ?? 100"
+                  :height="technician.photo.height ?? 100"
                   loading="lazy"
                   decoding="async"
                 />
@@ -29,10 +29,10 @@ Path: src/components/TecnicoACargo.vue
                 :id="headingId"
                 class="text-uppercase small text-warning mb-1"
               >
-                Técnico a cargo
+                {{ technician.role }}
               </p>
               <h3 class="h5 fw-bold mb-3">
-                Agustín Bustos
+                {{ technician.name }}
               </h3>
 
               <button
@@ -41,10 +41,10 @@ Path: src/components/TecnicoACargo.vue
                 class="btn c-ui-btn c-ui-btn--primary btn-lg w-100"
                 @click="handleWhatsAppClick"
               >
-                Coordinar por WhatsApp
+                {{ technician.whatsappLabel }}
               </button>
               <p v-else class="text-muted small mb-0">
-                Contacto no disponible
+                {{ technician.unavailableLabel }}
               </p>
             </div>
           </div>
@@ -63,11 +63,11 @@ Path: src/components/TecnicoACargo.vue
       <div class="card-body p-4 text-center">
         <div class="c-tecnico-avatar mx-auto mb-3">
           <img
-            :src="tecnicoAvatar"
-            alt="Foto del tecnico a cargo"
+            :src="technician.photo.src"
+            :alt="technician.photo.alt"
             class="c-tecnico-avatar__image rounded-circle"
-            width="100"
-            height="100"
+            :width="technician.photo.width ?? 100"
+            :height="technician.photo.height ?? 100"
             loading="lazy"
             decoding="async"
           />
@@ -77,10 +77,10 @@ Path: src/components/TecnicoACargo.vue
           :id="headingId"
           class="text-uppercase small text-warning mb-1"
         >
-          Técnico a cargo
+          {{ technician.role }}
         </p>
         <h3 class="h5 fw-bold mb-3">
-          Agustín Bustos
+          {{ technician.name }}
         </h3>
 
         <button
@@ -89,10 +89,10 @@ Path: src/components/TecnicoACargo.vue
           class="btn c-ui-btn c-ui-btn--primary btn-lg w-100"
           @click="handleWhatsAppClick"
         >
-          Coordinar por WhatsApp
+          {{ technician.whatsappLabel }}
         </button>
         <p v-else class="text-muted small mb-0">
-          Contacto no disponible
+          {{ technician.unavailableLabel }}
         </p>
       </div>
     </div>
@@ -103,8 +103,6 @@ Path: src/components/TecnicoACargo.vue
 import { computed } from 'vue'
 import { getWhatsAppHref } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
-
-const tecnicoAvatar = '/media/tecnico-a-cargo.webp'
 
 const props = withDefaults(
   defineProps<{
@@ -120,6 +118,7 @@ const props = withDefaults(
 const whatsappHref = computed(() => getWhatsAppHref())
 const isSection = computed(() => props.variant === 'section')
 const headingId = computed(() => props.headingId)
+const technician = computed(() => useContainer().content.getBrandContent().technician)
 
 function handleWhatsAppClick(): void {
   if (!whatsappHref.value) {

@@ -146,6 +146,7 @@ function logPricingInfo(
     resource: 'pricing',
     endpoint,
     status,
+    payload,
     metadata,
     details: {
       currency: metadata.currency ?? null,

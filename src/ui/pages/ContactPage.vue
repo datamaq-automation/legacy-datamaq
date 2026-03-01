@@ -10,6 +10,7 @@ const {
   footer,
   legal,
   contact,
+  contactPage,
   contactCtaEnabled,
   isContactFormActive,
   isEmailFormActive,
@@ -61,7 +62,7 @@ const {
             class="btn c-ui-btn c-ui-btn--outline d-lg-none"
             to="/"
           >
-            Inicio
+            {{ contactPage.homeButtonLabel }}
           </RouterLink>
         </div>
       </div>
@@ -73,7 +74,7 @@ const {
           <div class="row g-4 align-items-stretch">
             <div class="col-12 col-lg-5">
               <article class="c-contact-page-panel c-contact-page-panel--intro">
-                <span class="c-contact-page-eyebrow">Contacto</span>
+                <span class="c-contact-page-eyebrow">{{ contactPage.eyebrow }}</span>
                 <h1 id="contact-page-title" class="c-contact-page-title">{{ contact.title }}</h1>
                 <p class="c-contact-page-copy">{{ contact.subtitle }}</p>
 
@@ -92,11 +93,9 @@ const {
 
             <div class="col-12 col-lg-7">
               <article class="c-contact-page-panel c-contact-page-panel--support">
-                <p class="c-contact-page-support-label">Canales disponibles</p>
+                <p class="c-contact-page-support-label">{{ contactPage.supportTitle }}</p>
                 <ul class="c-contact-page-support-list">
-                  <li>Formulario principal para consultas tecnicas y comerciales.</li>
-                  <li>Canal alternativo por email si preferis seguimiento asincronico.</li>
-                  <li>WhatsApp directo para coordinacion rapida cuando este habilitado.</li>
+                  <li v-for="item in contactPage.supportItems" :key="item">{{ item }}</li>
                 </ul>
 
                 <div class="c-contact-page-support-actions">
@@ -109,7 +108,7 @@ const {
                     {{ navbar.contactLabel }}
                   </button>
                   <RouterLink class="btn c-ui-btn c-ui-btn--outline" to="/">
-                    Volver al inicio
+                    {{ contactPage.supportBackHomeLabel }}
                   </RouterLink>
                 </div>
               </article>
@@ -123,7 +122,7 @@ const {
         section-id="contacto"
         :title="contact.title"
         :subtitle="contact.subtitle"
-        submit-label="Enviar solicitud"
+        :submit-label="contactPage.primaryFormSubmitLabel"
         backend-channel="contact"
         :on-submit="handleContactSubmit"
       />
@@ -131,9 +130,9 @@ const {
       <ContactFormSection
         v-if="isEmailFormActive"
         section-id="contacto-mail"
-        title="Canal alternativo por email"
-        subtitle="Si preferis correo, tambien podes enviarnos tu consulta por este canal."
-        submit-label="Enviar por email"
+        :title="contactPage.secondaryEmailForm.title"
+        :subtitle="contactPage.secondaryEmailForm.subtitle"
+        :submit-label="contactPage.secondaryEmailForm.submitLabel"
         backend-channel="mail"
         :on-submit="handleEmailSubmit"
       />

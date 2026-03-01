@@ -4,17 +4,34 @@ import {
   buildWebsiteJsonLd,
   getDefaultSeo
 } from '@/ui/seo/defaultSeo'
-import type { ContentPort } from '@/application/ports/Content'
-import type { ConfigPort } from '@/application/ports/Config'
+import type { ContentPort, SeoContentPort } from '@/application/ports/Content'
 import type { LocationProvider } from '@/application/ports/Environment'
+import type { SeoContent } from '@/domain/types/site'
 
-const contentPort: ContentPort = {
-  getContent: () => ({
-    services: {
-      title: 'Servicios',
-      cards: []
-    }
-  }) as ReturnType<ContentPort['getContent']>
+function buildSeoContent(overrides: Partial<SeoContent> = {}): SeoContent {
+  return {
+    siteUrl: '',
+    siteName: '',
+    siteDescription: '',
+    siteOgImage: '',
+    siteLocale: '',
+    business: {
+      name: '',
+      areaServed: []
+    },
+    ...overrides
+  }
+}
+
+const contentPort: ContentPort & SeoContentPort = {
+  getContent: () =>
+    ({
+      services: {
+        title: 'Servicios',
+        cards: []
+      }
+    }) as ReturnType<ContentPort['getContent']>,
+  getSeoContent: () => buildSeoContent()
 }
 
 const location: LocationProvider = {
@@ -23,43 +40,19 @@ const location: LocationProvider = {
   search: () => ''
 }
 
-function buildConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
-  return {
-    inquiryApiUrl: undefined,
-    mailApiUrl: undefined,
-    contactEmail: undefined,
-    analyticsEnabled: true,
-    siteUrl: undefined,
-    siteName: undefined,
-    siteDescription: undefined,
-    siteOgImage: undefined,
-    siteLocale: undefined,
-    gscVerification: undefined,
-    businessName: undefined,
-    businessTelephone: undefined,
-    businessEmail: undefined,
-    businessStreet: undefined,
-    businessLocality: undefined,
-    businessRegion: undefined,
-    businessPostalCode: undefined,
-    businessCountry: undefined,
-    businessLat: undefined,
-    businessLng: undefined,
-    businessArea: undefined,
-    ...overrides
-  }
-}
-
 describe('defaultSeo', () => {
-  it('usa valores de configuracion y los normaliza', () => {
+  it('usa valores de seo remoto y los normaliza', () => {
     const seo = getDefaultSeo(
-      contentPort,
-      buildConfig({
-        siteUrl: ' https://datamaq.com ',
-        siteName: ' Profe ',
-        siteDescription: '  Descripcion  ',
-        siteOgImage: ' https://datamaq.com/og.png '
-      }),
+      {
+        ...contentPort,
+        getSeoContent: () =>
+          buildSeoContent({
+            siteUrl: ' https://datamaq.com ',
+            siteName: ' Profe ',
+            siteDescription: '  Descripcion  ',
+            siteOgImage: ' https://datamaq.com/og.png '
+          })
+      },
       location
     )
 
@@ -84,8 +77,8 @@ describe('defaultSeo', () => {
     })
   })
 
-  it('usa fallbacks cuando la configuracion no esta definida', () => {
-    const seo = getDefaultSeo(contentPort, buildConfig(), location)
+  it('usa fallbacks cuando seo remoto no esta definido', () => {
+    const seo = getDefaultSeo(contentPort, location)
 
     expect(seo.siteUrl).toBe('https://datamaq.com')
     expect(seo.ogImage).toBe('https://datamaq.com/og-default.png')
@@ -95,15 +88,11 @@ describe('defaultSeo', () => {
   })
 
   it('maneja ausencia de href devolviendo campos vacios', () => {
-    const seo = getDefaultSeo(
-      contentPort,
-      buildConfig(),
-      {
-        href: () => '',
-        referrer: () => '',
-        search: () => ''
-      }
-    )
+    const seo = getDefaultSeo(contentPort, {
+      href: () => '',
+      referrer: () => '',
+      search: () => ''
+    })
 
     expect(seo.siteUrl).toBe('')
     expect(seo.ogImage).toBe('')
@@ -112,26 +101,31 @@ describe('defaultSeo', () => {
 
   it('incluye datos de negocio, verificacion y locale cuando se configuran', () => {
     const seo = getDefaultSeo(
-      contentPort,
-      buildConfig({
-        siteUrl: ' https://example.com/ ',
-        siteName: ' Example ',
-        siteDescription: ' Desc ',
-        siteOgImage: ' https://example.com/og.png ',
-        siteLocale: ' es_ES ',
-        gscVerification: ' token ',
-        businessName: ' Example Biz ',
-        businessTelephone: ' +54 11 1111 ',
-        businessEmail: ' test@example.com ',
-        businessStreet: ' Main 123 ',
-        businessLocality: ' Tigre ',
-        businessRegion: ' Buenos Aires ',
-        businessPostalCode: ' 1648 ',
-        businessCountry: ' AR ',
-        businessLat: ' -34.0 ',
-        businessLng: ' -58.5 ',
-        businessArea: 'Tigre, GBA Norte, , Argentina'
-      }),
+      {
+        ...contentPort,
+        getSeoContent: () =>
+          buildSeoContent({
+            siteUrl: ' https://example.com/ ',
+            siteName: ' Example ',
+            siteDescription: ' Desc ',
+            siteOgImage: ' https://example.com/og.png ',
+            siteLocale: ' es_ES ',
+            gscVerification: ' token ',
+            business: {
+              name: ' Example Biz ',
+              telephone: ' +54 11 1111 ',
+              email: ' test@example.com ',
+              street: ' Main 123 ',
+              locality: ' Tigre ',
+              region: ' Buenos Aires ',
+              postalCode: ' 1648 ',
+              country: ' AR ',
+              lat: -34,
+              lng: -58.5,
+              areaServed: ['Tigre', 'GBA Norte', 'Argentina']
+            }
+          })
+      },
       location
     )
 
@@ -154,20 +148,5 @@ describe('defaultSeo', () => {
       lng: -58.5,
       areaServed: ['Tigre', 'GBA Norte', 'Argentina']
     })
-  })
-
-  it('omite latitud invalida y conserva longitud valida', () => {
-    const seo = getDefaultSeo(
-      contentPort,
-      buildConfig({
-        siteUrl: 'https://example.com',
-        businessLat: 'nope',
-        businessLng: ' -58.5 '
-      }),
-      location
-    )
-
-    expect(seo.business.lat).toBeUndefined()
-    expect(seo.business.lng).toBe(-58.5)
   })
 })

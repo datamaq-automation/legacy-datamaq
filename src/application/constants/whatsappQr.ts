@@ -1,4 +1,4 @@
-import { publicConfig } from '@/infrastructure/config/publicConfig'
+import { useContainer } from '@/di/container'
 
 export interface WhatsAppQrConfig {
   phoneE164: string
@@ -6,15 +6,16 @@ export interface WhatsAppQrConfig {
   sourceTag: string
 }
 
-export const whatsappQrConfig: WhatsAppQrConfig = {
-  phoneE164: publicConfig.whatsappQrPhoneE164?.trim() ?? '',
-  message:
-    publicConfig.whatsappQrMessage?.trim() ??
-    'Hola, te contacto desde la web. Podemos coordinar?',
-  sourceTag: publicConfig.whatsappQrSourceTag?.trim() ?? 'qr_card'
+export function getWhatsAppQrConfig(): WhatsAppQrConfig {
+  const qr = useContainer().content.getBrandContent().whatsappQr
+  return {
+    phoneE164: qr.phoneE164?.trim() ?? '',
+    message: qr.message.trim(),
+    sourceTag: qr.sourceTag.trim()
+  }
 }
 
-export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = whatsappQrConfig): string {
+export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = getWhatsAppQrConfig()): string {
   const normalizedMessage = config.message.trim()
   const normalizedTag = config.sourceTag.trim()
   if (!normalizedTag) {
@@ -23,10 +24,10 @@ export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = whatsappQrConf
   return `${normalizedMessage}\n\nOrigen: ${normalizedTag}`
 }
 
-export function buildWhatsAppQrHref(config: WhatsAppQrConfig = whatsappQrConfig): string {
+export function buildWhatsAppQrHref(config: WhatsAppQrConfig = getWhatsAppQrConfig()): string {
   const phoneE164 = normalizePhone(config.phoneE164)
   if (!phoneE164) {
-    return publicConfig.whatsappUrl?.trim() ?? ''
+    return useContainer().content.getBrandContent().whatsappUrl?.trim() ?? ''
   }
   const text = encodeURIComponent(buildWhatsAppQrMessage(config))
   return `https://wa.me/${phoneE164}?text=${text}`

@@ -158,10 +158,69 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
     },
     thanks: {
       badge: 'Formulario enviado',
+      topbarTitle: 'Solicitud finalizada',
       title: 'Gracias!',
       subtitle: 'Recibimos tu consulta.',
       whatsappButtonLabel: 'Escribir por WhatsApp',
-      goHomeButtonLabel: 'Volver al inicio'
+      goHomeButtonLabel: 'Volver al inicio',
+      closeButtonAriaLabel: 'Volver al inicio'
+    },
+    homePage: {
+      headerContactLabel: 'Contacto',
+      heroFallbackContactLabel: 'Iniciar contacto',
+      heroMediaLabel: 'Cobertura tecnica activa',
+      trustTitle: 'Senales de confianza',
+      profileEyebrow: 'Perfil profesional',
+      profileName: 'Agustin Bustos',
+      profileWhatsappLabel: 'Contacto directo por WhatsApp',
+      profileFormLabel: 'Ir al formulario',
+      profileSectionLabel: 'Enfoque tecnico',
+      servicesEyebrow: 'Servicios',
+      servicesIntro: 'Soluciones tecnicas orientadas a planta, mantenimiento y mejora continua.',
+      faqEyebrow: 'Ayuda',
+      faqTitle: 'Preguntas frecuentes',
+      quickLinks: {
+        services: 'Explorar servicios',
+        profile: 'Ver perfil tecnico'
+      },
+      dockLabels: {
+        home: 'Inicio',
+        services: 'Servicios',
+        profile: 'Perfil',
+        contact: 'Contacto'
+      },
+      primaryContactForm: {
+        title: 'Inicia tu proyecto',
+        subtitle: 'Dejanos tus datos y te contactamos en menos de 24 horas.',
+        submitLabel: 'Enviar solicitud'
+      },
+      secondaryEmailForm: {
+        title: 'Canal alternativo por email',
+        subtitle: 'Si preferis correo, tambien podes enviarnos tu consulta por este canal.',
+        submitLabel: 'Enviar por email'
+      }
+    },
+    contactPage: {
+      eyebrow: 'Contacto',
+      homeButtonLabel: 'Inicio',
+      supportTitle: 'Canales disponibles',
+      supportItems: [
+        'Formulario principal para consultas tecnicas y comerciales.',
+        'Canal alternativo por email si preferis seguimiento asincronico.',
+        'WhatsApp directo para coordinacion rapida cuando este habilitado.'
+      ],
+      supportBackHomeLabel: 'Volver al inicio',
+      introLinks: {
+        services: 'Servicios',
+        profile: 'Perfil tecnico',
+        faq: 'FAQ'
+      },
+      primaryFormSubmitLabel: 'Enviar solicitud',
+      secondaryEmailForm: {
+        title: 'Canal alternativo por email',
+        subtitle: 'Si preferis correo, tambien podes enviarnos tu consulta por este canal.',
+        submitLabel: 'Enviar por email'
+      }
     }
   }
 }

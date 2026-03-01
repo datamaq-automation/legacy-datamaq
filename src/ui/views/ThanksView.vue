@@ -15,12 +15,12 @@ const { contactCtaEnabled, thanksContent, handleChat, handleGoHome } = useThanks
         <button
           type="button"
           class="thanks-topbar__close"
-          aria-label="Volver al inicio"
+          :aria-label="thanksContent.closeButtonAriaLabel"
           @click="handleGoHome"
         >
           <i class="bi bi-x-lg" aria-hidden="true"></i>
         </button>
-        <h2 class="thanks-topbar__title">Solicitud Finalizada</h2>
+        <h2 class="thanks-topbar__title">{{ thanksContent.topbarTitle }}</h2>
       </header>
 
       <section class="thanks-main">

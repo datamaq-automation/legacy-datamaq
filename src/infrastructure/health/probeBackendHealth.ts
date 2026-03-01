@@ -92,6 +92,7 @@ export async function probeBackendHealth(
       resource: 'health',
       endpoint,
       status: response.status,
+      payload: response.data,
       metadata,
       details: {
         service

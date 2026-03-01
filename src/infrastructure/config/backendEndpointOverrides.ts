@@ -4,7 +4,7 @@ type BackendEndpointKey =
   | 'inquiryApiUrl'
   | 'mailApiUrl'
   | 'pricingApiUrl'
-  | 'contentApiUrl'
+  | 'siteApiUrl'
   | 'healthApiUrl'
   | 'quoteDiagnosticApiUrl'
   | 'quotePdfApiUrl'
@@ -13,7 +13,7 @@ const LOCAL_BACKEND_PATHS: Record<BackendEndpointKey, string> = {
   inquiryApiUrl: 'v1/contact',
   mailApiUrl: 'v1/mail',
   pricingApiUrl: 'v1/pricing',
-  contentApiUrl: 'v1/content',
+  siteApiUrl: 'v1/site',
   healthApiUrl: 'v1/health',
   quoteDiagnosticApiUrl: 'v1/quote/diagnostic',
   quotePdfApiUrl: 'v1/quote/{quote_id}/pdf'

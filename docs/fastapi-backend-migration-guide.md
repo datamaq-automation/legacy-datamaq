@@ -44,7 +44,7 @@ La recomendacion de buenas practicas para esta migracion es:
 Contrato objetivo recomendado:
 
 - `/v1/health`
-- `/v1/content`
+- `/v1/site`
 - `/v1/pricing`
 - `/v1/contact`
 - `/v1/mail`
@@ -123,7 +123,7 @@ El frontend resuelve dependencias de backend principalmente desde:
 El frontend depende hoy de estas capacidades backend:
 
 - `GET /v1/health`
-- `GET /v1/content`
+- `GET /v1/site`
 - `GET /v1/pricing`
 - `POST /v1/contact`
 - `POST /v1/mail`
@@ -133,7 +133,7 @@ El frontend depende hoy de estas capacidades backend:
 En entornos locales de integracion tambien consume equivalentes same-origin:
 
 - `/api/v1/health`
-- `/api/v1/content`
+- `/api/v1/site`
 - `/api/v1/pricing`
 - `/api/v1/contact`
 - `/api/v1/mail`
@@ -147,7 +147,7 @@ Las claves backend que el frontend ya usa hoy son:
 - `inquiryApiUrl`
 - `mailApiUrl`
 - `pricingApiUrl`
-- `contentApiUrl`
+- `siteApiUrl`
 - `healthApiUrl`
 - `quoteDiagnosticApiUrl`
 - `quotePdfApiUrl`
@@ -194,17 +194,17 @@ Comportamiento esperado:
 - `status: "ok"` se usa como metadata observable
 - si falla, frontend registra `network-error` o `http-error`
 
-## 2. Content
+## 2. Site
 
 Fuentes principales:
 
 - `src/infrastructure/content/contentRepository.ts`
 - `src/infrastructure/content/dynamicContentService.ts`
-- `src/domain/schemas/contentSchema.ts`
+- `src/domain/schemas/siteSchema.ts`
 
 Endpoint esperado:
 
-- `contentApiUrl`
+- `siteApiUrl`
 
 Headers enviados:
 
@@ -218,9 +218,15 @@ Contrato minimo:
 Contrato ideal:
 
 - objeto con metadata superior
-- contenido real dentro de `data`
+- snapshot real dentro de `data`
 
-Forma de contenido que el frontend valida:
+Forma de `data` que el frontend valida:
+
+- `content`
+- `brand`
+- `seo`
+
+Forma de `data.content` que el frontend valida:
 
 - `hero`
 - `services`
@@ -233,10 +239,8 @@ Forma de contenido que el frontend valida:
 - `consent`
 - `decisionFlow`
 - `thanks`
-
-Fallback tolerado por frontend:
-
-- si no hay snapshot completo, igual puede aprovechar `hero.title`
+- `homePage`
+- `contactPage`
 
 ## 3. Pricing
 
@@ -518,7 +522,7 @@ Estado actual:
 
 Contrato objetivo:
 
-- `/v1/content`
+- `/v1/site`
 - `/v1/pricing`
 - `/v1/quote/diagnostic`
 - `/v1/quote/{quote_id}/pdf`
@@ -600,7 +604,7 @@ Interpretacion sugerida:
 Una estructura razonable para reemplazar Laravel sin romper el frontend seria:
 
 - router `health`
-- router `content`
+- router `site`
 - router `pricing`
 - router `contact`
 - router `mail`
@@ -618,7 +622,7 @@ Antes de cambiar el endpoint productivo a FastAPI, validar:
 2. que la convencion final de paths quede definida y reflejada en `ViteConfig`
 3. que `contact` preserve CORS, `OPTIONS`, request id y shape de error
 4. que `mail` preserve validacion diferenciada respecto de `contact`
-5. que `content` siga entregando un `data` compatible con `AppContentSchema`
+5. que `site` siga entregando un `data` compatible con `SiteSnapshotSchema`
 6. que `pricing` siga entregando al menos una clave reconocible para precio
 7. que `quote` preserve response JSON y descarga PDF con filename
 8. que `integration` y `e2e` queden alineados con el backend local de FastAPI
@@ -641,7 +645,7 @@ Para una migracion segura, tambien hay que mirar:
 - gateway de `contact` y parsing de respuestas: `src/infrastructure/contact/*.ts`
 - DTOs de `quote`: `src/application/dto/quote.ts`
 - gateway de `quote`: `src/infrastructure/quote/quoteApiGateway.ts`
-- shape del contenido remoto: `src/domain/schemas/contentSchema.ts`
+- shape del snapshot remoto: `src/domain/schemas/siteSchema.ts`
 - tests que fijan contrato observable: `tests/unit/infrastructure/*.test.ts`
 
 Nota importante sobre tests actuales:

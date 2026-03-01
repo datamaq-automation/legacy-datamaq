@@ -24,7 +24,7 @@ export type BackendMetadataKey = (typeof BACKEND_METADATA_KEYS)[number]
 
 export type BackendResponseMetadata = Partial<Record<BackendMetadataKey, string | null>>
 
-export type BackendInfoResource = 'health' | 'content' | 'pricing'
+export type BackendInfoResource = 'health' | 'content' | 'pricing' | 'site'
 
 export type BackendInfoPayload = {
   resource: BackendInfoResource
@@ -101,6 +101,36 @@ export function emitBackendInfo(options: {
   console.info(
     ...buildRuntimeLogArgs(`[backend:${options.resource}] conexion OK`, buildBackendInfoPayload(options))
   )
+}
+
+export function emitBackendError(options: {
+  resource: BackendInfoResource
+  endpoint: string
+  status: number
+  error?: unknown
+  payload?: unknown
+  currentLocation?: BrowserLocationLike
+}): void {
+  if (!isDevRuntime) {
+    return
+  }
+
+  console.error(
+    `❌ [backend:${options.resource}] Error ${options.status}`,
+    {
+      endpoint: options.endpoint,
+      status: options.status,
+      transportMode: buildBackendEndpointContext(options.endpoint, options.currentLocation).transportMode
+    }
+  )
+
+  if (options.error) {
+    console.error(`   Error details:`, options.error)
+  }
+
+  if (options.payload) {
+    console.error(`   Response payload:`, options.payload)
+  }
 }
 
 export function normalizeBackendString(value: unknown): string | null {

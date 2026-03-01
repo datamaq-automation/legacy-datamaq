@@ -7,14 +7,14 @@ import './WhatsAppRedirectView.css'
 const REDIRECT_DELAY_SECONDS = 0
 
 export function useWhatsAppRedirectView() {
-  const { config } = useContainer()
+  const { content } = useContainer()
   const whatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
   const shouldRedirect = computed(() => /^https?:\/\//.test(whatsappHref.value))
   const canonicalHref = computed(() => {
-    const siteUrl = config.siteUrl?.trim().replace(/\/$/, '')
+    const siteUrl = content.getSeoContent().siteUrl?.trim().replace(/\/$/, '')
     return siteUrl ? `${siteUrl}/w` : '/w'
   })
-  const title = computed(() => config.siteName?.trim() || 'Sitio')
+  const title = computed(() => content.getSeoContent().siteName?.trim() || 'Sitio')
 
   useHead(() => ({
     title: title.value,

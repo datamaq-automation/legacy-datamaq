@@ -136,10 +136,12 @@ export interface DecisionFlowContent {
 
 export interface ThanksContent {
   badge: string
+  topbarTitle: string
   title: string
   subtitle: string
   whatsappButtonLabel: string
   goHomeButtonLabel: string
+  closeButtonAriaLabel: string
 }
 
 /**
@@ -150,12 +152,66 @@ export interface ProfileContent {
   bullets: string[]
 }
 
+export interface HomePageContent {
+  headerContactLabel: string
+  heroFallbackContactLabel: string
+  heroMediaLabel: string
+  trustTitle: string
+  profileEyebrow: string
+  profileName: string
+  profileWhatsappLabel: string
+  profileFormLabel: string
+  profileSectionLabel: string
+  servicesEyebrow: string
+  servicesIntro: string
+  faqEyebrow: string
+  faqTitle: string
+  quickLinks: {
+    services: string
+    profile: string
+  }
+  dockLabels: {
+    home: string
+    services: string
+    profile: string
+    contact: string
+  }
+  primaryContactForm: {
+    title: string
+    subtitle: string
+    submitLabel: string
+  }
+  secondaryEmailForm: {
+    title: string
+    subtitle: string
+    submitLabel: string
+  }
+}
+
+export interface ContactPageContent {
+  eyebrow: string
+  homeButtonLabel: string
+  supportTitle: string
+  supportItems: string[]
+  supportBackHomeLabel: string
+  introLinks: {
+    services: string
+    profile: string
+    faq: string
+  }
+  primaryFormSubmitLabel: string
+  secondaryEmailForm: {
+    title: string
+    subtitle: string
+    submitLabel: string
+  }
+}
+
 export interface AppContent {
   hero: HeroContent
   services: ServicesContent
   about: AboutContent
   profile: ProfileContent
-
   navbar: NavbarContent
   footer: FooterContent
   legal: LegalContent
@@ -163,6 +219,8 @@ export interface AppContent {
   consent: ConsentContent
   decisionFlow: DecisionFlowContent
   thanks: ThanksContent
+  homePage: HomePageContent
+  contactPage: ContactPageContent
 }
 
 export interface CommercialConfig {

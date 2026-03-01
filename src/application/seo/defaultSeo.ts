@@ -3,70 +3,67 @@ Path: src/application/seo/defaultSeo.ts
 */
 
 import type { BusinessInfo, SeoMeta } from '@/domain/seo/types'
-import type { ContentPort } from '@/application/ports/Content'
-import type { ConfigPort } from '@/application/ports/Config'
+import type { ContentPort, SeoContentPort } from '@/application/ports/Content'
 import type { LocationProvider } from '@/application/ports/Environment'
 
 export function getDefaultSeo(
-  content: ContentPort,
-  config: ConfigPort,
+  content: ContentPort & SeoContentPort,
   location: LocationProvider
 ): SeoMeta {
+  const seoContent = content.getSeoContent()
   const fallbackOrigin = getOrigin(location.href())
-  const siteUrl = normalize(config.siteUrl) || fallbackOrigin
-  const siteName = normalize(config.siteName) || 'Sitio'
-  const description =
-    normalize(config.siteDescription) ||
-    'Servicios industriales y eficiencia energetica para empresas.'
+  const siteUrl = normalize(seoContent.siteUrl) || fallbackOrigin
+  const siteName = normalize(seoContent.siteName) || 'Sitio'
+  const description = normalize(seoContent.siteDescription) || 'Servicios industriales y eficiencia energetica para empresas.'
   const ogImage =
-    normalize(config.siteOgImage) ||
+    normalize(seoContent.siteOgImage) ||
     (siteUrl ? `${siteUrl.replace(/\/$/, '')}/og-default.png` : '')
-  const verificationToken = normalize(config.gscVerification)
-  const locale = normalize(config.siteLocale) || 'es_AR'
+  const verificationToken = normalize(seoContent.gscVerification)
+  const locale = normalize(seoContent.siteLocale) || 'es_AR'
 
-  const businessName = normalize(config.businessName) || siteName
+  const businessName = normalize(seoContent.business.name) || siteName
   const businessInfo: BusinessInfo = {
     name: businessName,
-    country: normalize(config.businessCountry) || 'AR',
-    areaServed: buildAreaServed(config)
+    country: normalize(seoContent.business.country) || 'AR',
+    areaServed: buildAreaServed(seoContent)
   }
 
-  const telephone = normalize(config.businessTelephone)
+  const telephone = normalize(seoContent.business.telephone)
   if (telephone) {
     businessInfo.telephone = telephone
   }
 
-  const email = normalize(config.businessEmail)
+  const email = normalize(seoContent.business.email)
   if (email) {
     businessInfo.email = email
   }
 
-  const street = normalize(config.businessStreet)
+  const street = normalize(seoContent.business.street)
   if (street) {
     businessInfo.street = street
   }
 
-  const locality = normalize(config.businessLocality)
+  const locality = normalize(seoContent.business.locality)
   if (locality) {
     businessInfo.locality = locality
   }
 
-  const region = normalize(config.businessRegion)
+  const region = normalize(seoContent.business.region)
   if (region) {
     businessInfo.region = region
   }
 
-  const postalCode = normalize(config.businessPostalCode)
+  const postalCode = normalize(seoContent.business.postalCode)
   if (postalCode) {
     businessInfo.postalCode = postalCode
   }
 
-  const lat = parseNumber(config.businessLat)
+  const lat = typeof seoContent.business.lat === 'number' ? seoContent.business.lat : undefined
   if (typeof lat === 'number') {
     businessInfo.lat = lat
   }
 
-  const lng = parseNumber(config.businessLng)
+  const lng = typeof seoContent.business.lng === 'number' ? seoContent.business.lng : undefined
   if (typeof lng === 'number') {
     businessInfo.lng = lng
   }
@@ -89,9 +86,9 @@ export function getDefaultSeo(
   return meta
 }
 
-function buildAreaServed(config: ConfigPort): string[] {
-  const configured = parseCsv(config.businessArea)
-  if (configured.length) {
+function buildAreaServed(seoContent: { business: { areaServed?: string[] } }): string[] {
+  const configured = seoContent.business.areaServed?.map((item) => item.trim()).filter(Boolean) ?? []
+  if (configured.length > 0) {
     return configured
   }
   return ['GBA Norte', 'Argentina']
@@ -106,24 +103,6 @@ function getOrigin(href: string): string {
   } catch {
     return ''
   }
-}
-
-function parseCsv(value: string | undefined): string[] {
-  if (!value) {
-    return []
-  }
-  return value
-    .split(',')
-    .map((item) => item.trim())
-    .filter(Boolean)
-}
-
-function parseNumber(value: string | undefined): number | undefined {
-  if (!value) {
-    return undefined
-  }
-  const parsed = Number(value)
-  return Number.isFinite(parsed) ? parsed : undefined
 }
 
 function normalize(value: string | undefined): string | undefined {

@@ -5,20 +5,27 @@ Path: src/application/ports/Content.ts
 import type {
   AboutContent,
   AppContent,
+  ContactPageContent,
   ConsentContent,
   ContactContent,
   FooterContent,
   HeroContent,
+  HomePageContent,
   LegalContent,
   NavbarContent,
   ProfileContent,
   ServicesContent
 } from '@/domain/types/content'
+import type { BrandContent, SeoContent, SiteSnapshot } from '@/domain/types/site'
 
 export type RemoteContentStatus = 'pending' | 'ready' | 'unavailable' | 'not-required'
 
 export interface ContentPort {
   getContent(): AppContent
+}
+
+export interface SiteSnapshotPort {
+  getSiteSnapshot(): SiteSnapshot
 }
 
 export interface RemoteContentStatusPort {
@@ -60,4 +67,20 @@ export interface ConsentContentPort {
 
 export interface ServicesContentPort {
   getServicesContent(): ServicesContent
+}
+
+export interface BrandContentPort {
+  getBrandContent(): BrandContent
+}
+
+export interface SeoContentPort {
+  getSeoContent(): SeoContent
+}
+
+export interface HomePageContentPort {
+  getHomePageContent(): HomePageContent
+}
+
+export interface ContactPageContentPort {
+  getContactPageContent(): ContactPageContent
 }

@@ -9,11 +9,11 @@ describe('backendConfigEndpoint', () => {
   it('preserves relative canonical endpoints', () => {
     expect(
       resolveBackendConfigEndpoint({
-        directUrl: '/api/v1/content',
-        configKey: 'contentApiUrl',
+        directUrl: '/api/v1/site',
+        configKey: 'siteApiUrl',
         isDev: true
       })
-    ).toBe('/api/v1/content')
+    ).toBe('/api/v1/site')
   })
 
   it('accepts explicit https endpoints', () => {
@@ -52,35 +52,35 @@ describe('backendConfigEndpoint', () => {
 
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://api.example.com/v1/content',
-        configKey: 'contentApiUrl',
+        value: 'http://api.example.com/v1/site',
+        configKey: 'siteApiUrl',
         isDev: false,
         warn
       })
     ).toBeUndefined()
     expect(warn).toHaveBeenCalledWith(
-      '[config] El campo contentApiUrl debe comenzar con "https://" en produccion. Valor recibido: http://api.example.com/v1/content'
+      '[config] El campo siteApiUrl debe comenzar con "https://" en produccion. Valor recibido: http://api.example.com/v1/site'
     )
   })
 
   it('accepts loopback http endpoints in local-preview mode', () => {
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://127.0.0.1:8899/v1/content',
-        configKey: 'contentApiUrl',
+        value: 'http://127.0.0.1:8899/v1/site',
+        configKey: 'siteApiUrl',
         isDev: false,
         policyMode: 'local-preview'
       })
-    ).toBe('http://127.0.0.1:8899/v1/content')
+    ).toBe('http://127.0.0.1:8899/v1/site')
 
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://localhost:8899/v1/content',
-        configKey: 'contentApiUrl',
+        value: 'http://localhost:8899/v1/site',
+        configKey: 'siteApiUrl',
         isDev: false,
         policyMode: 'local-preview'
       })
-    ).toBe('http://localhost:8899/v1/content')
+    ).toBe('http://localhost:8899/v1/site')
   })
 
   it('rejects arbitrary http hosts in local-preview mode', () => {
@@ -88,8 +88,8 @@ describe('backendConfigEndpoint', () => {
 
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://192.168.1.20:8899/v1/content',
-        configKey: 'contentApiUrl',
+        value: 'http://192.168.1.20:8899/v1/site',
+        configKey: 'siteApiUrl',
         isDev: false,
         policyMode: 'local-preview',
         warn
@@ -97,7 +97,7 @@ describe('backendConfigEndpoint', () => {
     ).toBeUndefined()
 
     expect(warn).toHaveBeenCalledWith(
-      '[config] El campo contentApiUrl debe comenzar con "https://" o apuntar a loopback local ("http://localhost" o "http://127.0.0.1") en local-preview. Valor recibido: http://192.168.1.20:8899/v1/content'
+      '[config] El campo siteApiUrl debe comenzar con "https://" o apuntar a loopback local ("http://localhost" o "http://127.0.0.1") en local-preview. Valor recibido: http://192.168.1.20:8899/v1/site'
     )
   })
 

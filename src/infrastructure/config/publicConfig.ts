@@ -37,7 +37,7 @@ export type PublicConfig = {
   inquiryApiUrl: NullableString
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
-  contentApiUrl: NullableString
+  siteApiUrl: NullableString
   healthApiUrl: NullableString
   requireRemoteContent: boolean
   quoteDiagnosticApiUrl: NullableString
@@ -77,7 +77,7 @@ export const publicConfig: PublicConfig = {
   inquiryApiUrl: resolveBackendEndpointOverride('inquiryApiUrl', activeRuntimeProfile.inquiryApiUrl),
   mailApiUrl: resolveBackendEndpointOverride('mailApiUrl', activeRuntimeProfile.mailApiUrl),
   pricingApiUrl: resolveBackendEndpointOverride('pricingApiUrl', activeRuntimeProfile.pricingApiUrl),
-  contentApiUrl: resolveBackendEndpointOverride('contentApiUrl', activeRuntimeProfile.contentApiUrl),
+  siteApiUrl: resolveBackendEndpointOverride('siteApiUrl', activeRuntimeProfile.siteApiUrl),
   healthApiUrl: resolveBackendEndpointOverride('healthApiUrl', activeRuntimeProfile.healthApiUrl),
   requireRemoteContent: activeRuntimeProfile.requireRemoteContent,
   quoteDiagnosticApiUrl: resolveBackendEndpointOverride(

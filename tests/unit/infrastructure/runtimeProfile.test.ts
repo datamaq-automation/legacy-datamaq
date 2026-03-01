@@ -10,7 +10,7 @@ describe('runtimeProfile', () => {
     const profile = getRuntimeProfile('integration')
 
     expect(profile.healthApiUrl).toBe('/api/v1/health')
-    expect(profile.contentApiUrl).toBe('/api/v1/content')
+    expect(profile.siteApiUrl).toBe('/api/v1/site')
     expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
     expect(profile.mailApiUrl).toBe('/api/v1/mail')
     expect(profile.pricingApiUrl).toBe('/api/v1/pricing')
@@ -22,7 +22,7 @@ describe('runtimeProfile', () => {
     const profile = getRuntimeProfile('e2e')
 
     expect(profile.healthApiUrl).toBe('/api/v1/health')
-    expect(profile.contentApiUrl).toBe('/api/v1/content')
+    expect(profile.siteApiUrl).toBe('/api/v1/site')
     expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
     expect(profile.mailApiUrl).toBe('/api/v1/mail')
     expect(profile.pricingApiUrl).toBe('/api/v1/pricing')

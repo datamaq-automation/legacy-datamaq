@@ -1,6 +1,6 @@
-﻿import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { LoggerPort } from '@/application/ports/Logger'
-import { AppContentSchema } from '@/domain/schemas/contentSchema'
+import { SiteSnapshotSchema } from '@/domain/schemas/siteSchema'
 import { commercialConfig } from '@/infrastructure/content/Appcontent.active'
 import { ContentRepository } from '@/infrastructure/content/contentRepository'
 
@@ -10,162 +10,86 @@ describe('ContentRepository', () => {
     vi.restoreAllMocks()
   })
 
-  it('parses content once and reuses cached result across getters', () => {
-    const originalSafeParse = AppContentSchema.safeParse.bind(AppContentSchema)
-    const safeParseSpy = vi
-      .spyOn(AppContentSchema, 'safeParse')
-      .mockImplementation((value) => originalSafeParse(value))
+  it('parses site snapshot once and reuses cached getters', () => {
+    const originalSafeParse = SiteSnapshotSchema.safeParse.bind(SiteSnapshotSchema)
+    const safeParseSpy = vi.spyOn(SiteSnapshotSchema, 'safeParse').mockImplementation((value) => originalSafeParse(value))
     const repository = new ContentRepository()
 
-    const fullContent = repository.getContent()
-    const navbar = repository.getNavbarContent()
-    const contact = repository.getContactContent()
+    const content = repository.getContent()
     const hero = repository.getHeroContent()
-    const services = repository.getServicesContent()
+    const brand = repository.getBrandContent()
+    const seo = repository.getSeoContent()
 
-    expect(fullContent.navbar).toEqual(navbar)
-    expect(fullContent.contact).toEqual(contact)
-    expect(fullContent.hero).toEqual(hero)
-    expect(fullContent.services).toEqual(services)
+    expect(content.hero).toEqual(hero)
+    expect(brand.brandName).toBeTypeOf('string')
+    expect(seo.siteName).toBeTypeOf('string')
     expect(safeParseSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('throws when content schema is invalid', () => {
-    vi.spyOn(AppContentSchema, 'safeParse').mockReturnValue({
-      success: false
-    } as any)
-    const repository = new ContentRepository()
+  it('throws when fallback site schema is invalid', () => {
+    vi.spyOn(SiteSnapshotSchema, 'safeParse').mockReturnValue({ success: false } as never)
 
-    expect(() => repository.getContent()).toThrowError('Invalid content schema')
+    expect(() => new ContentRepository().getContent()).toThrowError('Invalid site schema')
   })
 
-  it('does not fetch remote content or pricing until bootstrapRemoteData is called', async () => {
+  it('does not fetch remote site or pricing until bootstrapRemoteData is called', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
 
     new ContentRepository(
       {
         pricingApiUrl: 'https://api.example.com/v1/pricing',
-        contentApiUrl: 'https://api.example.com/v1/content'
+        siteApiUrl: 'https://api.example.com/v1/site'
       },
       createLoggerSpy()
     )
 
-    await flushRuntimePricing()
+    await flushAsync()
 
     expect(fetchSpy).not.toHaveBeenCalled()
   })
 
-  it('exposes navbar anchors for the landing decision flow sections', () => {
-    const repository = new ContentRepository()
-
-    const links = repository.getNavbarContent().links.map((link) => link.href)
-
-    expect(links).toEqual([
-      '#servicios',
-      '#proceso',
-      '#tarifas',
-      '#cobertura',
-      '#faq',
-      '#contacto'
-    ])
-  })
-
-  it('hydrates diagnostic list pricing from backend JSON and renders ARS amount', async () => {
+  it('applies full site snapshot from backend', async () => {
     const logger = createLoggerSpy()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          data: {
-            diagnostico_lista_2h_ars: 275000
-          }
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
+    const baseRepository = new ContentRepository(undefined, logger)
+    const baseSite = baseRepository.getSiteSnapshot()
+    const remoteSite = {
+      ...baseSite,
+      content: {
+        ...baseSite.content,
+        hero: {
+          ...baseSite.content.hero,
+          title: 'Titulo remoto site',
+          subtitle: 'Subtitulo remoto site'
+        },
+        contactPage: {
+          ...baseSite.content.contactPage,
+          supportTitle: 'Canales remotos'
         }
-      )
-    )
-
-    const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
-      logger
-    )
-    repository.bootstrapRemoteData()
-
-    const heroRef = repository.getHeroContent()
-    const servicesRef = repository.getServicesContent()
-
-    expect(heroRef.responseNote).toContain('Base operativa')
-
-    await flushRuntimePricing()
-    await flushRuntimePricing()
-
-    expect(heroRef.responseNote).toContain('Base operativa')
-    expect(servicesRef.cards[0].figure?.caption).toContain('Contenido temporal.')
-    expect(servicesRef.cards[1].note).toContain('Contenido no disponible temporalmente.')
-    expect(commercialConfig.visitaDiagnosticoHasta2hARS).toBe(275000)
-    expect(commercialConfig.tarifaBaseDesdeARS).toBeNull()
-    expect(commercialConfig.trasladoMinimoARS).toBeNull()
-    expect(commercialConfig.diagnosticoHoraAdicionalARS).toBeNull()
-    expect(logger.debug).toHaveBeenCalled()
-  })
-
-  it('hydrates hero.title from content backend payload', async () => {
-    const logger = createLoggerSpy()
-    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
-      const url = String(input)
-      if (url.includes('/content')) {
-        return Promise.resolve(
-          new Response(
-            JSON.stringify({
-              status: 'ok',
-              data: { hero: { title: 'Titulo remoto por marca' } }
-            }),
-            {
-              status: 200,
-              headers: { 'Content-Type': 'application/json' }
-            }
-          )
-        )
-      }
-      return Promise.resolve(
-        new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: 275000 } }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        })
-      )
-    })
-
-    const repository = new ContentRepository(
-      {
-        contentApiUrl: 'https://api.example.com/v1/content'
       },
-      logger
-    )
-    repository.bootstrapRemoteData()
+      brand: {
+        ...baseSite.brand,
+        technician: {
+          ...baseSite.brand.technician,
+          name: 'Tecnico remoto'
+        }
+      },
+      seo: {
+        ...baseSite.seo,
+        siteName: 'Marca remota'
+      }
+    }
 
-    await flushRuntimePricing()
-
-    expect(repository.getHeroContent().title).toBe('Titulo remoto por marca')
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://api.example.com/v1/content',
-      expect.objectContaining({ method: 'GET' })
-    )
-    expect(logger.debug).toHaveBeenCalled()
-  })
-
-  it('keeps local hero.title fallback when content payload lacks usable title', async () => {
-    const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
       const url = String(input)
-      if (url.includes('/content')) {
+      if (url.includes('/site')) {
         return Promise.resolve(
-          new Response(JSON.stringify({ status: 'ok', data: { hero: { title: '   ' } } }), {
+          new Response(JSON.stringify({ status: 'ok', data: remoteSite }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
           })
         )
       }
+
       return Promise.resolve(
         new Response(JSON.stringify({ data: { diagnostico_lista_2h_ars: 275000 } }), {
           status: 200,
@@ -176,117 +100,53 @@ describe('ContentRepository', () => {
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/content'
+        siteApiUrl: 'https://api.example.com/v1/site',
+        pricingApiUrl: 'https://api.example.com/v1/pricing'
       },
       logger
     )
     repository.bootstrapRemoteData()
-    const localTitle = repository.getHeroContent().title
 
-    await flushRuntimePricing()
+    await flushAsync()
+    await flushAsync()
 
-    expect(repository.getHeroContent().title).toBe(localTitle)
-    expect(logger.warn).toHaveBeenCalled()
+    expect(repository.getHeroContent().title).toBe('Titulo remoto site')
+    expect(repository.getContactPageContent().supportTitle).toBe('Canales remotos')
+    expect(repository.getBrandContent().technician.name).toBe('Tecnico remoto')
+    expect(repository.getSeoContent().siteName).toBe('Marca remota')
   })
 
-  it('applies full content snapshot when backend returns data compatible with AppContentSchema', async () => {
-    const logger = createLoggerSpy()
-    const repository = new ContentRepository(undefined, logger)
-    const baseContent = repository.getContent()
-    const remoteContent = {
-      ...baseContent,
-      hero: {
-        ...baseContent.hero,
-        title: 'Titulo full remoto',
-        subtitle: 'Subtitulo full remoto'
-      },
-      legal: {
-        text: 'Legal remoto'
-      }
-    }
-
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          status: 'ok',
-          data: remoteContent
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    )
-
-    const remoteRepository = new ContentRepository(
-      {
-        contentApiUrl: 'https://api.example.com/v1/content'
-      },
-      logger
-    )
-    remoteRepository.bootstrapRemoteData()
-
-    await flushRuntimePricing()
-    await flushRuntimePricing()
-
-    expect(remoteRepository.getHeroContent().title).toBe('Titulo full remoto')
-    expect(remoteRepository.getHeroContent().subtitle).toBe('Subtitulo full remoto')
-    expect(remoteRepository.getLegalContent().text).toBe('Legal remoto')
-  })
-
-  it('keeps technical fallback when backend responds with non-ok status', async () => {
+  it('keeps fallback content when remote site payload is invalid', async () => {
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response('backend-down', {
-        status: 503
-      })
-    )
-
-    const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
-      logger
-    )
-    repository.bootstrapRemoteData()
-    const heroRef = repository.getHeroContent()
-
-    await flushRuntimePricing()
-
-    expect(heroRef.responseNote).toContain('Base operativa')
-    expect(logger.warn).toHaveBeenCalled()
-  })
-
-  it('keeps technical fallback when payload has no recognized pricing keys', async () => {
-    const logger = createLoggerSpy()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify({ ok: true, data: { foo: 'bar' } }), {
+      new Response(JSON.stringify({ status: 'ok', data: { hero: { title: 'invalido' } } }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       })
     )
 
     const repository = new ContentRepository(
-      { pricingApiUrl: 'https://api.example.com/v1/pricing' },
+      {
+        siteApiUrl: 'https://api.example.com/v1/site'
+      },
       logger
     )
+    const localTitle = repository.getHeroContent().title
     repository.bootstrapRemoteData()
 
-    await flushRuntimePricing()
+    await flushAsync()
 
-    expect(repository.getHeroContent().responseNote).toContain('Base operativa')
+    expect(repository.getHeroContent().title).toBe(localTitle)
     expect(logger.warn).toHaveBeenCalled()
   })
 
-  it('marks remote content as unavailable when required content endpoint responds non-ok', async () => {
+  it('marks remote content as unavailable when required site endpoint fails', async () => {
     const logger = createLoggerSpy()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response('backend-down', {
-        status: 503
-      })
-    )
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('backend-down', { status: 503 }))
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/content',
+        siteApiUrl: 'https://api.example.com/v1/site',
         requireRemoteContent: true
       },
       logger
@@ -295,92 +155,35 @@ describe('ContentRepository', () => {
     expect(repository.getRemoteContentStatus()).toBe('pending')
 
     repository.bootstrapRemoteData()
-
-    await flushRuntimePricing()
+    await flushAsync()
 
     expect(repository.getRemoteContentStatus()).toBe('unavailable')
-    expect(logger.warn).toHaveBeenCalled()
   })
 
-  it('notifies subscribers when required remote content becomes unavailable', async () => {
+  it('marks remote content as ready when required site endpoint succeeds', async () => {
     const logger = createLoggerSpy()
+    const baseSite = new ContentRepository(undefined, logger).getSiteSnapshot()
+
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response('backend-down', {
-        status: 503
+      new Response(JSON.stringify({ status: 'ok', data: baseSite }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
       })
     )
 
     const repository = new ContentRepository(
       {
-        contentApiUrl: 'https://api.example.com/v1/content',
+        siteApiUrl: 'https://api.example.com/v1/site',
         requireRemoteContent: true
       },
       logger
     )
-    const listener = vi.fn()
-    repository.subscribeRemoteContentStatus(listener)
 
     repository.bootstrapRemoteData()
+    await flushAsync()
+    await flushAsync()
 
-    await flushRuntimePricing()
-
-    expect(listener).toHaveBeenCalledWith('unavailable')
-  })
-
-  it('notifies subscribers when required remote content becomes ready', async () => {
-    const logger = createLoggerSpy()
-    const baseRepository = new ContentRepository(undefined, logger)
-    const remoteContent = {
-      ...baseRepository.getContent(),
-      hero: {
-        ...baseRepository.getHeroContent(),
-        title: 'Titulo remoto listo'
-      }
-    }
-
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          status: 'ok',
-          data: remoteContent
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    )
-
-    const repository = new ContentRepository(
-      {
-        contentApiUrl: 'https://api.example.com/v1/content',
-        requireRemoteContent: true
-      },
-      logger
-    )
-    const listener = vi.fn()
-    repository.subscribeRemoteContentStatus(listener)
-
-    repository.bootstrapRemoteData()
-
-    await flushRuntimePricing()
-    await flushRuntimePricing()
-
-    expect(listener).toHaveBeenCalledWith('ready')
     expect(repository.getRemoteContentStatus()).toBe('ready')
-  })
-
-  it('does not call fetch when pricing endpoint is missing', async () => {
-    const logger = createLoggerSpy()
-    const fetchSpy = vi.spyOn(globalThis, 'fetch')
-
-    const repository = new ContentRepository({ pricingApiUrl: '   ' }, logger)
-    repository.bootstrapRemoteData()
-
-    await flushRuntimePricing()
-
-    expect(fetchSpy).not.toHaveBeenCalled()
-    expect(logger.warn).toHaveBeenCalled()
   })
 })
 
@@ -396,7 +199,7 @@ function createLoggerSpy(): LoggerPort & {
   }
 }
 
-async function flushRuntimePricing(): Promise<void> {
+async function flushAsync(): Promise<void> {
   await Promise.resolve()
   await Promise.resolve()
   await new Promise((resolve) => setTimeout(resolve, 0))
@@ -408,4 +211,3 @@ function resetCommercialConfig(): void {
   commercialConfig.visitaDiagnosticoHasta2hARS = null
   commercialConfig.diagnosticoHoraAdicionalARS = null
 }
-
