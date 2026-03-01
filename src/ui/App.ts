@@ -16,7 +16,13 @@ import {
 } from '@/application/backend/devBackendAvailability'
 
 export function useApp() {
-  const { content, environment } = useContainer()
+  const container = useContainer()
+  const { content, environment } = container
+  
+  if (!content || typeof content.getRemoteContentStatus !== 'function') {
+    throw new Error('Content repository is not properly initialized in useContainer()')
+  }
+  
   const route = useRoute()
   const isThanksPage = computed(() => route.path === '/gracias')
   const remoteContentStatus = ref<RemoteContentStatus>(content.getRemoteContentStatus())

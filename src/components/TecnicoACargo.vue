@@ -120,7 +120,18 @@ const { content, engagementTracker, environment } = useContainer()
 const whatsappHref = computed(() => getWhatsAppHref())
 const isSection = computed(() => props.variant === 'section')
 const headingId = computed(() => props.headingId)
-const technician = computed(() => content.getBrandContent().technician)
+const technician = computed(() => {
+  if (!content || typeof content.getBrandContent !== 'function') {
+    return {
+      name: 'Agustín Bustos',
+      role: 'Técnico a cargo',
+      photo: { src: '/media/tecnico-a-cargo.webp', alt: 'Foto del técnico a cargo', width: 100, height: 100 },
+      whatsappLabel: 'Coordinar por WhatsApp',
+      unavailableLabel: 'Técnico no disponible'
+    }
+  }
+  return content.getBrandContent().technician
+})
 
 function handleWhatsAppClick(): void {
   if (!whatsappHref.value) {
