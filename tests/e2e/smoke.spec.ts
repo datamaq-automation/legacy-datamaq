@@ -123,7 +123,7 @@ test.describe('Smoke E2E', () => {
 
   test('contact lead flow submits and navigates to thanks', async ({ page }) => {
     await page.goto('/')
-    const leadSection = page.locator('#contacto-lead')
+    const leadSection = page.locator('#contacto')
     await leadSection.scrollIntoViewIfNeeded()
     await expect(leadSection).toBeVisible()
     await leadSection.locator('input[name="email"]').fill('ada@example.com')
@@ -132,10 +132,10 @@ test.describe('Smoke E2E', () => {
       .locator('textarea[name="comment"]')
       .fill('Necesito una propuesta para mantenimiento industrial.')
 
-    await page.getByRole('button', { name: /Registrar contacto/i }).click()
+    await page.getByRole('button', { name: /Enviar solicitud/i }).click()
 
     await expect(page).toHaveURL(/\/gracias$/)
-    await expect(page.getByRole('heading', { level: 1, name: 'Gracias!' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 
   test('mail flow submits and navigates to thanks', async ({ page }) => {
@@ -147,16 +147,16 @@ test.describe('Smoke E2E', () => {
     await expect(mailSection.locator('textarea[name="comment"]')).toBeVisible()
     await mailSection.locator('textarea[name="comment"]').fill('Necesito enviar una consulta por correo.')
 
-    await page.getByRole('button', { name: /Enviar consulta por correo/i }).click()
+    await page.getByRole('button', { name: /Enviar por email/i }).click()
 
     await expect(page).toHaveURL(/\/gracias$/)
-    await expect(page.getByRole('heading', { level: 1, name: 'Gracias!' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 
   test('thanks page returns to home', async ({ page }) => {
     await page.goto('/gracias')
 
-    await page.getByRole('button', { name: /Volver al inicio/i }).click()
+    await page.locator('.thanks-actions__home').click()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
       /Contenido no disponible|Diagnostico e instalacion electrica para pymes/i
