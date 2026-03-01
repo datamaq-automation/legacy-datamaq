@@ -3,6 +3,7 @@ Path: src/infrastructure/config/publicConfig.ts
 */
 
 import { activeRuntimeProfile } from '@/infrastructure/content/runtimeProfile'
+import { resolveBackendEndpointOverride } from '@/infrastructure/config/backendEndpointOverrides'
 
 type NullableString = string | undefined
 type PublicBoolean = boolean | undefined
@@ -73,14 +74,17 @@ export const publicConfig: PublicConfig = {
   contactEmail: activeRuntimeProfile.contactEmail,
   contactFormActive: activeRuntimeProfile.contactFormActive,
   emailFormActive: activeRuntimeProfile.emailFormActive,
-  inquiryApiUrl: activeRuntimeProfile.inquiryApiUrl,
-  mailApiUrl: activeRuntimeProfile.mailApiUrl,
-  pricingApiUrl: activeRuntimeProfile.pricingApiUrl,
-  contentApiUrl: activeRuntimeProfile.contentApiUrl,
-  healthApiUrl: activeRuntimeProfile.healthApiUrl,
+  inquiryApiUrl: resolveBackendEndpointOverride('inquiryApiUrl', activeRuntimeProfile.inquiryApiUrl),
+  mailApiUrl: resolveBackendEndpointOverride('mailApiUrl', activeRuntimeProfile.mailApiUrl),
+  pricingApiUrl: resolveBackendEndpointOverride('pricingApiUrl', activeRuntimeProfile.pricingApiUrl),
+  contentApiUrl: resolveBackendEndpointOverride('contentApiUrl', activeRuntimeProfile.contentApiUrl),
+  healthApiUrl: resolveBackendEndpointOverride('healthApiUrl', activeRuntimeProfile.healthApiUrl),
   requireRemoteContent: activeRuntimeProfile.requireRemoteContent,
-  quoteDiagnosticApiUrl: activeRuntimeProfile.quoteDiagnosticApiUrl,
-  quotePdfApiUrl: activeRuntimeProfile.quotePdfApiUrl,
+  quoteDiagnosticApiUrl: resolveBackendEndpointOverride(
+    'quoteDiagnosticApiUrl',
+    activeRuntimeProfile.quoteDiagnosticApiUrl
+  ),
+  quotePdfApiUrl: resolveBackendEndpointOverride('quotePdfApiUrl', activeRuntimeProfile.quotePdfApiUrl),
   whatsappUrl: activeRuntimeProfile.whatsappUrl,
   whatsappQrPhoneE164: activeRuntimeProfile.whatsappQrPhoneE164,
   whatsappQrMessage: activeRuntimeProfile.whatsappQrMessage,

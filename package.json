@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/build-target.mjs",
+    "build:local": "node scripts/build-local.mjs",
     "build:datamaq": "npm run build -- datamaq",
     "build:upp": "npm run build -- upp",
     "build:example": "npm run build -- example",

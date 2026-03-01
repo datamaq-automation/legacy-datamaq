@@ -2,6 +2,7 @@
 interface ImportMetaEnv {
   readonly MODE: string
   readonly DEV: boolean
+  readonly VITE_BACKEND_BASE_URL?: string
   readonly VITE_CONTENT_TARGET?: string
   readonly VITE_HEALTH_ENDPOINT?: string
 }

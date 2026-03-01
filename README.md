@@ -25,11 +25,14 @@ Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfile
 npm install
 npm run dev
 npm run build -- <target>
+npm run build:local
 npm run typecheck
 npm run test
 npm run test:contracts:fastapi
 npm run test:e2e:smoke
 ```
+
+`npm run build:local` limpia solo los artefactos del frontend en `C:\AppServ\www`, compila ahi y fuerza los endpoints backend a `http://127.0.0.1:8899/v1/...`.
 
 ## CI/CD
 
