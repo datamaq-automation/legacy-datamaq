@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   submitContact: vi.fn(),
   submitMail: vi.fn(),
   getHeroContent: vi.fn(),
+  getBrandContent: vi.fn(),
   environment: {
     search: () => '' as string,
     referrer: () => '' as string
@@ -27,7 +28,8 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@/di/container', () => ({
   useContainer: () => ({
     content: {
-      getHeroContent: mocks.getHeroContent
+      getHeroContent: mocks.getHeroContent,
+      getBrandContent: mocks.getBrandContent
     },
     config: mocks.config,
     engagementTracker: {
@@ -52,6 +54,12 @@ describe('contactController', () => {
     mocks.submitContact.mockReset()
     mocks.submitMail.mockReset()
     mocks.getHeroContent.mockReset()
+    mocks.getBrandContent.mockReset()
+    mocks.getBrandContent.mockReturnValue({
+      contactEmail: 'contacto@example.com',
+      contactFormActive: true,
+      emailFormActive: true
+    })
     mocks.environment.search = () => ''
     mocks.environment.referrer = () => ''
     mocks.config.contactEmail = 'contacto@example.com'

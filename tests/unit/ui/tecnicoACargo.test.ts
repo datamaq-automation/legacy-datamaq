@@ -5,7 +5,8 @@ import TecnicoACargo from '@/components/TecnicoACargo.vue'
 const mocks = vi.hoisted(() => ({
   getWhatsAppHref: vi.fn(),
   trackChat: vi.fn(),
-  windowOpen: vi.fn()
+  windowOpen: vi.fn(),
+  getBrandContent: vi.fn()
 }))
 
 vi.mock('@/ui/controllers/contactController', () => ({
@@ -14,6 +15,9 @@ vi.mock('@/ui/controllers/contactController', () => ({
 
 vi.mock('@/di/container', () => ({
   useContainer: () => ({
+    content: {
+      getBrandContent: mocks.getBrandContent
+    },
     engagementTracker: {
       trackChat: mocks.trackChat
     },
@@ -29,6 +33,19 @@ describe('TecnicoACargo', () => {
     mocks.getWhatsAppHref.mockReset()
     mocks.trackChat.mockReset()
     mocks.windowOpen.mockReset()
+    mocks.getBrandContent.mockReset()
+    mocks.getBrandContent.mockReturnValue({
+      technician: {
+        name: 'Agustín Bustos',
+        role: 'Técnico a cargo',
+        photo: {
+          src: '/media/tecnico.jpg',
+          alt: 'Agustín Bustos'
+        },
+        whatsappLabel: 'Coordinar por WhatsApp',
+        unavailableLabel: 'Técnico no disponible'
+      }
+    })
     vi.spyOn(window, 'open').mockImplementation(mocks.windowOpen)
   })
 
@@ -58,6 +75,6 @@ describe('TecnicoACargo', () => {
     })
 
     expect(screen.queryByRole('button', { name: 'Coordinar por WhatsApp' })).toBeNull()
-    expect(screen.getByText('Contacto no disponible')).toBeInTheDocument()
+    expect(screen.getByText('Técnico no disponible')).toBeInTheDocument()
   })
 })

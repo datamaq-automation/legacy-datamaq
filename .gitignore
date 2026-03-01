@@ -49,3 +49,4 @@ docs/validacion-local-frontend-backend-laravel.md
 %ERR%
 %LOG%
 .env
+test-output.txt
