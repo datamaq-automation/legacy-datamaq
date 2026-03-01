@@ -29,6 +29,9 @@ Ejemplos:
 Documento complementario ya creado:
 
 - contrato canonico de `contact` y `mail`: `docs/fastapi-contact-contract.md`
+- contrato canonico de `content` y `pricing`: `docs/fastapi-content-pricing-contract.md`
+- contrato canonico de `quote`: `docs/fastapi-quote-contract.md`
+- checklist operativa por router: `docs/fastapi-router-implementation-checklist.md`
 
 ## Decision recomendada de paths
 
@@ -648,6 +651,12 @@ Para una migracion segura, tambien hay que mirar:
 - shape del contenido remoto: `src/domain/schemas/contentSchema.ts`
 - tests que fijan contrato observable: `tests/unit/infrastructure/*.test.ts`
 
+Nota importante sobre tests actuales:
+
+- `tests/unit/infrastructure/phpApiContracts.test.ts` describe el snapshot del backend PHP actual
+- no debe tomarse como contrato objetivo final de FastAPI
+- durante la migracion conviene reemplazarlo gradualmente por una suite equivalente para FastAPI
+
 Conclusion:
 
 - este archivo ya sirve como documento maestro para la migracion
@@ -658,14 +667,12 @@ Conclusion:
 
 ## 1. Estrategia documental futura
 
-La division ya adoptada para `contact` es:
+La division ya adoptada es:
 
 - `docs/fastapi-backend-migration-guide.md`
 - `docs/fastapi-contact-contract.md`
-
-Si la migracion sigue creciendo, la siguiente division natural seria:
-
 - `docs/fastapi-content-pricing-contract.md`
 - `docs/fastapi-quote-contract.md`
+- `docs/fastapi-router-implementation-checklist.md`
 
 Por ahora no hace falta abrir mas documentos especializados.

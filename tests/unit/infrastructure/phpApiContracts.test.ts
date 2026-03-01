@@ -1,3 +1,5 @@
+// Legacy contract snapshot for the current PHP/Laravel-style backend.
+// Keep this suite as a reference of current behavior until an equivalent FastAPI contract suite replaces it.
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
 import { existsSync } from 'node:fs'
@@ -19,7 +21,7 @@ let phpServerStdout = ''
 let phpServerStderr = ''
 let phpServerExit: { code: number | null; signal: NodeJS.Signals | null } | undefined
 
-describe.skipIf(!HAS_LOCAL_PHP_API)('PHP API contracts', () => {
+describe.skipIf(!HAS_LOCAL_PHP_API)('Legacy PHP API contracts', () => {
   beforeAll(async () => {
     phpServer = spawn('php', ['-S', `${HOST}:${PORT}`, '-t', 'public'], {
       cwd: path.resolve(process.cwd()),
