@@ -17,8 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-quality-gate:
-    name: Build / Quality Gate
+  quality-merge:
+    name: Quality / Merge Gate
     runs-on: ubuntu-latest
 
     steps:
@@ -36,15 +36,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run quality checks
-        run: |
-          npm run lint:brand-hardcodes
-          npm run typecheck
-          npm run test
-          npm run build
+      - name: Install Playwright browser (Chromium)
+        run: npx playwright install --with-deps chromium
 
-  build-smoke-e2e:
-    name: Build / Smoke E2E
+      - name: Run merge-quality gate
+        run: npm run quality:merge
+
+  fastapi-contracts:
+    name: Contracts / FastAPI
+    if: ${{ vars.FASTAPI_CONTRACT_BASE_URL != '' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -60,42 +60,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browser (Chromium)
-        run: npx playwright install --with-deps chromium
-
-      - name: Run smoke e2e
-        run: npm run test:e2e:smoke
-
-  build-integration-e2e:
-    name: Build / Integration E2E (PHP backend)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browser (Chromium)
-        run: npx playwright install --with-deps chromium
-
-      - name: Verify PHP runtime
-        run: php -v
-
-      - name: Start PHP backend and run integration e2e
-        run: |
-          php -S 127.0.0.1:8899 -t public >/tmp/php-e2e.log 2>&1 &
-          for i in $(seq 1 30); do
-            if curl -sf http://127.0.0.1:8899/v1/health >/dev/null; then
-              break
-            fi
-            sleep 1
-          done
-          PLAYWRIGHT_MODE=integration VITE_API_PROXY_TARGET=http://127.0.0.1:8899 VITE_API_PROXY_PREFIX= npm run test:e2e:integration
+      - name: Run FastAPI contract suite
+        env:
+          FASTAPI_CONTRACT_BASE_URL: ${{ vars.FASTAPI_CONTRACT_BASE_URL }}
+        run: npm run test:contracts:fastapi
