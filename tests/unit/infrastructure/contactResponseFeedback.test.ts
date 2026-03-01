@@ -24,22 +24,24 @@ describe('extractContactSubmitFeedback', () => {
   it('extracts canonical FastAPI envelope fields from JSON body', () => {
     const response: HttpResponse = {
       ok: true,
-      status: 202,
+      status: 201,
       data: {
         request_id: 'req_body_fastapi_1',
+        submission_id: 'sub_fastapi_1',
         status: 'accepted',
-        processing_status: 'accepted',
-        code: 'CONTACT_ACCEPTED',
-        detail: 'Contact request accepted for processing'
+        processing_status: 'queued',
+        code: 'CONTACT_CREATED',
+        detail: 'Contact submission created'
       }
     }
 
     expect(extractContactSubmitFeedback(response)).toEqual({
       requestId: 'req_body_fastapi_1',
+      submissionId: 'sub_fastapi_1',
       submitStatus: 'accepted',
-      processingStatus: 'accepted',
-      errorCode: 'CONTACT_ACCEPTED',
-      backendMessage: 'Contact request accepted for processing'
+      processingStatus: 'queued',
+      errorCode: 'CONTACT_CREATED',
+      backendMessage: 'Contact submission created'
     })
   })
 

@@ -13,8 +13,9 @@ describe('runtimeConsole', () => {
       channel: 'contact',
       pathname: '/api/v1/contact',
       transportMode: 'proxy',
-      status: 202,
+      status: 201,
       requestId: 'req-123',
+      submissionId: 'sub-123',
       ignored: undefined,
       payload: {
         firstNamePresent: true,
@@ -27,8 +28,9 @@ describe('runtimeConsole', () => {
       channel: 'contact',
       pathname: '/api/v1/contact',
       transportMode: 'proxy',
-      status: 202,
+      status: 201,
       requestId: 'req-123',
+      submissionId: 'sub-123',
       payload: {
         firstNamePresent: true,
         companyPresent: false
@@ -40,6 +42,7 @@ describe('runtimeConsole', () => {
       'transportMode',
       'status',
       'requestId',
+      'submissionId',
       'payload'
     ])
   })

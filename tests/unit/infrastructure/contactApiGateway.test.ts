@@ -151,6 +151,7 @@ describe('ContactApiGateway', () => {
       transportMode: 'direct',
       status: 0,
       requestId: null,
+      submissionId: null,
       submitStatus: null,
       processingStatus: null,
       errorCode: null,
@@ -183,6 +184,7 @@ describe('ContactApiGateway', () => {
       transportMode: 'direct',
       status: 503,
       requestId: null,
+      submissionId: null,
       submitStatus: null,
       processingStatus: null,
       errorCode: null,
@@ -240,11 +242,12 @@ describe('ContactApiGateway', () => {
     const http = createHttpClient()
     vi.mocked(http.postJson).mockResolvedValueOnce({
       ok: true,
-      status: 202,
+      status: 201,
       data: {
         request_id: 'req_body_123',
+        submission_id: 'sub_123',
         status: 'accepted',
-        processing_status: 'accepted'
+        processing_status: 'queued'
       }
     })
     const logger = createLogger()
@@ -261,8 +264,9 @@ describe('ContactApiGateway', () => {
       ok: true,
       data: {
         requestId: 'req_body_123',
+        submissionId: 'sub_123',
         submitStatus: 'accepted',
-        processingStatus: 'accepted'
+        processingStatus: 'queued'
       }
     })
   })
@@ -308,6 +312,7 @@ describe('ContactApiGateway', () => {
       transportMode: 'direct',
       status: 429,
       requestId: 'req_hdr_429',
+      submissionId: null,
       submitStatus: 'rejected',
       processingStatus: 'failed',
       errorCode: 'RATE_LIMITED',
@@ -340,6 +345,7 @@ describe('ContactApiGateway', () => {
       transportMode: 'proxy',
       status: 503,
       requestId: null,
+      submissionId: null,
       submitStatus: null,
       processingStatus: null,
       errorCode: null,

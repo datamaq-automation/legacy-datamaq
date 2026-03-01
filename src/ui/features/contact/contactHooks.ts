@@ -152,6 +152,7 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
           channel: backendChannel,
           sectionId,
           requestId: result.data.requestId ?? null,
+          submissionId: result.data.submissionId ?? null,
           submitStatus: result.data.submitStatus ?? null,
           processingStatus: result.data.processingStatus ?? null
         })

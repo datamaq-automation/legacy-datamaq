@@ -7,6 +7,11 @@ const REQUEST_ID_PATHS: string[][] = [
   ['request', 'id'],
   ['meta', 'requestId']
 ]
+const SUBMISSION_ID_PATHS: string[][] = [
+  ['submissionId'],
+  ['submission', 'id'],
+  ['meta', 'submissionId']
+]
 const ERROR_CODE_PATHS: string[][] = [
   ['errorCode'],
   ['code'],
@@ -29,6 +34,7 @@ export function extractContactSubmitFeedback(response: HttpResponse): ContactSub
   const requestIdFromBody = extractByPaths(record, REQUEST_ID_PATHS)
   const requestIdFromHeaders = extractHeader(response.headers, REQUEST_ID_HEADER_KEYS)
   const requestId = requestIdFromHeaders ?? requestIdFromBody
+  const submissionId = extractByPaths(record, SUBMISSION_ID_PATHS)
   const errorCode = extractByPaths(record, ERROR_CODE_PATHS)
   const submitStatus = extractByPaths(record, SUBMIT_STATUS_PATHS)
   const processingStatus = extractByPaths(record, PROCESSING_STATUS_PATHS)
@@ -37,6 +43,9 @@ export function extractContactSubmitFeedback(response: HttpResponse): ContactSub
   const feedback: ContactSubmitFeedback = {}
   if (requestId) {
     feedback.requestId = requestId
+  }
+  if (submissionId) {
+    feedback.submissionId = submissionId
   }
   if (submitStatus) {
     feedback.submitStatus = submitStatus

@@ -81,9 +81,15 @@ test.describe('Smoke E2E', () => {
 
       if (method === 'POST') {
         await route.fulfill({
-          status: 200,
+          status: 201,
           contentType: 'application/json',
-          body: JSON.stringify({ status: 'ok', request_id: 'e2e-request' })
+          body: JSON.stringify({
+            request_id: 'e2e-request',
+            submission_id: 'e2e-submission',
+            status: 'accepted',
+            processing_status: 'queued',
+            detail: 'Submission created'
+          })
         })
         return
       }

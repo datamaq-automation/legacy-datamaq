@@ -95,6 +95,7 @@ export class SubmitContactUseCase {
 
     emitRuntimeInfo('[contact:use-case] submit completado', {
       requestId: submitResult.data.requestId ?? null,
+      submissionId: submitResult.data.submissionId ?? null,
       submitStatus: submitResult.data.submitStatus ?? null,
       processingStatus: submitResult.data.processingStatus ?? null
     })

@@ -14,6 +14,7 @@ Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfile
 ## Documentacion
 
 - Guia principal para migracion de backend a FastAPI: `docs/fastapi-backend-migration-guide.md`
+- Contrato canonico de `contact` y `mail` para FastAPI: `docs/fastapi-contact-contract.md`
 
 ## Comandos
 

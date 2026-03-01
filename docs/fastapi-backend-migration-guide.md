@@ -26,6 +26,10 @@ Ejemplos:
 - documento vivo: `docs/fastapi-backend-migration-guide.md`
 - snapshot puntual: `docs/frontend-to-backend-verification-2026-03-01.md`
 
+Documento complementario ya creado:
+
+- contrato canonico de `contact` y `mail`: `docs/fastapi-contact-contract.md`
+
 ## Decision recomendada de paths
 
 La recomendacion de buenas practicas para esta migracion es:
@@ -76,7 +80,7 @@ Con las decisiones tomadas, el frontend debe normalizarse en estos puntos:
 2. dejar de construir fallbacks con `/v1/public/*`
 3. derivar el PDF del cotizador desde `/v1/quote/diagnostic` hacia `/v1/quote/{quote_id}/pdf`
 4. alinear fixtures, tests y configuracion a los paths canonicos
-5. normalizar el parsing de `contact` y `mail` hacia un envelope canonical con `request_id`, `status`, `processing_status`, `detail` y `code`
+5. normalizar el parsing de `contact` y `mail` hacia un envelope canonical con `request_id`, `submission_id`, `status`, `processing_status`, `detail` y `code`
 
 Lo que ya se puede cambiar con certeza:
 
@@ -86,8 +90,8 @@ Lo que ya se puede cambiar con certeza:
 
 Lo que todavia depende de decision backend:
 
-- uso final de `200/201` vs `202`
 - si `processing_status` representa aceptacion, completitud real o estado de job
+- el mecanismo interno para llevar una `submission` de `queued` a `completed` o `failed`
 
 ## Resumen del repositorio
 
@@ -369,6 +373,7 @@ Claves de body que frontend intenta leer hoy:
 Claves canonical recomendadas para FastAPI:
 
 - `request_id`
+- `submission_id`
 - `status`
 - `processing_status`
 - `detail`
@@ -390,8 +395,9 @@ Contrato objetivo recomendado para FastAPI:
 ```json
 {
   "request_id": "string",
-  "status": "accepted | completed | error",
-  "processing_status": "accepted | completed | failed",
+  "submission_id": "string",
+  "status": "accepted | completed | rejected",
+  "processing_status": "queued | processing | completed | failed",
   "detail": "string opcional",
   "code": "string opcional"
 }
@@ -559,7 +565,7 @@ Recomendacion:
 
 Decision operativa en frontend:
 
-- `contact` y `mail` deben converger al envelope canonical `request_id` + `status` + `processing_status` + `detail` + `code`
+- `contact` y `mail` deben converger al envelope canonical `request_id` + `submission_id` + `status` + `processing_status` + `detail` + `code`
 - la tolerancia a aliases legacy debe considerarse transitoria y eliminarse una vez consolidado FastAPI
 
 ## 4. Respuestas de error legibles
@@ -573,23 +579,25 @@ Para que el frontend pueda mostrar errores utiles, FastAPI deberia devolver al m
 
 ## 5. Semantica del submit de `contact`
 
-La semantica actual puede redefinirse en FastAPI.
+Decision recomendada para esta migracion:
 
-Recomendacion:
+- `POST /v1/contact` y `POST /v1/mail` deben crear una `submission` durable
+- si esa persistencia se completa antes de responder, el status canonical debe ser `201 Created`
+- el procesamiento posterior de mail, CRM o automatizaciones puede continuar fuera de banda
+- no usar `202` como respuesta canonical si ya existe una persistencia durable al momento de responder
 
-- no usar `202` por inercia
-- elegir el status code segun el modelo real de procesamiento
-
-Regla recomendada:
-
-- si el procesamiento real termina antes de responder: `200` o `201`
-- si el procesamiento real continua fuera de banda: `202`
-
-En ambos casos conviene devolver:
+Response canonical recomendada:
 
 - `request_id`
+- `submission_id`
 - `status`
 - `processing_status`
+
+Interpretacion sugerida:
+
+- `status: accepted` significa que la submission fue creada y aceptada por el sistema
+- `processing_status: queued` significa que el trabajo posterior todavia no termino
+- `processing_status: completed` o `failed` queda reservado para seguimiento interno o futuros endpoints de estado
 
 ## Recomendacion de estructura FastAPI
 
@@ -619,6 +627,7 @@ Antes de cambiar el endpoint productivo a FastAPI, validar:
 7. que `quote` preserve response JSON y descarga PDF con filename
 8. que `integration` y `e2e` queden alineados con el backend local de FastAPI
 9. que `contact` y `mail` usen el nuevo status code de forma consistente con su modelo real
+10. que `contact` y `mail` respondan `201 Created` cuando la `submission` ya fue persistida
 
 ## Cobertura de este documento
 
@@ -647,26 +656,16 @@ Conclusion:
 
 ## Preguntas abiertas
 
-## 1. Semantica final de `contact` y `mail`
+## 1. Estrategia documental futura
 
-Falta definir si FastAPI va a procesar `contact` y `mail` de forma:
-
-- sincronica
-- asincronica con cola o job
-
-Esta decision define:
-
-- `200/201` vs `202`
-- el valor de `processing_status`
-- el nivel de trazabilidad necesario post-respuesta
-
-## 2. Estrategia documental futura
-
-Si este documento crece demasiado, la division natural seria:
+La division ya adoptada para `contact` es:
 
 - `docs/fastapi-backend-migration-guide.md`
 - `docs/fastapi-contact-contract.md`
+
+Si la migracion sigue creciendo, la siguiente division natural seria:
+
 - `docs/fastapi-content-pricing-contract.md`
 - `docs/fastapi-quote-contract.md`
 
-Por ahora conviene mantener un solo documento maestro.
+Por ahora no hace falta abrir mas documentos especializados.
