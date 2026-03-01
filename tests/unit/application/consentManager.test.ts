@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import {
-  analyticsConsentLegacyStorageKey,
-  analyticsConsentStorageKey
-} from '@/application/consent/consentStorage'
+import { analyticsConsentStorageKey } from '@/application/consent/consentStorage'
 import { createConsentManager } from '@/application/consent/consentManager'
 import type { LoggerPort } from '@/application/ports/Logger'
 import type { StoragePort } from '@/application/ports/Storage'
@@ -32,28 +29,23 @@ function createLogger(): LoggerPort {
 }
 
 describe('consentManager', () => {
-  it('migrates legacy consent key to the active key on load', () => {
+  it('loads consent from the canonical storage key', () => {
     const storage = createMemoryStorage({
-      [analyticsConsentLegacyStorageKey]: 'granted'
+      [analyticsConsentStorageKey]: 'granted'
     })
     const manager = createConsentManager(storage, createLogger())
 
     expect(manager.getStatus()).toBe('granted')
-    expect(storage.get(analyticsConsentStorageKey)).toBe('granted')
-    expect(storage.get(analyticsConsentLegacyStorageKey)).toBeNull()
   })
 
-  it('persists granted consent and removes legacy key', () => {
-    const storage = createMemoryStorage({
-      [analyticsConsentLegacyStorageKey]: 'denied'
-    })
+  it('persists granted consent in the canonical storage key', () => {
+    const storage = createMemoryStorage()
     const manager = createConsentManager(storage, createLogger())
 
     manager.grant()
 
     expect(manager.getStatus()).toBe('granted')
     expect(storage.get(analyticsConsentStorageKey)).toBe('granted')
-    expect(storage.get(analyticsConsentLegacyStorageKey)).toBeNull()
   })
 
   it('persists denied consent and notifies subscribers', () => {
@@ -69,5 +61,17 @@ describe('consentManager', () => {
     expect(listener).toHaveBeenCalledWith('denied')
 
     unsubscribe()
+  })
+
+  it('removes the canonical key when consent is reset', () => {
+    const storage = createMemoryStorage({
+      [analyticsConsentStorageKey]: 'granted'
+    })
+    const manager = createConsentManager(storage, createLogger())
+
+    manager.reset()
+
+    expect(manager.getStatus()).toBe('unknown')
+    expect(storage.get(analyticsConsentStorageKey)).toBeNull()
   })
 })

@@ -1,8 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import {
-  analyticsConsentLegacyStorageKey,
-  analyticsConsentStorageKey
-} from '@/application/consent/consentStorage'
+import { analyticsConsentStorageKey } from '@/application/consent/consentStorage'
 import { getAnalyticsConsent, setAnalyticsConsent } from '@/infrastructure/consent/consent'
 
 describe('consent', () => {
@@ -30,27 +27,17 @@ describe('consent', () => {
     expect(getAnalyticsConsent()).toBe('denied')
   })
 
-  it('migrates legacy key and keeps one active key', () => {
-    window.localStorage.setItem(analyticsConsentLegacyStorageKey, 'granted')
-
-    expect(getAnalyticsConsent()).toBe('granted')
-    expect(window.localStorage.getItem(analyticsConsentStorageKey)).toBe('granted')
-    expect(window.localStorage.getItem(analyticsConsentLegacyStorageKey)).toBeNull()
-  })
-
   it('returns unset for unknown values', () => {
     window.localStorage.setItem(analyticsConsentStorageKey, 'maybe')
 
     expect(getAnalyticsConsent()).toBe('unset')
   })
 
-  it('clears active and legacy keys when consent is unset', () => {
+  it('clears the canonical key when consent is unset', () => {
     window.localStorage.setItem(analyticsConsentStorageKey, 'granted')
-    window.localStorage.setItem(analyticsConsentLegacyStorageKey, 'granted')
 
     setAnalyticsConsent('unset')
 
     expect(window.localStorage.getItem(analyticsConsentStorageKey)).toBeNull()
-    expect(window.localStorage.getItem(analyticsConsentLegacyStorageKey)).toBeNull()
   })
 })

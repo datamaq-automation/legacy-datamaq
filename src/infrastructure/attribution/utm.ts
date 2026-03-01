@@ -8,7 +8,6 @@ type StoredAttribution = {
 }
 
 const STORAGE_KEY = `${resolveStorageNamespace(publicConfig.storageNamespace)}_attribution`
-const LEGACY_STORAGE_KEYS = ['datamaq_attribution']
 const DEFAULT_TTL_DAYS = 30
 
 export function initAttribution(
@@ -82,19 +81,6 @@ export function getAttribution(storage: StoragePort): Attribution | null {
   const primaryStored = readStoredAttribution(storage, STORAGE_KEY)
   if (primaryStored) {
     return primaryStored.data
-  }
-
-  for (const legacyKey of LEGACY_STORAGE_KEYS) {
-    if (legacyKey === STORAGE_KEY) {
-      continue
-    }
-    const legacyStored = readStoredAttribution(storage, legacyKey)
-    if (!legacyStored) {
-      continue
-    }
-    storage.set(STORAGE_KEY, JSON.stringify(legacyStored))
-    storage.remove(legacyKey)
-    return legacyStored.data
   }
 
   return null

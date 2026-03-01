@@ -1,11 +1,7 @@
 import type { InjectionKey } from 'vue'
 import type { LoggerPort } from '../ports/Logger'
 import type { StoragePort } from '../ports/Storage'
-import {
-  analyticsConsentLegacyStorageKey,
-  analyticsConsentStorageKey,
-  parseStoredConsentStatus
-} from './consentStorage'
+import { analyticsConsentStorageKey, parseStoredConsentStatus } from './consentStorage'
 
 export type ConsentStatus = 'unknown' | 'granted' | 'denied'
 
@@ -64,13 +60,6 @@ function loadFromStorage(storage: StoragePort, logger: LoggerPort): ConsentStatu
     if (stored) {
       return stored
     }
-
-    const legacyStored = parseStoredConsentStatus(storage.get(analyticsConsentLegacyStorageKey))
-    if (legacyStored) {
-      storage.set(analyticsConsentStorageKey, legacyStored)
-      storage.remove(analyticsConsentLegacyStorageKey)
-      return legacyStored
-    }
   } catch (error) {
     logger.warn('[consentManager] No fue posible leer el consentimiento almacenado:', error)
   }
@@ -89,8 +78,6 @@ function persistStatus(
     } else {
       storage.set(analyticsConsentStorageKey, status)
     }
-
-    storage.remove(analyticsConsentLegacyStorageKey)
   } catch (error) {
     logger.warn('[consentManager] No fue posible persistir el consentimiento:', error)
   }
