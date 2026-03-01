@@ -27,7 +27,7 @@ export class ContactBackendMonitor {
     private config: ConfigPort,
     private runtime: RuntimeFlags,
     private logger: LoggerPort,
-    private selectApiUrl: ApiUrlSelector = (cfg) => cfg.inquiryApiUrl,
+    private selectApiUrl: ApiUrlSelector = (cfg) => cfg.healthApiUrl || cfg.inquiryApiUrl,
     private monitorLabel: string = 'contactBackendStatus'
   ) {
     this.status = this.selectApiUrl(config) ? 'unknown' : 'unavailable'
@@ -104,7 +104,8 @@ export class ContactBackendMonitor {
 
     try {
       this.logger.debug(`[${this.monitorLabel}] Probe start`, { apiUrl })
-      const response = await this.http.options(apiUrl)
+      const isHealthEndpoint = apiUrl.endsWith('/health')
+      const response = isHealthEndpoint ? await this.http.get(apiUrl) : await this.http.options(apiUrl)
       if (response.ok || response.status === 405 || response.status === 400) {
         this.status = 'available'
       } else if (response.status === 404) {

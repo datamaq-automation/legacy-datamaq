@@ -7,6 +7,7 @@ export interface ConfigPort {
   mailApiUrl: NullableString
   pricingApiUrl: NullableString
   contentApiUrl: NullableString
+  healthApiUrl: NullableString
   requireRemoteContent?: boolean
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString

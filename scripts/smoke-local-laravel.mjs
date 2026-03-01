@@ -78,7 +78,7 @@ const smokeChecks = [
   {
     id: 'quote-pdf-get',
     method: 'GET',
-    path: '/api/v1/quote/pdf?quote_id=missing-test',
+    path: '/api/v1/quote/missing-test/pdf',
     expectedStatus: 422,
     headers: {
       Accept: 'application/pdf, application/json'
