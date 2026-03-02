@@ -11,6 +11,9 @@ Path: src/ui/layout/Navbar.vue
         type="button"
         :aria-expanded="isOffcanvasOpen ? 'true' : 'false'"
         aria-label="Abrir navegacion"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#mainOffcanvas"
+        aria-controls="mainOffcanvas"
         @click="toggleOffcanvas"
       >
         <svg viewBox="0 0 24 24" width="24" height="24" class="tw:fill-current">

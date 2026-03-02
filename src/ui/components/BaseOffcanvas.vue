@@ -3,6 +3,7 @@
     <transition name="offcanvas">
       <div
         v-if="show"
+        id="mainOffcanvas"
         class="tw:fixed tw:inset-0 tw:z-[1050] tw:flex tw:justify-end"
         role="dialog"
         aria-modal="true"
