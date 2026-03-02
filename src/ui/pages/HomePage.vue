@@ -36,7 +36,7 @@ const {
 </script>
 
 <template>
-  <div id="top" class="app-shell app-shell--home min-vh-100">
+  <div id="top" class="app-shell app-shell--home tw:min-h-screen">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
 
     <header class="c-home-header" role="banner">
@@ -48,7 +48,7 @@ const {
           <span class="c-home-header__brand-copy">{{ navbar.brand }}</span>
         </RouterLink>
 
-        <nav class="c-home-header__nav d-none d-lg-flex" aria-label="Navegacion principal">
+        <nav class="c-home-header__nav tw:hidden tw:lg:flex" aria-label="Navegacion principal">
           <RouterLink
             v-for="link in headerLinks"
             :key="link.label"
@@ -63,7 +63,7 @@ const {
           <RouterLink
             v-for="link in quickLinks"
             :key="link.label"
-            class="c-home-header__icon-link d-lg-none"
+            class="c-home-header__icon-link tw:lg:hidden"
             :to="link.to"
             :aria-label="link.label"
             :title="link.label"
@@ -73,7 +73,7 @@ const {
 
           <RouterLink
             v-if="contactCtaEnabled"
-            class="btn c-ui-btn c-ui-btn--primary c-home-header__cta d-none d-lg-inline-flex"
+            class="btn c-ui-btn c-ui-btn--primary c-home-header__cta tw:hidden tw:lg:inline-flex"
             to="/contact"
           >
             {{ homePage.headerContactLabel }}

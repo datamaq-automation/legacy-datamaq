@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@config "../../tailwind.config.js";
+
+@theme {}
+
+/* 
+  Desactivar preflight manualmente si es necesario para evitar conflictos con Bootstrap Reboot.
+  En v4, esto se puede hacer mediante @layer si no queremos que los resets globales afecten.
+*/
