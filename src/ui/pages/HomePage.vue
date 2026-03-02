@@ -73,14 +73,14 @@ const {
 
           <RouterLink
             v-if="contactCtaEnabled"
-            class="btn c-ui-btn c-ui-btn--primary c-home-header__cta tw:hidden tw:lg:inline-flex"
+            class="tw:btn-primary c-home-header__cta tw:hidden tw:lg:inline-flex"
             to="/contact"
           >
             {{ homePage.headerContactLabel }}
           </RouterLink>
           <RouterLink
             v-else
-            class="btn c-ui-btn c-ui-btn--outline c-home-header__cta d-none d-lg-inline-flex"
+            class="tw:btn-outline c-home-header__cta tw:hidden tw:lg:inline-flex"
             to="/contact"
           >
             {{ homePage.headerContactLabel }}
@@ -113,20 +113,20 @@ const {
                   <button
                     v-if="contactCtaEnabled"
                     type="button"
-                    class="btn c-ui-btn c-ui-btn--primary c-home-hero__primary"
+                    class="tw:btn-primary c-home-hero__primary"
                     @click="handleChat('hero', hero.primaryCta.href)"
                   >
                     {{ hero.primaryCta.label }}
                   </button>
                   <a
                     v-else
-                    class="btn c-ui-btn c-ui-btn--primary c-home-hero__primary"
+                    class="tw:btn-primary c-home-hero__primary"
                     href="#contacto"
                   >
                     {{ homePage.heroFallbackContactLabel }}
                   </a>
 
-                  <RouterLink class="btn c-ui-btn c-ui-btn--outline c-home-hero__secondary" :to="{ path: '/', hash: '#servicios' }">
+                  <RouterLink class="tw:btn-outline c-home-hero__secondary" :to="{ path: '/', hash: '#servicios' }">
                     {{ hero.secondaryCta.label }}
                   </RouterLink>
                 </div>

@@ -3,15 +3,15 @@ Path: src/ui/sections/ServiceCard.vue
 -->
 
 <template>
-  <div class="card h-100 bg-transparent border-0 c-services__card">
-    <div class="card-body p-0">
-      <article class="c-ui-card c-ui-card--interactive h-100 c-services__panel">
-        <div class="p-4 d-flex flex-column h-100 c-services__panel-body">
-          <div class="text-center">
+  <div class="tw:h-full tw:bg-transparent tw:border-0 c-services__card">
+    <div class="tw:p-0">
+      <article class="c-ui-card c-ui-card--interactive tw:h-full c-services__panel">
+        <div class="tw:p-4 tw:flex tw:flex-col tw:h-full c-services__panel-body">
+          <div class="tw:text-center">
             <img
               :src="card.media.src"
               :alt="card.media.alt"
-              class="img-fluid mb-3 c-services__media c-services__media-image"
+              class="tw:max-w-full tw:h-auto tw:mb-3 c-services__media c-services__media-image"
               :width="card.media.width"
               :height="card.media.height"
               loading="lazy"
@@ -19,48 +19,48 @@ Path: src/ui/sections/ServiceCard.vue
               @error="onServiceImageError"
             />
           </div>
-          <h3 class="h5 fw-semibold text-body-emphasis mb-2 c-services__card-title">{{ card.title }}</h3>
-          <p class="text-secondary mb-3 c-services__card-text">
+          <h3 class="tw:text-lg tw:font-semibold tw:text-dm-text-0 tw:mb-2 c-services__card-title">{{ card.title }}</h3>
+          <p class="tw:text-dm-text-muted tw:mb-3 c-services__card-text">
             {{ card.description }}
           </p>
           <section
-            class="c-services__scope mb-3"
+            class="c-services__scope tw:mb-3"
             :id="detailsId"
             :class="{ 'c-services__scope--collapsed': !detailsExpanded }"
             :aria-label="`${card.subtitle}: detalle del alcance`"
           >
-            <h4 class="h6 text-uppercase text-secondary fw-semibold mb-2 c-services__subtitle">
+            <h4 class="tw:text-sm tw:uppercase tw:text-dm-text-muted tw:font-semibold tw:mb-2 c-services__subtitle">
               {{ card.subtitle }}
             </h4>
-            <ul class="small mb-3 ps-3 c-services__list">
+            <ul class="tw:text-sm tw:mb-3 tw:pl-3 c-services__list">
               <li
                 v-for="(item, index) in card.items"
                 :key="`${card.id}-item-${index}`"
-                class="mb-2 c-services__list-item"
+                class="tw:mb-2 c-services__list-item"
               >
-                <span class="text-body-secondary c-services__list-text">{{ item }}</span>
+                <span class="tw:text-dm-text-muted c-services__list-text">{{ item }}</span>
               </li>
             </ul>
-            <p v-if="card.note" class="small text-secondary mb-0 c-services__note">
+            <p v-if="card.note" class="tw:text-sm tw:text-dm-text-muted tw:mb-0 c-services__note">
               {{ card.note }}
             </p>
           </section>
           <button
             v-if="isCollapsible"
             type="button"
-            class="btn btn-outline-light c-services__details-toggle d-md-none mb-3"
+            class="tw:btn-outline tw:md:hidden tw:mb-3 c-services__details-toggle"
             :aria-expanded="detailsExpanded ? 'true' : 'false'"
             :aria-controls="detailsId"
             @click="toggleDetails"
           >
             {{ detailsExpanded ? 'Ocultar detalle' : 'Ver detalle' }}
           </button>
-          <div class="mt-auto c-cta-stack c-services__cta">
+          <div class="tw:mt-auto c-cta-stack c-services__cta">
             <div class="c-cta-stack__item">
               <button
                 type="button"
-                class="btn c-ui-btn c-ui-btn--outline w-100 c-services__cta-button"
-                @click="handleWhatsAppClick(card.cta.href, card.cta.section)"
+                class="tw:btn-outline tw:w-full c-services__cta-button"
+                @click="handleWhatsAppClick(card.cta.href ?? '', card.cta.section ?? '')"
               >
                 {{ card.cta.label }}
               </button>
@@ -68,7 +68,7 @@ Path: src/ui/sections/ServiceCard.vue
           </div>
           <ul
             v-if="showChips"
-            class="list-unstyled d-flex flex-wrap gap-2 mt-3 mb-0 c-services__chips"
+            class="tw:list-none tw:flex tw:flex-wrap tw:gap-2 tw:mt-3 tw:mb-0 c-services__chips"
             aria-label="Condiciones operativas"
           >
             <li v-for="chip in installationChips" :key="chip">

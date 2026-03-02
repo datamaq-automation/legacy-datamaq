@@ -3,6 +3,24 @@
 
 @theme {}
 
+@layer components {
+
+  /* Base button styles repeated to avoid @apply nesting issues in v4 */
+  .tw\:btn {
+    @apply tw:inline-flex tw:items-center tw:justify-center tw:px-6 tw:py-3 tw:rounded-xl tw:font-medium tw:transition-all tw:duration-200 tw:cursor-pointer;
+  }
+
+  .tw\:btn-primary {
+    @apply tw:inline-flex tw:items-center tw:justify-center tw:px-6 tw:py-3 tw:rounded-xl tw:font-medium tw:transition-all tw:duration-200 tw:cursor-pointer;
+    @apply tw:bg-dm-primary tw:text-dm-bg tw:hover:brightness-110 tw:active:scale-95;
+  }
+
+  .tw\:btn-outline {
+    @apply tw:inline-flex tw:items-center tw:justify-center tw:px-6 tw:py-3 tw:rounded-xl tw:font-medium tw:transition-all tw:duration-200 tw:cursor-pointer;
+    @apply tw:border tw:border-dm-border tw:text-dm-text-0 tw:hover:bg-dm-surface tw:active:scale-95;
+  }
+}
+
 /* 
   Desactivar preflight manualmente si es necesario para evitar conflictos con Bootstrap Reboot.
   En v4, esto se puede hacer mediante @layer si no queremos que los resets globales afecten.
