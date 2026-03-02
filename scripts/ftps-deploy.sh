@@ -270,4 +270,4 @@ case "${COMMAND}" in
     error "Usage: scripts/ftps-deploy.sh <validate|preflight|upload>"
     ;;
 esac
- beach
+
