@@ -317,7 +317,7 @@ function resolveQuoteFormField(issue: QuoteValidationIssue): QuoteFormField | un
 
   for (let index = issue.loc.length - 1; index >= 0; index -= 1) {
     const segment = issue.loc[index]
-    if (isQuoteFormField(segment)) {
+    if (typeof segment === 'string' && isQuoteFormField(segment)) {
       return segment
     }
   }
@@ -425,23 +425,23 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
 </script>
 
 <template>
-  <div class="app-shell bg-dark text-white min-vh-100">
+  <div class="app-shell tw:bg-dm-bg tw:text-dm-text-0 tw:min-h-screen">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
     <Navbar :contactCtaEnabled="contactCtaEnabled" />
 
-    <main id="contenido-principal" class="flex-grow-1 with-floating-cta py-5">
-      <div class="container">
-        <section class="quote-hero mb-4 mb-lg-5">
-          <p class="text-uppercase fw-bold small mb-2">Cotizador publico</p>
-          <h1 class="display-6 fw-bold mb-3">Propuesta tecnica en minutos</h1>
-          <p class="lead text-white-50 mb-0">
+    <main id="contenido-principal" class="tw:flex-grow tw:py-16">
+      <div class="tw:container tw:mx-auto tw:px-4">
+        <section class="tw:mb-12">
+          <p class="tw:uppercase tw:font-bold tw:text-sm tw:text-dm-primary tw:mb-2">Cotizador publico</p>
+          <h1 class="tw:text-4xl tw:font-extrabold tw:mb-4">Propuesta tecnica en minutos</h1>
+          <p class="tw:text-xl tw:text-dm-text-muted tw:max-w-2xl">
             Completa los datos minimos y generamos una propuesta premium con reserva y envio por WhatsApp.
           </p>
         </section>
 
-        <div class="row g-4 align-items-start">
-          <section class="col-lg-7" aria-labelledby="cotizador-form-title">
-            <div class="bg-dark border border-secondary-subtle rounded-4 p-4">
+        <div class="tw:grid tw:grid-cols-1 tw:lg:grid-cols-12 tw:gap-12 tw:items-start">
+          <section class="tw:col-span-1 tw:lg:col-span-7" aria-labelledby="cotizador-form-title">
+            <div class="tw:bg-dm-surface tw:border tw:border-dm-border tw:rounded-2xl tw:p-6 tw:lg:p-8">
               <h2 id="cotizador-form-title" class="h4 fw-semibold mb-3">Datos del servicio</h2>
 
               <form class="d-flex flex-column gap-3" @submit.prevent="handleGenerateQuote">
@@ -563,7 +563,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 pt-2">
-                  <button type="submit" class="btn c-ui-btn c-ui-btn--primary" :disabled="loading">
+                  <button type="submit" class="tw:btn-primary tw:w-full tw:lg:w-auto" :disabled="loading">
                     {{ loading ? 'Generando...' : 'Generar propuesta' }}
                   </button>
                 </div>
@@ -571,11 +571,11 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
             </div>
           </section>
 
-          <aside class="col-lg-5" aria-live="polite">
-            <div class="bg-dark border border-secondary-subtle rounded-4 p-4 position-lg-sticky top-0">
-              <h2 class="h4 fw-semibold mb-3">Propuesta generada</h2>
+          <aside class="tw:col-span-1 tw:lg:col-span-5" aria-live="polite">
+            <div class="tw:bg-dm-surface tw:border tw:border-dm-border tw:rounded-2xl tw:p-6 tw:lg:p-8 tw:lg:sticky tw:lg:top-24">
+              <h2 class="tw:text-xl tw:font-semibold tw:mb-4">Propuesta generada</h2>
 
-              <p v-if="!quote" class="text-white-50 mb-0">
+              <p v-if="!quote" class="tw:text-dm-text-muted tw:mb-0">
                 Al generar la propuesta vas a ver aqui el resumen premium con precio final, sena y vigencia.
               </p>
 
@@ -639,7 +639,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                 </a>
               </div>
 
-              <hr class="my-4 border-secondary-subtle" />
+              <hr class="tw:my-8 tw:border-dm-border" />
 
               <ul class="mb-0 ps-3 text-white-50">
                 <li>Sena 50% para reservar agenda</li>

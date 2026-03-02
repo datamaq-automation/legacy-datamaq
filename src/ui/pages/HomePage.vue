@@ -40,8 +40,8 @@ const {
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
 
     <header class="c-home-header" role="banner">
-      <div class="container c-home-header__inner">
-        <RouterLink class="c-home-header__brand" to="/" :aria-label="navbar.brandAriaLabel">
+      <div class="tw:container tw:mx-auto tw:px-4 c-home-header__inner">
+        <RouterLink class="tw:flex tw:items-center tw:gap-2 tw:text-dm-text-0 tw:decoration-0" to="/" :aria-label="navbar.brandAriaLabel">
           <span class="c-home-header__brand-icon" aria-hidden="true">
             <i class="bi bi-terminal-fill"></i>
           </span>
@@ -97,9 +97,9 @@ const {
           backgroundImage: `linear-gradient(180deg, rgba(4, 18, 35, 0.42), rgba(2, 12, 27, 0.96)), url('${hero.image.src}')`
         }"
       >
-        <div class="container">
-          <div class="row g-4 align-items-end">
-            <div class="col-12 col-lg-7">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <div class="tw:grid tw:grid-cols-1 tw:lg:grid-cols-12 tw:gap-8 tw:items-end">
+            <div class="tw:col-span-1 tw:lg:col-span-7">
               <div class="c-home-hero__copy">
                 <span class="c-home-eyebrow">{{ hero.badge }}</span>
                 <h1 id="hero-title" class="c-home-hero__title">
@@ -139,7 +139,7 @@ const {
               </div>
             </div>
 
-            <div class="col-12 col-lg-5">
+            <div class="tw:col-span-1 tw:lg:col-span-5">
               <article class="c-home-hero__media-card">
                 <p class="c-home-hero__media-label">{{ homePage.heroMediaLabel }}</p>
                 <img
@@ -159,7 +159,7 @@ const {
       </section>
 
       <section class="c-home-trust" aria-labelledby="trust-title">
-        <div class="container">
+        <div class="tw:container tw:mx-auto tw:px-4">
           <div class="c-home-trust__shell">
             <p id="trust-title" class="c-home-trust__label">{{ homePage.trustTitle }}</p>
             <div v-if="homePage.trustLogos?.length" class="c-home-trust__rail c-home-trust__rail--logos" role="list" aria-label="Marcas que confían">
@@ -184,9 +184,9 @@ const {
       </section>
 
       <section id="perfil" class="section-mobile c-home-profile" aria-labelledby="perfil-title">
-        <div class="container">
-          <div class="row g-4 align-items-stretch">
-            <div class="col-12 col-lg-5">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <div class="tw:grid tw:grid-cols-1 tw:lg:grid-cols-12 tw:gap-8 tw:items-stretch">
+            <div class="tw:col-span-1 tw:lg:col-span-5">
               <article class="c-home-panel c-home-profile__card">
                 <span class="c-home-eyebrow">{{ homePage.profileEyebrow }}</span>
                 <div class="c-home-profile__avatar-wrap">
@@ -208,14 +208,14 @@ const {
                 <button
                   v-if="contactCtaEnabled"
                   type="button"
-                  class="btn c-ui-btn c-ui-btn--primary c-home-profile__cta"
+                  class="tw:btn-primary c-home-profile__cta"
                   @click="handleChat('profile-card', whatsappHref)"
                 >
                   {{ homePage.profileWhatsappLabel }}
                 </button>
                   <RouterLink
                     v-else
-                    class="btn c-ui-btn c-ui-btn--outline c-home-profile__cta"
+                    class="tw:btn-outline c-home-profile__cta"
                     to="/contact"
                   >
                     {{ homePage.profileFormLabel }}
@@ -223,7 +223,7 @@ const {
               </article>
             </div>
 
-            <div class="col-12 col-lg-7">
+            <div class="tw:col-span-1 tw:lg:col-span-7">
               <article class="c-home-panel c-home-profile__details">
                 <p class="c-home-profile__section-label">{{ homePage.profileSectionLabel }}</p>
                 <p class="c-home-profile__detail-copy">
@@ -242,7 +242,7 @@ const {
       </section>
 
       <section id="servicios" class="section-mobile c-home-services" aria-labelledby="servicios-title">
-        <div class="container">
+        <div class="tw:container tw:mx-auto tw:px-4">
           <div class="c-home-section-head">
             <span class="c-home-eyebrow">{{ homePage.servicesEyebrow }}</span>
             <h2 id="servicios-title" class="c-home-section-title">
@@ -286,14 +286,14 @@ const {
                 <button
                   v-if="contactCtaEnabled"
                   type="button"
-                  class="btn c-ui-btn c-ui-btn--outline c-home-service-card__cta"
+                  class="tw:btn-outline c-home-service-card__cta"
                   @click="handleChat(`service-${card.id}`, card.cta.href)"
                 >
                   {{ card.cta.label }}
                 </button>
                 <RouterLink
                   v-else
-                  class="btn c-ui-btn c-ui-btn--outline c-home-service-card__cta"
+                  class="tw:btn-outline c-home-service-card__cta"
                   :to="card.cta.href === '#contacto' ? '/contact' : { path: '/', hash: card.cta.href || '#contacto' }"
                 >
                   {{ card.cta.label }}
@@ -305,7 +305,7 @@ const {
       </section>
 
       <section id="faq" class="section-mobile c-home-faq" aria-labelledby="faq-title">
-        <div class="container">
+        <div class="tw:container tw:mx-auto tw:px-4">
           <div class="c-home-section-head">
             <span class="c-home-eyebrow">{{ homePage.faqEyebrow }}</span>
             <h2 id="faq-title" class="c-home-section-title">{{ homePage.faqTitle }}</h2>
@@ -355,7 +355,7 @@ const {
       />
 
       <footer class="c-home-footer" role="contentinfo">
-        <div class="container">
+        <div class="tw:container tw:mx-auto tw:px-4">
           <div class="c-home-footer__shell">
             <div>
               <p class="c-home-footer__brand">{{ navbar.brand }}</p>
@@ -380,7 +380,7 @@ const {
     <ConsentBanner />
     <WhatsAppFab />
 
-    <nav class="c-home-dock d-lg-none" aria-label="Navegacion rapida">
+    <nav class="c-home-dock tw:lg:hidden" aria-label="Navegacion rapida">
       <RouterLink
         v-for="link in dockLinks"
         :key="link.label"

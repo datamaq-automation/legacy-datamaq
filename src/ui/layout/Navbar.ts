@@ -23,21 +23,18 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     document.body.classList.toggle('offcanvas-open', isOpen)
   }
 
+  function toggleOffcanvas() {
+    isOffcanvasOpen.value = !isOffcanvasOpen.value
+    setOffcanvasBodyState(isOffcanvasOpen.value)
+  }
+
   function handleContactClickDesktop() {
     emit('contact')
   }
 
   function hideOffcanvas() {
-    if (!offcanvasRef.value) {
-      return
-    }
-    // Validar que el offcanvas está realmente abierto antes de intentar cerrarlo
-    if (!isOffcanvasOpen.value) {
-      return
-    }
-    offcanvasRef.value
-      .querySelector<HTMLButtonElement>('button[data-bs-dismiss="offcanvas"]')
-      ?.click()
+    isOffcanvasOpen.value = false
+    setOffcanvasBodyState(false)
   }
 
   function handleMobileNavLinkClick() {
@@ -49,53 +46,26 @@ export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
     hideOffcanvas()
   }
 
-  function handleShown() {
-    isOffcanvasOpen.value = true
-    setOffcanvasBodyState(true)
-  }
-
-  function handleHidden() {
-    isOffcanvasOpen.value = false
-    setOffcanvasBodyState(false)
-  }
-
   function handleHashChange() {
     hideOffcanvas()
   }
 
   onMounted(() => {
-    if (!offcanvasRef.value) {
-      return
-    }
-
-    // En Vite SSG, Bootstrap se inicializa durante pre-rendering del lado servidor.
-    // En hidratación en el cliente, necesitamos re-inicializar el instance.
-    // Obtenemos o creamos el instance de Bootstrap Offcanvas.
-    const offcanvasInstance = window?.bootstrap?.Offcanvas?.getOrCreateInstance?.(offcanvasRef.value)
-    
-    // Registrar listeners Vue para sincronizar con Bootstrap events
-    // Estos listeners se registran DESPUÉS de onMounted para garantizar que
-    // el offcanvas está completamente inicializado por Bootstrap
-    offcanvasRef.value.addEventListener('shown.bs.offcanvas', handleShown)
-    offcanvasRef.value.addEventListener('hidden.bs.offcanvas', handleHidden)
-    
     window.addEventListener('hashchange', handleHashChange)
   })
 
   onUnmounted(() => {
-    offcanvasRef.value?.removeEventListener('shown.bs.offcanvas', handleShown)
-    offcanvasRef.value?.removeEventListener('hidden.bs.offcanvas', handleHidden)
     window.removeEventListener('hashchange', handleHashChange)
     isOffcanvasOpen.value = false
     setOffcanvasBodyState(false)
   })
 
   return {
-    offcanvasRef,
-    toggleButtonRef,
     isOffcanvasOpen,
     contactCtaEnabled,
     navbar,
+    toggleOffcanvas,
+    hideOffcanvas,
     handleMobileNavLinkClick,
     handleContactClickDesktop,
     handleContactClickMobile

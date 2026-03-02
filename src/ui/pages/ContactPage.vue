@@ -26,7 +26,7 @@ const {
 </script>
 
 <template>
-  <div class="app-shell app-shell--contact min-vh-100">
+  <div class="app-shell app-shell--contact tw:min-h-screen">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
 
     <header class="c-contact-page-header" role="banner">
@@ -38,7 +38,7 @@ const {
           <span>{{ navbar.brand }}</span>
         </RouterLink>
 
-        <nav class="c-contact-page-header__nav d-none d-lg-flex" aria-label="Navegacion principal">
+        <nav class="c-contact-page-header__nav tw:hidden tw:lg:flex" aria-label="Navegacion principal">
           <RouterLink
             v-for="link in homeLinks"
             :key="link.label"
@@ -53,13 +53,13 @@ const {
           <button
             v-if="contactCtaEnabled"
             type="button"
-            class="btn c-ui-btn c-ui-btn--primary d-none d-lg-inline-flex"
+            class="tw:btn-primary tw:hidden tw:lg:inline-flex"
             @click="handleChat('contact-header', whatsappHref)"
           >
             {{ navbar.contactLabel }}
           </button>
           <RouterLink
-            class="btn c-ui-btn c-ui-btn--outline d-lg-none"
+            class="tw:btn-outline tw:lg:hidden"
             to="/"
           >
             {{ contactPage.homeButtonLabel }}
@@ -70,9 +70,9 @@ const {
 
     <main id="contenido-principal" class="c-contact-page-main">
       <section class="section-mobile c-contact-page-hero" aria-labelledby="contact-page-title">
-        <div class="container">
-          <div class="row g-4 align-items-stretch">
-            <div class="col-12 col-lg-5">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <div class="tw:grid tw:grid-cols-1 tw:lg:grid-cols-12 tw:gap-8 tw:items-stretch">
+            <div class="tw:col-span-1 tw:lg:col-span-12 lg:tw:col-span-5">
               <article class="c-contact-page-panel c-contact-page-panel--intro">
                 <span class="c-contact-page-eyebrow">{{ contactPage.eyebrow }}</span>
                 <h1 id="contact-page-title" class="c-contact-page-title">{{ contact.title }}</h1>
@@ -91,7 +91,7 @@ const {
               </article>
             </div>
 
-            <div class="col-12 col-lg-7">
+            <div class="tw:col-span-1 tw:lg:col-span-12 lg:tw:col-span-7">
               <article class="c-contact-page-panel c-contact-page-panel--support">
                 <p class="c-contact-page-support-label">{{ contactPage.supportTitle }}</p>
                 <ul class="c-contact-page-support-list">
@@ -138,7 +138,7 @@ const {
       />
 
       <footer class="c-contact-page-footer" role="contentinfo">
-        <div class="container c-contact-page-footer__inner">
+        <div class="tw:container tw:mx-auto tw:px-4 tw:flex tw:items-center tw:justify-between tw:gap-4 c-contact-page-footer__inner">
           <div>
             <p class="c-contact-page-footer__brand">{{ navbar.brand }}</p>
             <p class="c-contact-page-footer__note">(c) {{ footerYear }} {{ footer.note }}</p>

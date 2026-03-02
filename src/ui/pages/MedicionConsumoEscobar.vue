@@ -19,52 +19,52 @@ const {
 </script>
 
 <template>
-  <div class="app-shell bg-dark text-white min-vh-100">
+  <div class="app-shell tw:bg-dm-bg tw:text-dm-text-0 tw:min-h-screen">
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
     <Navbar :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('landing-escobar-navbar')" />
     <main id="contenido-principal" class="flex-grow-1 with-floating-cta">
-      <section class="py-5" aria-labelledby="escobar-hero-title">
-        <div class="container">
-          <p class="text-uppercase small text-muted mb-2">{{ pageContent.eyebrow }}</p>
-          <h1 id="escobar-hero-title" class="display-5 fw-bold mb-3">{{ pageContent.headline }}</h1>
-          <p class="lead text-white-50 mb-4">{{ pageContent.lead }}</p>
-          <div class="d-flex flex-column flex-sm-row gap-3">
+      <section class="tw:py-16" aria-labelledby="escobar-hero-title">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <p class="tw:uppercase tw:text-sm tw:font-bold tw:text-dm-primary tw:mb-2">{{ pageContent.eyebrow }}</p>
+          <h1 id="escobar-hero-title" class="tw:text-4xl tw:lg:text-5xl tw:font-extrabold tw:mb-6">{{ pageContent.headline }}</h1>
+          <p class="tw:text-xl tw:text-dm-text-muted tw:mb-8 tw:max-w-3xl">{{ pageContent.lead }}</p>
+          <div class="tw:flex tw:flex-col tw:sm:flex-row tw:gap-4">
             <button
               v-if="contactCtaEnabled"
               type="button"
-              class="btn c-ui-btn c-ui-btn--primary btn-lg"
+              class="tw:btn-primary tw:px-8"
               @click="handleChat('landing-escobar-hero')"
             >
               {{ pageContent.primaryCtaLabel }}
             </button>
-            <a class="btn c-ui-btn c-ui-btn--outline btn-lg" href="#contacto">
+            <a class="tw:btn-outline tw:px-8" href="#contacto">
               {{ pageContent.secondaryCtaLabel }}
             </a>
           </div>
         </div>
       </section>
 
-      <section class="py-4" aria-labelledby="escobar-summary-title">
-        <div class="container">
-          <h2 id="escobar-summary-title" class="h3 fw-semibold mb-3">{{ pageContent.summaryTitle }}</h2>
-          <ul class="text-white-50">
+      <section class="tw:py-12" aria-labelledby="escobar-summary-title">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <h2 id="escobar-summary-title" class="tw:text-2xl tw:font-bold tw:mb-6">{{ pageContent.summaryTitle }}</h2>
+          <ul class="tw:text-dm-text-muted tw:space-y-2">
             <li v-for="item in pageContent.summary" :key="item">{{ item }}</li>
           </ul>
         </div>
       </section>
 
-      <section class="py-4" aria-labelledby="escobar-includes-title">
-        <div class="container">
-          <div class="row g-4">
-            <div class="col-lg-6">
-              <h2 id="escobar-includes-title" class="h4 fw-semibold mb-3">{{ pageContent.includesTitle }}</h2>
-              <ul class="text-white-50">
+      <section class="tw:py-12" aria-labelledby="escobar-includes-title">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <div class="tw:grid tw:grid-cols-1 tw:lg:grid-cols-2 tw:gap-12">
+            <div>
+              <h2 id="escobar-includes-title" class="tw:text-xl tw:font-bold tw:mb-4">{{ pageContent.includesTitle }}</h2>
+              <ul class="tw:text-dm-text-muted tw:space-y-2">
                 <li v-for="item in pageContent.includes" :key="item">{{ item }}</li>
               </ul>
             </div>
-            <div class="col-lg-6">
-              <h2 class="h4 fw-semibold mb-3">{{ pageContent.processTitle }}</h2>
-              <ol class="text-white-50">
+            <div>
+              <h2 class="tw:text-xl tw:font-bold tw:mb-4">{{ pageContent.processTitle }}</h2>
+              <ol class="tw:text-dm-text-muted tw:space-y-4">
                 <li v-for="item in pageContent.processSteps" :key="item">{{ item }}</li>
               </ol>
             </div>
@@ -72,23 +72,23 @@ const {
         </div>
       </section>
 
-      <section class="py-4" aria-labelledby="escobar-deliverables-title">
-        <div class="container">
-          <h2 id="escobar-deliverables-title" class="h4 fw-semibold mb-3">{{ pageContent.deliverablesTitle }}</h2>
-          <ul class="text-white-50">
+      <section class="tw:py-12" aria-labelledby="escobar-deliverables-title">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <h2 id="escobar-deliverables-title" class="tw:text-xl tw:font-bold tw:mb-4">{{ pageContent.deliverablesTitle }}</h2>
+          <ul class="tw:text-dm-text-muted tw:space-y-2">
             <li v-for="item in pageContent.deliverables" :key="item">{{ item }}</li>
           </ul>
         </div>
       </section>
 
-      <section class="py-4" aria-labelledby="escobar-faq-title">
-        <div class="container">
-          <h2 id="escobar-faq-title" class="h4 fw-semibold mb-3">{{ pageContent.faqTitle }}</h2>
-          <div class="d-flex flex-column gap-3">
+      <section class="tw:py-12" aria-labelledby="escobar-faq-title">
+        <div class="tw:container tw:mx-auto tw:px-4">
+          <h2 id="escobar-faq-title" class="tw:text-xl tw:font-bold tw:mb-6">{{ pageContent.faqTitle }}</h2>
+          <div class="tw:flex tw:flex-col tw:gap-4">
             <details
               v-for="faq in pageContent.faqs"
               :key="faq.question"
-              class="bg-body text-body rounded-3 p-3"
+              class="tw:bg-dm-surface tw:text-dm-text-0 tw:rounded-xl tw:p-6 tw:border tw:border-dm-border"
             >
               <summary class="fw-semibold mb-2">{{ faq.question }}</summary>
               <p class="mb-0">{{ faq.answer }}</p>
