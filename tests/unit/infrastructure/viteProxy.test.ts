@@ -9,7 +9,7 @@ describe('vite proxy config', () => {
     vi.restoreAllMocks()
   })
 
-  it('uses the local FastAPI bridge on port 8000 by default', async () => {
+  it('uses the local FastAPI bridge on port 8899 by default', async () => {
     const configFactory = (await import('../../../vite.config.js')).default
     const config = configFactory({ mode: 'development', command: 'serve' })
     const proxy = config.server.proxy['/api'] as any
