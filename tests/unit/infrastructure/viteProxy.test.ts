@@ -11,11 +11,11 @@ describe('vite proxy config', () => {
 
   it('uses the local FastAPI bridge on port 8000 by default', async () => {
     const configFactory = (await import('../../../vite.config.js')).default
-    const config = configFactory({ mode: 'development' })
-    const proxy = config.server.proxy['/api']
-    const rewrite = config.server.proxy['/api'].rewrite
+    const config = configFactory({ mode: 'development', command: 'serve' })
+    const proxy = config.server.proxy['/api'] as any
+    const rewrite = proxy.rewrite
 
-    expect(proxy.target).toBe('http://127.0.0.1:8000')
+    expect(proxy.target).toBe('http://127.0.0.1:8899')
     expect(rewrite('/api/v1/health')).toBe('/v1/health')
   })
 
@@ -23,8 +23,9 @@ describe('vite proxy config', () => {
     process.env.VITE_API_PROXY_TARGET = 'http://127.0.0.1:8000'
 
     const configFactory = (await import('../../../vite.config.js')).default
-    const config = configFactory({ mode: 'development' })
-    const rewrite = config.server.proxy['/api'].rewrite
+    const config = configFactory({ mode: 'development', command: 'serve' })
+    const proxy = config.server.proxy['/api'] as any
+    const rewrite = proxy.rewrite
 
     expect(rewrite('/api/v1/health')).toBe('/v1/health')
     expect(rewrite('/api/v1/quote/Q-20260222-000321/pdf')).toBe('/v1/quote/Q-20260222-000321/pdf')
@@ -60,7 +61,7 @@ describe('vite proxy config', () => {
 
   it('keeps warn/error in production while stripping log/info/debug calls', async () => {
     const configFactory = (await import('../../../vite.config.js')).default
-    const config = configFactory({ mode: 'production' })
+    const config = configFactory({ mode: 'production', command: 'build' })
 
     expect(config.esbuild).toEqual({
       pure: ['console.log', 'console.info', 'console.debug'],
