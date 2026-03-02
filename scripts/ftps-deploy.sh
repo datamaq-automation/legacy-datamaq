@@ -118,12 +118,8 @@ normalize_inputs() {
 }
 
 validate_upload_flags() {
-  ALLOW_INSECURE_DATA_CHANNEL="$(trim_compact "${FTPS_ALLOW_INSECURE_DATA_CHANNEL:-false}" | tr '[:upper:]' '[:lower:]')"
   PRUNE_REMOTE="$(trim_compact "${FTPS_PRUNE_REMOTE:-false}" | tr '[:upper:]' '[:lower:]')"
 
-  if ! printf '%s' "${ALLOW_INSECURE_DATA_CHANNEL}" | grep -Eq '^(true|false)$'; then
-    error "FTPS_ALLOW_INSECURE_DATA_CHANNEL must be true or false."
-  fi
   if ! printf '%s' "${PRUNE_REMOTE}" | grep -Eq '^(true|false)$'; then
     error "FTPS_PRUNE_REMOTE must be true or false."
   fi
@@ -172,9 +168,10 @@ run_preflight_attempt() {
 
   log_file="$(mktemp)"
   open_target="$(open_target_for_mode "${ftps_mode}")"
+  # Always force SSL and Data channel protection
   lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 4; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; pwd; cls -1; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; pwd; cls -1; bye"
 
-  notice "Preflight attempt ${attempt} for target=${TARGET_LABEL} mode=${ftps_mode} port=${attempt_port}"
+  echo "::group::Preflight attempt ${attempt} for target=${TARGET_LABEL} mode=${ftps_mode} port=${attempt_port}"
   set +e
   timeout 90 lftp -e "${lftp_command}" >"${log_file}" 2>&1
   status=$?
@@ -183,6 +180,7 @@ run_preflight_attempt() {
   cat "${log_file}"
   log_peer_close_hint "${log_file}"
   rm -f "${log_file}"
+  echo "::endgroup::"
 
   [[ "${status}" -eq 0 ]]
 }
@@ -193,7 +191,6 @@ run_upload_attempt() {
   local ftps_mode="$3"
   local prefer_epsv="$4"
   local fix_pasv_address="$5"
-  local ssl_protect_data="$6"
   local log_file
   local open_target
   local lftp_command
@@ -206,9 +203,10 @@ run_upload_attempt() {
 
   log_file="$(mktemp)"
   open_target="$(open_target_for_mode "${ftps_mode}")"
-  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data ${ssl_protect_data}; set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 3; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue ${mirror_delete_flag} --verbose dist .; bye"
+  # Always force SSL protection
+  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 3; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue ${mirror_delete_flag} --verbose dist .; bye"
 
-  notice "Upload attempt ${attempt} for target=${TARGET_LABEL} mode=${ftps_mode} port=${attempt_port}"
+  echo "::group::Upload attempt ${attempt} for target=${TARGET_LABEL} mode=${ftps_mode} port=${attempt_port}"
   set +e
   timeout 120 lftp -e "${lftp_command}" >"${log_file}" 2>&1
   status=$?
@@ -217,6 +215,7 @@ run_upload_attempt() {
   cat "${log_file}"
   log_peer_close_hint "${log_file}"
   rm -f "${log_file}"
+  echo "::endgroup::"
 
   [[ "${status}" -eq 0 ]]
 }
@@ -225,15 +224,8 @@ run_preflight_sequence() {
   if [[ -n "$MODE" ]]; then
     run_preflight_attempt 1 "${PORT}" "${MODE}" false true && return 0
     run_preflight_attempt 2 "${PORT}" "${MODE}" true false && return 0
-  elif [[ -n "$(trim_compact "${FTPS_PORT:-}")" || -n "${SERVER_PORT_FROM_HOST}" ]]; then
-    local selected_port="${FTPS_PORT:-${SERVER_PORT_FROM_HOST}}"
-    local selected_mode="explicit"
-    if [[ "${selected_port}" == "990" ]]; then
-      selected_mode="implicit"
-    fi
-    run_preflight_attempt 1 "${selected_port}" "${selected_mode}" false true && return 0
-    run_preflight_attempt 2 "${selected_port}" "${selected_mode}" true false && return 0
   else
+    # Fallback try both common ports
     run_preflight_attempt 1 21 explicit false true && return 0
     run_preflight_attempt 2 21 explicit true false && return 0
     run_preflight_attempt 3 990 implicit false true && return 0
@@ -245,24 +237,16 @@ run_preflight_sequence() {
 
 run_upload_sequence() {
   if [[ -n "$MODE" ]]; then
-    run_upload_attempt 1 "${PORT}" "${MODE}" false true true && return 0
-    run_upload_attempt 2 "${PORT}" "${MODE}" true false true && return 0
-  elif [[ -n "$(trim_compact "${FTPS_PORT:-}")" || -n "${SERVER_PORT_FROM_HOST}" ]]; then
-    local selected_port="${FTPS_PORT:-${SERVER_PORT_FROM_HOST}}"
-    local selected_mode="explicit"
-    if [[ "${selected_port}" == "990" ]]; then
-      selected_mode="implicit"
-    fi
-    run_upload_attempt 1 "${selected_port}" "${selected_mode}" false true true && return 0
-    run_upload_attempt 2 "${selected_port}" "${selected_mode}" true false true && return 0
+    run_upload_attempt 1 "${PORT}" "${MODE}" false true && return 0
+    run_upload_attempt 2 "${PORT}" "${MODE}" true false && return 0
   else
-    run_upload_attempt 1 21 explicit false true true && return 0
-    run_upload_attempt 2 21 explicit true false true && return 0
-    run_upload_attempt 3 990 implicit false true true && return 0
-    run_upload_attempt 4 990 implicit true false true && return 0
+    run_upload_attempt 1 21 explicit false true && return 0
+    run_upload_attempt 2 21 explicit true false && return 0
+    run_upload_attempt 3 990 implicit false true && return 0
+    run_upload_attempt 4 990 implicit true false && return 0
   fi
 
-  error "FTPS upload failed for target=${TARGET_LABEL} (Secure channel required)."
+  error "FTPS upload failed for target=${TARGET_LABEL}."
 }
 
 case "${COMMAND}" in
@@ -286,3 +270,4 @@ case "${COMMAND}" in
     error "Usage: scripts/ftps-deploy.sh <validate|preflight|upload>"
     ;;
 esac
+ beach
