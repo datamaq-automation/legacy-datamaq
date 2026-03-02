@@ -72,7 +72,7 @@ jobs:
         run: bash scripts/ftps-deploy.sh preflight
 
       - name: Build / Setup Node.js
-        uses: actions/setup-node@393f0e9d3751a1c5047d522ad2972954b1729bfe # v4.1.0
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
