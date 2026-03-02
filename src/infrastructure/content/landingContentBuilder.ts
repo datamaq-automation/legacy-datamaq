@@ -91,9 +91,6 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       brandAriaLabel: config.brandAriaLabel,
       links: [
         { label: 'Servicios', href: '#servicios' },
-        { label: 'Proceso', href: '#proceso' },
-        { label: 'Tarifas', href: '#tarifas' },
-        { label: 'Cobertura', href: '#cobertura' },
         { label: 'FAQ', href: '#faq' },
         { label: 'Contacto', href: '#contacto' }
       ],
@@ -170,6 +167,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       heroFallbackContactLabel: 'Iniciar contacto',
       heroMediaLabel: 'Cobertura tecnica activa',
       trustTitle: 'Senales de confianza',
+      trustLogos: [],
       profileEyebrow: 'Perfil profesional',
       profileName: 'Agustin Bustos',
       profileWhatsappLabel: 'Contacto directo por WhatsApp',

@@ -10,9 +10,6 @@ export interface LandingRouteLink {
 const HOME_SECTION_HASHES = new Set([
   '#top',
   '#servicios',
-  '#proceso',
-  '#tarifas',
-  '#cobertura',
   '#perfil',
   '#faq',
   '#contacto',

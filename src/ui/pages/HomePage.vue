@@ -162,7 +162,19 @@ const {
         <div class="container">
           <div class="c-home-trust__shell">
             <p id="trust-title" class="c-home-trust__label">{{ homePage.trustTitle }}</p>
-            <div class="c-home-trust__rail" role="list" aria-label="Capacidades destacadas">
+            <div v-if="homePage.trustLogos?.length" class="c-home-trust__rail c-home-trust__rail--logos" role="list" aria-label="Marcas que confían">
+              <img
+                v-for="(logo, idx) in homePage.trustLogos"
+                :key="idx"
+                :src="logo.src"
+                :alt="logo.alt"
+                class="c-home-trust__logo"
+                loading="lazy"
+                decoding="async"
+                role="listitem"
+              />
+            </div>
+            <div v-else class="c-home-trust__rail" role="list" aria-label="Capacidades destacadas">
               <span v-for="signal in trustSignals" :key="signal" class="c-home-trust__item" role="listitem">
                 {{ signal }}
               </span>
@@ -652,6 +664,26 @@ const {
   background: rgba(var(--dm-text-0-rgb), 0.05);
   color: rgba(var(--dm-text-0-rgb), 0.76);
   font-size: 0.92rem;
+}
+
+.c-home-trust__logo {
+  flex: 0 0 auto;
+  height: clamp(1.8rem, 3.5vw, 2.5rem);
+  width: auto;
+  opacity: 0.65;
+  filter: grayscale(1) brightness(1.5);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.c-home-trust__logo:hover {
+  opacity: 1;
+  filter: grayscale(0) brightness(1);
+}
+
+.c-home-trust__rail--logos {
+  align-items: center;
+  gap: 2.5rem;
+  padding-block: 0.5rem;
 }
 
 .c-home-profile,

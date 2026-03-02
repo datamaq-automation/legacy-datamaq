@@ -7,9 +7,6 @@ export function normalizeNavbarContent(navbar: AppContent['navbar']): AppContent
     ...navbar,
     links: [
       { href: '#servicios', label: labelsByHref.get('#servicios') ?? 'Servicios' },
-      { href: '#proceso', label: labelsByHref.get('#proceso') ?? 'Proceso' },
-      { href: '#tarifas', label: labelsByHref.get('#tarifas') ?? 'Tarifas' },
-      { href: '#cobertura', label: labelsByHref.get('#cobertura') ?? 'Cobertura' },
       { href: '#faq', label: labelsByHref.get('#faq') ?? 'FAQ' },
       { href: '#contacto', label: labelsByHref.get('#contacto') ?? 'Contacto' }
     ]

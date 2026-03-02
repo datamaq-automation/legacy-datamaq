@@ -157,6 +157,7 @@ export interface HomePageContent {
   heroFallbackContactLabel: string
   heroMediaLabel: string
   trustTitle: string
+  trustLogos?: ImageContent[]
   profileEyebrow: string
   profileName: string
   profileWhatsappLabel: string

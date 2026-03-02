@@ -30,10 +30,10 @@
 - [ ] Alinear toda la documentacion de migracion y contratos FastAPI al endpoint canonico `GET /v1/site`.
 - [/] Alinear la suite `tests/integration/fastApiContracts.test.ts` al contrato canonico `GET /v1/site`.
 
-### 3. Definiciones Abiertas del Nuevo Home DataMaq
-- [ ] Confirmar si el nuevo home debe reemplazar por completo los modulos legacy hoy omitidos del flujo principal (`CaseStudiesSection` y proceso/tarifas/cobertura) o si deben reincorporarse con el mismo lenguaje visual.
-- [ ] Definir si la franja de confianza llevara logos o marcas reales de clientes/partners; por ahora se resolvio con senales/capacidades porque el repo no contiene assets ni autorizaciones de marca.
-- [ ] Definir si el boton secundario del banner de cookies debe abrir un centro real de preferencias. Hoy se mantuvo la logica existente de aceptar/rechazar, sin pantalla de configuracion.
+### 3. Definiciones de Home DataMaq (Resoluciones)
+- [x] Confirmación: Eliminar módulos legacy (`CaseStudiesSection`, `DecisionFlowSection`, etc.) del repositorio.
+- [x] Confirmación: Usar logos reales en la franja de confianza (infraestructura lista).
+- [ ] Definir si el botón secundario del banner de cookies debe abrir un centro real de preferencias. Hoy se mantuvo la lógica existente de aceptar/rechazar.
 
 ### 4. Implementacion de Mejoras UX/UI (Ref: `ux_audit_report.md`)
 - [x] Incorporar utilidades de glassmorphism (`backdrop-filter`) en fondos de tarjetas y paneles.
