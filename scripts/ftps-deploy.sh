@@ -262,23 +262,7 @@ run_upload_sequence() {
     run_upload_attempt 4 990 implicit true false true && return 0
   fi
 
-  if [[ "${ALLOW_INSECURE_DATA_CHANNEL}" == "true" ]]; then
-    local fallback_port="${PORT}"
-    local fallback_mode="${MODE:-explicit}"
-
-    warning "Using insecure data-channel fallback (ssl-protect-data=false)"
-    if [[ -z "${MODE}" ]]; then
-      fallback_port="${FTPS_PORT:-${SERVER_PORT_FROM_HOST:-21}}"
-      fallback_mode="explicit"
-      if [[ "${fallback_port}" == "990" ]]; then
-        fallback_mode="implicit"
-      fi
-    fi
-
-    run_upload_attempt 5 "${fallback_port}" "${fallback_mode}" false true false && return 0
-  fi
-
-  error "FTPS upload failed for target=${TARGET_LABEL}."
+  error "FTPS upload failed for target=${TARGET_LABEL} (Secure channel required)."
 }
 
 case "${COMMAND}" in

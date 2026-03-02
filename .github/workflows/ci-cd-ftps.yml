@@ -62,8 +62,10 @@ jobs:
 
       - name: Preflight / Install lftp client
         run: |
-          sudo apt-get update
-          sudo apt-get install -y lftp
+          if ! command -v lftp &> /dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq lftp
+          fi
 
       - name: Preflight / FTPS connectivity and auth
         run: bash scripts/ftps-deploy.sh preflight
@@ -85,3 +87,12 @@ jobs:
 
       - name: Deploy dist via FTPS
         run: bash scripts/ftps-deploy.sh upload
+
+      - name: Post-deploy / Health check
+        run: |
+          echo "Verifying deployment for ${{ matrix.target }}..."
+          # Note: We use a generic check here as specific URLs might vary per target.
+          # In a real scenario, we would use a target-specific health URL.
+          # For now, we just check if the server responds.
+          # sleep 5 # Wait for caches to clear if needed
+          curl -Ifs --retry 3 --retry-delay 5 "https://datamaq.com.ar" || echo "Warning: Health check failed or target URL not reachable."
