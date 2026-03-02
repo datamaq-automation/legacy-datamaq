@@ -75,11 +75,11 @@ Ejecucion:
 
 ## Router Content
 
-- exponer `GET /v1/content`
+- exponer `GET /v1/site`
 - devolver `200 OK`
 - entregar snapshot completo dentro de `data`
 - incluir `status`, `request_id`, `brand_id`, `version`, `content_revision`
-- asegurar compatibilidad con `AppContentSchema`
+- asegurar compatibilidad con `SiteSnapshotSchema`
 - no usar `hero.title` parcial como contrato normal
 - validar que `content_revision` cambie cuando cambia el snapshot
 - validar metodo no permitido con `405`

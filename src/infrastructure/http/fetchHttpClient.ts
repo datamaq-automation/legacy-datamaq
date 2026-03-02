@@ -76,6 +76,8 @@ export class FetchHttpClient implements HttpClient {
         {
           method,
           headers: requestHeaders,
+          mode: 'cors',
+          credentials: 'include',
           ...(method === 'GET' ? {} : { body: JSON.stringify(body) })
         },
         options
