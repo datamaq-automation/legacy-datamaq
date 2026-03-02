@@ -16,8 +16,40 @@
   }
 
   .tw\:btn-outline {
-    @apply tw:inline-flex tw:items-center tw:justify-center tw:px-6 tw:py-3 tw:rounded-xl tw:font-medium tw:transition-all tw:duration-200 tw:cursor-pointer;
-    @apply tw:border tw:border-dm-border tw:text-dm-text-0 tw:hover:bg-dm-surface tw:active:scale-95;
+    border: 1px solid var(--color-dm-border);
+    color: var(--color-dm-text-0);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  /* Form Base Styles */
+  .tw\:form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-dm-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .tw\:form-control {
+    width: 100%;
+    background-color: var(--color-dm-surface);
+    border: 1px solid var(--color-dm-border);
+    color: var(--color-dm-text-0);
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    outline: none;
+    transition: all 0.2s;
+
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.5);
+      border-color: var(--color-dm-primary);
+    }
   }
 }
 

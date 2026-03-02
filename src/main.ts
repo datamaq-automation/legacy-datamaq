@@ -5,21 +5,10 @@ import { routes } from './router/routes'
 import './styles/main.scss'
 import './styles/tailwind.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import { emitRuntimeInfo, emitRuntimeWarn } from './application/utils/runtimeConsole'
 import { setDevBackendAvailability } from './application/backend/devBackendAvailability'
 import { configureAnalytics, enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
 import { probeBackendHealth } from './infrastructure/health/probeBackendHealth'
-
-// Exponer Bootstrap globalmente para que Vue pueda accesarlo
-declare global {
-  interface Window {
-    bootstrap: typeof bootstrap
-  }
-}
-if (typeof window !== 'undefined') {
-  window.bootstrap = bootstrap
-}
 import { initAttribution } from './infrastructure/attribution/utm'
 import { consentManagerKey, type ConsentStatus } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'

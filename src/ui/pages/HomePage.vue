@@ -202,7 +202,7 @@ const {
                 </div>
                 <h2 id="perfil-title" class="c-home-profile__name">{{ homePage.profileName }}</h2>
                 <p class="c-home-profile__role">{{ about.title }}</p>
-                <p class="c-home-profile__lead">
+                <p>
                   {{ profileLead }}
                 </p>
                 <button

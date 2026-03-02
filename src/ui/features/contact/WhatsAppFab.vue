@@ -28,7 +28,7 @@ function handleFabClick(event: MouseEvent): void {
 <template>
   <a
     v-if="whatsappHref"
-    class="whatsapp-fab c-whatsapp-fab position-fixed end-0 d-flex align-items-center justify-content-center rounded-circle text-decoration-none"
+    class="tw:fixed tw:bottom-6 tw:right-6 tw:z-[1050] tw:flex tw:items-center tw:justify-center tw:w-14 tw:h-14 tw:bg-[#25D366] tw:text-white tw:rounded-full tw:shadow-lg tw:transition-transform hover:tw:scale-110 active:tw:scale-95"
     :href="whatsappHref"
     target="_blank"
     rel="noopener noreferrer"

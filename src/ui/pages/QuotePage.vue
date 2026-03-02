@@ -441,129 +441,129 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
 
         <div class="tw:grid tw:grid-cols-1 tw:lg:grid-cols-12 tw:gap-12 tw:items-start">
           <section class="tw:col-span-1 tw:lg:col-span-7" aria-labelledby="cotizador-form-title">
-            <div class="tw:bg-dm-surface tw:border tw:border-dm-border tw:rounded-2xl tw:p-6 tw:lg:p-8">
-              <h2 id="cotizador-form-title" class="h4 fw-semibold mb-3">Datos del servicio</h2>
+            <div class="tw:bg-dm-surface tw:border tw:border-dm-border tw:rounded-2xl tw:p-6 tw:lg:p-12 tw:shadow-xl">
+              <h2 id="cotizador-form-title" class="tw:text-xl tw:font-semibold tw:mb-6">Datos del servicio</h2>
 
-              <form class="d-flex flex-column gap-3" @submit.prevent="handleGenerateQuote">
-                <div>
-                  <label class="form-label fw-semibold" for="quote-company">Empresa *</label>
-                  <input id="quote-company" v-model="form.company" class="form-control" type="text" />
-                  <small v-if="errors.company" class="text-danger">{{ errors.company }}</small>
+              <form class="tw:grid tw:grid-cols-1 tw:md:grid-cols-2 tw:gap-6" @submit.prevent="handleGenerateQuote">
+                <div class="tw:col-span-1 tw:md:col-span-2">
+                  <label class="tw:form-label" for="quote-company">Empresa *</label>
+                  <input id="quote-company" v-model="form.company" class="tw:form-control" type="text" />
+                  <small v-if="errors.company" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.company }}</small>
+                </div>
+
+                <div class="tw:col-span-1">
+                  <label class="tw:form-label" for="quote-contact-name">Nombre de contacto *</label>
+                  <input id="quote-contact-name" v-model="form.contact_name" class="tw:form-control" type="text" />
+                  <small v-if="errors.contact_name" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.contact_name }}</small>
+                </div>
+
+                <div class="tw:col-span-1">
+                  <label class="tw:form-label" for="quote-locality">Localidad *</label>
+                  <input id="quote-locality" v-model="form.locality" class="tw:form-control" type="text" />
+                  <small v-if="errors.locality" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.locality }}</small>
                 </div>
 
                 <div>
-                  <label class="form-label fw-semibold" for="quote-contact-name">Nombre de contacto *</label>
-                  <input id="quote-contact-name" v-model="form.contact_name" class="form-control" type="text" />
-                  <small v-if="errors.contact_name" class="text-danger">{{ errors.contact_name }}</small>
-                </div>
-
-                <div>
-                  <label class="form-label fw-semibold" for="quote-locality">Localidad *</label>
-                  <input id="quote-locality" v-model="form.locality" class="form-control" type="text" />
-                  <small v-if="errors.locality" class="text-danger">{{ errors.locality }}</small>
-                </div>
-
-                <div>
-                  <label class="form-label fw-semibold d-block mb-2">Turno agendado *</label>
-                  <div class="d-flex gap-2">
+                  <label class="tw:form-label">Turno agendado *</label>
+                  <div class="tw:flex tw:gap-2">
                     <button
                       type="button"
-                      class="btn btn-sm"
-                      :class="form.scheduled === true ? 'btn-success' : 'btn-outline-light'"
+                      class="tw:px-4 tw:py-2 tw:rounded-xl tw:text-sm tw:font-bold tw:transition-all"
+                      :class="form.scheduled === true ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('scheduled', true)"
                     >
                       Si
                     </button>
                     <button
                       type="button"
-                      class="btn btn-sm"
-                      :class="form.scheduled === false ? 'btn-success' : 'btn-outline-light'"
+                      class="tw:px-4 tw:py-2 tw:rounded-xl tw:text-sm tw:font-bold tw:transition-all"
+                      :class="form.scheduled === false ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('scheduled', false)"
                     >
                       No
                     </button>
                   </div>
-                  <small v-if="errors.scheduled" class="text-danger">{{ errors.scheduled }}</small>
+                  <small v-if="errors.scheduled" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.scheduled }}</small>
                 </div>
 
                 <div>
-                  <label class="form-label fw-semibold d-block mb-2">Acceso preparado *</label>
-                  <div class="d-flex gap-2">
+                  <label class="tw:form-label">Acceso preparado *</label>
+                  <div class="tw:flex tw:gap-2">
                     <button
                       type="button"
-                      class="btn btn-sm"
-                      :class="form.access_ready === true ? 'btn-success' : 'btn-outline-light'"
+                      class="tw:px-4 tw:py-2 tw:rounded-xl tw:text-sm tw:font-bold tw:transition-all"
+                      :class="form.access_ready === true ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('access_ready', true)"
                     >
                       Si
                     </button>
                     <button
                       type="button"
-                      class="btn btn-sm"
-                      :class="form.access_ready === false ? 'btn-success' : 'btn-outline-light'"
+                      class="tw:px-4 tw:py-2 tw:rounded-xl tw:text-sm tw:font-bold tw:transition-all"
+                      :class="form.access_ready === false ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('access_ready', false)"
                     >
                       No
                     </button>
                   </div>
-                  <small v-if="errors.access_ready" class="text-danger">{{ errors.access_ready }}</small>
+                  <small v-if="errors.access_ready" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.access_ready }}</small>
                 </div>
 
                 <div>
-                  <label class="form-label fw-semibold d-block mb-2">Ventana segura confirmada *</label>
-                  <div class="d-flex gap-2">
+                  <label class="tw:form-label">Ventana segura confirmada *</label>
+                  <div class="tw:flex tw:gap-2">
                     <button
                       type="button"
-                      class="btn btn-sm"
-                      :class="form.safe_window_confirmed === true ? 'btn-success' : 'btn-outline-light'"
+                      class="tw:px-4 tw:py-2 tw:rounded-xl tw:text-sm tw:font-bold tw:transition-all"
+                      :class="form.safe_window_confirmed === true ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('safe_window_confirmed', true)"
                     >
                       Si
                     </button>
                     <button
                       type="button"
-                      class="btn btn-sm"
-                      :class="form.safe_window_confirmed === false ? 'btn-success' : 'btn-outline-light'"
+                      class="tw:px-4 tw:py-2 tw:rounded-xl tw:text-sm tw:font-bold tw:transition-all"
+                      :class="form.safe_window_confirmed === false ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('safe_window_confirmed', false)"
                     >
                       No
                     </button>
                   </div>
-                  <small v-if="errors.safe_window_confirmed" class="text-danger">
+                  <small v-if="errors.safe_window_confirmed" class="tw:text-red-500 tw:mt-1 tw:block">
                     {{ errors.safe_window_confirmed }}
                   </small>
                 </div>
 
-                <div>
-                  <label class="form-label fw-semibold" for="quote-bureaucracy">Burocracia</label>
-                  <select id="quote-bureaucracy" v-model="form.bureaucracy" class="form-select">
+                <div class="tw:col-span-1">
+                  <label class="tw:form-label" for="quote-bureaucracy">Burocracia</label>
+                  <select id="quote-bureaucracy" v-model="form.bureaucracy" class="tw:form-control">
                     <option value="low">Baja</option>
                     <option value="medium">Media</option>
                     <option value="high">Alta</option>
                   </select>
-                  <small v-if="errors.bureaucracy" class="text-danger">{{ errors.bureaucracy }}</small>
+                  <small v-if="errors.bureaucracy" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.bureaucracy }}</small>
                 </div>
 
-                <div>
-                  <label class="form-label fw-semibold" for="quote-email">Email (opcional)</label>
-                  <input id="quote-email" v-model="form.email" class="form-control" type="email" />
-                  <small v-if="errors.email" class="text-danger">{{ errors.email }}</small>
+                <div class="tw:col-span-1">
+                  <label class="tw:form-label" for="quote-email">Email (opcional)</label>
+                  <input id="quote-email" v-model="form.email" class="tw:form-control" type="email" />
+                  <small v-if="errors.email" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.email }}</small>
                 </div>
 
-                <div>
-                  <label class="form-label fw-semibold" for="quote-phone">Telefono (opcional)</label>
-                  <input id="quote-phone" v-model="form.phone" class="form-control" type="tel" />
-                  <small v-if="errors.phone" class="text-danger">{{ errors.phone }}</small>
+                <div class="tw:col-span-1">
+                  <label class="tw:form-label" for="quote-phone">Telefono (opcional)</label>
+                  <input id="quote-phone" v-model="form.phone" class="tw:form-control" type="tel" />
+                  <small v-if="errors.phone" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.phone }}</small>
                 </div>
 
-                <div>
-                  <label class="form-label fw-semibold" for="quote-notes">Notas (opcional)</label>
-                  <textarea id="quote-notes" v-model="form.notes" class="form-control" rows="3"></textarea>
-                  <small v-if="errors.notes" class="text-danger">{{ errors.notes }}</small>
+                <div class="tw:col-span-1">
+                  <label class="tw:form-label" for="quote-notes">Notas (opcional)</label>
+                  <textarea id="quote-notes" v-model="form.notes" class="tw:form-control" rows="3"></textarea>
+                  <small v-if="errors.notes" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.notes }}</small>
                 </div>
-
-                <div class="d-flex flex-wrap gap-2 pt-2">
-                  <button type="submit" class="tw:btn-primary tw:w-full tw:lg:w-auto" :disabled="loading">
+                
+                <div class="tw:col-span-1 tw:md:col-span-2 tw:pt-4">
+                  <button type="submit" class="tw:btn-primary tw:w-full" :disabled="loading">
                     {{ loading ? 'Generando...' : 'Generar propuesta' }}
                   </button>
                 </div>
@@ -580,19 +580,19 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
               </p>
 
               <template v-else>
-                <p class="mb-1"><strong>ID:</strong> {{ quote.quote_id }}</p>
-                <p class="mb-1"><strong>Lista:</strong> {{ formatArs(quote.list_price_ars) }}</p>
-                <p class="mb-1">
+                <p class="tw:mb-1"><strong>ID:</strong> {{ quote.quote_id }}</p>
+                <p class="tw:mb-1"><strong>Lista:</strong> {{ formatArs(quote.list_price_ars) }}</p>
+                <p class="tw:mb-1">
                   <strong>Descuentos ({{ quote.discount_pct }}%):</strong>
                   -{{ formatArs(quote.discount_total_ars) }}
                 </p>
-                <p class="mb-1"><strong>Final:</strong> {{ formatArs(quote.final_price_ars) }}</p>
-                <p class="mb-1"><strong>Sena ({{ quote.deposit_pct }}%):</strong> {{ formatArs(quote.deposit_ars) }}</p>
-                <p class="mb-3"><strong>Valida hasta:</strong> {{ formatDateTime(quote.valid_until) }}</p>
+                <p class="tw:mb-1"><strong>Final:</strong> {{ formatArs(quote.final_price_ars) }}</p>
+                <p class="tw:mb-1"><strong>Sena ({{ quote.deposit_pct }}%):</strong> {{ formatArs(quote.deposit_ars) }}</p>
+                <p class="tw:mb-3"><strong>Valida hasta:</strong> {{ formatDateTime(quote.valid_until) }}</p>
 
-                <div v-if="normalizedDiscounts.length" class="mb-3">
-                  <p class="fw-semibold mb-2">Descuentos aplicados</p>
-                  <ul class="mb-0 ps-3">
+                <div v-if="normalizedDiscounts.length" class="tw:mb-4">
+                  <p class="tw:font-semibold tw:mb-2">Descuentos aplicados</p>
+                  <ul class="tw:mb-0 tw:pl-4 tw:list-disc">
                     <li v-for="discount in normalizedDiscounts" :key="discount.key">
                       {{ discount.label }} ({{ discount.code }}): -{{ discount.amountText }}
                     </li>
@@ -628,9 +628,10 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                 </div>
               </template>
 
-              <div v-if="errorMessage" class="alert alert-warning mt-3 mb-0" role="alert">
-                <p class="mb-2">{{ errorMessage }}</p>
+              <div v-if="errorMessage" class="tw:bg-orange-900/40 tw:border tw:border-orange-800 tw:rounded-xl tw:px-4 tw:py-3 tw:mt-4 tw:mb-0" role="alert">
+                <p class="tw:mb-2 tw:text-orange-400">{{ errorMessage }}</p>
                 <a
+                  class="tw:text-dm-primary tw:font-bold tw:hover:tw:underline"
                   :href="fallbackWhatsAppUrl"
                   :target="isFallbackWhatsAppExternal ? '_blank' : undefined"
                   :rel="isFallbackWhatsAppExternal ? 'noopener noreferrer' : undefined"

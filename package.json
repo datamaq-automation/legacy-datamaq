@@ -58,7 +58,6 @@
   "dependencies": {
     "@microsoft/clarity": "^1.0.0",
     "@vueuse/head": "^2.0.0",
-    "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "vite-ssg": "^28.2.2",
     "vue": "^3.5.22",
