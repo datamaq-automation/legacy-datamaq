@@ -5,10 +5,8 @@ type PublicConfigStub = {
   storageNamespace?: string
   contactEmail?: string
   contactFormActive?: boolean
-  emailFormActive?: boolean
   analyticsEnabled?: boolean
   inquiryApiUrl?: string
-  mailApiUrl?: string
   pricingApiUrl?: string
   siteApiUrl?: string
   quoteDiagnosticApiUrl?: string
@@ -23,7 +21,6 @@ describe('ViteConfig', () => {
   it('preserves relative canonical endpoints (/api/v1/...)', async () => {
     const ViteConfig = await importViteConfigWithPublicConfig({
       inquiryApiUrl: '/api/v1/contact',
-      mailApiUrl: '/api/v1/mail',
       pricingApiUrl: '/api/v1/pricing',
       siteApiUrl: '/api/v1/site',
       quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
@@ -32,7 +29,6 @@ describe('ViteConfig', () => {
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBe('/api/v1/contact')
-    expect(config.mailApiUrl).toBe('/api/v1/mail')
     expect(config.pricingApiUrl).toBe('/api/v1/pricing')
     expect(config.siteApiUrl).toBe('/api/v1/site')
     expect(config.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
@@ -42,7 +38,6 @@ describe('ViteConfig', () => {
   it('accepts explicit https endpoints', async () => {
     const ViteConfig = await importViteConfigWithPublicConfig({
       inquiryApiUrl: 'https://api.example.com/contact',
-      mailApiUrl: 'https://api.example.com/mail',
       pricingApiUrl: 'https://api.example.com/pricing',
       siteApiUrl: 'https://api.example.com/site',
       quoteDiagnosticApiUrl: 'https://api.example.com/quote/diagnostic',
@@ -51,7 +46,6 @@ describe('ViteConfig', () => {
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBe('https://api.example.com/contact')
-    expect(config.mailApiUrl).toBe('https://api.example.com/mail')
     expect(config.pricingApiUrl).toBe('https://api.example.com/pricing')
     expect(config.siteApiUrl).toBe('https://api.example.com/site')
     expect(config.quoteDiagnosticApiUrl).toBe('https://api.example.com/quote/diagnostic')
@@ -63,7 +57,6 @@ describe('ViteConfig', () => {
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBeUndefined()
-    expect(config.mailApiUrl).toBeUndefined()
     expect(config.pricingApiUrl).toBeUndefined()
     expect(config.siteApiUrl).toBeUndefined()
     expect(config.quoteDiagnosticApiUrl).toBeUndefined()
@@ -78,7 +71,6 @@ async function importViteConfigWithPublicConfig(overrides: PublicConfigStub) {
       storageNamespace: 'test',
       contactEmail: 'contacto@example.com',
       contactFormActive: true,
-      emailFormActive: true,
       analyticsEnabled: false,
       ...overrides
     }

@@ -33,9 +33,7 @@ export type PublicConfig = {
   businessArea: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
-  emailFormActive: boolean
   inquiryApiUrl: NullableString
-  mailApiUrl: NullableString
   pricingApiUrl: NullableString
   siteApiUrl: NullableString
   healthApiUrl: NullableString
@@ -73,9 +71,7 @@ export const publicConfig: PublicConfig = {
   businessArea: activeRuntimeProfile.businessArea,
   contactEmail: activeRuntimeProfile.contactEmail,
   contactFormActive: activeRuntimeProfile.contactFormActive,
-  emailFormActive: activeRuntimeProfile.emailFormActive,
   inquiryApiUrl: resolveBackendEndpointOverride('inquiryApiUrl', activeRuntimeProfile.inquiryApiUrl),
-  mailApiUrl: resolveBackendEndpointOverride('mailApiUrl', activeRuntimeProfile.mailApiUrl),
   pricingApiUrl: resolveBackendEndpointOverride('pricingApiUrl', activeRuntimeProfile.pricingApiUrl),
   siteApiUrl: resolveBackendEndpointOverride('siteApiUrl', activeRuntimeProfile.siteApiUrl),
   healthApiUrl: resolveBackendEndpointOverride('healthApiUrl', activeRuntimeProfile.healthApiUrl),

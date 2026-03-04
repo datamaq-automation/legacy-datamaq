@@ -15,7 +15,6 @@ const BrandSchema = z.object({
   baseOperativa: z.string(),
   contactEmail: z.string().optional(),
   contactFormActive: z.boolean(),
-  emailFormActive: z.boolean(),
   whatsappUrl: z.string().optional(),
   whatsappQr: z.object({
     phoneE164: z.string().optional(),

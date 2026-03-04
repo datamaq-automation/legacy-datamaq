@@ -14,7 +14,6 @@ export class ViteConfig implements ConfigPort {
   brandId: NullableString
   storageNamespace: NullableString
   inquiryApiUrl: NullableString
-  mailApiUrl: NullableString
   pricingApiUrl: NullableString
   siteApiUrl: NullableString
   healthApiUrl: NullableString
@@ -23,7 +22,6 @@ export class ViteConfig implements ConfigPort {
   quotePdfApiUrl: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
-  emailFormActive: boolean
   analyticsEnabled: boolean | undefined
   ga4Id: NullableString
   clarityProjectId: NullableString
@@ -62,11 +60,6 @@ export class ViteConfig implements ConfigPort {
       configKey: 'inquiryApiUrl',
       ...endpointOptions
     })
-    this.mailApiUrl = resolveBackendConfigEndpoint({
-      directUrl: normalize(publicConfig.mailApiUrl),
-      configKey: 'mailApiUrl',
-      ...endpointOptions
-    })
     this.pricingApiUrl = resolveBackendConfigEndpoint({
       directUrl: normalize(publicConfig.pricingApiUrl),
       configKey: 'pricingApiUrl',
@@ -94,7 +87,6 @@ export class ViteConfig implements ConfigPort {
       ...endpointOptions
     })
     this.contactFormActive = publicConfig.contactFormActive
-    this.emailFormActive = publicConfig.emailFormActive
     this.analyticsEnabled = publicConfig.analyticsEnabled
     this.ga4Id = normalize(publicConfig.ga4Id)
     this.clarityProjectId = normalize(publicConfig.clarityProjectId)

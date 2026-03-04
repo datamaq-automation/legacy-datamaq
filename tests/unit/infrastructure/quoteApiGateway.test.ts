@@ -7,13 +7,11 @@ import { QuoteApiError } from '@/application/quote/quoteApiError'
 function createConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
   return {
     inquiryApiUrl: undefined,
-    mailApiUrl: undefined,
     pricingApiUrl: undefined,
     quoteDiagnosticApiUrl: 'https://api.example.com/v1/quote/diagnostic',
     quotePdfApiUrl: undefined,
     contactEmail: undefined,
     contactFormActive: true,
-    emailFormActive: true,
     analyticsEnabled: true,
     siteUrl: undefined,
     siteName: undefined,

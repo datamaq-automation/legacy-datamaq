@@ -4,7 +4,6 @@ export interface ConfigPort {
   brandId: NullableString
   storageNamespace: NullableString
   inquiryApiUrl: NullableString
-  mailApiUrl: NullableString
   pricingApiUrl: NullableString
   siteApiUrl: NullableString
   healthApiUrl: NullableString
@@ -13,7 +12,6 @@ export interface ConfigPort {
   quotePdfApiUrl: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
-  emailFormActive: boolean
   analyticsEnabled: boolean | undefined
   ga4Id: NullableString
   clarityProjectId: NullableString

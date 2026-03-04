@@ -88,21 +88,6 @@ describe.skipIf(!FASTAPI_CONTRACT_BASE_URL)('FastAPI contracts', () => {
     expect(typeof payload.detail).toBe('string')
   })
 
-  it('mail endpoint creates a durable submission with canonical envelope', async () => {
-    const response = await fetchJson('/v1/mail', {
-      email: 'mail-contract@example.com',
-      message: 'Necesito enviar una consulta por correo con detalle suficiente.'
-    })
-    const payload = (await response.json()) as JsonRecord
-
-    expect(response.status).toBe(201)
-    expectRequestId(payload)
-    expectSubmissionId(payload)
-    expect(payload.status).toBe('accepted')
-    expect(payload.processing_status).toBe('queued')
-    expect(typeof payload.detail).toBe('string')
-  })
-
   it('contact endpoint returns canonical validation error shape', async () => {
     const response = await fetchJson('/v1/contact', {
       email: 'invalid-email',

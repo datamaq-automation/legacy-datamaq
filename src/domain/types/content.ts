@@ -182,11 +182,6 @@ export interface HomePageContent {
     subtitle: string
     submitLabel: string
   }
-  secondaryEmailForm: {
-    title: string
-    subtitle: string
-    submitLabel: string
-  }
 }
 
 export interface ContactPageContent {
@@ -201,11 +196,6 @@ export interface ContactPageContent {
     faq: string
   }
   primaryFormSubmitLabel: string
-  secondaryEmailForm: {
-    title: string
-    subtitle: string
-    submitLabel: string
-  }
 }
 
 export interface AppContent {

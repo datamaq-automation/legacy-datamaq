@@ -191,11 +191,6 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         title: 'Inicia tu proyecto',
         subtitle: 'Dejanos tus datos y te contactamos en menos de 24 horas.',
         submitLabel: 'Enviar solicitud'
-      },
-      secondaryEmailForm: {
-        title: 'Canal alternativo por email',
-        subtitle: 'Si preferis correo, tambien podes enviarnos tu consulta por este canal.',
-        submitLabel: 'Enviar por email'
       }
     },
     contactPage: {
@@ -204,7 +199,6 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       supportTitle: 'Canales disponibles',
       supportItems: [
         'Formulario principal para consultas tecnicas y comerciales.',
-        'Canal alternativo por email si preferis seguimiento asincronico.',
         'WhatsApp directo para coordinacion rapida cuando este habilitado.'
       ],
       supportBackHomeLabel: 'Volver al inicio',
@@ -213,12 +207,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         profile: 'Perfil tecnico',
         faq: 'FAQ'
       },
-      primaryFormSubmitLabel: 'Enviar solicitud',
-      secondaryEmailForm: {
-        title: 'Canal alternativo por email',
-        subtitle: 'Si preferis correo, tambien podes enviarnos tu consulta por este canal.',
-        submitLabel: 'Enviar por email'
-      }
+      primaryFormSubmitLabel: 'Enviar solicitud'
     }
   }
 }

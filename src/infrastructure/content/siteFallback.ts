@@ -13,7 +13,6 @@ export function buildFallbackBrandContent(config: CommercialConfig): BrandConten
     baseOperativa: config.baseOperativa,
     ...(contactEmail ? { contactEmail } : {}),
     contactFormActive: activeRuntimeProfile.contactFormActive,
-    emailFormActive: activeRuntimeProfile.emailFormActive,
     ...(whatsappUrl ? { whatsappUrl } : {}),
     whatsappQr: {
       ...(phoneE164 ? { phoneE164 } : {}),

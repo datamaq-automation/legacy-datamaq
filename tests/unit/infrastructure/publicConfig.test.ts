@@ -35,7 +35,6 @@ describe('publicConfig', () => {
     const { publicConfig } = await import('@/infrastructure/config/publicConfig')
 
     expect(publicConfig.inquiryApiUrl).toBe('http://127.0.0.1:8899/v1/contact')
-    expect(publicConfig.mailApiUrl).toBe('http://127.0.0.1:8899/v1/mail')
     expect(publicConfig.pricingApiUrl).toBe('http://127.0.0.1:8899/v1/pricing')
     expect(publicConfig.siteApiUrl).toBe('http://127.0.0.1:8899/v1/site')
     expect(publicConfig.healthApiUrl).toBe('http://127.0.0.1:8899/v1/health')

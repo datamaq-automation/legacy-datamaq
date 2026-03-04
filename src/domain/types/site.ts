@@ -15,7 +15,6 @@ export interface BrandContent {
   baseOperativa: string
   contactEmail?: string
   contactFormActive: boolean
-  emailFormActive: boolean
   whatsappUrl?: string
   whatsappQr: {
     phoneE164?: string

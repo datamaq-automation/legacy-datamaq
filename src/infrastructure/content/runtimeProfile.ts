@@ -38,9 +38,7 @@ export interface RuntimeProfile {
   businessArea: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
-  emailFormActive: boolean
   inquiryApiUrl: NullableString
-  mailApiUrl: NullableString
   pricingApiUrl: NullableString
   siteApiUrl: NullableString
   healthApiUrl: NullableString
@@ -85,9 +83,7 @@ type RuntimeProfileJson = {
   businessArea: NullableStringJson
   contactEmail: NullableStringJson
   contactFormActive: boolean
-  emailFormActive: boolean
   inquiryApiUrl: NullableStringJson
-  mailApiUrl: NullableStringJson
   pricingApiUrl: NullableStringJson
   siteApiUrl: NullableStringJson
   healthApiUrl: NullableStringJson
@@ -190,9 +186,7 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
     businessArea: normalize(profile.businessArea),
     contactEmail: normalize(profile.contactEmail),
     contactFormActive: profile.contactFormActive,
-    emailFormActive: profile.emailFormActive,
     inquiryApiUrl: normalize(profile.inquiryApiUrl),
-    mailApiUrl: normalize(profile.mailApiUrl),
     pricingApiUrl: normalize(profile.pricingApiUrl),
     siteApiUrl: normalize(profile.siteApiUrl),
     healthApiUrl: normalize(profile.healthApiUrl),

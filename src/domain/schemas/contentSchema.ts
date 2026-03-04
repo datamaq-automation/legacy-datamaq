@@ -177,11 +177,6 @@ const HomePageSchema = z.object({
     title: z.string(),
     subtitle: z.string(),
     submitLabel: z.string()
-  }),
-  secondaryEmailForm: z.object({
-    title: z.string(),
-    subtitle: z.string(),
-    submitLabel: z.string()
   })
 })
 
@@ -196,12 +191,7 @@ const ContactPageSchema = z.object({
     profile: z.string(),
     faq: z.string()
   }),
-  primaryFormSubmitLabel: z.string(),
-  secondaryEmailForm: z.object({
-    title: z.string(),
-    subtitle: z.string(),
-    submitLabel: z.string()
-  })
+  primaryFormSubmitLabel: z.string()
 })
 
 export const AppContentSchema = z.object({
