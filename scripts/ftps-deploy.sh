@@ -14,6 +14,7 @@ PORT=""
 REMOTE_DIR=""
 ALLOW_INSECURE_DATA_CHANNEL="false"
 PRUNE_REMOTE="false"
+LFTP_DEBUG_LEVEL="4"
 
 trim_compact() {
   printf '%s' "${1:-}" | tr -d '\r\n\t '
@@ -53,7 +54,10 @@ print_debug_context() {
   echo "raw_server_scheme=${scheme}"
   echo "normalized_host=${SERVER_HOST}"
   echo "normalized_port=${PORT}"
+  echo "normalized_mode=${MODE:-auto}"
   echo "normalized_remote_dir=${REMOTE_DIR}"
+  echo "allow_insecure_data_channel=${ALLOW_INSECURE_DATA_CHANNEL}"
+  echo "lftp_debug_level=${LFTP_DEBUG_LEVEL}"
   if [[ "$include_dns" == "true" ]]; then
     getent hosts "${SERVER_HOST}" || true
   fi
@@ -86,6 +90,8 @@ normalize_inputs() {
   fi
 
   MODE="$(trim_compact "${FTPS_MODE:-}" | tr '[:upper:]' '[:lower:]')"
+  ALLOW_INSECURE_DATA_CHANNEL="$(trim_compact "${FTPS_ALLOW_INSECURE_DATA_CHANNEL:-false}" | tr '[:upper:]' '[:lower:]')"
+  LFTP_DEBUG_LEVEL="$(trim_compact "${FTPS_LFTP_DEBUG_LEVEL:-4}")"
   PORT="${explicit_port:-${SERVER_PORT_FROM_HOST:-}}"
   if [[ -z "$PORT" && "$MODE" == "implicit" ]]; then
     PORT="990"
@@ -111,6 +117,12 @@ normalize_inputs() {
   fi
   if [[ -n "$MODE" ]] && ! printf '%s' "${MODE}" | grep -Eq '^(explicit|implicit)$'; then
     error "FTPS mode is invalid. Use explicit or implicit."
+  fi
+  if ! printf '%s' "${ALLOW_INSECURE_DATA_CHANNEL}" | grep -Eq '^(true|false)$'; then
+    error "FTPS_ALLOW_INSECURE_DATA_CHANNEL must be true or false."
+  fi
+  if ! printf '%s' "${LFTP_DEBUG_LEVEL}" | grep -Eq '^[0-9]+$'; then
+    error "FTPS_LFTP_DEBUG_LEVEL must be numeric."
   fi
   if printf '%s' "${REMOTE_DIR}" | grep -q '\\'; then
     error "FTPS remote dir must use Unix-style slashes."
@@ -147,6 +159,32 @@ open_target_for_mode() {
   printf '%s' "${SERVER_HOST}"
 }
 
+print_tool_versions() {
+  echo "::group::FTPS tool versions"
+  command -v lftp >/dev/null && lftp --version | head -n 1 || true
+  command -v openssl >/dev/null && openssl version || true
+  echo "::endgroup::"
+}
+
+print_tls_probe() {
+  local ftps_mode="$1"
+  local attempt_port="$2"
+  local connect_target="${SERVER_HOST}:${attempt_port}"
+  local starttls_args=()
+
+  if ! command -v openssl >/dev/null; then
+    return
+  fi
+
+  if [[ "$ftps_mode" == "explicit" ]]; then
+    starttls_args=(-starttls ftp)
+  fi
+
+  echo "::group::TLS probe mode=${ftps_mode} port=${attempt_port}"
+  timeout 20 openssl s_client -connect "${connect_target}" -servername "${SERVER_HOST}" "${starttls_args[@]}" < /dev/null 2>&1 || true
+  echo "::endgroup::"
+}
+
 log_peer_close_hint() {
   local log_file="$1"
   if grep -qi "Peer closed connection" "${log_file}"; then
@@ -168,10 +206,12 @@ run_preflight_attempt() {
 
   log_file="$(mktemp)"
   open_target="$(open_target_for_mode "${ftps_mode}")"
-  # Always force SSL and Data channel protection
-  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 4; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; pwd; cls -1; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; pwd; cls -1; bye"
+  # Always force SSL and Data channel protection unless explicitly relaxed for broken servers.
+  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data $( [[ "${ALLOW_INSECURE_DATA_CHANNEL}" == "true" ]] && printf false || printf true ); set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug ${LFTP_DEBUG_LEVEL}; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; pwd; cls -1; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; pwd; cls -1; bye"
 
   echo "::group::Preflight attempt ${attempt} for target=${TARGET_LABEL} mode=${ftps_mode} port=${attempt_port}"
+  echo "prefer_epsv=${prefer_epsv}"
+  echo "fix_pasv_address=${fix_pasv_address}"
   set +e
   timeout 90 lftp -e "${lftp_command}" >"${log_file}" 2>&1
   status=$?
@@ -179,6 +219,9 @@ run_preflight_attempt() {
 
   cat "${log_file}"
   log_peer_close_hint "${log_file}"
+  if [[ "${status}" -ne 0 ]]; then
+    print_tls_probe "${ftps_mode}" "${attempt_port}"
+  fi
   rm -f "${log_file}"
   echo "::endgroup::"
 
@@ -203,10 +246,12 @@ run_upload_attempt() {
 
   log_file="$(mktemp)"
   open_target="$(open_target_for_mode "${ftps_mode}")"
-  # Always force SSL protection
-  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug 3; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue ${mirror_delete_flag} --verbose dist .; bye"
+  # Always force SSL protection unless explicitly relaxed for broken servers.
+  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data $( [[ "${ALLOW_INSECURE_DATA_CHANNEL}" == "true" ]] && printf false || printf true ); set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug ${LFTP_DEBUG_LEVEL}; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue ${mirror_delete_flag} --verbose dist .; bye"
 
   echo "::group::Upload attempt ${attempt} for target=${TARGET_LABEL} mode=${ftps_mode} port=${attempt_port}"
+  echo "prefer_epsv=${prefer_epsv}"
+  echo "fix_pasv_address=${fix_pasv_address}"
   set +e
   timeout 120 lftp -e "${lftp_command}" >"${log_file}" 2>&1
   status=$?
@@ -214,6 +259,9 @@ run_upload_attempt() {
 
   cat "${log_file}"
   log_peer_close_hint "${log_file}"
+  if [[ "${status}" -ne 0 ]]; then
+    print_tls_probe "${ftps_mode}" "${attempt_port}"
+  fi
   rm -f "${log_file}"
   echo "::endgroup::"
 
@@ -257,6 +305,8 @@ case "${COMMAND}" in
   preflight)
     normalize_inputs
     print_normalized_context
+    print_tool_versions
+    print_debug_context true
     ensure_dns
     run_preflight_sequence
     ;;
@@ -264,10 +314,10 @@ case "${COMMAND}" in
     normalize_inputs
     validate_upload_flags
     print_normalized_context
+    print_tool_versions
     run_upload_sequence
     ;;
   *)
     error "Usage: scripts/ftps-deploy.sh <validate|preflight|upload>"
     ;;
 esac
-
