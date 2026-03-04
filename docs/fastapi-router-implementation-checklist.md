@@ -10,8 +10,8 @@ Este documento no reemplaza a los contratos.
 Orden de lectura:
 
 1. `docs/fastapi-backend-migration-guide.md`
-2. `docs/fastapi-contact-contract.md`
-3. `docs/fastapi-content-pricing-contract.md`
+2. `docs/backend-content-brand-seo-contract.md`
+3. `docs/fastapi-contact-contract.md`
 4. `docs/fastapi-quote-contract.md`
 
 Luego ejecutar esta checklist.
@@ -86,8 +86,8 @@ Ejecucion:
 
 Fuente de verdad:
 
-- `docs/fastapi-content-pricing-contract.md`
-- `src/domain/schemas/contentSchema.ts`
+- `docs/backend-content-brand-seo-contract.md`
+- `src/domain/schemas/siteSchema.ts`
 
 ## Router Pricing
 

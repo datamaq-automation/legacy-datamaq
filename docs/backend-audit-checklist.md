@@ -183,7 +183,7 @@ No recomendamos:
 - [backend-content-brand-seo-contract.md](/C:/AppServ/www/plantilla-www/docs/backend-content-brand-seo-contract.md)
 - [fastapi-backend-migration-guide.md](/C:/AppServ/www/plantilla-www/docs/fastapi-backend-migration-guide.md)
 - [fastapi-contact-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-contact-contract.md)
-- [fastapi-content-pricing-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-content-pricing-contract.md)
+- [fastapi-content-pricing-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-content-pricing-contract.md) solo para `pricing`
 - [fastapi-quote-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-quote-contract.md)
 - [fastapi-router-implementation-checklist.md](/C:/AppServ/www/plantilla-www/docs/fastapi-router-implementation-checklist.md)
 

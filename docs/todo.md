@@ -31,9 +31,9 @@
 - [/] Alinear la suite `tests/integration/fastApiContracts.test.ts` al contrato canonico `GET /v1/site`.
 
 ### 3. Definiciones de Home DataMaq (Resoluciones)
-- [x] Confirmación: Eliminar módulos legacy (`CaseStudiesSection`, `DecisionFlowSection`, etc.) del repositorio.
-- [x] Confirmación: Usar logos reales en la franja de confianza (infraestructura lista).
-- [ ] Definir si el botón secundario del banner de cookies debe abrir un centro real de preferencias. Hoy se mantuvo la lógica existente de aceptar/rechazar.
+- [x] Confirmacion: Eliminar modulos legacy (`CaseStudiesSection`, `DecisionFlowSection`, etc.) del repositorio.
+- [x] Confirmacion: Usar logos reales en la franja de confianza (infraestructura lista).
+- [ ] Definir si el boton secundario del banner de cookies debe abrir un centro real de preferencias. Hoy se mantuvo la logica existente de aceptar/rechazar.
 
 ### 4. Implementacion de Mejoras UX/UI (Ref: `ux_audit_report.md`)
 - [x] Incorporar utilidades de glassmorphism (`backdrop-filter`) en fondos de tarjetas y paneles.

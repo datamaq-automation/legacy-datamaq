@@ -13,11 +13,11 @@ Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfile
 
 ## Documentacion
 
+- Indice de documentacion: `docs/README.md`
 - Guia principal para migracion de backend a FastAPI: `docs/fastapi-backend-migration-guide.md`
-- Contrato canonico de `contact` y `mail` para FastAPI: `docs/fastapi-contact-contract.md`
-- Contrato canonico de `content` y `pricing` para FastAPI: `docs/fastapi-content-pricing-contract.md`
-- Contrato canonico de `quote` para FastAPI: `docs/fastapi-quote-contract.md`
-- Checklist operativa por router para FastAPI: `docs/fastapi-router-implementation-checklist.md`
+- Contrato objetivo de `GET /v1/site`: `docs/backend-content-brand-seo-contract.md`
+- Contrato canonico de `contact` y `mail`: `docs/fastapi-contact-contract.md`
+- Contrato canonico de `quote`: `docs/fastapi-quote-contract.md`
 
 ## Comandos
 

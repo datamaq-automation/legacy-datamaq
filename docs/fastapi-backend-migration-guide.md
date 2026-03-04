@@ -28,8 +28,9 @@ Ejemplos:
 
 Documento complementario ya creado:
 
+- contrato objetivo de sitio `GET /v1/site`: `docs/backend-content-brand-seo-contract.md`
 - contrato canonico de `contact` y `mail`: `docs/fastapi-contact-contract.md`
-- contrato canonico de `content` y `pricing`: `docs/fastapi-content-pricing-contract.md`
+- referencia parcial de `pricing`: `docs/fastapi-content-pricing-contract.md`
 - contrato canonico de `quote`: `docs/fastapi-quote-contract.md`
 - checklist operativa por router: `docs/fastapi-router-implementation-checklist.md`
 - suite base de contratos para FastAPI: `tests/integration/fastApiContracts.test.ts`
