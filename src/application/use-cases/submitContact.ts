@@ -14,7 +14,7 @@ import {
   summarizeContactError,
   summarizeContactSubmitPayload
 } from '@/application/contact/contactSubmitDiagnostics'
-import { emitRuntimeDebug, emitRuntimeInfo, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
+import { emitRuntimeDebug, emitRuntimeWarn } from '@/application/utils/runtimeConsole'
 
 export class SubmitContactUseCase {
   constructor(
@@ -93,7 +93,7 @@ export class SubmitContactUseCase {
       return submitResult
     }
 
-    emitRuntimeInfo('[contact:use-case] submit completado', {
+    emitRuntimeDebug('[contact:use-case] submit completado', {
       requestId: submitResult.data.requestId ?? null,
       submissionId: submitResult.data.submissionId ?? null,
       submitStatus: submitResult.data.submitStatus ?? null,

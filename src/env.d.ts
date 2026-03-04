@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_BACKEND_POLICY_MODE?: string
   readonly VITE_CONTENT_TARGET?: string
   readonly VITE_HEALTH_ENDPOINT?: string
+  readonly VITE_RUNTIME_LOG_LEVEL?: 'debug' | 'info' | 'warn' | 'error'
 }
 
 interface ImportMeta {

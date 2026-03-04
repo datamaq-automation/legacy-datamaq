@@ -146,9 +146,20 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
         await announceFeedback(contact.errorMessage, false)
         return
       }
+
+      emitRuntimeDebug('[contact:ui] validacion local OK', {
+        channel: backendChannel,
+        sectionId
+      })
+
+      emitRuntimeDebug('[contact:ui] enviando solicitud al caso de uso', {
+        channel: backendChannel,
+        sectionId
+      })
+
       const result = await props.onSubmit(parsed.data)
       if (result?.ok === true) {
-        emitRuntimeInfo('[contact:ui] submit OK, navegando a thanks', {
+        emitRuntimeInfo('[contact:ui] submit OK', {
           channel: backendChannel,
           sectionId,
           requestId: result.data.requestId ?? null,
@@ -156,7 +167,11 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
           submitStatus: result.data.submitStatus ?? null,
           processingStatus: result.data.processingStatus ?? null
         })
-        void router.push({ name: 'thanks' })
+        await router.push({ name: 'thanks' })
+        emitRuntimeDebug('[contact:ui] navegacion a thanks completada', {
+          channel: backendChannel,
+          sectionId
+        })
         return
       } else {
         emitRuntimeWarn('[contact:ui] submit fallo', {
@@ -171,6 +186,10 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
           }),
           false
         )
+        emitRuntimeDebug('[contact:ui] feedback de error mostrado', {
+          channel: backendChannel,
+          sectionId
+        })
       }
     } catch (error) {
       emitRuntimeError('[contact:ui] excepcion inesperada durante submit', {
@@ -179,6 +198,10 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
         message: error instanceof Error ? error.message : String(error)
       })
       await announceFeedback(contact.unexpectedErrorMessage, false)
+      emitRuntimeDebug('[contact:ui] feedback de error inesperado mostrado', {
+        channel: backendChannel,
+        sectionId
+      })
     } finally {
       isSubmitting.value = false
     }
