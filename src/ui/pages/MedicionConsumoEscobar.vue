@@ -11,10 +11,8 @@ const {
   contactContent,
   contactCtaEnabled,
   isContactFormActive,
-  isEmailFormActive,
   handleChat,
-  handleContactSubmit,
-  handleEmailSubmit
+  handleContactSubmit
 } = useMedicionConsumoEscobar()
 </script>
 
@@ -103,17 +101,7 @@ const {
         :title="contactContent.title"
         :subtitle="contactContent.subtitle"
         :submit-label="contactContent.submitLabel"
-        backend-channel="contact"
         :on-submit="handleContactSubmit"
-      />
-      <ContactFormSection
-        v-if="isEmailFormActive"
-        section-id="landing-escobar-mail"
-        :title="contactContent.title"
-        :subtitle="contactContent.subtitle"
-        :submit-label="contactContent.submitLabel"
-        backend-channel="mail"
-        :on-submit="handleEmailSubmit"
       />
     </main>
     <Footer :contactCtaEnabled="contactCtaEnabled" @contact="handleChat('landing-escobar-footer')" />

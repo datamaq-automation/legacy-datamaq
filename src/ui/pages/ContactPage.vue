@@ -13,15 +13,13 @@ const {
   contactPage,
   contactCtaEnabled,
   isContactFormActive,
-  isEmailFormActive,
   homeLinks,
   footerYear,
   whatsappHref,
   isExternalWhatsappHref,
   contactIntroLinks,
   handleChat,
-  handleContactSubmit,
-  handleEmailSubmit
+  handleContactSubmit
 } = useContactPage()
 </script>
 
@@ -123,18 +121,7 @@ const {
         :title="contact.title"
         :subtitle="contact.subtitle"
         :submit-label="contactPage.primaryFormSubmitLabel"
-        backend-channel="contact"
         :on-submit="handleContactSubmit"
-      />
-
-      <ContactFormSection
-        v-if="isEmailFormActive"
-        section-id="contacto-mail"
-        :title="contactPage.secondaryEmailForm.title"
-        :subtitle="contactPage.secondaryEmailForm.subtitle"
-        :submit-label="contactPage.secondaryEmailForm.submitLabel"
-        backend-channel="mail"
-        :on-submit="handleEmailSubmit"
       />
 
       <footer class="c-contact-page-footer" role="contentinfo">

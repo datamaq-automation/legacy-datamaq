@@ -13,14 +13,7 @@ export function useContactFacade() {
     return container.useCases.submitContact.execute(payload)
   }
 
-  function submitMail(
-    payload: ContactFormPayload
-  ): Promise<Result<ContactSubmitSuccess, ContactError>> {
-    return container.useCases.submitMail.execute(payload)
-  }
-
   return {
-    submitContact,
-    submitMail
+    submitContact
   }
 }

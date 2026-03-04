@@ -1,12 +1,10 @@
 import { useContainer } from '@/di/container'
 import {
   getContactFormActive,
-  getEmailFormActive,
   getWhatsAppEnabled,
   getWhatsAppHref,
   openWhatsApp,
   submitContact,
-  submitMail,
   trackSectionScroll
 } from '@/ui/controllers/contactController'
 import { computed, onMounted, onUnmounted } from 'vue'
@@ -42,7 +40,6 @@ export function useHomePage() {
   const legal = content.getLegalContent()
   const contactCtaEnabled = getWhatsAppEnabled()
   const isContactFormActive = getContactFormActive()
-  const isEmailFormActive = getEmailFormActive()
   const whatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
   const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(whatsappHref.value))
   const heroConditions = buildHeroConditions(hero.responseNote)
@@ -95,10 +92,6 @@ export function useHomePage() {
     return SERVICE_ICON_BY_KEYWORD.find((entry) => key.includes(entry.keyword))?.icon ?? 'bi-gear-wide-connected'
   }
 
-  function handleEmailSubmit(payload: Parameters<typeof submitMail>[0]) {
-    return submitMail(payload)
-  }
-
   function handleContactSubmit(payload: Parameters<typeof submitContact>[0]) {
     return submitContact(payload)
   }
@@ -139,7 +132,6 @@ export function useHomePage() {
     legal,
     contactCtaEnabled,
     isContactFormActive,
-    isEmailFormActive,
     whatsappHref,
     isExternalWhatsappHref,
     heroConditions,
@@ -153,8 +145,7 @@ export function useHomePage() {
     footerYear,
     handleChat,
     getServiceIcon,
-    handleContactSubmit,
-    handleEmailSubmit
+    handleContactSubmit
   }
 }
 

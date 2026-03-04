@@ -66,8 +66,8 @@ type ContactSubmitFeedbackState = {
 }
 
 export function useContactForm(props: ContactFormProps, contact: ResolvedContactFormContent) {
-  const backendChannel = props.backendChannel ?? 'contact'
-  const isLeadChannel = backendChannel === 'contact'
+  const backendChannel = 'contact'
+  const isLeadChannel = true
   const sectionId = props.sectionId?.trim() || 'contacto'
   const titleId = `${sectionId}-title`
   const fieldMeta = createFieldMeta(sectionId)
@@ -75,7 +75,7 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
   const formRef = ref<HTMLFormElement | null>(null)
   const form = reactive(createEmptyForm())
   const fieldErrors = reactive(createEmptyFieldErrors())
-  const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus(backendChannel))
+  const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus())
   const isBackendAvailable = computed(() => backendStatus.value === 'available')
   const isCheckingBackend = computed(() => backendStatus.value === 'unknown')
   const isChannelEnabled = computed(() => isBackendAvailable.value)
@@ -135,7 +135,7 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
     }
     isSubmitting.value = true
     try {
-      const parsed = validate(payload, backendChannel)
+      const parsed = validate(payload)
       if (!parsed.ok) {
         applyFieldErrors(parsed.fieldErrors)
         emitRuntimeWarn('[contact:ui] validacion local fallo', {
@@ -187,8 +187,8 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
   onMounted(() => {
     unsubscribeFromStatus = subscribeToContactBackendStatus((status) => {
       backendStatus.value = status
-    }, backendChannel)
-    void ensureContactBackendStatus(backendChannel)
+    })
+    void ensureContactBackendStatus()
       .then((status) => {
         void status
       })

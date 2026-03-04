@@ -43,19 +43,15 @@ describe('vite proxy config', () => {
 
     expect(warnSpy).toHaveBeenNthCalledWith(
       1,
-      '[vite:proxy] GET /v1/health -> http://127.0.0.1:8000 backend-offline',
-      {
-        code: 'ECONNREFUSED',
-        target: 'http://127.0.0.1:8000'
-      }
+      '[vite:proxy] GET /v1/health -> http://127.0.0.1:8000 backend-offline | Backend no disponible en http://127.0.0.1:8000. Inicia el backend o actualiza VITE_API_PROXY_TARGET. Usa VITE_PROXY_VERBOSE=true para detalle tecnico.'
     )
     expect(warnSpy).toHaveBeenNthCalledWith(
       2,
-      '[vite:proxy] GET /v1/health -> http://127.0.0.1:8000 backend-offline (x2)',
-      {
-        code: 'ECONNREFUSED',
-        target: 'http://127.0.0.1:8000'
-      }
+      '[vite:proxy:summary] Frontend OK. Proxy backend OFFLINE (http://127.0.0.1:8000).'
+    )
+    expect(warnSpy).toHaveBeenNthCalledWith(
+      3,
+      '[vite:proxy] GET /v1/health -> http://127.0.0.1:8000 backend-offline (x2) | Backend no disponible en http://127.0.0.1:8000. Inicia el backend o actualiza VITE_API_PROXY_TARGET. Usa VITE_PROXY_VERBOSE=true para detalle tecnico.'
     )
   })
 

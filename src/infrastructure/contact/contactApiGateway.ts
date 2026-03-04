@@ -15,30 +15,27 @@ import { evaluateContactEndpointPolicy } from '@/application/contact/contactEndp
 import { extractContactSubmitFeedback } from './contactResponseFeedback'
 import { describeBackendEndpoint, resolveBackendPathname } from '@/shared/backend/backendEndpoint'
 
-type GatewayChannel = 'contact' | 'mail'
-
 export class ContactApiGateway implements ContactGateway {
   constructor(
     private http: HttpClient,
     private config: ConfigPort,
     private storage: StoragePort,
-    private logger: LoggerPort,
-    private channel: GatewayChannel = 'contact'
+    private logger: LoggerPort
   ) {}
 
   async submit(payload: ContactSubmitPayload): Promise<Result<ContactSubmitSuccess, ContactError>> {
-    const apiUrl = this.channel === 'mail' ? this.config.mailApiUrl : this.config.inquiryApiUrl
+    const apiUrl = this.config.inquiryApiUrl
     const endpointPolicy = evaluateContactEndpointPolicy(apiUrl)
     const endpointLogContext = buildContactEndpointLogContext(apiUrl)
     emitRuntimeDebug('[contact:gateway] submit start', {
-      channel: this.channel,
+      channel: 'contact',
       ...endpointLogContext,
       payload: summarizeContactSubmitPayload(payload)
     })
 
     if (!apiUrl || !endpointPolicy.allowed) {
       emitRuntimeWarn('[contact:gateway] endpoint invalido para submit', {
-        channel: this.channel,
+        channel: 'contact',
         reason: endpointPolicy.reason ?? 'unknown',
         ...endpointLogContext
       })
@@ -55,7 +52,7 @@ export class ContactApiGateway implements ContactGateway {
 
     if (!response.ok) {
       emitRuntimeWarn('[contact:gateway] response no OK', {
-        channel: this.channel,
+        channel: 'contact',
         ...endpointLogContext,
         status: response.status,
         requestId: feedback.requestId ?? null,
@@ -82,7 +79,7 @@ export class ContactApiGateway implements ContactGateway {
     }
 
     emitRuntimeInfo('[contact:gateway] response OK', {
-      channel: this.channel,
+      channel: 'contact',
       ...endpointLogContext,
       status: response.status,
       requestId: feedback.requestId ?? null,
@@ -97,7 +94,7 @@ export class ContactApiGateway implements ContactGateway {
   }
 
   private resolveChannelLabel(): string {
-    return this.channel === 'mail' ? 'MAIL_API_URL' : 'INQUIRY_API_URL'
+    return 'INQUIRY_API_URL'
   }
 }
 

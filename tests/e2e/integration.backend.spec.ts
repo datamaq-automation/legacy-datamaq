@@ -47,22 +47,4 @@ test.describe('Integration E2E (real backend)', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 
-  test('mail flow submits and navigates to thanks', async ({ page }) => {
-    test.skip(!backendAvailable, `Backend no disponible: ${BACKEND_HEALTH_URL}`)
-    test.slow()
-
-    await page.goto('/')
-    const mailSection = page.locator('#contacto-mail')
-    await mailSection.scrollIntoViewIfNeeded()
-    await expect(mailSection).toBeVisible()
-    await expect(mailSection.locator('input[name="email"]')).toBeEnabled()
-    await mailSection.locator('input[name="email"]').fill('ada@example.com')
-    await mailSection.locator('textarea[name="comment"]').fill('Necesito enviar una consulta por correo.')
-
-    const submitButton = await expectChannelReady(mailSection, /Enviar por email/i)
-    await submitButton.click()
-
-    await expect(page).toHaveURL(/\/gracias$/)
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-  })
 })

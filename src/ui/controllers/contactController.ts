@@ -19,10 +19,6 @@ export function getContactFormActive(): boolean {
   return useContainer().content.getBrandContent().contactFormActive
 }
 
-export function getEmailFormActive(): boolean {
-  return useContainer().content.getBrandContent().emailFormActive
-}
-
 export function openWhatsApp(section: string = 'whatsapp', href?: string): void {
   const whatsappUrl = normalizeHref(href) ?? resolveWhatsAppUrl()
   if (!whatsappUrl) {
@@ -51,10 +47,6 @@ export function trackSectionScroll(sectionHref: string): void {
 
 export function submitContact(payload: ContactFormPayload) {
   return useContactFacade().submitContact(payload)
-}
-
-export function submitMail(payload: ContactFormPayload) {
-  return useContactFacade().submitMail(payload)
 }
 
 function getTrafficSource(location: { search(): string; referrer(): string }): string {

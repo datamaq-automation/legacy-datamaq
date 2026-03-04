@@ -85,6 +85,8 @@ function rewriteProxyPath(requestPath) {
 
 export function attachBackendProxyDiagnostics(proxy, proxyTarget) {
   const requestFailures = new Map()
+  const hintTimestamps = new Map()
+  const hintCooldownMs = 30_000
 
   proxy.on('error', (error, request) => {
     const code = typeof error?.code === 'string' ? error.code : 'UNKNOWN'
@@ -98,11 +100,52 @@ export function attachBackendProxyDiagnostics(proxy, proxyTarget) {
     const suffix = nextCount > 1 ? ` (x${nextCount})` : ''
     const target = normalizeProxyTarget(proxyTarget)
     const reason = code === 'ECONNREFUSED' ? 'backend-offline' : 'proxy-error'
-    console.warn(`[vite:proxy] ${method} ${requestUrl} -> ${target} ${reason}${suffix}`, {
-      code,
-      target
-    })
+    const verbose = process.env.VITE_PROXY_VERBOSE === 'true'
+    const actionableHint = resolveActionableHint({ code, target, verbose })
+
+    console.warn(`[vite:proxy] ${method} ${requestUrl} -> ${target} ${reason}${suffix}${actionableHint}`)
+
+    if (verbose) {
+      console.warn('[vite:proxy:details]', {
+        code,
+        target,
+        request: `${method} ${requestUrl}`,
+        message: error?.message ?? null
+      })
+    }
+
+    if (code === 'ECONNREFUSED') {
+      maybeLogBackendOfflineSummary({
+        target,
+        hintTimestamps,
+        hintCooldownMs
+      })
+    }
   })
+}
+
+function resolveActionableHint({ code, target, verbose }) {
+  if (code !== 'ECONNREFUSED') {
+    return verbose ? ' (ejecuta sin verbose para menos ruido)' : ''
+  }
+
+  const hint = ` | Backend no disponible en ${target}. Inicia el backend o actualiza VITE_API_PROXY_TARGET.`
+  if (verbose) {
+    return `${hint} (verbose activo)`
+  }
+
+  return `${hint} Usa VITE_PROXY_VERBOSE=true para detalle tecnico.`
+}
+
+function maybeLogBackendOfflineSummary({ target, hintTimestamps, hintCooldownMs }) {
+  const now = Date.now()
+  const lastTimestamp = hintTimestamps.get(target) ?? 0
+  if (now - lastTimestamp < hintCooldownMs) {
+    return
+  }
+
+  hintTimestamps.set(target, now)
+  console.warn(`[vite:proxy:summary] Frontend OK. Proxy backend OFFLINE (${target}).`)
 }
 
 function normalizeProxyTarget(value) {

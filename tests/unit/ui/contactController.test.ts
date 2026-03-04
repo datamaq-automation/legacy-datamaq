@@ -4,7 +4,6 @@ import {
   getWhatsAppEnabled,
   getWhatsAppHref,
   openWhatsApp,
-  submitMail,
   submitContact,
   trackSectionScroll
 } from '@/ui/controllers/contactController'
@@ -13,7 +12,6 @@ const mocks = vi.hoisted(() => ({
   trackChat: vi.fn(),
   trackSectionScroll: vi.fn(),
   submitContact: vi.fn(),
-  submitMail: vi.fn(),
   getHeroContent: vi.fn(),
   getBrandContent: vi.fn(),
   environment: {
@@ -42,8 +40,7 @@ vi.mock('@/di/container', () => ({
 
 vi.mock('@/ui/features/contact/useContactFacade', () => ({
   useContactFacade: () => ({
-    submitContact: mocks.submitContact,
-    submitMail: mocks.submitMail
+    submitContact: mocks.submitContact
   })
 }))
 
@@ -52,13 +49,11 @@ describe('contactController', () => {
     mocks.trackChat.mockReset()
     mocks.trackSectionScroll.mockReset()
     mocks.submitContact.mockReset()
-    mocks.submitMail.mockReset()
     mocks.getHeroContent.mockReset()
     mocks.getBrandContent.mockReset()
     mocks.getBrandContent.mockReturnValue({
       contactEmail: 'contacto@example.com',
-      contactFormActive: true,
-      emailFormActive: true
+      contactFormActive: true
     })
     mocks.environment.search = () => ''
     mocks.environment.referrer = () => ''
@@ -133,20 +128,4 @@ describe('contactController', () => {
     expect(mocks.submitContact).toHaveBeenCalledWith(payload)
   })
 
-  it('submits mail via facade', async () => {
-    mocks.submitMail.mockResolvedValue({ ok: true, data: {} })
-
-    const payload = {
-      firstName: '',
-      lastName: '',
-      company: '',
-      email: 'ana@example.com',
-      phone: '',
-      geographicLocation: '',
-      comment: 'Hola desde correo'
-    }
-    await submitMail(payload)
-
-    expect(mocks.submitMail).toHaveBeenCalledWith(payload)
-  })
 })

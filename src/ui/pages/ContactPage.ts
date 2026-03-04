@@ -1,12 +1,10 @@
 import { useContainer } from '@/di/container'
 import {
   getContactFormActive,
-  getEmailFormActive,
   getWhatsAppEnabled,
   getWhatsAppHref,
   openWhatsApp,
-  submitContact,
-  submitMail
+  submitContact
 } from '@/ui/controllers/contactController'
 import { computed } from 'vue'
 import { mapNavbarLinks, toHomeSectionRoute } from './landingNavigation'
@@ -20,7 +18,6 @@ export function useContactPage() {
   const contactPage = content.getContactPageContent()
   const contactCtaEnabled = getWhatsAppEnabled()
   const isContactFormActive = getContactFormActive()
-  const isEmailFormActive = getEmailFormActive()
   const navbarLinks = mapNavbarLinks(navbar)
   const homeLinks = navbarLinks.filter((link) => link.href !== '#contacto')
   const footerYear = new Date().getFullYear()
@@ -36,10 +33,6 @@ export function useContactPage() {
     openWhatsApp(section, href)
   }
 
-  function handleEmailSubmit(payload: Parameters<typeof submitMail>[0]) {
-    return submitMail(payload)
-  }
-
   function handleContactSubmit(payload: Parameters<typeof submitContact>[0]) {
     return submitContact(payload)
   }
@@ -52,7 +45,6 @@ export function useContactPage() {
     contactPage,
     contactCtaEnabled,
     isContactFormActive,
-    isEmailFormActive,
     navbarLinks,
     homeLinks,
     footerYear,
@@ -60,7 +52,6 @@ export function useContactPage() {
     isExternalWhatsappHref,
     contactIntroLinks,
     handleChat,
-    handleContactSubmit,
-    handleEmailSubmit
+    handleContactSubmit
   }
 }

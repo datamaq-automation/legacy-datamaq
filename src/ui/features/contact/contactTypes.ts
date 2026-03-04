@@ -2,7 +2,6 @@ import type { ContactFormPayload, ContactSubmitSuccess } from '@/application/dto
 import type { ContactError } from '@/application/types/errors'
 import type { Result } from '@/domain/shared/result'
 import type { ContactContent } from '@/domain/types/content'
-import type { ContactBackendChannel } from '@/ui/controllers/contactBackendController'
 
 export type ContactFormSubmit = (
   payload: ContactFormPayload
@@ -28,7 +27,6 @@ export type ResolvedContactFormContent = Omit<ContactContent, 'labels'> & {
 
 export interface ContactFormProps {
   onSubmit: ContactFormSubmit
-  backendChannel?: ContactBackendChannel
   sectionId?: string
   title?: string
   subtitle?: string

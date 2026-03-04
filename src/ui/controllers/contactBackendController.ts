@@ -2,26 +2,21 @@ import { useContainer } from '@/di/container'
 import type { ContactBackendStatus } from '@/application/contact/contactBackendStatus'
 
 export type { ContactBackendStatus }
-export type ContactBackendChannel = 'contact' | 'mail'
 
-function resolveMonitor(channel: ContactBackendChannel = 'contact') {
-  const container = useContainer()
-  return channel === 'mail' ? container.mailBackend : container.contactBackend
+function resolveMonitor() {
+  return useContainer().contactBackend
 }
 
-export function getContactBackendStatus(channel: ContactBackendChannel = 'contact'): ContactBackendStatus {
-  return resolveMonitor(channel).getStatus()
+export function getContactBackendStatus(): ContactBackendStatus {
+  return resolveMonitor().getStatus()
 }
 
 export function subscribeToContactBackendStatus(
-  listener: (status: ContactBackendStatus) => void,
-  channel: ContactBackendChannel = 'contact'
+  listener: (status: ContactBackendStatus) => void
 ): () => void {
-  return resolveMonitor(channel).subscribe(listener)
+  return resolveMonitor().subscribe(listener)
 }
 
-export async function ensureContactBackendStatus(
-  channel: ContactBackendChannel = 'contact'
-): Promise<ContactBackendStatus> {
-  return resolveMonitor(channel).ensureStatus()
+export async function ensureContactBackendStatus(): Promise<ContactBackendStatus> {
+  return resolveMonitor().ensureStatus()
 }

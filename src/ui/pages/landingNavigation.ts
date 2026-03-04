@@ -12,8 +12,7 @@ const HOME_SECTION_HASHES = new Set([
   '#servicios',
   '#perfil',
   '#faq',
-  '#contacto',
-  '#contacto-mail'
+  '#contacto'
 ])
 
 export function toHomeSectionRoute(hash: string): RouteLocationRaw {

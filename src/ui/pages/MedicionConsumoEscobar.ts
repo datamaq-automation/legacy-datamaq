@@ -1,10 +1,8 @@
 import {
   getWhatsAppEnabled,
   getContactFormActive,
-  getEmailFormActive,
   openWhatsApp,
-  submitContact,
-  submitMail
+  submitContact
 } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
 import { computed } from 'vue'
@@ -41,14 +39,9 @@ export function useMedicionConsumoEscobar() {
 
   const contactCtaEnabled = getWhatsAppEnabled()
   const isContactFormActive = getContactFormActive()
-  const isEmailFormActive = getEmailFormActive()
 
   function handleChat(section: string, href?: string) {
     openWhatsApp(section, href)
-  }
-
-  function handleEmailSubmit(payload: Parameters<typeof submitMail>[0]) {
-    return submitMail(payload)
   }
 
   function handleContactSubmit(payload: Parameters<typeof submitContact>[0]) {
@@ -60,9 +53,7 @@ export function useMedicionConsumoEscobar() {
     contactContent,
     contactCtaEnabled,
     isContactFormActive,
-    isEmailFormActive,
     handleChat,
-    handleContactSubmit,
-    handleEmailSubmit
+    handleContactSubmit
   }
 }

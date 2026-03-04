@@ -25,8 +25,7 @@ vi.mock('@/ui/controllers/contactBackendController', () => ({
 vi.mock('@/di/container', () => ({
   useContainer: () => ({
     config: {
-      inquiryApiUrl: undefined,
-      mailApiUrl: undefined
+      inquiryApiUrl: undefined
     },
     content: {
       getHeroContent: () => ({
@@ -121,28 +120,6 @@ describe('ContactFormSection', () => {
     )
     expect(backendMocks.ensureContactBackendStatus).toHaveBeenCalledTimes(1)
     expect(backendMocks.subscribeToContactBackendStatus).toHaveBeenCalledTimes(1)
-  })
-
-  it('renders mail mode with email and comment only', async () => {
-    const onSubmit = vi.fn(async () => ({ ok: true as const, data: {} }))
-    const router = createTestRouter()
-    await router.push('/')
-    await router.isReady()
-
-    render(ContactFormSection, {
-      props: {
-        backendChannel: 'mail',
-        submitLabel: 'Enviar consulta por correo',
-        onSubmit
-      },
-      global: {
-        plugins: [router]
-      }
-    })
-
-    expect(screen.queryByLabelText('Nombre')).not.toBeInTheDocument()
-    expect(screen.getByLabelText('E-mail')).toBeInTheDocument()
-    expect(screen.getByLabelText('Comentario')).toBeInTheDocument()
   })
 
   it('keeps submit disabled when backend channel is unavailable', async () => {

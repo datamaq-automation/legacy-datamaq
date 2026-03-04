@@ -16,7 +16,6 @@ const {
   legal,
   contactCtaEnabled,
   isContactFormActive,
-  isEmailFormActive,
   whatsappHref,
   isExternalWhatsappHref,
   heroConditions,
@@ -30,8 +29,7 @@ const {
   footerYear,
   handleChat,
   getServiceIcon,
-  handleContactSubmit,
-  handleEmailSubmit
+  handleContactSubmit
 } = useHomePage()
 </script>
 
@@ -338,19 +336,7 @@ const {
         :title="homePage.primaryContactForm.title"
         :subtitle="homePage.primaryContactForm.subtitle"
         :submit-label="homePage.primaryContactForm.submitLabel"
-        backend-channel="contact"
         :on-submit="handleContactSubmit"
-        :show-technician-card="false"
-      />
-
-      <ContactFormSection
-        v-if="isEmailFormActive"
-        section-id="contacto-mail"
-        :title="homePage.secondaryEmailForm.title"
-        :subtitle="homePage.secondaryEmailForm.subtitle"
-        :submit-label="homePage.secondaryEmailForm.submitLabel"
-        backend-channel="mail"
-        :on-submit="handleEmailSubmit"
         :show-technician-card="false"
       />
 

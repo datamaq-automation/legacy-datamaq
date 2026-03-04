@@ -106,10 +106,6 @@ test.describe('Smoke E2E', () => {
       await page.route(pattern, fulfillContactApi)
     }
 
-    const mailRoutes = ['**/api/v1/mail*', '**/v1/mail*', '**/plantilla-www/public/api/v1/mail*']
-    for (const pattern of mailRoutes) {
-      await page.route(pattern, fulfillContactApi)
-    }
   })
 
   test('home renders core sections', async ({ page }) => {
@@ -133,21 +129,6 @@ test.describe('Smoke E2E', () => {
       .fill('Necesito una propuesta para mantenimiento industrial.')
 
     await page.getByRole('button', { name: /Enviar solicitud/i }).click()
-
-    await expect(page).toHaveURL(/\/gracias$/)
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-  })
-
-  test('mail flow submits and navigates to thanks', async ({ page }) => {
-    await page.goto('/')
-    const mailSection = page.locator('#contacto-mail')
-    await mailSection.scrollIntoViewIfNeeded()
-    await expect(mailSection).toBeVisible()
-    await mailSection.locator('input[name="email"]').fill('ada@example.com')
-    await expect(mailSection.locator('textarea[name="comment"]')).toBeVisible()
-    await mailSection.locator('textarea[name="comment"]').fill('Necesito enviar una consulta por correo.')
-
-    await page.getByRole('button', { name: /Enviar por email/i }).click()
 
     await expect(page).toHaveURL(/\/gracias$/)
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()

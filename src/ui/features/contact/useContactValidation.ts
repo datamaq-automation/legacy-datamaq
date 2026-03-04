@@ -1,10 +1,8 @@
 import {
   ContactLeadSchema,
-  EmailContactSchema,
   validateContactDomainRules
 } from '@/application/validation/contactSchema'
 import type { ContactFormPayload } from '@/application/dto/contact'
-import type { ContactBackendChannel } from '@/ui/controllers/contactBackendController'
 import type { ContactFieldErrors, ContactFormField } from './contactTypes'
 
 export type ContactValidationResult =
@@ -18,9 +16,8 @@ export type ContactValidationResult =
     }
 
 export function useContactValidation() {
-  function validate(payload: ContactFormPayload, channel: ContactBackendChannel): ContactValidationResult {
-    const schema = channel === 'mail' ? EmailContactSchema : ContactLeadSchema
-    const parsed = schema.safeParse(payload)
+  function validate(payload: ContactFormPayload): ContactValidationResult {
+    const parsed = ContactLeadSchema.safeParse(payload)
     if (!parsed.success) {
       return {
         ok: false,
