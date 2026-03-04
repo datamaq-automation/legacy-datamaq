@@ -33,7 +33,6 @@ Validar como minimo:
 - `GET /v1/site`
 - `GET /v1/pricing`
 - `POST /v1/contact`
-- `POST /v1/mail`
 - `POST /v1/quote/diagnostic`
 - `GET /v1/quote/{quote_id}/pdf`
 
@@ -81,7 +80,7 @@ Verificar:
 - `currency: "ARS"`
 - `data.diagnostico_lista_2h_ars`
 
-### `POST /v1/contact` y `POST /v1/mail`
+### `POST /v1/contact`
 
 Verificar:
 

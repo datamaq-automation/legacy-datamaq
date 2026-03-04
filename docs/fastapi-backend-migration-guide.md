@@ -29,7 +29,7 @@ Ejemplos:
 Documento complementario ya creado:
 
 - contrato objetivo de sitio `GET /v1/site`: `docs/backend-content-brand-seo-contract.md`
-- contrato canonico de `contact` y `mail`: `docs/fastapi-contact-contract.md`
+- contrato canonico de `contact`: `docs/fastapi-contact-contract.md`
 - referencia parcial de `pricing`: `docs/fastapi-content-pricing-contract.md`
 - contrato canonico de `quote`: `docs/fastapi-quote-contract.md`
 - checklist operativa por router: `docs/fastapi-router-implementation-checklist.md`
@@ -48,7 +48,6 @@ Contrato objetivo recomendado:
 - `/v1/site`
 - `/v1/pricing`
 - `/v1/contact`
-- `/v1/mail`
 - `/v1/quote/diagnostic`
 - `/v1/quote/{quote_id}/pdf`
 
@@ -85,7 +84,7 @@ Con las decisiones tomadas, el frontend debe normalizarse en estos puntos:
 2. exigir endpoints explicitos en configuracion, sin `backendBaseUrl` ni fallbacks por path
 3. derivar el PDF del cotizador desde `/v1/quote/diagnostic` hacia `/v1/quote/{quote_id}/pdf`
 4. alinear fixtures, tests y configuracion a los paths canonicos
-5. consumir `contact` y `mail` solo con el envelope canonical `request_id`, `submission_id`, `status`, `processing_status`, `detail` y `code`
+5. consumir `contact` con el envelope canonical `request_id`, `submission_id`, `status`, `processing_status`, `detail` y `code`
 
 Lo que ya se puede cambiar con certeza:
 
@@ -127,7 +126,6 @@ El frontend depende hoy de estas capacidades backend:
 - `GET /v1/site`
 - `GET /v1/pricing`
 - `POST /v1/contact`
-- `POST /v1/mail`
 - `POST /v1/quote/diagnostic`
 - `GET /v1/quote/{quote_id}/pdf`
 
@@ -137,7 +135,6 @@ En entornos locales de integracion tambien consume equivalentes same-origin:
 - `/api/v1/site`
 - `/api/v1/pricing`
 - `/api/v1/contact`
-- `/api/v1/mail`
 - `/api/v1/quote/diagnostic`
 - `/api/v1/quote/{quote_id}/pdf`
 
@@ -146,7 +143,6 @@ En entornos locales de integracion tambien consume equivalentes same-origin:
 Las claves backend que el frontend ya usa hoy son:
 
 - `inquiryApiUrl`
-- `mailApiUrl`
 - `pricingApiUrl`
 - `siteApiUrl`
 - `healthApiUrl`
@@ -404,30 +400,7 @@ Contrato objetivo recomendado para FastAPI:
 }
 ```
 
-## 5. Mail
-
-Fuentes principales:
-
-- mismas que `contact`
-- mismo caso de uso con otro canal en `src/di/container.ts`
-
-Endpoint esperado:
-
-- `mailApiUrl`
-
-Validacion funcional en frontend para canal `mail`:
-
-- `email` obligatorio
-- `comment` obligatorio
-- `comment` minimo 10 caracteres
-
-Observacion:
-
-- FastAPI puede reutilizar gran parte del contrato de `contact`
-- pero `mail` no tiene la misma regla de validacion que `contact`
-- conviene que comparta el mismo envelope de respuesta que `contact`
-
-## 6. Quote
+## 5. Quote
 
 Fuentes principales:
 
@@ -501,7 +474,7 @@ La logica principal esta distribuida asi:
 - contenido remoto: `src/infrastructure/content/dynamicContentService.ts`
 - pricing remoto: `src/infrastructure/content/dynamicPricingService.ts`
 - submit contacto: `src/application/use-cases/submitContact.ts`
-- gateway contacto/mail: `src/infrastructure/contact/contactApiGateway.ts`
+- gateway contacto: `src/infrastructure/contact/contactApiGateway.ts`
 - gateway cotizador: `src/infrastructure/quote/quoteApiGateway.ts`
 
 Vistas que dependen directamente del backend:
@@ -541,7 +514,6 @@ Para entornos browser cross-origin, FastAPI debe responder correctamente con COR
 En especial para:
 
 - `/v1/contact`
-- `/v1/mail`
 
 ## 2. Correlacion por request id
 
@@ -566,7 +538,7 @@ Recomendacion:
 
 Decision operativa en frontend:
 
-- `contact` y `mail` deben converger al envelope canonical `request_id` + `submission_id` + `status` + `processing_status` + `detail` + `code`
+- `contact` debe converger al envelope canonical `request_id` + `submission_id` + `status` + `processing_status` + `detail` + `code`
 - el frontend ya fue normalizado para consumir solo ese envelope
 
 ## 4. Respuestas de error legibles
@@ -582,7 +554,7 @@ Para que el frontend pueda mostrar errores utiles, FastAPI deberia devolver al m
 
 Decision recomendada para esta migracion:
 
-- `POST /v1/contact` y `POST /v1/mail` deben crear una `submission` durable
+- `POST /v1/contact` debe crear una `submission` durable
 - si esa persistencia se completa antes de responder, el status canonical debe ser `201 Created`
 - el procesamiento posterior de mail, CRM o automatizaciones puede continuar fuera de banda
 - no usar `202` como respuesta canonical si ya existe una persistencia durable al momento de responder
@@ -608,7 +580,6 @@ Una estructura razonable para reemplazar Laravel sin romper el frontend seria:
 - router `site`
 - router `pricing`
 - router `contact`
-- router `mail`
 - router `quote`
 - middleware de CORS
 - middleware de request id

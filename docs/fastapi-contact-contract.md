@@ -9,7 +9,6 @@ La recomendacion para esta migracion es:
 
 - persistir una `submission` durable antes de responder
 - responder `201 Created` para `POST /v1/contact`
-- responder `201 Created` para `POST /v1/mail`
 - continuar el procesamiento de mail, CRM o automatizaciones fuera de banda si hace falta
 
 Esta decision evita un `202` ambiguo cuando el sistema ya puede afirmar que la solicitud fue registrada.
@@ -17,7 +16,6 @@ Esta decision evita un `202` ambiguo cuando el sistema ya puede afirmar que la s
 ## Endpoints
 
 - `POST /v1/contact`
-- `POST /v1/mail`
 
 ## Response de exito
 

@@ -28,7 +28,7 @@ Ejecucion:
 
 ### Settings
 
-- definir variables explicitas para `health`, `content`, `pricing`, `contact`, `mail`, `quoteDiagnostic` y `quotePdf`
+- definir variables explicitas para `health`, `content`, `pricing`, `contact`, `quoteDiagnostic` y `quotePdf`
 - separar configuracion por ambiente: local, integration, production
 - mantener `/v1/*` como contrato publico canonico
 - no reintroducir rutas removidas como `/v1/public/*`
@@ -116,23 +116,6 @@ Fuente de verdad:
 - incluir `detail`
 - incluir `code` cuando aplique
 - aplicar validacion equivalente a la del frontend
-- devolver `422` para validacion
-- devolver `429` con `Retry-After` para rate limiting
-- devolver `503` para dependencia temporalmente no disponible
-- soportar `OPTIONS`
-
-Fuente de verdad:
-
-- `docs/fastapi-contact-contract.md`
-- `src/application/validation/contactSchema.ts`
-
-## Router Mail
-
-- exponer `POST /v1/mail`
-- persistir una `submission` durable antes de responder
-- devolver `201 Created`
-- reutilizar el mismo envelope canonico de `contact`
-- mantener validacion diferenciada: `email` obligatorio y `comment` obligatorio
 - devolver `422` para validacion
 - devolver `429` con `Retry-After` para rate limiting
 - devolver `503` para dependencia temporalmente no disponible

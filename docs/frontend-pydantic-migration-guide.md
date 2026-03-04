@@ -81,34 +81,7 @@ if (response.status === 422) {
 
 ---
 
-#### 2. **POST `/v1/mail`**
-
-**Mismo cambio que `/v1/contact`:**
-
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| Error format | `detail: "string"` | `detail: [{loc, msg, type}]` |
-| Campos requeridos | `email, message` | `email, message` (sin cambio) |
-| Validación extra | Formato email | Formato email (mejorada con Pydantic) |
-
-**Ejemplo Futuro:**
-```json
-{
-  "status": 422,
-  "error_code": "VALIDATION_ERROR",
-  "detail": [
-    {
-      "loc": ["body", "message"],
-      "msg": "String should have at least 5 characters",
-      "type": "string_too_short"
-    }
-  ]
-}
-```
-
----
-
-#### 3. **POST `/v1/quote/diagnostic`**
+#### 2. **POST `/v1/quote/diagnostic`**
 
 **Actual (Legacy Format):**
 ```json
@@ -151,7 +124,7 @@ if (response.status === 422) {
 | Endpoint | Campo | Cambio | Tipo | Impacto |
 |----------|-------|--------|------|---------|
 | `/contact` | `detail` | `string` → `array` | Error response | **Alto** |
-| `/mail` | `detail` | `string` → `array` | Error response | **Alto** |
+
 | `/quote/diagnostic` | `detail` | Ya es `array` | N/A | **Nulo** |
 | Todas | Success (200) | Sin cambios | N/A | **Nulo** |
 
@@ -223,7 +196,6 @@ Cuando migres a nuevo formato, estos son los tipos de errores que verás:
 
 - [ ] **Actualizar validación de respectivas formas:**
   - Form `/contact` (phone/email verification)
-  - Form `/mail` (email + message validation)
   - Form `/quote/diagnostic` (company, contact_name, locality)
 
 - [ ] **Crear tests unitarios que validen:**
@@ -425,7 +397,7 @@ HTTP/1.1 422 Unprocessable Entity
 
 ```
 2026-03-01  ✅ F2 Phase 1: Backend internal refactor (Pydantic)
-            └─ /contact, /mail, /quote/diagnostic con validación Pydantic
+            └─ /contact, /quote/diagnostic con validación Pydantic
             └─ 117/117 tests passing con formato legacy preservado
 
 2026-03-04  📋 F2 Phase 2: Frontend prep (THIS DOCUMENT)
@@ -447,7 +419,7 @@ HTTP/1.1 422 Unprocessable Entity
 **Para el equipo de Frontend:**
 
 1. **¿Necesito cambiar TODAS las llamadas a estos endpoints?**
-   - NO. Solo endpoints con errores de validación (POST /contact, /mail, /quote/diagnostic)
+   - NO. Solo endpoints con errores de validación (POST /contact, /quote/diagnostic)
    - GET endpoints sin cambios
    - Success responses sin cambios
 
@@ -479,3 +451,4 @@ HTTP/1.1 422 Unprocessable Entity
 
 **Última actualización:** 2026-03-01  
 **Próxima revisión:** Post F2 Phase 3 (2026-03-15)
+

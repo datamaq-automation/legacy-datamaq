@@ -11,7 +11,7 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 ## Contratos canonicos
 
 - `backend-content-brand-seo-contract.md`: contrato objetivo de `GET /v1/site`.
-- `fastapi-contact-contract.md`: contrato de `POST /v1/contact` y `POST /v1/mail`.
+- `fastapi-contact-contract.md`: contrato de `POST /v1/contact`.
 - `fastapi-content-pricing-contract.md`: referencia legacy/parcial de `content` y `pricing`. Revisar contra `GET /v1/site` antes de usarlo como fuente canonica.
 - `fastapi-quote-contract.md`: contrato de `quote`.
 

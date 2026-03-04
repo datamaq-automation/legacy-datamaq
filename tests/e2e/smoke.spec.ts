@@ -112,9 +112,9 @@ test.describe('Smoke E2E', () => {
     await page.goto('/')
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Contenido no disponible'
+      /Diagnostico e instalacion electrica/i
     )
-    await expect(page.getByRole('heading', { name: 'Contenido', exact: true })).toBeVisible()
+    await expect(page.locator('#servicios')).toBeVisible()
   })
 
   test('contact lead flow submits and navigates to thanks', async ({ page }) => {
@@ -140,7 +140,7 @@ test.describe('Smoke E2E', () => {
     await page.locator('.thanks-actions__home').click()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      /Contenido no disponible|Diagnostico e instalacion electrica para pymes/i
+      /Diagnostico e instalacion electrica/i
     )
   })
 })

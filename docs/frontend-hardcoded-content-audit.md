@@ -104,9 +104,6 @@ Y en la homepage esas props se pasan con copy literal:
 - `Inicia tu proyecto`
 - `Dejanos tus datos y te contactamos en menos de 24 horas.`
 - `Enviar solicitud`
-- `Canal alternativo por email`
-- `Si preferis correo, tambien podes enviarnos tu consulta por este canal.`
-- `Enviar por email`
 
 Referencia: [HomePage.vue](/C:/AppServ/www/plantilla-www/src/ui/pages/HomePage.vue#L322)
 
