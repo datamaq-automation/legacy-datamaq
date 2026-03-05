@@ -33,12 +33,12 @@ export const ContactLeadSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['email'],
-        message: 'Ingresa e-mail o telefono.'
+        message: 'Ingresa e-mail o teléfono (al menos uno).'
       })
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['phone'],
-        message: 'Ingresa e-mail o telefono.'
+        message: 'Ingresa e-mail o teléfono (al menos uno).'
       })
     }
   })

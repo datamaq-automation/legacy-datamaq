@@ -51,7 +51,7 @@ export class ContactApiGateway implements ContactGateway {
     const feedback = extractContactSubmitFeedback(response)
 
     if (!response.ok) {
-      emitRuntimeWarn('[contact:gateway] response no OK', {
+      emitRuntimeDebug('[contact:gateway] response no OK', {
         channel: 'contact',
         ...endpointLogContext,
         status: response.status,
@@ -62,6 +62,16 @@ export class ContactApiGateway implements ContactGateway {
         errorCode: feedback.errorCode ?? null,
         backendMessage: feedback.backendMessage ?? null
       })
+      if (response.status >= 500 || response.status === 0) {
+        emitRuntimeWarn('[contact:gateway] backend error resumen', {
+          channel: 'contact',
+          ...endpointLogContext,
+          status: response.status,
+          requestId: feedback.requestId ?? null,
+          errorCode: feedback.errorCode ?? null,
+          backendMessage: feedback.backendMessage ?? null
+        })
+      }
       this.logger.warn('[contactApiGateway] response no OK', {
         ...endpointLogContext,
         status: response.status,
@@ -78,7 +88,7 @@ export class ContactApiGateway implements ContactGateway {
       }
     }
 
-    emitRuntimeInfo('[contact:gateway] response OK', {
+    emitRuntimeDebug('[contact:gateway] response OK', {
       channel: 'contact',
       ...endpointLogContext,
       status: response.status,

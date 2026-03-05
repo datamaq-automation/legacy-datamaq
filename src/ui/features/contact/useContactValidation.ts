@@ -76,8 +76,8 @@ function buildDomainFieldErrors(
       return { phone: 'Ingresa un telefono valido.' }
     case 'MissingContactMethod':
       return {
-        email: 'Ingresa e-mail o telefono.',
-        phone: 'Ingresa e-mail o telefono.'
+        email: 'Ingresa e-mail o teléfono (al menos uno).',
+        phone: 'Ingresa e-mail o teléfono (al menos uno).'
       }
     default:
       return {}

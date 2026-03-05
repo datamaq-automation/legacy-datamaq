@@ -174,10 +174,11 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
         })
         return
       } else {
+        const normalizedError = summarizeContactError(result?.error) ?? { type: 'UnknownError' }
         emitRuntimeWarn('[contact:ui] submit fallo', {
           channel: backendChannel,
           sectionId,
-          error: summarizeContactError(result?.error)
+          error: normalizedError
         })
         await announceFeedback(
           mapContactError(result?.error, {

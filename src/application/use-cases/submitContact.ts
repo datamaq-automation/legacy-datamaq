@@ -82,7 +82,7 @@ export class SubmitContactUseCase {
     const submitResult = await this.contactGateway.submit(submitPayload)
 
     if (!submitResult.ok) {
-      emitRuntimeWarn('[contact:use-case] gateway rechazo el submit', {
+      emitRuntimeDebug('[contact:use-case] gateway rechazo el submit', {
         error: summarizeContactError(submitResult.error)
       })
       if (submitResult.error.type === 'BackendError' && submitResult.error.status >= 500) {

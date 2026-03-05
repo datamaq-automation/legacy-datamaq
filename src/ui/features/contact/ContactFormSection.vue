@@ -135,7 +135,7 @@ Path: src/ui/features/contact/ContactFormSection.vue
                   <small
                     :id="fieldMeta.phone.helperId"
                     class="tw:text-dm-text-muted tw:block tw:mt-1 tw:text-xs"
-                  >Completá e-mail o teléfono.</small>
+                  >Completá e-mail o teléfono (al menos uno).</small>
                   <small
                     v-if="fieldErrors.phone"
                     :id="fieldMeta.phone.errorId"

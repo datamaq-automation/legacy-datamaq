@@ -151,7 +151,7 @@ describe('ContactFormSection', () => {
       error: {
         type: 'BackendError' as const,
         status: 422,
-        backendMessage: 'Ingresa e-mail o telefono.',
+        backendMessage: 'Ingresa e-mail o teléfono (al menos uno).',
         requestId: 'req_422'
       }
     }))
@@ -174,7 +174,7 @@ describe('ContactFormSection', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(
-        'Ingresa e-mail o telefono. Codigo de seguimiento: req_422.'
+        'Ingresa e-mail o teléfono (al menos uno). Codigo de seguimiento: req_422.'
       )
     })
   })

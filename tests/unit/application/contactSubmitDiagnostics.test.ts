@@ -64,14 +64,14 @@ describe('contactSubmitDiagnostics', () => {
         status: 422,
         requestId: 'req_1',
         errorCode: 'VALIDATION',
-        backendMessage: 'Ingresa e-mail o telefono.'
+        backendMessage: 'Ingresa e-mail o teléfono (al menos uno).'
       })
     ).toEqual({
       type: 'BackendError',
       status: 422,
       requestId: 'req_1',
       errorCode: 'VALIDATION',
-      backendMessagePreview: 'Ingresa e-mail o telefono.'
+      backendMessagePreview: 'Ingresa e-mail o teléfono (al menos uno).'
     })
 
     expect(
