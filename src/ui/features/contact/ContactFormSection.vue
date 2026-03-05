@@ -1,248 +1,7 @@
-﻿<!--
-Path: src/ui/features/contact/ContactFormSection.vue
--->
-<template>
-  <section
-    :id="sectionId"
-    class="tw:py-16 tw:bg-dm-bg tw:text-dm-text-0 c-contact"
-    :aria-labelledby="titleId"
-  >
-    <div class="tw:container tw:mx-auto tw:px-4">
-      <div class="tw:flex tw:justify-center">
-        <div class="tw:w-full tw:max-w-4xl">
-          <div class="tw:bg-dm-surface tw:border tw:border-dm-border tw:rounded-2xl tw:shadow-2xl c-contact__card">
-            <div class="tw:p-6 tw:lg:p-12">
-              <h2 :id="titleId" class="tw:text-2xl tw:lg:text-3xl tw:font-bold c-contact__title tw:mb-4">
-                {{ contact.title }}
-              </h2>
-              <p class="tw:text-dm-text-muted tw:mb-8 c-contact__subtitle">
-                {{ contact.subtitle }}
-              </p>
-              <TecnicoACargo
-                v-if="props.showTechnicianCard"
-                variant="embedded"
-                :heading-id="tecnicoHeadingId"
-              />
-              <form
-                ref="formRef"
-                class="tw:grid tw:grid-cols-1 tw:md:grid-cols-2 tw:gap-6"
-                novalidate
-                :aria-busy="isSubmitting"
-                @submit.prevent="handleSubmit"
-              >
-                <template v-if="isLeadChannel">
-                  <div class="tw:col-span-1">
-                    <label class="tw:form-label" :for="fieldMeta.firstName.inputId">{{ contact.labels.firstName }}</label>
-                    <input
-                      :id="fieldMeta.firstName.inputId"
-                      v-model="form.firstName"
-                      type="text"
-                      class="tw:form-control"
-                      name="firstName"
-                      autocomplete="given-name"
-                      maxlength="80"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.firstName)"
-                      :aria-describedby="fieldErrors.firstName ? fieldMeta.firstName.errorId : undefined"
-                    />
-                    <small
-                      v-if="fieldErrors.firstName"
-                      :id="fieldMeta.firstName.errorId"
-                      class="tw:text-red-500 tw:mt-1 tw:block"
-                    >{{ fieldErrors.firstName }}</small>
-                  </div>
-                  <div class="tw:col-span-1">
-                    <label class="tw:form-label" :for="fieldMeta.lastName.inputId">{{ contact.labels.lastName }}</label>
-                    <input
-                      :id="fieldMeta.lastName.inputId"
-                      v-model="form.lastName"
-                      type="text"
-                      class="tw:form-control"
-                      name="lastName"
-                      autocomplete="family-name"
-                      maxlength="80"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.lastName)"
-                      :aria-describedby="fieldErrors.lastName ? fieldMeta.lastName.errorId : undefined"
-                    />
-                    <small
-                      v-if="fieldErrors.lastName"
-                      :id="fieldMeta.lastName.errorId"
-                      class="tw:text-red-500 tw:mt-1 tw:block"
-                    >{{ fieldErrors.lastName }}</small>
-                  </div>
-                  <div class="tw:col-span-1 tw:md:col-span-2">
-                    <label class="tw:form-label" :for="fieldMeta.company.inputId">{{ contact.labels.company }}</label>
-                    <input
-                      :id="fieldMeta.company.inputId"
-                      v-model="form.company"
-                      type="text"
-                      class="tw:form-control"
-                      name="company"
-                      autocomplete="organization"
-                      maxlength="120"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.company)"
-                      :aria-describedby="fieldErrors.company ? fieldMeta.company.errorId : undefined"
-                    />
-                    <small
-                      v-if="fieldErrors.company"
-                      :id="fieldMeta.company.errorId"
-                      class="tw:text-red-500 tw:mt-1 tw:block"
-                    >{{ fieldErrors.company }}</small>
-                  </div>
-                </template>
-                <div :class="isLeadChannel ? 'tw:col-span-1' : 'tw:col-span-1 tw:md:col-span-2'">
-                  <label class="tw:form-label" :for="fieldMeta.email.inputId">{{ contact.labels.email }}</label>
-                  <input
-                    :id="fieldMeta.email.inputId"
-                    v-model="form.email"
-                    type="email"
-                    class="tw:form-control"
-                    name="email"
-                    autocomplete="email"
-                    maxlength="160"
-                    inputmode="email"
-                    :disabled="!isChannelEnabled"
-                    :required="!isLeadChannel"
-                    :aria-invalid="Boolean(fieldErrors.email)"
-                    :aria-describedby="fieldErrors.email ? fieldMeta.email.errorId : undefined"
-                  />
-                  <small
-                    v-if="fieldErrors.email"
-                    :id="fieldMeta.email.errorId"
-                    class="tw:text-red-500 tw:mt-1 tw:block"
-                  >{{ fieldErrors.email }}</small>
-                </div>
-                <div v-if="isLeadChannel" class="tw:col-span-1">
-                  <label class="tw:form-label" :for="fieldMeta.phone.inputId">{{ contact.labels.phone }}</label>
-                  <input
-                    :id="fieldMeta.phone.inputId"
-                    v-model="form.phone"
-                    type="tel"
-                    class="tw:form-control"
-                    name="phone"
-                    autocomplete="tel"
-                    maxlength="40"
-                    inputmode="tel"
-                    :disabled="!isChannelEnabled"
-                    :aria-invalid="Boolean(fieldErrors.phone)"
-                    :aria-describedby="[
-                      fieldMeta.phone.helperId,
-                      fieldErrors.phone ? fieldMeta.phone.errorId : undefined
-                    ].filter(Boolean).join(' ') || undefined"
-                  />
-                  <small
-                    :id="fieldMeta.phone.helperId"
-                    class="tw:text-dm-text-muted tw:block tw:mt-1 tw:text-xs"
-                  >Completá e-mail o teléfono (al menos uno).</small>
-                  <small
-                    v-if="fieldErrors.phone"
-                    :id="fieldMeta.phone.errorId"
-                    class="tw:text-red-500 tw:block tw:mt-1"
-                  >{{ fieldErrors.phone }}</small>
-                </div>
-                <div v-if="isLeadChannel" class="tw:col-span-1 tw:md:col-span-2">
-                  <label class="tw:form-label" :for="fieldMeta.geographicLocation.inputId">{{
-                    contact.labels.geographicLocation
-                  }}</label>
-                  <input
-                    :id="fieldMeta.geographicLocation.inputId"
-                    v-model="form.geographicLocation"
-                    type="text"
-                    class="tw:form-control"
-                    name="geographicLocation"
-                    autocomplete="address-level2"
-                    maxlength="160"
-                    :disabled="!isChannelEnabled"
-                    :aria-invalid="Boolean(fieldErrors.geographicLocation)"
-                    :aria-describedby="
-                      fieldErrors.geographicLocation ? fieldMeta.geographicLocation.errorId : undefined
-                    "
-                  />
-                  <small
-                    v-if="fieldErrors.geographicLocation"
-                    :id="fieldMeta.geographicLocation.errorId"
-                    class="tw:text-red-500 tw:mt-1 tw:block"
-                  >{{ fieldErrors.geographicLocation }}</small>
-                </div>
-                <div class="tw:col-span-1 tw:md:col-span-2">
-                  <label class="tw:form-label" :for="fieldMeta.comment.inputId">{{
-                    contact.labels.comment ?? contact.labels.message
-                  }}</label>
-                  <textarea
-                    :id="fieldMeta.comment.inputId"
-                    v-model="form.comment"
-                    class="tw:form-control"
-                    name="comment"
-                    rows="5"
-                    maxlength="2000"
-                    :disabled="!isChannelEnabled"
-                    :required="!isLeadChannel"
-                    :minlength="isLeadChannel ? undefined : 10"
-                    :aria-invalid="Boolean(fieldErrors.comment)"
-                    :aria-describedby="fieldErrors.comment ? fieldMeta.comment.errorId : undefined"
-                  />
-                  <small
-                    v-if="fieldErrors.comment"
-                    :id="fieldMeta.comment.errorId"
-                    class="tw:text-red-500 tw:mt-1 tw:block"
-                  >{{ fieldErrors.comment }}</small>
-                </div>
-                <div class="tw:col-span-1 tw:md:col-span-2 tw:mt-4">
-                  <button
-                    type="submit"
-                    class="tw:btn-primary tw:w-full c-contact__submit"
-                    :class="!isChannelEnabled ? 'tw:opacity-50 tw:cursor-not-allowed' : ''"
-                    :disabled="!isChannelEnabled || isSubmitting"
-                    :aria-disabled="!isChannelEnabled || isSubmitting"
-                    :aria-busy="isSubmitting"
-                  >
-                    <span v-if="isSubmitting" class="tw:flex tw:items-center tw:justify-center tw:gap-2">
-                      Enviando...
-                      <span class="tw:animate-spin tw:h-4 tw:w-4 tw:border-2 tw:border-white tw:border-t-transparent tw:rounded-full"></span>
-                    </span>
-                    <span v-else>
-                      {{ contact.submitLabel }}
-                    </span>
-                  </button>
-                </div>
-                <div class="tw:col-span-1 tw:md:col-span-2" aria-live="polite" aria-atomic="true">
-                  <p
-                    v-if="isCheckingBackend"
-                    class="tw:text-blue-400 tw:bg-blue-900/40 tw:border tw:border-blue-800 tw:rounded-xl tw:px-4 tw:py-3 tw:text-sm"
-                    role="status"
-                  >
-                    {{ contact.checkingMessage }}
-                  </p>
-                  <p
-                    v-else-if="!isBackendAvailable"
-                    class="tw:text-orange-400 tw:bg-orange-900/40 tw:border tw:border-orange-800 tw:rounded-xl tw:px-4 tw:py-3 tw:text-sm c-contact__alert"
-                    role="status"
-                  >
-                    {{ contact.unavailableMessage }}
-                  </p>
-                  <p
-                    v-if="feedback.message"
-                    ref="feedbackMessageRef"
-                    :class="['tw:mt-4', 'tw:px-4', 'tw:py-3', 'tw:rounded-xl', 'tw:border', feedback.success ? 'tw:text-green-400 tw:bg-green-900/40 tw:border-green-800' : 'tw:text-red-400 tw:bg-red-900/40 tw:border-red-800']"
-                    role="alert"
-                    tabindex="-1"
-                  >
-                    {{ feedback.message }}
-                  </p>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</template>
-
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import TecnicoACargo from '@/components/TecnicoACargo.vue'
+import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps } from './contactTypes'
 import { useContactFormSection } from './ContactFormSection'
 
@@ -259,7 +18,6 @@ const {
   titleId,
   fieldMeta,
   tecnicoHeadingId,
-  isLeadChannel,
   isBackendAvailable,
   isCheckingBackend,
   isChannelEnabled,
@@ -268,4 +26,424 @@ const {
   feedbackMessageRef,
   handleSubmit
 } = useContactFormSection(props)
+
+const currentStep = ref(1)
+const totalSteps = 3
+const preferredContact = ref<'whatsapp' | 'phone'>('whatsapp')
+const contactEmail = computed(() => getContactEmail())
+
+const progressPercent = computed(() => Math.round((currentStep.value / totalSteps) * 100))
+const isLastStep = computed(() => currentStep.value === totalSteps)
+
+function goPrevStep() {
+  if (currentStep.value > 1) {
+    currentStep.value -= 1
+  }
+}
+
+function goNextStep() {
+  if (!validateCurrentStep()) {
+    return
+  }
+  if (currentStep.value < totalSteps) {
+    currentStep.value += 1
+  }
+}
+
+function validateCurrentStep(): boolean {
+  if (currentStep.value === 1) {
+    fieldErrors.firstName = form.firstName.trim() ? '' : 'Ingresa tu nombre.'
+    const emailValue = form.email.trim()
+    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)
+    fieldErrors.email = validEmail ? '' : 'Ingresa un e-mail valido.'
+    return !fieldErrors.firstName && !fieldErrors.email
+  }
+
+  if (currentStep.value === 2) {
+    const commentValue = form.comment.trim()
+    fieldErrors.comment = commentValue.length >= 10 ? '' : 'Describe el proyecto en al menos 10 caracteres.'
+    return !fieldErrors.comment
+  }
+
+  fieldErrors.phone = form.phone.trim().length >= 8 ? '' : 'Ingresa un numero de contacto valido.'
+  return !fieldErrors.phone
+}
+
+async function onFinalSubmit() {
+  if (!validateCurrentStep()) {
+    return
+  }
+  await handleSubmit()
+}
 </script>
+
+<template>
+  <section
+    :id="sectionId"
+    class="tw:py-10 tw:bg-dm-bg tw:text-dm-text-0 c-contact"
+    :aria-labelledby="titleId"
+  >
+    <div class="tw:container tw:mx-auto tw:px-4">
+      <div class="tw:flex tw:justify-center">
+        <div class="tw:w-full tw:max-w-3xl">
+          <div class="tw:bg-dm-surface tw:border tw:border-dm-border tw:rounded-2xl tw:shadow-2xl c-contact__card">
+            <div class="tw:p-5 tw:lg:p-8">
+              <h2 :id="titleId" class="tw:text-2xl tw:lg:text-3xl tw:font-bold c-contact__title tw:mb-2">
+                {{ contact.title }}
+              </h2>
+              <p class="tw:text-dm-text-muted tw:mb-5 c-contact__subtitle">
+                {{ contact.subtitle }}
+              </p>
+
+              <div class="c-contact__progress" role="progressbar" aria-label="Progreso del formulario" :aria-valuemin="1" :aria-valuemax="totalSteps" :aria-valuenow="currentStep">
+                <div class="c-contact__progress-track">
+                  <div class="c-contact__progress-fill" :style="{ width: `${progressPercent}%` }"></div>
+                </div>
+                <p class="c-contact__progress-text">Paso {{ currentStep }} de {{ totalSteps }}</p>
+              </div>
+
+              <TecnicoACargo
+                v-if="props.showTechnicianCard"
+                variant="embedded"
+                :heading-id="tecnicoHeadingId"
+              />
+
+              <form
+                ref="formRef"
+                class="tw:grid tw:grid-cols-1 tw:gap-4"
+                novalidate
+                :aria-busy="isSubmitting"
+                @submit.prevent="onFinalSubmit"
+              >
+                <template v-if="currentStep === 1">
+                  <h3 class="c-contact__step-title">1. Datos de contacto</h3>
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.firstName.inputId">Nombre</label>
+                    <input
+                      :id="fieldMeta.firstName.inputId"
+                      v-model="form.firstName"
+                      type="text"
+                      class="c-contact__input"
+                      autocomplete="given-name"
+                      maxlength="80"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.firstName)"
+                    />
+                    <small v-if="fieldErrors.firstName" class="c-contact__error">{{ fieldErrors.firstName }}</small>
+                  </div>
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.email.inputId">E-mail</label>
+                    <input
+                      :id="fieldMeta.email.inputId"
+                      v-model="form.email"
+                      type="email"
+                      class="c-contact__input"
+                      autocomplete="email"
+                      maxlength="160"
+                      inputmode="email"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.email)"
+                    />
+                    <small v-if="fieldErrors.email" class="c-contact__error">{{ fieldErrors.email }}</small>
+                  </div>
+                </template>
+
+                <template v-else-if="currentStep === 2">
+                  <h3 class="c-contact__step-title">2. Contanos tu proyecto</h3>
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.comment.inputId">Descripcion del proyecto</label>
+                    <textarea
+                      :id="fieldMeta.comment.inputId"
+                      v-model="form.comment"
+                      class="c-contact__input c-contact__input--textarea"
+                      rows="6"
+                      maxlength="2000"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.comment)"
+                    />
+                    <small class="c-contact__helper">Inclui objetivos, tiempos estimados y alcance.</small>
+                    <small v-if="fieldErrors.comment" class="c-contact__error">{{ fieldErrors.comment }}</small>
+                  </div>
+                </template>
+
+                <template v-else>
+                  <h3 class="c-contact__step-title">3. Medio de contacto preferido</h3>
+                  <fieldset class="c-contact__choice-group">
+                    <legend class="c-contact__label">Elegi como queres que te contactemos</legend>
+                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'whatsapp' }">
+                      <input v-model="preferredContact" type="radio" value="whatsapp" name="preferredContact" />
+                      WhatsApp
+                    </label>
+                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'phone' }">
+                      <input v-model="preferredContact" type="radio" value="phone" name="preferredContact" />
+                      Telefono
+                    </label>
+                  </fieldset>
+
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.phone.inputId">
+                      {{ preferredContact === 'whatsapp' ? 'Numero de WhatsApp' : 'Numero de telefono' }}
+                    </label>
+                    <input
+                      :id="fieldMeta.phone.inputId"
+                      v-model="form.phone"
+                      type="tel"
+                      class="c-contact__input"
+                      autocomplete="tel"
+                      maxlength="40"
+                      inputmode="tel"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.phone)"
+                    />
+                    <small class="c-contact__helper">Formato sugerido: +54 9 11 1234 5678</small>
+                    <small v-if="fieldErrors.phone" class="c-contact__error">{{ fieldErrors.phone }}</small>
+                  </div>
+                </template>
+
+                <div class="c-contact__actions">
+                  <button
+                    v-if="currentStep > 1"
+                    type="button"
+                    class="c-contact__btn c-contact__btn--ghost"
+                    :disabled="isSubmitting"
+                    @click="goPrevStep"
+                  >
+                    Volver
+                  </button>
+
+                  <button
+                    v-if="!isLastStep"
+                    type="button"
+                    class="c-contact__btn c-contact__btn--primary"
+                    :disabled="!isChannelEnabled || isSubmitting"
+                    @click="goNextStep"
+                  >
+                    Continuar
+                  </button>
+
+                  <button
+                    v-else
+                    type="submit"
+                    class="c-contact__btn c-contact__btn--primary"
+                    :disabled="!isChannelEnabled || isSubmitting"
+                    :aria-busy="isSubmitting"
+                  >
+                    <span v-if="isSubmitting" class="tw:flex tw:items-center tw:justify-center tw:gap-2">
+                      Enviando solicitud...
+                      <span class="tw:animate-spin tw:h-4 tw:w-4 tw:border-2 tw:border-white tw:border-t-transparent tw:rounded-full"></span>
+                    </span>
+                    <span v-else>Enviar solicitud</span>
+                  </button>
+                </div>
+
+                <div aria-live="polite" aria-atomic="true">
+                  <p
+                    v-if="isCheckingBackend"
+                    class="tw:text-blue-200 tw:bg-blue-900/40 tw:border tw:border-blue-700 tw:rounded-xl tw:px-4 tw:py-3 tw:text-sm"
+                    role="status"
+                  >
+                    {{ contact.checkingMessage }}
+                  </p>
+                  <p
+                    v-else-if="!isBackendAvailable"
+                    class="tw:text-orange-200 tw:bg-orange-900/35 tw:border tw:border-orange-600 tw:rounded-xl tw:px-4 tw:py-3 tw:text-sm"
+                    role="status"
+                  >
+                    {{ contact.unavailableMessage }}
+                  </p>
+                  <p
+                    v-if="feedback.message"
+                    ref="feedbackMessageRef"
+                    :class="['tw:mt-3', 'tw:px-4', 'tw:py-3', 'tw:rounded-xl', 'tw:border', feedback.success ? 'tw:text-green-200 tw:bg-green-900/35 tw:border-green-700' : 'tw:text-red-200 tw:bg-red-900/35 tw:border-red-700']"
+                    role="alert"
+                    tabindex="-1"
+                  >
+                    {{ feedback.message }}
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <article v-if="contactEmail" class="c-contact__email-card" aria-label="Contacto alternativo por email">
+            <p class="c-contact__email-label">Contacto alternativo</p>
+            <p class="c-contact__email-title">Contactanos via email</p>
+            <a class="c-contact__email-link" :href="`mailto:${contactEmail}`">{{ contactEmail }}</a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<style scoped lang="scss">
+.c-contact__progress-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.c-contact__progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #ff8c00;
+  transition: width 220ms ease;
+}
+
+.c-contact__progress-text {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.82rem;
+  color: #d1d9e2;
+}
+
+.c-contact__step-title {
+  margin: 0 0 0.35rem;
+  color: #f6f8fb;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.c-contact__label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #e9eef5;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.c-contact__helper {
+  display: block;
+  margin-top: 0.4rem;
+  color: #cfd8e3;
+  font-size: 0.78rem;
+}
+
+.c-contact__input {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: #0a192f;
+  color: #ffffff;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.c-contact__input:focus-visible {
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.25);
+}
+
+.c-contact__input::placeholder {
+  color: #b8c6d8;
+}
+
+.c-contact__input[aria-invalid='true'] {
+  border-color: #ff6b6b;
+}
+
+.c-contact__input--textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.c-contact__choice-group {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.9rem;
+  padding: 0.8rem;
+  margin: 0;
+}
+
+.c-contact__choice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  border-radius: 0.65rem;
+  color: #d6dfeb;
+}
+
+.c-contact__choice.is-active {
+  background: rgba(255, 140, 0, 0.2);
+  color: #ffffff;
+}
+
+.c-contact__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+.c-contact__btn {
+  min-height: 2.8rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  font-weight: 700;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.c-contact__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.c-contact__btn--primary {
+  background: #ff8c00;
+  color: #0a192f;
+}
+
+.c-contact__btn--ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.26);
+  color: #f4f8fc;
+}
+
+.c-contact__error {
+  display: block;
+  margin-top: 0.4rem;
+  color: #ff9b9b;
+  font-size: 0.8rem;
+}
+
+.c-contact__email-card {
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 1rem;
+  padding: 1rem 1.2rem;
+  background: rgba(10, 25, 47, 0.72);
+}
+
+.c-contact__email-label {
+  margin: 0;
+  color: #c9d4e3;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.c-contact__email-title {
+  margin: 0.35rem 0;
+  color: #f4f8fc;
+  font-weight: 700;
+}
+
+.c-contact__email-link {
+  color: #ffb357;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+  .c-contact__actions {
+    flex-direction: column-reverse;
+  }
+
+  .c-contact__btn {
+    width: 100%;
+  }
+}
+</style>

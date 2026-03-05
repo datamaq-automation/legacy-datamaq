@@ -221,7 +221,7 @@ const {
 }
 
 .c-contact-page-hero {
-  padding-block: clamp(2rem, 5vw, 4rem);
+  padding-block: clamp(1.1rem, 3.2vw, 2.2rem);
 }
 
 .c-contact-page-panel {

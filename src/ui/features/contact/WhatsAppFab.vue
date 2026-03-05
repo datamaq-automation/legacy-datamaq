@@ -5,18 +5,16 @@ import { getWhatsAppHref } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
 
 const whatsappHref = computed(() => getWhatsAppHref())
-const fabAriaLabel = 'Abrir WhatsApp para pedir coordinación'
+const fabAriaLabel = 'Abrir WhatsApp para pedir coordinacion'
 
 function handleFabClick(event: MouseEvent): void {
   if (!whatsappHref.value) {
     return
   }
   event.preventDefault()
-  
-  // Abrir directamente sin openWhatsApp() para evitar fallback redirect
+
   window.open(whatsappHref.value, '_blank')
-  
-  // Analytics tracking separado (inline para evitar dependencias extra)
+
   const { engagementTracker, environment } = useContainer()
   const params = new URLSearchParams(environment.search())
   const utmSource = params.get('utm_source')
@@ -28,7 +26,7 @@ function handleFabClick(event: MouseEvent): void {
 <template>
   <a
     v-if="whatsappHref"
-    class="tw:fixed tw:bottom-6 tw:right-6 tw:z-[1050] tw:flex tw:items-center tw:justify-center tw:w-14 tw:h-14 tw:bg-[#25D366] tw:text-white tw:rounded-full tw:shadow-lg tw:transition-transform hover:tw:scale-110 active:tw:scale-95"
+    class="c-whatsapp-fab tw:fixed tw:right-4 tw:z-[1050] tw:flex tw:items-center tw:justify-center tw:w-14 tw:h-14 tw:bg-[#25D366] tw:text-white tw:rounded-full tw:shadow-lg tw:transition-transform hover:tw:scale-110 active:tw:scale-95"
     :href="whatsappHref"
     target="_blank"
     rel="noopener noreferrer"
@@ -50,3 +48,21 @@ function handleFabClick(event: MouseEvent): void {
     </svg>
   </a>
 </template>
+
+<style scoped lang="scss">
+.c-whatsapp-fab {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+}
+
+.c-whatsapp-fab__icon {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+@media (min-width: 1024px) {
+  .c-whatsapp-fab {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+}
+</style>
