@@ -65,6 +65,23 @@ test.describe('Smoke E2E', () => {
       })
     }
 
+    const siteRoutes = ['**/api/v1/site*', '**/v1/site*', '**/plantilla-www/public/api/v1/site*']
+    for (const pattern of siteRoutes) {
+      await page.route(pattern, async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ok',
+            data: {
+              seo: { title: 'E2E Site' },
+              brand: { name: 'Datamaq' }
+            }
+          })
+        })
+      })
+    }
+
     const fulfillContactApi = async (route: any) => {
       const method = route.request().method()
       if (method === 'OPTIONS') {
@@ -122,13 +139,23 @@ test.describe('Smoke E2E', () => {
     const leadSection = page.locator('#contacto')
     await leadSection.scrollIntoViewIfNeeded()
     await expect(leadSection).toBeVisible()
-    await leadSection.locator('input[name="email"]').fill('ada@example.com')
-    await expect(leadSection.locator('textarea[name="comment"]')).toBeVisible()
-    await leadSection
-      .locator('textarea[name="comment"]')
-      .fill('Necesito una propuesta para mantenimiento industrial.')
+    await test.step('Paso 1: completar identidad', async () => {
+      await leadSection.getByLabel(/nombre/i).fill('Ada')
+      await leadSection.getByRole('textbox', { name: /e-mail/i }).fill('ada@example.com')
+      await leadSection.getByRole('button', { name: /continuar/i }).click()
+    })
 
-    await page.getByRole('button', { name: /Enviar solicitud/i }).click()
+    await test.step('Paso 2: completar proyecto', async () => {
+      const projectDescription = leadSection.getByLabel(/descripcion del proyecto/i)
+      await expect(projectDescription).toBeVisible()
+      await projectDescription.fill('Necesito una propuesta para mantenimiento industrial.')
+      await leadSection.getByRole('button', { name: /continuar/i }).click()
+    })
+
+    await test.step('Paso 3: completar contacto y enviar', async () => {
+      await leadSection.getByLabel(/numero de (whatsapp|telefono)/i).fill('+54 9 11 1234 5678')
+      await page.getByRole('button', { name: /enviar solicitud/i }).click()
+    })
 
     await expect(page).toHaveURL(/\/gracias$/)
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()

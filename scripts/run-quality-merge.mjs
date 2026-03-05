@@ -2,20 +2,16 @@ import { spawnSync } from 'node:child_process'
 
 const steps = [
   {
-    label: 'typecheck',
-    command: 'npm run typecheck'
-  },
-  {
-    label: 'unit-tests',
-    command: 'npm run test'
+    label: 'quality-fast',
+    command: 'npm run quality:fast'
   },
   {
     label: 'build',
     command: 'npm run build'
   },
   {
-    label: 'e2e-smoke',
-    command: 'npm run test:e2e:smoke'
+    label: 'quality-e2e',
+    command: 'npm run quality:e2e'
   }
 ]
 

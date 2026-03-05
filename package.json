@@ -44,6 +44,8 @@
     "todo:archive:dry-run": "node scripts/archive-todo-completed.mjs --dry-run",
     "todo:compact:noise": "node scripts/compact-todo-noise.mjs",
     "todo:compact:noise:dry-run": "node scripts/compact-todo-noise.mjs --dry-run",
+    "quality:fast": "npm run lint:security && npm run typecheck && npm run test && npm run lint:colors && npm run lint:layers",
+    "quality:e2e": "npm run test:e2e:smoke",
     "quality:gate": "npm run lint:todo-sync && npm run lint:security && npm run typecheck && npm run lint:test-coverage && npm run lint:colors && npm run lint:layers && npm run test:a11y && npm run check:css",
     "quality:mobile": "node scripts/run-mobile-first-checks.mjs",
     "quality:responsive": "node scripts/run-responsive-stages.mjs",
