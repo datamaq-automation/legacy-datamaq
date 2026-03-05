@@ -35,7 +35,7 @@ describe('WhatsAppFab', () => {
     render(WhatsAppFab)
 
     const link = screen.getByRole('link', {
-      name: 'Abrir WhatsApp para pedir coordinación'
+      name: /Abrir WhatsApp para pedir coordinaci.n/i
     })
     expect(link).toHaveAttribute('href', expect.stringContaining('wa.me/5491135162685'))
     expect(link).toHaveAttribute('target', '_blank')
@@ -45,7 +45,7 @@ describe('WhatsAppFab', () => {
   it('opens WhatsApp in new tab and tracks analytics on click', async () => {
     render(WhatsAppFab)
     const link = screen.getByRole('link', {
-      name: 'Abrir WhatsApp para pedir coordinación'
+      name: /Abrir WhatsApp para pedir coordinaci.n/i
     })
 
     await fireEvent.click(link)
@@ -60,3 +60,4 @@ describe('WhatsAppFab', () => {
     expect(trackChatMock).toHaveBeenCalledWith('whatsapp-fab', 'direct')
   })
 })
+

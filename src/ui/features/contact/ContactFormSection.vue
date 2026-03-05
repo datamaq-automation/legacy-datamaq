@@ -34,10 +34,24 @@ const contactEmail = computed(() => getContactEmail())
 
 const progressPercent = computed(() => Math.round((currentStep.value / totalSteps) * 100))
 const isLastStep = computed(() => currentStep.value === totalSteps)
+const stepLabels = ['Identidad', 'Proyecto', 'Contacto']
 
 function goPrevStep() {
   if (currentStep.value > 1) {
     currentStep.value -= 1
+  }
+}
+
+function goToStep(targetStep: number) {
+  if (targetStep === currentStep.value || targetStep < 1 || targetStep > totalSteps) {
+    return
+  }
+  if (targetStep < currentStep.value) {
+    currentStep.value = targetStep
+    return
+  }
+  if (validateCurrentStep()) {
+    currentStep.value = targetStep
   }
 }
 
@@ -95,6 +109,32 @@ async function onFinalSubmit() {
                 {{ contact.subtitle }}
               </p>
 
+              <ol class="c-contact__stepper" aria-label="Pasos del formulario">
+                <li
+                  v-for="(label, index) in stepLabels"
+                  :key="label"
+                  class="c-contact__stepper-item"
+                  :class="{
+                    'is-active': currentStep === index + 1,
+                    'is-completed': currentStep > index + 1
+                  }"
+                >
+                  <button
+                    type="button"
+                    class="c-contact__stepper-trigger"
+                    :aria-current="currentStep === index + 1 ? 'step' : undefined"
+                    :aria-label="`Ir al paso ${index + 1}: ${label}`"
+                    @click="goToStep(index + 1)"
+                  >
+                    <span class="c-contact__stepper-dot" aria-hidden="true">
+                      <span v-if="currentStep > index + 1">✓</span>
+                      <span v-else>{{ index + 1 }}</span>
+                    </span>
+                    <span class="c-contact__stepper-label">{{ label }}</span>
+                  </button>
+                </li>
+              </ol>
+
               <div class="c-contact__progress" role="progressbar" aria-label="Progreso del formulario" :aria-valuemin="1" :aria-valuemax="totalSteps" :aria-valuenow="currentStep">
                 <div class="c-contact__progress-track">
                   <div class="c-contact__progress-fill" :style="{ width: `${progressPercent}%` }"></div>
@@ -115,6 +155,8 @@ async function onFinalSubmit() {
                 :aria-busy="isSubmitting"
                 @submit.prevent="onFinalSubmit"
               >
+                <Transition name="step-fade" mode="out-in">
+                  <div :key="currentStep" class="c-contact__step-panel">
                 <template v-if="currentStep === 1">
                   <h3 class="c-contact__step-title">1. Datos de contacto</h3>
                   <div>
@@ -199,6 +241,8 @@ async function onFinalSubmit() {
                     <small v-if="fieldErrors.phone" class="c-contact__error">{{ fieldErrors.phone }}</small>
                   </div>
                 </template>
+                  </div>
+                </Transition>
 
                 <div class="c-contact__actions">
                   <button
@@ -277,6 +321,84 @@ async function onFinalSubmit() {
 </template>
 
 <style scoped lang="scss">
+.c-contact__stepper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0 0 0.8rem;
+  padding: 0;
+  list-style: none;
+}
+
+.c-contact__stepper-item {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #cfd8e3;
+  min-width: 0;
+}
+
+.c-contact__stepper-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  text-align: left;
+  border-radius: 999px;
+}
+
+.c-contact__stepper-trigger:focus-visible {
+  outline: 2px solid #ff8c00;
+  outline-offset: 2px;
+}
+
+.c-contact__stepper-dot {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.c-contact__stepper-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-contact__stepper-item.is-active {
+  border-color: rgba(255, 140, 0, 0.8);
+  background: rgba(255, 140, 0, 0.14);
+  color: #ffffff;
+}
+
+.c-contact__stepper-item.is-active .c-contact__stepper-dot {
+  border-color: #ff8c00;
+  background: rgba(255, 140, 0, 0.2);
+}
+
+.c-contact__stepper-item.is-completed {
+  border-color: rgba(255, 140, 0, 0.6);
+  color: #ffe4bf;
+}
+
+.c-contact__stepper-item.is-completed .c-contact__stepper-dot {
+  border-color: #ff8c00;
+  background: #ff8c00;
+  color: #0a192f;
+}
+
 .c-contact__progress-track {
   height: 0.5rem;
   border-radius: 999px;
@@ -302,6 +424,11 @@ async function onFinalSubmit() {
   color: #f6f8fb;
   font-size: 1rem;
   font-weight: 700;
+}
+
+.c-contact__step-panel {
+  display: grid;
+  gap: 1rem;
 }
 
 .c-contact__label {
@@ -437,7 +564,29 @@ async function onFinalSubmit() {
   font-weight: 600;
 }
 
+.step-fade-enter-active,
+.step-fade-leave-active {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.step-fade-enter-from,
+.step-fade-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-fade-enter-active,
+  .step-fade-leave-active {
+    transition: none;
+  }
+}
+
 @media (max-width: 767.98px) {
+  .c-contact__stepper {
+    grid-template-columns: 1fr;
+  }
+
   .c-contact__actions {
     flex-direction: column-reverse;
   }
