@@ -18,11 +18,11 @@ Luego ejecutar esta checklist.
 
 Suite base ya disponible en este repositorio:
 
-- `tests/integration/fastApiContracts.test.ts`
+- suite de contrato FastAPI en backend
 
 Ejecucion:
 
-- `FASTAPI_CONTRACT_BASE_URL=http://127.0.0.1:8000 npm run test:contracts:fastapi`
+- ejecutar la suite de contrato en backend contra `http://127.0.0.1:8000`
 
 ## Capas transversales
 
@@ -167,8 +167,8 @@ Fuente de verdad:
 
 ### Contratos
 
-- usar `tests/integration/fastApiContracts.test.ts` como suite de contrato objetivo
-- ejecutar la suite con `FASTAPI_CONTRACT_BASE_URL`
+- usar la suite de contrato del backend como suite de contrato objetivo
+- ejecutar la suite desde el pipeline/repo backend
 - mantener cualquier test unitario de frontend alineado a ese mismo contrato
 
 ### Integracion frontend

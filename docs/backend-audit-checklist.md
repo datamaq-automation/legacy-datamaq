@@ -10,22 +10,15 @@ No alcanza con revisar la UI ni con abrir `F12`.
 
 La auditoria correcta combina:
 
-1. tests de contrato
+1. tests de contrato (backend)
 2. inspeccion de `Network` en navegador
 3. inspeccion de `Console` con logs estructurados
 4. smoke manual de flujos criticos
 
 ## 1. Tests de contrato
 
-Fuente principal:
-
-- [fastApiContracts.test.ts](/C:/AppServ/www/plantilla-www/tests/integration/fastApiContracts.test.ts)
-
-Comando:
-
-```powershell
-$env:FASTAPI_CONTRACT_BASE_URL='https://backend.example.com'; npm run test:contracts:fastapi
-```
+La suite de contrato de API se ejecuta en el repositorio/pipeline de backend.
+En frontend solo se valida consumo real via `Network`, `Console` y smoke funcional.
 
 Validar como minimo:
 

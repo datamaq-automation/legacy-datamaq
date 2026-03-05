@@ -28,7 +28,7 @@
 - [x] Definir una estrategia de auditoria combinando tests de contrato, inspeccion en `F12` y logs estructurados del frontend.
 - [x] Documentar un informe operativo para backend sobre el estado actual del frontend y las referencias en `docs/`.
 - [ ] Alinear toda la documentacion de migracion y contratos FastAPI al endpoint canonico `GET /v1/site`.
-- [/] Alinear la suite `tests/integration/fastApiContracts.test.ts` al contrato canonico `GET /v1/site`.
+- [x] Mover la validacion de contratos FastAPI al pipeline/repositorio backend.
 
 ### 3. Definiciones de Home DataMaq (Resoluciones)
 - [x] Confirmacion: Eliminar modulos legacy (`CaseStudiesSection`, `DecisionFlowSection`, etc.) del repositorio.

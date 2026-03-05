@@ -33,7 +33,7 @@ Documento complementario ya creado:
 - referencia parcial de `pricing`: `docs/fastapi-content-pricing-contract.md`
 - contrato canonico de `quote`: `docs/fastapi-quote-contract.md`
 - checklist operativa por router: `docs/fastapi-router-implementation-checklist.md`
-- suite base de contratos para FastAPI: `tests/integration/fastApiContracts.test.ts`
+- la suite de contratos de API corre en backend (fuera de este repo frontend)
 
 ## Decision recomendada de paths
 
@@ -622,8 +622,8 @@ Para una migracion segura, tambien hay que mirar:
 
 Nota importante sobre tests actuales:
 
-- `tests/integration/fastApiContracts.test.ts` es la suite base de contrato para FastAPI
-- se ejecuta con `FASTAPI_CONTRACT_BASE_URL`
+- la suite de contrato de FastAPI se mantiene y ejecuta en backend
+- este repo frontend mantiene unit tests y smoke E2E de UI/flujo
 - cualquier suite anterior de PHP debe considerarse retirada y fuera del contrato objetivo
 
 Conclusion:

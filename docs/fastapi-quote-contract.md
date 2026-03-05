@@ -191,4 +191,4 @@ Campos visibles en logs:
 - gateway: `src/infrastructure/quote/quoteApiGateway.ts`
 - error model: `src/application/quote/quoteApiError.ts`
 - tests gateway: `tests/unit/infrastructure/quoteApiGateway.test.ts`
-- tests de contrato FastAPI: `tests/integration/fastApiContracts.test.ts`
+- tests de contrato FastAPI: se ejecutan en backend

@@ -183,4 +183,4 @@ Campos visibles en logs:
 - schema de contenido: `src/domain/schemas/contentSchema.ts`
 - cliente de contenido: `src/infrastructure/content/dynamicContentService.ts`
 - cliente de pricing: `src/infrastructure/content/dynamicPricingService.ts`
-- tests de contrato FastAPI: `tests/integration/fastApiContracts.test.ts`
+- tests de contrato FastAPI: se ejecutan en backend

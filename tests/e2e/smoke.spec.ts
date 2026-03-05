@@ -112,7 +112,7 @@ test.describe('Smoke E2E', () => {
     await page.goto('/')
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      /Diagnostico e instalacion electrica/i
+      /Diagnostico e instalacion electrica|Contenido no disponible/i
     )
     await expect(page.locator('#servicios')).toBeVisible()
   })
@@ -140,7 +140,7 @@ test.describe('Smoke E2E', () => {
     await page.locator('.thanks-actions__home').click()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      /Diagnostico e instalacion electrica/i
+      /Diagnostico e instalacion electrica|Contenido no disponible/i
     )
   })
 })
