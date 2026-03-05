@@ -21,6 +21,22 @@ vi.mock('@/di/container', () => ({
       inquiryApiUrl: undefined
     },
     content: {
+      getBrandContent: () => ({
+        contactEmail: 'info@datamaq.com.ar',
+        contactFormActive: true,
+        technician: {
+          name: 'Agustin Bustos',
+          role: 'Tecnico a cargo',
+          photo: {
+            src: '/media/tecnico-a-cargo.webp',
+            alt: 'Foto del tecnico a cargo',
+            width: 100,
+            height: 100
+          },
+          whatsappLabel: 'Coordinar por WhatsApp',
+          unavailableLabel: 'Tecnico no disponible'
+        }
+      }),
       getHeroContent: () => ({
         primaryCta: {
           href: 'https://wa.me/5491156297160'
@@ -55,6 +71,7 @@ describe('Contact submit and thanks flow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    window.localStorage.clear()
     reportValiditySpy = vi.spyOn(HTMLFormElement.prototype, 'reportValidity').mockReturnValue(true)
   })
 
@@ -107,8 +124,14 @@ describe('Contact submit and thanks flow', () => {
 
     await fireEvent.update(screen.getByLabelText('Nombre'), 'Maria')
     await fireEvent.update(screen.getByLabelText('E-mail'), 'maria@example.com')
-    await fireEvent.update(screen.getByLabelText('Comentario'), 'Necesito una propuesta para una planta.')
-    await fireEvent.click(screen.getByRole('button', { name: 'Registrar contacto' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(
+      screen.getByLabelText('Descripcion del proyecto'),
+      'Necesito una propuesta para una planta.'
+    )
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(screen.getByLabelText('Numero de WhatsApp'), '+54 11 5555 4444')
+    await fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }))
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1)

@@ -28,6 +28,22 @@ vi.mock('@/di/container', () => ({
       inquiryApiUrl: undefined
     },
     content: {
+      getBrandContent: () => ({
+        contactEmail: 'info@datamaq.com.ar',
+        contactFormActive: true,
+        technician: {
+          name: 'Agustin Bustos',
+          role: 'Tecnico a cargo',
+          photo: {
+            src: '/media/tecnico-a-cargo.webp',
+            alt: 'Foto del tecnico a cargo',
+            width: 100,
+            height: 100
+          },
+          whatsappLabel: 'Coordinar por WhatsApp',
+          unavailableLabel: 'Tecnico no disponible'
+        }
+      }),
       getHeroContent: () => ({
         primaryCta: {
           href: 'https://wa.me/5491156297160'
@@ -72,6 +88,7 @@ describe('ContactFormSection', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    window.localStorage.clear()
     backendMocks.setCurrentStatus('available')
     reportValiditySpy = vi.spyOn(HTMLFormElement.prototype, 'reportValidity').mockReturnValue(true)
   })
@@ -96,13 +113,15 @@ describe('ContactFormSection', () => {
     })
 
     await fireEvent.update(screen.getByLabelText('Nombre'), 'Ana')
-    await fireEvent.update(screen.getByLabelText('Apellido'), 'Perez')
-    await fireEvent.update(screen.getByLabelText('Empresa'), 'Acme')
     await fireEvent.update(screen.getByLabelText('E-mail'), 'ana@example.com')
-    await fireEvent.update(screen.getByLabelText('Nro telefono'), '+54 11 5555 4444')
-    await fireEvent.update(screen.getByLabelText('Ubicacion geografica'), 'Escobar')
-    await fireEvent.update(screen.getByLabelText('Comentario'), 'Necesito una propuesta para mi planta')
-    await fireEvent.click(screen.getByRole('button', { name: 'Registrar contacto' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(
+      screen.getByLabelText('Descripcion del proyecto'),
+      'Necesito una propuesta para mi planta'
+    )
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(screen.getByLabelText('Numero de WhatsApp'), '+54 11 5555 4444')
+    await fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }))
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1)
@@ -110,11 +129,8 @@ describe('ContactFormSection', () => {
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         firstName: 'Ana',
-        lastName: 'Perez',
-        company: 'Acme',
         email: 'ana@example.com',
         phone: '+54 11 5555 4444',
-        geographicLocation: 'Escobar',
         comment: 'Necesito una propuesta para mi planta'
       })
     )
@@ -138,7 +154,7 @@ describe('ContactFormSection', () => {
       }
     })
 
-    const submitButton = screen.getByRole('button', { name: 'Registrar contacto' })
+    const submitButton = screen.getByRole('button', { name: 'Continuar' })
     expect(submitButton).toBeDisabled()
 
     await fireEvent.click(submitButton)
@@ -170,7 +186,14 @@ describe('ContactFormSection', () => {
 
     await fireEvent.update(screen.getByLabelText('Nombre'), 'Ana')
     await fireEvent.update(screen.getByLabelText('E-mail'), 'ana@example.com')
-    await fireEvent.click(screen.getByRole('button', { name: 'Registrar contacto' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(
+      screen.getByLabelText('Descripcion del proyecto'),
+      'Mensaje valido en longitud para forzar error de email.'
+    )
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(screen.getByLabelText('Numero de WhatsApp'), '+54 11 5555 4444')
+    await fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }))
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(

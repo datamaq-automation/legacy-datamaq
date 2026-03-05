@@ -12,6 +12,11 @@ vi.mock('@/ui/controllers/contactController', () => ({
 
 vi.mock('@/di/container', () => ({
   useContainer: () => ({
+    content: {
+      getBrandContent: () => ({
+        contactEmail: 'contacto@example.com'
+      })
+    },
     engagementTracker: {
       trackChat: trackChatMock
     },

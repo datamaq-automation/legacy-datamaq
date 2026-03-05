@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import TecnicoACargo from '@/components/TecnicoACargo.vue'
 import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps } from './contactTypes'
@@ -35,6 +35,16 @@ const contactEmail = computed(() => getContactEmail())
 const progressPercent = computed(() => Math.round((currentStep.value / totalSteps) * 100))
 const isLastStep = computed(() => currentStep.value === totalSteps)
 const stepLabels = ['Identidad', 'Proyecto', 'Contacto']
+const draftStorageKey = `dm-contact-draft-${sectionId}`
+
+type ContactDraft = {
+  firstName: string
+  email: string
+  comment: string
+  phone: string
+  preferredContact: 'whatsapp' | 'phone'
+  currentStep: number
+}
 
 function goPrevStep() {
   if (currentStep.value > 1) {
@@ -88,7 +98,45 @@ async function onFinalSubmit() {
     return
   }
   await handleSubmit()
+  if (feedback.success) {
+    window.localStorage.removeItem(draftStorageKey)
+  }
 }
+
+onMounted(() => {
+  const rawDraft = window.localStorage.getItem(draftStorageKey)
+  if (!rawDraft) {
+    return
+  }
+  try {
+    const draft = JSON.parse(rawDraft) as Partial<ContactDraft>
+    form.firstName = draft.firstName ?? form.firstName
+    form.email = draft.email ?? form.email
+    form.comment = draft.comment ?? form.comment
+    form.phone = draft.phone ?? form.phone
+    preferredContact.value = draft.preferredContact === 'phone' ? 'phone' : 'whatsapp'
+    if (typeof draft.currentStep === 'number' && draft.currentStep >= 1 && draft.currentStep <= totalSteps) {
+      currentStep.value = draft.currentStep
+    }
+  } catch {
+    window.localStorage.removeItem(draftStorageKey)
+  }
+})
+
+watch(
+  () => [form.firstName, form.email, form.comment, form.phone, preferredContact.value, currentStep.value],
+  () => {
+    const draft: ContactDraft = {
+      firstName: form.firstName,
+      email: form.email,
+      comment: form.comment,
+      phone: form.phone,
+      preferredContact: preferredContact.value,
+      currentStep: currentStep.value
+    }
+    window.localStorage.setItem(draftStorageKey, JSON.stringify(draft))
+  }
+)
 </script>
 
 <template>
