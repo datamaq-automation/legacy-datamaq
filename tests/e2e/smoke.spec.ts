@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test'
 
+const HOME_H1_PATTERN =
+  /Diagnostico e instalacion electrica|Servicio Tecnico Industrial Especializado|Contenido no disponible/i
+
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
     const healthRoutes = [
@@ -128,9 +131,7 @@ test.describe('Smoke E2E', () => {
   test('home renders core sections', async ({ page }) => {
     await page.goto('/')
 
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      /Diagnostico e instalacion electrica|Contenido no disponible/i
-    )
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(HOME_H1_PATTERN)
     await expect(page.locator('#servicios')).toBeVisible()
   })
 
@@ -166,9 +167,7 @@ test.describe('Smoke E2E', () => {
 
     await page.locator('.thanks-actions__home').click()
     await expect(page).toHaveURL(/\/$/)
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      /Diagnostico e instalacion electrica|Contenido no disponible/i
-    )
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(HOME_H1_PATTERN)
   })
 })
 

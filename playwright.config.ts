@@ -15,7 +15,7 @@ export default defineConfig({
   reporter: [['list']],
   use: {
     baseURL: E2E_BASE_URL,
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure'
   },
