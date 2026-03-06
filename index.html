@@ -10,6 +10,22 @@
 
     gtag('config', 'AW-17968350814');
   </script>
+  <!-- Event snippet for Otra conversion page
+  In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-17968350814/AYgBCLvGuIMcEN6M_fdC',
+        'event_callback': callback
+    });
+    return false;
+  }
+  </script>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
