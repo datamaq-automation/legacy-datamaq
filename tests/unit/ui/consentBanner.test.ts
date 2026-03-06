@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
-import { consentManagerKey, type ConsentManager, type ConsentStatus } from '@/application/consent/consentManager'
+import { type ConsentManager, type ConsentStatus } from '@/application/consent/consentManager'
+import { consentManagerKey } from '@/di/keys'
 
 vi.mock('@/di/container', () => ({
   useContainer: () => ({

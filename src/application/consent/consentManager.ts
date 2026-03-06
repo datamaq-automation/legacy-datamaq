@@ -1,4 +1,3 @@
-import type { InjectionKey } from 'vue'
 import type { LoggerPort } from '../ports/Logger'
 import type { StoragePort } from '../ports/Storage'
 import { analyticsConsentStorageKey, parseStoredConsentStatus } from './consentStorage'
@@ -82,5 +81,3 @@ function persistStatus(
     logger.warn('[consentManager] No fue posible persistir el consentimiento:', error)
   }
 }
-
-export const consentManagerKey: InjectionKey<ConsentManager> = Symbol('consentManager')

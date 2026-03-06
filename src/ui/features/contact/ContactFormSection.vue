@@ -1,9 +1,23 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import TecnicoACargo from '@/components/TecnicoACargo.vue'
+import {
+  clampContactLeadStep,
+  CONTACT_LEAD_STEP_LABELS,
+  CONTACT_LEAD_TOTAL_STEPS,
+  hasContactLeadStepErrors,
+  normalizePreferredContact,
+  type ContactLeadDraft,
+  readContactDraft,
+  removeContactDraft,
+  validateContactLeadStep,
+  writeContactDraft
+} from '@/features/contact'
 import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps } from './contactTypes'
 import { useContactFormSection } from './ContactFormSection'
+
+// TODO(arch): Mover este componente a src/features/contact/ui cuando se migren las paginas por feature.
 
 const props = withDefaults(defineProps<ContactFormProps>(), {
   showTechnicianCard: true
@@ -28,23 +42,14 @@ const {
 } = useContactFormSection(props)
 
 const currentStep = ref(1)
-const totalSteps = 3
+const totalSteps = CONTACT_LEAD_TOTAL_STEPS
 const preferredContact = ref<'whatsapp' | 'phone'>('whatsapp')
 const contactEmail = computed(() => getContactEmail())
 
 const progressPercent = computed(() => Math.round((currentStep.value / totalSteps) * 100))
 const isLastStep = computed(() => currentStep.value === totalSteps)
-const stepLabels = ['Identidad', 'Proyecto', 'Contacto']
+const stepLabels = CONTACT_LEAD_STEP_LABELS
 const draftStorageKey = `dm-contact-draft-${sectionId}`
-
-type ContactDraft = {
-  firstName: string
-  email: string
-  comment: string
-  phone: string
-  preferredContact: 'whatsapp' | 'phone'
-  currentStep: number
-}
 
 function goPrevStep() {
   if (currentStep.value > 1) {
@@ -75,22 +80,19 @@ function goNextStep() {
 }
 
 function validateCurrentStep(): boolean {
-  if (currentStep.value === 1) {
-    fieldErrors.firstName = form.firstName.trim() ? '' : 'Ingresa tu nombre.'
-    const emailValue = form.email.trim()
-    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)
-    fieldErrors.email = validEmail ? '' : 'Ingresa un e-mail valido.'
-    return !fieldErrors.firstName && !fieldErrors.email
-  }
+  const stepErrors = validateContactLeadStep(currentStep.value, {
+    firstName: form.firstName,
+    email: form.email,
+    comment: form.comment,
+    phone: form.phone
+  })
 
-  if (currentStep.value === 2) {
-    const commentValue = form.comment.trim()
-    fieldErrors.comment = commentValue.length >= 10 ? '' : 'Describe el proyecto en al menos 10 caracteres.'
-    return !fieldErrors.comment
-  }
+  fieldErrors.firstName = stepErrors.firstName ?? ''
+  fieldErrors.email = stepErrors.email ?? ''
+  fieldErrors.comment = stepErrors.comment ?? ''
+  fieldErrors.phone = stepErrors.phone ?? ''
 
-  fieldErrors.phone = form.phone.trim().length >= 8 ? '' : 'Ingresa un numero de contacto valido.'
-  return !fieldErrors.phone
+  return !hasContactLeadStepErrors(stepErrors)
 }
 
 async function onFinalSubmit() {
@@ -99,34 +101,27 @@ async function onFinalSubmit() {
   }
   await handleSubmit()
   if (feedback.success) {
-    window.localStorage.removeItem(draftStorageKey)
+    removeContactDraft(draftStorageKey)
   }
 }
 
 onMounted(() => {
-  const rawDraft = window.localStorage.getItem(draftStorageKey)
-  if (!rawDraft) {
+  const draft = readContactDraft(draftStorageKey)
+  if (!draft) {
     return
   }
-  try {
-    const draft = JSON.parse(rawDraft) as Partial<ContactDraft>
-    form.firstName = draft.firstName ?? form.firstName
-    form.email = draft.email ?? form.email
-    form.comment = draft.comment ?? form.comment
-    form.phone = draft.phone ?? form.phone
-    preferredContact.value = draft.preferredContact === 'phone' ? 'phone' : 'whatsapp'
-    if (typeof draft.currentStep === 'number' && draft.currentStep >= 1 && draft.currentStep <= totalSteps) {
-      currentStep.value = draft.currentStep
-    }
-  } catch {
-    window.localStorage.removeItem(draftStorageKey)
-  }
+  form.firstName = draft.firstName ?? form.firstName
+  form.email = draft.email ?? form.email
+  form.comment = draft.comment ?? form.comment
+  form.phone = draft.phone ?? form.phone
+  preferredContact.value = normalizePreferredContact(draft.preferredContact)
+  currentStep.value = clampContactLeadStep(draft.currentStep)
 })
 
 watch(
   () => [form.firstName, form.email, form.comment, form.phone, preferredContact.value, currentStep.value],
   () => {
-    const draft: ContactDraft = {
+    const draft: ContactLeadDraft = {
       firstName: form.firstName,
       email: form.email,
       comment: form.comment,
@@ -134,7 +129,7 @@ watch(
       preferredContact: preferredContact.value,
       currentStep: currentStep.value
     }
-    window.localStorage.setItem(draftStorageKey, JSON.stringify(draft))
+    writeContactDraft(draftStorageKey, draft)
   }
 )
 </script>

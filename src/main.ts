@@ -10,8 +10,9 @@ import { setDevBackendAvailability } from './application/backend/devBackendAvail
 import { configureAnalytics, enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
 import { probeBackendHealth } from './infrastructure/health/probeBackendHealth'
 import { initAttribution } from './infrastructure/attribution/utm'
-import { consentManagerKey, type ConsentStatus } from './application/consent/consentManager'
+import { type ConsentStatus } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
+import { consentManagerKey } from './di/keys'
 
 const head = createHead()
 

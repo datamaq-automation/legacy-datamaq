@@ -1,5 +1,6 @@
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { consentManagerKey, type ConsentStatus } from '@/application/consent/consentManager'
+import { type ConsentStatus } from '@/application/consent/consentManager'
+import { consentManagerKey } from '@/di/keys'
 import { useContainer } from '@/di/container'
 
 export function useConsentBanner() {
