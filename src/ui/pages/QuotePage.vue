@@ -7,8 +7,7 @@ import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import type {
   DiagnosticQuoteRequest,
-  DiagnosticQuoteResponse,
-  QuoteBureaucracyLevel
+  DiagnosticQuoteResponse
 } from '@/application/dto/quote'
 import {
   summarizeDiagnosticQuoteRequest,
@@ -16,44 +15,23 @@ import {
   summarizeQuoteError,
   summarizeQuotePdfDownload
 } from '@/application/quote/quoteRuntimeDiagnostics'
-import { QuoteApiError, type QuoteValidationIssue } from '@/application/quote/quoteApiError'
+import { QuoteApiError } from '@/application/quote/quoteApiError'
 import { buildRuntimeLogArgs } from '@/application/utils/runtimeConsole'
+import {
+  collectInvalidQuoteFields,
+  hasQuoteFormErrors,
+  mapBackendValidationIssuesToQuoteErrors,
+  QUOTE_FORM_FIELDS,
+  type QuoteFormErrors,
+  type QuoteFormState,
+  validateQuoteForm
+} from '@/features/quote/application/quoteFormValidation'
 import { getWhatsAppEnabled, getWhatsAppHref } from '@/ui/controllers/contactController'
 import { createDiagnosticQuote, fetchQuotePdf } from '@/ui/controllers/quoteController'
 import { saveQuoteWebSnapshot } from './quoteWebState'
 import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
-type BinaryChoice = boolean | null
-const QUOTE_FORM_FIELDS = [
-  'company',
-  'contact_name',
-  'locality',
-  'scheduled',
-  'access_ready',
-  'safe_window_confirmed',
-  'bureaucracy',
-  'email',
-  'phone',
-  'notes'
-] as const
-type QuoteFormField = (typeof QUOTE_FORM_FIELDS)[number]
-const QUOTE_FORM_FIELDS_SET = new Set<string>(QUOTE_FORM_FIELDS)
-
-interface QuoteFormState {
-  company: string
-  contact_name: string
-  locality: string
-  scheduled: BinaryChoice
-  access_ready: BinaryChoice
-  safe_window_confirmed: BinaryChoice
-  bureaucracy: QuoteBureaucracyLevel | ''
-  email: string
-  phone: string
-  notes: string
-}
-
-type QuoteFormErrors = Partial<Record<QuoteFormField, string>>
-
+// SOLID-DEBATE: Evaluar extraer el workflow generate/download/webview a un composable dedicado inyectable.
 interface QuoteDiscountView {
   key: string
   label: string
@@ -103,9 +81,11 @@ async function handleGenerateQuote() {
   clearErrors()
   errorMessage.value = undefined
 
-  if (!validateForm()) {
+  const validationErrors = validateQuoteForm(form)
+  if (hasQuoteFormErrors(validationErrors)) {
+    applyQuoteFormErrors(validationErrors)
     logQuoteUiWarn('generar propuesta validacion local fallo', {
-      invalidFields: collectInvalidQuoteFields()
+      invalidFields: collectInvalidQuoteFields(validationErrors)
     })
     return
   }
@@ -222,45 +202,22 @@ function handleOpenWebView() {
   })
 }
 
-function validateForm(): boolean {
-  let valid = true
-
-  if (!form.company.trim()) {
-    errors.company = 'Ingresa la empresa.'
-    valid = false
-  }
-  if (!form.contact_name.trim()) {
-    errors.contact_name = 'Ingresa el nombre de contacto.'
-    valid = false
-  }
-  if (!form.locality.trim()) {
-    errors.locality = 'Ingresa la localidad.'
-    valid = false
-  }
-  if (form.scheduled === null) {
-    errors.scheduled = 'Selecciona Si o No.'
-    valid = false
-  }
-  if (form.access_ready === null) {
-    errors.access_ready = 'Selecciona Si o No.'
-    valid = false
-  }
-  if (form.safe_window_confirmed === null) {
-    errors.safe_window_confirmed = 'Selecciona Si o No.'
-    valid = false
-  }
-
-  return valid
-}
-
 function clearErrors(): void {
   QUOTE_FORM_FIELDS.forEach((field) => {
     delete errors[field]
   })
 }
 
-function collectInvalidQuoteFields(): QuoteFormField[] {
-  return QUOTE_FORM_FIELDS.filter((field) => Boolean(errors[field]?.trim()))
+function applyQuoteFormErrors(nextErrors: QuoteFormErrors): void {
+  QUOTE_FORM_FIELDS.forEach((field) => {
+    const message = nextErrors[field]?.trim()
+    if (message) {
+      errors[field] = message
+      return
+    }
+
+    delete errors[field]
+  })
 }
 
 function buildQuoteCreationErrorMessage(error: unknown): string {
@@ -269,8 +226,9 @@ function buildQuoteCreationErrorMessage(error: unknown): string {
   }
 
   if (error.status === 422) {
-    const hasFieldErrors = applyBackendValidationErrors(error.validationIssues)
-    if (hasFieldErrors) {
+    const backendFieldErrors = mapBackendValidationIssuesToQuoteErrors(error.validationIssues)
+    if (hasQuoteFormErrors(backendFieldErrors)) {
+      applyQuoteFormErrors(backendFieldErrors)
       return 'Revisa los campos marcados e intenta nuevamente.'
     }
     return normalizeText(error.detail) ?? 'No pudimos validar los datos enviados. Revisa el formulario.'
@@ -309,40 +267,6 @@ function buildQuotePdfErrorMessage(error: unknown): string {
     normalizeText(error.message) ??
     'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
   )
-}
-
-function applyBackendValidationErrors(validationIssues: QuoteValidationIssue[]): boolean {
-  let hasFieldErrors = false
-
-  validationIssues.forEach((issue) => {
-    const field = resolveQuoteFormField(issue)
-    if (!field) {
-      return
-    }
-    errors[field] = issue.message
-    hasFieldErrors = true
-  })
-
-  return hasFieldErrors
-}
-
-function resolveQuoteFormField(issue: QuoteValidationIssue): QuoteFormField | undefined {
-  if (issue.field && isQuoteFormField(issue.field)) {
-    return issue.field
-  }
-
-  for (let index = issue.loc.length - 1; index >= 0; index -= 1) {
-    const segment = issue.loc[index]
-    if (typeof segment === 'string' && isQuoteFormField(segment)) {
-      return segment
-    }
-  }
-
-  return undefined
-}
-
-function isQuoteFormField(value: string): value is QuoteFormField {
-  return QUOTE_FORM_FIELDS_SET.has(value)
 }
 
 function buildRateLimitMessage(retryAfterSeconds: number | undefined, action: string): string {

@@ -12,6 +12,7 @@ import { computed, onMounted, onUnmounted } from 'vue'
 import { mapNavbarLinks, toHomeSectionRoute } from './landingNavigation'
 
 type HomeVariant = 'direct' | 'authority'
+// SOLID-DEBATE: Si aparece una tercera variante, evaluar estrategia inyectable por variante en lugar de branching local.
 
 const HOME_SECTION_ORDER = ['#servicios', '#perfil', '#faq', '#contacto']
 const SERVICE_ICON_BY_KEYWORD: Array<{ keyword: string; icon: string }> = [
