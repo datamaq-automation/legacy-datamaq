@@ -103,6 +103,7 @@ Path: src/components/TecnicoACargo.vue
 import { computed } from 'vue'
 import { getWhatsAppHref } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
+import { reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 const props = withDefaults(
   defineProps<{
@@ -133,17 +134,17 @@ const technician = computed(() => {
   return content.getBrandContent().technician
 })
 
-function handleWhatsAppClick(): void {
+function handleWhatsAppClick(): boolean | void {
   if (!whatsappHref.value) {
     return
   }
-
-  window.open(whatsappHref.value, '_blank')
 
   const params = new URLSearchParams(environment.search())
   const utmSource = params.get('utm_source')
   const trafficSource = utmSource || environment.referrer() || 'direct'
   engagementTracker.trackChat('tecnico-a-cargo', trafficSource)
+
+  return reportGtagConversion(whatsappHref.value)
 }
 </script>
 

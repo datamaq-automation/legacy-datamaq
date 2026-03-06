@@ -5,7 +5,7 @@ import TecnicoACargo from '@/components/TecnicoACargo.vue'
 const mocks = vi.hoisted(() => ({
   getWhatsAppHref: vi.fn(),
   trackChat: vi.fn(),
-  windowOpen: vi.fn(),
+  gtagConversion: vi.fn(),
   getBrandContent: vi.fn()
 }))
 
@@ -32,7 +32,7 @@ describe('TecnicoACargo', () => {
   beforeEach(() => {
     mocks.getWhatsAppHref.mockReset()
     mocks.trackChat.mockReset()
-    mocks.windowOpen.mockReset()
+    mocks.gtagConversion.mockReset()
     mocks.getBrandContent.mockReset()
     mocks.getBrandContent.mockReturnValue({
       technician: {
@@ -46,10 +46,12 @@ describe('TecnicoACargo', () => {
         unavailableLabel: 'Técnico no disponible'
       }
     })
-    vi.spyOn(window, 'open').mockImplementation(mocks.windowOpen)
+    mocks.gtagConversion.mockReturnValue(false)
+    const windowWithGtag = window as unknown as { gtag_report_conversion?: (url?: string) => boolean }
+    windowWithGtag.gtag_report_conversion = mocks.gtagConversion
   })
 
-  it('renders the technician card and opens WhatsApp on click', async () => {
+  it('renders the technician card and reports WhatsApp conversion on click', async () => {
     mocks.getWhatsAppHref.mockReturnValue('https://wa.me/5491156297160')
 
     render(TecnicoACargo)
@@ -60,7 +62,7 @@ describe('TecnicoACargo', () => {
     const button = screen.getByRole('button', { name: 'Coordinar por WhatsApp' })
     await fireEvent.click(button)
 
-    expect(mocks.windowOpen).toHaveBeenCalledWith('https://wa.me/5491156297160', '_blank')
+    expect(mocks.gtagConversion).toHaveBeenCalledWith('https://wa.me/5491156297160')
     expect(mocks.trackChat).toHaveBeenCalledWith('tecnico-a-cargo', 'direct')
   })
 

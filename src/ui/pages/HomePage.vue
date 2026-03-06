@@ -4,13 +4,16 @@ import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import { useHomePage } from './HomePage'
+import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 const {
   navbar,
   hero,
   services,
   about,
-  profile,
+  homeVariant,
+  isDirectVariant,
+  isAuthorityVariant,
   homePage,
   footer,
   legal,
@@ -26,15 +29,35 @@ const {
   faqItems,
   profileLead,
   profileDetail,
+  profileBenefits,
+  authorityHighlights,
+  urgencyBadge,
+  emergencyLabel,
   footerYear,
   handleChat,
   getServiceIcon,
   handleContactSubmit
 } = useHomePage()
+
+function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
+  const whatsappUrl = whatsappHref.value
+  if (!isWhatsAppUrl(whatsappUrl)) {
+    return
+  }
+
+  event.preventDefault()
+  return reportGtagConversion(whatsappUrl)
+}
 </script>
 
 <template>
-  <div id="top" class="app-shell app-shell--home tw:min-h-screen">
+  <div
+    id="top"
+    :class="[
+      'app-shell app-shell--home tw:min-h-screen',
+      `app-shell--variant-${homeVariant}`
+    ]"
+  >
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
 
     <header class="c-home-header" role="banner">
@@ -69,13 +92,14 @@ const {
             <i :class="['bi', link.icon]" aria-hidden="true"></i>
           </RouterLink>
 
-          <RouterLink
+          <button
             v-if="contactCtaEnabled"
+            type="button"
             class="tw:btn-primary c-home-header__cta tw:hidden tw:lg:inline-flex"
-            to="/contact"
+            @click="handleChat('header-emergency', whatsappHref)"
           >
-            {{ homePage.headerContactLabel }}
-          </RouterLink>
+            {{ isDirectVariant ? emergencyLabel : homePage.headerContactLabel }}
+          </button>
           <RouterLink
             v-else
             class="tw:btn-outline c-home-header__cta tw:hidden tw:lg:inline-flex"
@@ -90,9 +114,13 @@ const {
     <main id="contenido-principal" class="c-home-main with-floating-cta">
       <section
         class="section-mobile c-home-hero"
+        :class="{
+          'c-home-hero--direct': isDirectVariant,
+          'c-home-hero--authority': isAuthorityVariant
+        }"
         aria-labelledby="hero-title"
         :style="{
-          backgroundImage: `linear-gradient(180deg, rgba(4, 18, 35, 0.42), rgba(2, 12, 27, 0.96)), url('${hero.image.src}')`
+          backgroundImage: `linear-gradient(180deg, rgba(4, 18, 35, 0.42), rgba(2, 12, 27, 0.96)), url('${isAuthorityVariant ? about.image.src : hero.image.src}')`
         }"
       >
         <div class="tw:container tw:mx-auto tw:px-4">
@@ -101,7 +129,7 @@ const {
               <div class="c-home-hero__copy">
                 <span class="c-home-eyebrow">{{ hero.badge }}</span>
                 <h1 id="hero-title" class="c-home-hero__title">
-                  {{ hero.title }}
+                  {{ isDirectVariant ? 'Servicio Tecnico Industrial Especializado' : hero.title }}
                 </h1>
                 <p class="c-home-hero__subtitle">
                   {{ hero.subtitle }}
@@ -114,19 +142,52 @@ const {
                     class="tw:btn-primary c-home-hero__primary"
                     @click="handleChat('hero', hero.primaryCta.href)"
                   >
-                    {{ hero.primaryCta.label }}
+                    {{ isDirectVariant ? 'Emergencia tecnica por WhatsApp' : 'Contactar por WhatsApp' }}
                   </button>
                   <a
                     v-else
                     class="tw:btn-primary c-home-hero__primary"
                     href="#contacto"
                   >
-                    {{ homePage.heroFallbackContactLabel }}
+                    {{ isDirectVariant ? emergencyLabel : homePage.heroFallbackContactLabel }}
                   </a>
 
-                  <RouterLink class="tw:btn-outline c-home-hero__secondary" :to="{ path: '/', hash: '#servicios' }">
+                  <RouterLink
+                    v-if="!isDirectVariant"
+                    class="tw:btn-outline c-home-hero__secondary"
+                    :to="{ path: '/', hash: '#servicios' }"
+                  >
                     {{ hero.secondaryCta.label }}
                   </RouterLink>
+                </div>
+
+                <p class="c-home-hero__urgency" role="status">
+                  <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
+                  <span>{{ urgencyBadge }}</span>
+                </p>
+                <p class="c-home-hero__prefill">
+                  WhatsApp abre con mensaje precargado para agilizar la asistencia.
+                </p>
+                <div
+                  class="c-home-hero__trust-inline"
+                  :aria-label="homePage.trustLogos?.length ? 'Marcas que confian' : 'Capacidades destacadas'"
+                >
+                  <template v-if="homePage.trustLogos?.length">
+                    <img
+                      v-for="(logo, idx) in homePage.trustLogos"
+                      :key="idx"
+                      :src="logo.src"
+                      :alt="logo.alt"
+                      class="c-home-hero__trust-logo"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </template>
+                  <template v-else>
+                    <span v-for="signal in trustSignals.slice(0, 3)" :key="signal" class="c-home-hero__trust-chip">
+                      {{ signal }}
+                    </span>
+                  </template>
                 </div>
 
                 <ul class="c-home-hero__signals" aria-label="Condiciones operativas">
@@ -137,45 +198,23 @@ const {
               </div>
             </div>
 
-            <div class="tw:col-span-1 tw:lg:col-span-5">
+            <div
+              class="tw:col-span-1 tw:lg:col-span-5"
+              :class="{ 'tw:hidden tw:lg:block': isDirectVariant }"
+            >
               <article class="c-home-hero__media-card">
                 <p class="c-home-hero__media-label">{{ homePage.heroMediaLabel }}</p>
                 <img
-                  :src="hero.image.src"
-                  :alt="hero.image.alt"
+                  :src="isAuthorityVariant ? about.image.src : hero.image.src"
+                  :alt="isAuthorityVariant ? about.image.alt : hero.image.alt"
                   class="c-home-hero__image"
-                  :width="hero.image.width"
-                  :height="hero.image.height"
+                  :width="isAuthorityVariant ? about.image.width : hero.image.width"
+                  :height="isAuthorityVariant ? about.image.height : hero.image.height"
                   fetchpriority="high"
                   loading="eager"
                   decoding="async"
                 />
               </article>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="c-home-trust" aria-labelledby="trust-title">
-        <div class="tw:container tw:mx-auto tw:px-4">
-          <div class="c-home-trust__shell">
-            <p id="trust-title" class="c-home-trust__label">{{ homePage.trustTitle }}</p>
-            <div v-if="homePage.trustLogos?.length" class="c-home-trust__rail c-home-trust__rail--logos" role="list" aria-label="Marcas que confían">
-              <img
-                v-for="(logo, idx) in homePage.trustLogos"
-                :key="idx"
-                :src="logo.src"
-                :alt="logo.alt"
-                class="c-home-trust__logo"
-                loading="lazy"
-                decoding="async"
-                role="listitem"
-              />
-            </div>
-            <div v-else class="c-home-trust__rail" role="list" aria-label="Capacidades destacadas">
-              <span v-for="signal in trustSignals" :key="signal" class="c-home-trust__item" role="listitem">
-                {{ signal }}
-              </span>
             </div>
           </div>
         </div>
@@ -187,7 +226,7 @@ const {
             <div class="tw:col-span-1 tw:lg:col-span-5">
               <article class="c-home-panel c-home-profile__card">
                 <span class="c-home-eyebrow">{{ homePage.profileEyebrow }}</span>
-                <div class="c-home-profile__avatar-wrap">
+                <div class="c-home-profile__avatar-wrap" :class="{ 'tw:hidden tw:lg:flex': isDirectVariant }">
                   <img
                     :src="about.image.src"
                     :alt="about.image.alt"
@@ -209,7 +248,7 @@ const {
                   class="tw:btn-primary c-home-profile__cta"
                   @click="handleChat('profile-card', whatsappHref)"
                 >
-                  {{ homePage.profileWhatsappLabel }}
+                  {{ isDirectVariant ? `${emergencyLabel} por WhatsApp` : homePage.profileWhatsappLabel }}
                 </button>
                   <RouterLink
                     v-else
@@ -223,16 +262,30 @@ const {
 
             <div class="tw:col-span-1 tw:lg:col-span-7">
               <article class="c-home-panel c-home-profile__details">
-                <p class="c-home-profile__section-label">{{ homePage.profileSectionLabel }}</p>
+                <p class="c-home-profile__section-label">
+                  {{ isAuthorityVariant ? 'Por que elegirnos' : homePage.profileSectionLabel }}
+                </p>
                 <p class="c-home-profile__detail-copy">
                   {{ profileDetail }}
                 </p>
-                <ul class="c-home-profile__bullets">
-                  <li v-for="bullet in profile.bullets" :key="bullet">
+                <ul v-if="isAuthorityVariant" class="c-home-profile__bullets c-home-profile__bullets--authority">
+                  <li v-for="highlight in authorityHighlights" :key="highlight">
                     <span class="c-home-profile__bullet-dot" aria-hidden="true"></span>
-                    <span>{{ bullet }}</span>
+                    <span>{{ highlight }}</span>
                   </li>
                 </ul>
+                <div class="c-home-profile__benefits-grid">
+                  <article
+                    v-for="benefit in profileBenefits"
+                    :key="benefit.text"
+                    class="c-home-profile__benefit-card"
+                  >
+                    <span class="c-home-profile__benefit-icon" aria-hidden="true">
+                      <i :class="['bi', benefit.icon]"></i>
+                    </span>
+                    <p>{{ benefit.text }}</p>
+                  </article>
+                </div>
               </article>
             </div>
           </div>
@@ -252,12 +305,12 @@ const {
           </div>
 
           <div class="c-home-services__grid">
-            <details
+            <article
               v-for="card in services.cards"
               :key="card.id"
               class="c-home-service-card"
             >
-              <summary class="c-home-service-card__summary">
+              <div class="c-home-service-card__summary">
                 <span class="c-home-service-card__icon" aria-hidden="true">
                   <i :class="['bi', getServiceIcon(card.id, card.title)]"></i>
                 </span>
@@ -265,16 +318,15 @@ const {
                   <span class="c-home-service-card__title">{{ card.title }}</span>
                   <span class="c-home-service-card__description">{{ card.description }}</span>
                 </span>
-                <span class="c-home-service-card__toggle" aria-hidden="true">
-                  <i class="bi bi-chevron-down"></i>
-                </span>
-              </summary>
+              </div>
 
               <div class="c-home-service-card__content">
                 <p class="c-home-service-card__subtitle">{{ card.subtitle }}</p>
                 <ul class="c-home-service-card__list">
-                  <li v-for="item in card.items" :key="item">
-                    <span class="c-home-service-card__bullet" aria-hidden="true"></span>
+                  <li v-for="item in card.items.slice(0, 3)" :key="item">
+                    <span class="c-home-service-card__bullet" aria-hidden="true">
+                      <i class="bi bi-check2-circle"></i>
+                    </span>
                     <span>{{ item }}</span>
                   </li>
                 </ul>
@@ -297,7 +349,7 @@ const {
                   {{ card.cta.label }}
                 </RouterLink>
               </div>
-            </details>
+            </article>
           </div>
         </div>
       </section>
@@ -355,6 +407,7 @@ const {
               :href="whatsappHref"
               :target="isExternalWhatsappHref ? '_blank' : undefined"
               :rel="isExternalWhatsappHref ? 'noopener noreferrer' : undefined"
+              @click="handleFooterWhatsAppClick"
             >
               {{ navbar.contactLabel }}
             </a>
@@ -366,11 +419,19 @@ const {
     <ConsentBanner />
     <WhatsAppFab />
 
-    <nav class="c-home-dock tw:lg:hidden" aria-label="Navegacion rapida">
+    <nav
+      class="c-home-dock tw:lg:hidden"
+      :class="{ 'c-home-dock--direct': isDirectVariant }"
+      :style="{ '--dock-columns': String(Math.max(dockLinks.length, 1)) }"
+      aria-label="Navegacion rapida"
+    >
       <RouterLink
         v-for="link in dockLinks"
         :key="link.label"
-        class="c-home-dock__link"
+        :class="[
+          'c-home-dock__link',
+          { 'c-home-dock__link--emergency': link.label === emergencyLabel }
+        ]"
         :to="link.to"
       >
         <i :class="['bi', link.icon]" aria-hidden="true"></i>
@@ -409,7 +470,7 @@ const {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 4.5rem;
+  min-height: 4rem;
 }
 
 .c-home-header__brand {
@@ -477,7 +538,7 @@ const {
 }
 
 .c-home-header__cta {
-  min-height: 2.85rem;
+  min-height: 2.65rem;
   white-space: nowrap;
 }
 
@@ -501,6 +562,10 @@ const {
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
+}
+
+.c-home-hero.section-mobile {
+  padding-block: clamp(1.4rem, 3vw, 2.2rem) clamp(2.4rem, 4vw, 3.1rem);
 }
 
 .c-home-hero::before {
@@ -535,6 +600,18 @@ const {
   padding: clamp(1.5rem, 4vw, 2.5rem);
 }
 
+.app-shell--variant-direct .c-home-hero__copy {
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+}
+
+.app-shell--variant-direct .c-home-header__inner {
+  min-height: 3.7rem;
+}
+
+.app-shell--variant-authority .c-home-hero__copy {
+  padding: clamp(1.4rem, 3.2vw, 2rem);
+}
+
 .c-home-hero__title,
 .c-home-section-title {
   margin: 0;
@@ -563,6 +640,62 @@ const {
   flex-wrap: wrap;
   gap: 0.9rem;
   margin-top: 1.5rem;
+}
+
+.c-home-hero__urgency {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.95rem 0 0;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--dm-whatsapp-green-rgb), 0.45);
+  background: rgba(var(--dm-whatsapp-green-rgb), 0.18);
+  color: rgba(var(--dm-text-0-rgb), 0.95);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.c-home-hero__urgency i {
+  color: rgba(var(--dm-whatsapp-green-rgb), 0.95);
+}
+
+.c-home-hero__prefill {
+  margin: 0.55rem 0 0;
+  color: rgba(var(--dm-text-0-rgb), 0.64);
+  font-size: 0.82rem;
+}
+
+.c-home-hero__trust-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow-x: auto;
+  margin-top: 1rem;
+  padding-bottom: 0.15rem;
+  scrollbar-width: none;
+}
+
+.c-home-hero__trust-inline::-webkit-scrollbar {
+  display: none;
+}
+
+.c-home-hero__trust-logo {
+  flex: 0 0 auto;
+  height: clamp(1.6rem, 2.7vw, 2.05rem);
+  width: auto;
+  opacity: 0.78;
+  filter: grayscale(1) brightness(1.4);
+}
+
+.c-home-hero__trust-chip {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 0.48rem 0.8rem;
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.16);
+  background: rgba(var(--dm-text-0-rgb), 0.06);
+  color: rgba(var(--dm-text-0-rgb), 0.8);
+  font-size: 0.79rem;
 }
 
 .c-home-hero__primary,
@@ -597,13 +730,16 @@ const {
   background: rgb(var(--dm-accent-orange-rgb));
 }
 
+.app-shell--variant-direct .c-home-hero__signals li:nth-child(n + 3) {
+  display: none;
+}
+
 .c-home-hero__media-card {
   padding: 1.15rem;
 }
 
 .c-home-hero__media-label,
-.c-home-profile__section-label,
-.c-home-trust__label {
+.c-home-profile__section-label {
   margin: 0 0 0.85rem;
   color: rgba(var(--dm-text-0-rgb), 0.6);
   text-transform: uppercase;
@@ -619,57 +755,6 @@ const {
   object-fit: cover;
   border-radius: 1rem;
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.08);
-}
-
-.c-home-trust {
-  padding: 0 0 1rem;
-}
-
-.c-home-trust__shell {
-  border-block: 1px solid rgba(var(--dm-text-0-rgb), 0.08);
-  padding-block: 1.35rem;
-}
-
-.c-home-trust__rail {
-  display: flex;
-  gap: 0.9rem;
-  overflow-x: auto;
-  padding-bottom: 0.1rem;
-  scrollbar-width: none;
-}
-
-.c-home-trust__rail::-webkit-scrollbar {
-  display: none;
-}
-
-.c-home-trust__item {
-  flex: 0 0 auto;
-  border-radius: 999px;
-  padding: 0.8rem 1rem;
-  border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
-  background: rgba(var(--dm-text-0-rgb), 0.05);
-  color: rgba(var(--dm-text-0-rgb), 0.76);
-  font-size: 0.92rem;
-}
-
-.c-home-trust__logo {
-  flex: 0 0 auto;
-  height: clamp(1.8rem, 3.5vw, 2.5rem);
-  width: auto;
-  opacity: 0.65;
-  filter: grayscale(1) brightness(1.5);
-  transition: opacity 0.3s ease, filter 0.3s ease;
-}
-
-.c-home-trust__logo:hover {
-  opacity: 1;
-  filter: grayscale(0) brightness(1);
-}
-
-.c-home-trust__rail--logos {
-  align-items: center;
-  gap: 2.5rem;
-  padding-block: 0.5rem;
 }
 
 .c-home-profile,
@@ -740,6 +825,10 @@ const {
   margin: 1.25rem 0 0;
 }
 
+.c-home-profile__bullets--authority {
+  margin-bottom: 1.2rem;
+}
+
 .c-home-profile__bullets li {
   display: flex;
   align-items: flex-start;
@@ -753,6 +842,39 @@ const {
   margin-top: 0.45rem;
   border-radius: 999px;
   background: rgb(var(--dm-accent-orange-rgb));
+}
+
+.c-home-profile__benefits-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+
+.c-home-profile__benefit-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.95rem;
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.12);
+  background: rgba(var(--dm-text-0-rgb), 0.03);
+}
+
+.c-home-profile__benefit-card p {
+  margin: 0;
+  color: rgba(var(--dm-text-0-rgb), 0.82);
+  line-height: 1.5;
+}
+
+.c-home-profile__benefit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  color: rgb(var(--dm-accent-orange-rgb));
+  background: rgba(var(--dm-accent-orange-rgb), 0.16);
 }
 
 .c-home-section-head {
@@ -788,20 +910,18 @@ const {
   border-top: 3px solid rgba(var(--dm-accent-orange-rgb), 0.9);
 }
 
-.c-home-service-card__summary,
 .c-home-faq__summary {
   list-style: none;
   cursor: pointer;
 }
 
-.c-home-service-card__summary::-webkit-details-marker,
 .c-home-faq__summary::-webkit-details-marker {
   display: none;
 }
 
 .c-home-service-card__summary {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   gap: 1rem;
   align-items: start;
   padding: 1.25rem;
@@ -835,7 +955,6 @@ const {
   line-height: 1.55;
 }
 
-.c-home-service-card__toggle,
 .c-home-faq__toggle {
   display: inline-flex;
   align-items: center;
@@ -844,7 +963,6 @@ const {
   transition: transform 0.24s ease;
 }
 
-.c-home-service-card[open] .c-home-service-card__toggle,
 .c-home-faq__item[open] .c-home-faq__toggle {
   transform: rotate(180deg);
 }
@@ -878,11 +996,8 @@ const {
 
 .c-home-service-card__bullet {
   flex: 0 0 auto;
-  width: 0.45rem;
-  height: 0.45rem;
-  margin-top: 0.55rem;
-  border-radius: 999px;
-  background: rgb(var(--dm-accent-orange-rgb));
+  color: rgb(var(--dm-accent-orange-rgb));
+  margin-top: 0.12rem;
 }
 
 .c-home-service-card__note {
@@ -957,7 +1072,7 @@ const {
   bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
   z-index: 1045;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--dock-columns, 4), minmax(0, 1fr));
   gap: 0.35rem;
   padding: 0.5rem;
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
@@ -992,6 +1107,21 @@ const {
 
 .c-home-dock__link i {
   font-size: 1.25rem;
+}
+
+.c-home-dock--direct .c-home-dock__link {
+  min-height: 4.35rem;
+}
+
+.c-home-dock__link--emergency {
+  color: rgba(var(--dm-whatsapp-green-rgb), 0.95);
+  background: rgba(var(--dm-whatsapp-green-rgb), 0.16);
+}
+
+.c-home-dock__link--emergency:hover,
+.c-home-dock__link--emergency:focus-visible {
+  color: rgba(var(--dm-whatsapp-green-rgb), 0.98);
+  background: rgba(var(--dm-whatsapp-green-rgb), 0.24);
 }
 
 .app-shell--home :deep(.c-contact) {
@@ -1057,7 +1187,7 @@ const {
 
 @media (max-width: 991.98px) {
   .c-home-header__inner {
-    min-height: 4.2rem;
+    min-height: 3.75rem;
   }
 
   .c-home-hero__media-card {

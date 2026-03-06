@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { readQuoteWebSnapshot } from './quoteWebState'
+import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 const route = useRoute()
 const quoteId = computed(() => String(route.params.quoteId ?? '').trim())
@@ -47,6 +48,16 @@ function formatArs(value: number): string {
     currency: 'ARS',
     maximumFractionDigits: 0
   }).format(value)
+}
+
+function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
+  const whatsappUrl = confirmWhatsappHref.value
+  if (!isWhatsAppUrl(whatsappUrl)) {
+    return
+  }
+
+  event.preventDefault()
+  return reportGtagConversion(whatsappUrl)
 }
 </script>
 
@@ -141,6 +152,7 @@ function formatArs(value: number): string {
           :href="confirmWhatsappHref"
           :target="quote ? '_blank' : undefined"
           :rel="quote ? 'noopener noreferrer' : undefined"
+          @click="handleConfirmWhatsappClick"
         >
           <i class="bi bi-whatsapp" aria-hidden="true"></i>
           <span>{{ quote ? 'Confirmar en un clic' : 'Ir al cotizador' }}</span>

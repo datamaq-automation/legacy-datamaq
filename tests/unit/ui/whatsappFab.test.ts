@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 
 const trackChatMock = vi.fn()
-const windowOpenMock = vi.fn()
+const gtagConversionMock = vi.fn()
 
 vi.mock('@/ui/controllers/contactController', () => ({
   getWhatsAppHref: () =>
@@ -30,10 +30,10 @@ vi.mock('@/di/container', () => ({
 describe('WhatsAppFab', () => {
   beforeEach(() => {
     trackChatMock.mockClear()
-    windowOpenMock.mockClear()
-    // Mock window.open usando spyOn
-    windowOpenMock.mockReturnValue({} as Window)
-    vi.spyOn(window, 'open').mockImplementation(windowOpenMock)
+    gtagConversionMock.mockClear()
+    gtagConversionMock.mockReturnValue(false)
+    const windowWithGtag = window as unknown as { gtag_report_conversion?: (url?: string) => boolean }
+    windowWithGtag.gtag_report_conversion = gtagConversionMock
   })
 
   it('renders accessible floating WhatsApp CTA with existing href', () => {
@@ -47,7 +47,7 @@ describe('WhatsAppFab', () => {
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
-  it('opens WhatsApp in new tab and tracks analytics on click', async () => {
+  it('reports conversion and tracks analytics on click', async () => {
     render(WhatsAppFab)
     const link = screen.getByRole('link', {
       name: /Abrir WhatsApp para pedir coordinaci.n/i
@@ -55,13 +55,10 @@ describe('WhatsAppFab', () => {
 
     await fireEvent.click(link)
 
-    // Verifica que window.open se llama con la URL correcta
-    expect(windowOpenMock).toHaveBeenCalledWith(
-      expect.stringContaining('wa.me/5491135162685'),
-      '_blank'
+    expect(gtagConversionMock).toHaveBeenCalledWith(
+      expect.stringContaining('wa.me/5491135162685')
     )
 
-    // Verifica que se trackea el evento
     expect(trackChatMock).toHaveBeenCalledWith('whatsapp-fab', 'direct')
   })
 })

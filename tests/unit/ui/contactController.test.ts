@@ -8,6 +8,8 @@ import {
   trackSectionScroll
 } from '@/ui/controllers/contactController'
 
+const EXPECTED_WHATSAPP_MESSAGE = 'Hola DataMaq, necesito asistencia tecnica para [Tipo de Maquina].'
+
 const mocks = vi.hoisted(() => ({
   trackChat: vi.fn(),
   trackSectionScroll: vi.fn(),
@@ -69,7 +71,12 @@ describe('contactController', () => {
     })
 
     expect(getWhatsAppEnabled()).toBe(true)
-    expect(getWhatsAppHref()).toBe('https://wa.me/5491156297160')
+    const href = getWhatsAppHref()
+    expect(href).toBeDefined()
+
+    const parsed = new URL(href as string)
+    expect(`${parsed.origin}${parsed.pathname}`).toBe('https://wa.me/5491156297160')
+    expect(parsed.searchParams.get('text')).toBe(EXPECTED_WHATSAPP_MESSAGE)
   })
 
   it('returns undefined when WhatsApp CTA is missing', () => {
@@ -99,7 +106,14 @@ describe('contactController', () => {
 
     openWhatsApp('tecnico-a-cargo')
 
-    expect(window.open).toHaveBeenCalledWith('https://wa.me/5491156297160', '_blank', 'noopener,noreferrer')
+    expect(window.open).toHaveBeenCalledWith(
+      expect.stringContaining('https://wa.me/5491156297160'),
+      '_blank',
+      'noopener,noreferrer'
+    )
+    const openedUrl = (window.open as unknown as { mock: { calls: unknown[][] } }).mock.calls[0]?.[0]
+    expect(typeof openedUrl).toBe('string')
+    expect(new URL(openedUrl as string).searchParams.get('text')).toBe(EXPECTED_WHATSAPP_MESSAGE)
     expect(mocks.trackChat).toHaveBeenCalledWith('tecnico-a-cargo', 'google')
   })
 

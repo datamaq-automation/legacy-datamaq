@@ -3,23 +3,30 @@ import { computed } from 'vue'
 import { CTA_COPY } from '@/application/constants/ctaCopy'
 import { getWhatsAppHref } from '@/ui/controllers/contactController'
 import { useContainer } from '@/di/container'
+import { reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 const whatsappHref = computed(() => getWhatsAppHref())
 const fabAriaLabel = 'Abrir WhatsApp para pedir coordinacion'
 
-function handleFabClick(event: MouseEvent): void {
-  if (!whatsappHref.value) {
+function handleFabClick(event: MouseEvent): boolean | void {
+  const whatsappUrl = whatsappHref.value
+  if (!whatsappUrl) {
     return
   }
   event.preventDefault()
-
-  window.open(whatsappHref.value, '_blank')
 
   const { engagementTracker, environment } = useContainer()
   const params = new URLSearchParams(environment.search())
   const utmSource = params.get('utm_source')
   const trafficSource = utmSource || environment.referrer() || 'direct'
   engagementTracker.trackChat('whatsapp-fab', trafficSource)
+
+  const windowWithGtag = window as unknown as { gtag_report_conversion?: (url?: string) => boolean }
+  if (typeof windowWithGtag.gtag_report_conversion === 'function') {
+    return windowWithGtag.gtag_report_conversion(whatsappUrl)
+  }
+
+  return reportGtagConversion(whatsappUrl)
 }
 </script>
 

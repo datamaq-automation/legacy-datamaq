@@ -21,6 +21,7 @@ import { buildRuntimeLogArgs } from '@/application/utils/runtimeConsole'
 import { getWhatsAppEnabled, getWhatsAppHref } from '@/ui/controllers/contactController'
 import { createDiagnosticQuote, fetchQuotePdf } from '@/ui/controllers/quoteController'
 import { saveQuoteWebSnapshot } from './quoteWebState'
+import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 type BinaryChoice = boolean | null
 const QUOTE_FORM_FIELDS = [
@@ -184,12 +185,27 @@ async function handleDownloadPdf() {
   }
 }
 
-function handleOpenWhatsapp() {
+function handleOpenWhatsapp(): boolean | void {
   const whatsappUrl = quote.value?.whatsapp_url
   if (!whatsappUrl || typeof window === 'undefined') {
     return
   }
-  window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+
+  if (!isWhatsAppUrl(whatsappUrl)) {
+    return
+  }
+
+  return reportGtagConversion(whatsappUrl)
+}
+
+function handleFallbackWhatsappClick(event: MouseEvent): boolean | void {
+  const whatsappUrl = fallbackWhatsAppUrl.value
+  if (!isWhatsAppUrl(whatsappUrl)) {
+    return
+  }
+
+  event.preventDefault()
+  return reportGtagConversion(whatsappUrl)
 }
 
 function handleOpenWebView() {
@@ -635,6 +651,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                   :href="fallbackWhatsAppUrl"
                   :target="isFallbackWhatsAppExternal ? '_blank' : undefined"
                   :rel="isFallbackWhatsAppExternal ? 'noopener noreferrer' : undefined"
+                  @click="handleFallbackWhatsappClick"
                 >
                   Consultar al WhatsApp
                 </a>

@@ -4,6 +4,7 @@ import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import { useContactPage } from './ContactPage'
+import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 const {
   navbar,
@@ -21,6 +22,16 @@ const {
   handleChat,
   handleContactSubmit
 } = useContactPage()
+
+function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
+  const whatsappUrl = whatsappHref.value
+  if (!isWhatsAppUrl(whatsappUrl)) {
+    return
+  }
+
+  event.preventDefault()
+  return reportGtagConversion(whatsappUrl)
+}
 </script>
 
 <template>
@@ -136,6 +147,7 @@ const {
             :href="whatsappHref"
             :target="isExternalWhatsappHref ? '_blank' : undefined"
             :rel="isExternalWhatsappHref ? 'noopener noreferrer' : undefined"
+            @click="handleFooterWhatsAppClick"
           >
             {{ navbar.contactLabel }}
           </a>
