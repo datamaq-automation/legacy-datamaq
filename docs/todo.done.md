@@ -85,4 +85,22 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 
 ---
 
+## [2026-03-08] Decisión Arquitectónica: ContentRepository Mega-Repository
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Dividir ContentRepository (15+ interfaces) o mantener mega-repository?
+
+**Decisión**: Opción C - Mantener mega-repository (documentar decisión consciente)
+
+**Justificación**: El repository actúa como Facade unificado para todo el contenido. El riesgo de refactor no justifica el beneficio. Cohesión temática: todo es "content".
+
+**ADR**: `docs/decisions/ADR-005-content-repository-mega-repo.md`
+
+**Acciones**:
+- ✅ Crear ADR-005 documentando decisión consciente
+- ✅ Eliminar pregunta de `preguntas-arquitectura.md`
+
+---
+
 *Workflow completado. docs/todo.md vaciado.*
