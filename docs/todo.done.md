@@ -103,4 +103,41 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 
 ---
 
-*Workflow completado. docs/todo.md vaciado.*
+## [2026-03-08] Decisión Arquitectónica: Archivos TypeScript Grandes
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Refactorizar quoteApiGateway.ts (349 líneas) y contactHooks.ts (254 líneas)?
+
+**Decisión**: Opción B - Mantener cohesión, dividir solo si crecen más
+
+**Justificación**: Ambos archivos tienen alta cohesión funcional. El tamaño es razonable (no excesivo). Cohesión > tamaño arbitrario.
+
+**Límites de reconsideración**:
+- quoteApiGateway.ts > 400 líneas
+- contactHooks.ts > 300 líneas
+
+**ADR**: `docs/decisions/ADR-006-typescript-files-cohesion.md`
+
+**Acciones**:
+- ✅ Crear ADR-006 documentando decisión consciente
+- ✅ Vaciar `preguntas-arquitectura.md` (todas las decisiones resueltas)
+
+---
+
+## Resumen de Decisiones Arquitectónicas (2026-03-08)
+
+| # | Pregunta | Decisión | ADR |
+|---|----------|----------|-----|
+| 1 | Centro de Preferencias Cookies | Mantener lógica simple | ADR-001 |
+| 2 | DI ContentRepository | Mantener con defaults | ADR-002 |
+| 3 | HomePage.vue estructura | Monolito + composable | ADR-003 |
+| 4 | ContactFormSection.vue | Extraer stepper | ADR-004 |
+| 5 | ContentRepository mega-repo | Mantener como Facade | ADR-005 |
+| 6 | Archivos TS grandes | Mantener por cohesión | ADR-006 |
+
+**Total**: 6 decisiones documentadas, 0 pendientes.
+
+---
+
+*Inbox de decisiones arquitectónicas vacío. Todas las preguntas resueltas.*
