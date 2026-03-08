@@ -62,4 +62,27 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 
 ---
 
+## [2026-03-08] Decisión Arquitectónica: ContactFormSection.vue Structure
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Cómo dividir ContactFormSection.vue (641 líneas, formulario wizard)?
+
+**Decisión**: Opción B - Extraer solo el stepper, mantener pasos inline
+
+**Justificación**: El stepper es puramente presentacional y reusable. Extraer todos los pasos sería overkill con alto riesgo.
+
+**ADR**: `docs/decisions/ADR-004-contact-form-structure.md`
+
+**Plan de acción**: 
+- Crear `ContactStepper.vue` componente presentacional
+- Integrar en `ContactFormSection.vue`
+- Estimación: 2-3 horas
+
+**Acciones**:
+- ✅ Crear ADR-004 documentando decisión y plan
+- ✅ Eliminar pregunta de `preguntas-arquitectura.md`
+
+---
+
 *Workflow completado. docs/todo.md vaciado.*

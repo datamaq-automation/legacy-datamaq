@@ -4,19 +4,6 @@
 
 ---
 
-### [2026-03-08] Refactorización de ContactFormSection.vue
-- **Contexto**: ContactFormSection.vue tiene 641 líneas con formulario multi-paso
-- **Pregunta**: ¿Cómo dividir el componente manteniendo la lógica de pasos intacta?
-- **Opciones consideradas**:
-  - A) Extraer ContactStepper.vue + ContactFormStep[n].vue
-  - B) Extraer solo el stepper, mantener pasos inline
-  - C) Mantener monolito, mejorar organización interna
-- **Impacto**: UI/UX, testeabilidad
-- **Decisión**: (pendiente)
-- **ADR resultante**: (pendiente)
-
----
-
 ### [2026-03-08] División de ContentRepository (15+ interfaces)
 - **Contexto**: ContentRepository implementa 15+ interfaces (ContentPort, SiteSnapshotPort, NavbarContentPort, etc.)
 - **Pregunta**: ¿Dividir en repositorios especializados o mantener mega-repository?
