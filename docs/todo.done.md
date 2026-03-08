@@ -38,4 +38,22 @@ Las siguientes tareas fueron escaladas a `docs/decisions/preguntas-arquitectura.
 
 ---
 
+## [2026-03-08] Decisión Arquitectónica: ContentRepository DI
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Refactorizar inyección de dependencias en ContentRepository?
+
+**Decisión**: Opción C - Mantener implementación actual con defaults
+
+**Justificación**: El riesgo de refactorización no justifica el beneficio académico. El código funciona correctamente.
+
+**ADR**: `docs/decisions/ADR-002-content-repository-di.md`
+
+**Acciones**:
+- ✅ Crear ADR-002 documentando decisión consciente
+- ✅ Eliminar pregunta de `preguntas-arquitectura.md`
+
+---
+
 *Workflow completado. docs/todo.md vaciado.*

@@ -4,19 +4,6 @@
 
 ---
 
-### [2026-03-08] Refactorización de Inyección de Dependencias en ContentRepository
-- **Contexto**: ContentRepository inicializa implementaciones concretas (NoopLogger, FetchHttpClient) en el constructor con valores por defecto
-- **Pregunta**: ¿Cómo refactorizar para eliminar dependencias concretas del constructor y usar inyección pura vía DI container?
-- **Opciones consideradas**: 
-  - A) Eliminar defaults y forzar inyección completa
-  - B) Usar factory pattern con container
-  - C) Mantener como está (documentar decisión consciente)
-- **Impacto**: Cross-cutting (afecta infraestructura y container DI)
-- **Decisión**: (pendiente)
-- **ADR resultante**: (pendiente)
-
----
-
 ### [2026-03-08] Refactorización de Componentes Vue Grandes - HomePage.vue
 - **Contexto**: HomePage.vue tiene 1124 líneas (~50 script, ~390 template, ~680 estilos)
 - **Pregunta**: ¿Extraer sub-componentes (HomeHero, HomeProfile, HomeServices, HomeFaq) o mantener monolito por simplicidad?
