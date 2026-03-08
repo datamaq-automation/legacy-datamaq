@@ -26,18 +26,6 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 
 ---
 
-## Dudas de Alto Nivel Escaladas
-
-Las siguientes tareas fueron escaladas a `docs/decisions/preguntas-arquitectura.md` para decisión del usuario:
-
-1. **Refactorización DI en ContentRepository** - Impacto estructural
-2. **Refactorización HomePage.vue** - Impacto UI/UX grande
-3. **Refactorización ContactFormSection.vue** - Impacto UI/UX grande  
-4. **División ContentRepository (15+ interfaces)** - Diseño arquitectónico
-5. **Reducción archivos TypeScript grandes** - Refactorización significativa
-
----
-
 ## [2026-03-08] Decisión Arquitectónica: ContentRepository DI
 
 ### ✅ Decisión Tomada
@@ -52,6 +40,24 @@ Las siguientes tareas fueron escaladas a `docs/decisions/preguntas-arquitectura.
 
 **Acciones**:
 - ✅ Crear ADR-002 documentando decisión consciente
+- ✅ Eliminar pregunta de `preguntas-arquitectura.md`
+
+---
+
+## [2026-03-08] Decisión Arquitectónica: HomePage.vue Component Structure
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Cómo estructurar HomePage.vue (1,124 líneas)?
+
+**Decisión**: Opción B - Mantener monolito, extraer solo composables
+
+**Justificación**: El composable `useHomePage()` ya existe y separa la lógica. Extraer sub-componentes sería overkill sin necesidad de reutilización.
+
+**ADR**: `docs/decisions/ADR-003-homepage-component-structure.md`
+
+**Acciones**:
+- ✅ Crear ADR-003 documentando decisión consciente
 - ✅ Eliminar pregunta de `preguntas-arquitectura.md`
 
 ---

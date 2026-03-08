@@ -4,19 +4,6 @@
 
 ---
 
-### [2026-03-08] Refactorización de Componentes Vue Grandes - HomePage.vue
-- **Contexto**: HomePage.vue tiene 1124 líneas (~50 script, ~390 template, ~680 estilos)
-- **Pregunta**: ¿Extraer sub-componentes (HomeHero, HomeProfile, HomeServices, HomeFaq) o mantener monolito por simplicidad?
-- **Opciones consideradas**:
-  - A) Extraer 4 sub-componentes con sus propios estilos
-  - B) Mantener monolito, extraer solo composables
-  - C) Extraer solo la parte de estilos a SCSS separado
-- **Impacto**: UI/UX, mantenibilidad, bundle size
-- **Decisión**: (pendiente)
-- **ADR resultante**: (pendiente)
-
----
-
 ### [2026-03-08] Refactorización de ContactFormSection.vue
 - **Contexto**: ContactFormSection.vue tiene 641 líneas con formulario multi-paso
 - **Pregunta**: ¿Cómo dividir el componente manteniendo la lógica de pasos intacta?
