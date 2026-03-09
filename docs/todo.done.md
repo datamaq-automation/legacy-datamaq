@@ -4,6 +4,39 @@
 
 ---
 
+## [2026-03-09] Decisión Arquitectónica: Estructura de QuotePage.vue
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Cómo estructurar QuotePage.vue (601 líneas) - extraer componentes o mantener monolito?
+
+**Decisión**: Opción C - Mantener monolito (por ahora)
+
+**Justificación**:
+- El código ya anticipa su propio refactor (comentario SOLID-DEBATE línea 34)
+- QuotePage es página específica (no componente compartido como ContactFormSection)
+- Cohesión funcional > fragmentación arbitraria
+- Riesgo de refactor no justifica beneficio actual
+- Consistente con ADR-003 (HomePage.vue) y ADR-007 (HomePage.ts)
+
+**Límites de reconsideración**:
+- Workflow necesite reutilizarse en otra página
+- Archivo supere 800 líneas
+- Se agreguen más features complejos al workflow
+
+**ADR**: `docs/decisions/ADR-009-quotepage-structure.md`
+
+**Acciones**:
+- ✅ Crear ADR-009 documentando decisión consciente
+- ✅ Mantener código existente (sin refactor)
+- ✅ Monitorear límites de reconsideración
+
+**Validación**:
+- `npm run typecheck` ✅
+- `npm run lint:layers` ✅
+
+---
+
 ## [2026-03-09] Decisión Arquitectónica: Consolidación de Módulo SEO
 
 ### ✅ Decisión Tomada
@@ -253,10 +286,32 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 | 2026-03-09 | 8 | whatsappQr.ts ubicación | Mover a composables | Completado |
 | 2026-03-09 | 9 | HomePage.ts estructura | Mantener cohesión | ADR-007 |
 | 2026-03-09 | 10 | Consolidación módulo SEO | Eliminar barrel file | ADR-008 |
+| 2026-03-09 | 11 | QuotePage.vue estructura | Mantener monolito | ADR-009 |
 
-**Total**: 10 decisiones/tareas documentadas, 0 pendientes.
+**Total**: 11 decisiones/tareas documentadas, 0 pendientes.
 
 ---
+
+---
+
+## [2026-03-09] Workflow: Implementación ADR-009 (sin cambios de código)
+
+### ✅ Tareas Completadas
+
+#### ADR-009: Estructura de QuotePage.vue - Mantener Monolito
+- **Decisión**: Opción C - Mantener archivo actual (sin refactor)
+- **Tipo**: Decisión de no-acción (no requiere cambios de código)
+- **Acciones realizadas**:
+  - ✅ Documentar decisión en ADR-009
+  - ✅ Mantener código existente (sin refactor)
+  - ✅ Definir límites de reconsideración (reutilización, 800 líneas, nuevas features)
+- **Validación**:
+  - `npm run typecheck` ✅
+  - `npm run lint:layers` ✅ (0 violaciones)
+- **Riesgo**: Ninguno - sin cambios en código fuente
+- **Estado**: Completada
+
+**Nota**: El comentario SOLID-DEBATE en línea 34 de QuotePage.vue actúa como trigger para futuro refactor cuando sea necesario.
 
 ---
 
