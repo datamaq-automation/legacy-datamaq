@@ -4,6 +4,81 @@
 
 ---
 
+## [2026-03-09] Workflow: Auditoría Frontend Best Practices - Verificación Completa
+
+### ✅ Verificación de Mejoras Propuestas
+
+#### v-for con :key - YA IMPLEMENTADOS
+- **Verificación**: Todos los v-for en el codebase ya tienen `:key` implementado
+- **Hallazgo**: Las mejoras sugeridas en la auditoría ya estaban aplicadas
+- **Archivos verificados**:
+  - `HomePage.vue`: Todos los v-for usan keys (`link.href`, `card.id`, `benefit.text`, `item.question`)
+  - `ServiceCard.vue`: Usa keys compuestos (`${card.id}-item-${index}`)
+  - `MedicionConsumoEscobar.vue`: Usa `faq.question` como key
+- **Estado**: ✅ Completos - no requieren cambios
+
+#### Uso de índice en v-for - ACEPTABLE
+- **Verificación**: Solo 3 casos usan índice como key
+- **Contexto**: Casos donde no hay identificador único disponible:
+  - `trustLogos` con `idx` (array de imágenes sin ID)
+  - `card.items` con `index` (items de servicio son strings)
+- **Decisión**: Mantener índice es aceptable en estos casos
+- **Prioridad**: Baja - no afecta funcionalidad
+
+---
+
+## [2026-03-09] Workflow: Auditoría Frontend Best Practices - Mejoras Ejecutadas
+
+### ✅ Mejoras de Bajo Nivel Ejecutadas
+
+#### Agregar :key a v-for en HomePage.vue
+- **Decisión**: Ejecutar inmediatamente (bajo riesgo, mejora performance)
+- **Cambios realizados**:
+  - Línea 74: `v-for="link in headerLinks"` → `v-for="link in headerLinks" :key="link.href"`
+  - Línea 85: `v-for="link in quickLinks"` → `v-for="link in quickLinks" :key="link.href"`
+- **Validación**: `npm run typecheck` ✅
+- **Riesgo**: Ninguno - cambio mecánico
+
+#### Implementar backoff exponencial en retries HTTP
+- **Decisión**: Ejecutar inmediatamente (mejora estabilidad)
+- **Cambios realizados**:
+  - Agregado delay exponencial entre reintentos: 1s, 2s, 4s
+  - Método `delay()` privado para setTimeout promisificado
+  - Aplica tanto a errores 5xx como a excepciones de red
+- **Archivo**: `src/infrastructure/http/fetchHttpClient.ts`
+- **Validación**:
+  - `npm run typecheck` ✅
+  - `npm run lint:layers` ✅ (0 violaciones)
+- **Riesgo**: Bajo - mejora comportamiento existente
+
+### 🔴 Dudas de Bajo Nivel - Decisión de No Acción
+
+#### Type Assertions (45 usos)
+- **Decisión**: NO ejecutar refactor masivo
+- **Justificación**: La mayoría son justificados (JSON.parse, interoperabilidad)
+- **Meta**: Reducir gradualmente en futuros PRs (<20 usos)
+- **Prioridad**: Baja - no es deuda técnica crítica
+
+#### Uso de any vs unknown (ratio 1:3)
+- **Decisión**: Mantener estado actual
+- **Justificación**: Ratio 50 any / 143 unknown es aceptable
+- **Acción**: Revisar en code reviews futuros
+- **Prioridad**: Baja
+
+#### Timeout HTTP configurable
+- **Decisión**: NO implementar ahora
+- **Justificación**: 10s default funciona para caso de uso actual
+- **Límite**: Implementar cuando haya endpoints que requieran tiempos diferentes
+- **Prioridad**: Baja
+
+#### TODOs de migración a features/
+- **Decisión**: Mantener TODOs existentes
+- **Justificación**: Depende de refactor mayor de arquitectura
+- **Acción**: Abordar cuando se planifique migración completa
+- **Prioridad**: Baja
+
+---
+
 ## [2026-03-09] Decisión Arquitectónica: Estructura de QuotePage.vue
 
 ### ✅ Decisión Tomada
@@ -287,8 +362,10 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 | 2026-03-09 | 9 | HomePage.ts estructura | Mantener cohesión | ADR-007 |
 | 2026-03-09 | 10 | Consolidación módulo SEO | Eliminar barrel file | ADR-008 |
 | 2026-03-09 | 11 | QuotePage.vue estructura | Mantener monolito | ADR-009 |
+| 2026-03-09 | 12 | v-for :key en HomePage | Agregar keys | Completado |
+| 2026-03-09 | 13 | Backoff exponencial HTTP | Implementar retry | Completado |
 
-**Total**: 11 decisiones/tareas documentadas, 0 pendientes.
+**Total**: 13 decisiones/tareas documentadas, 0 pendientes.
 
 ---
 

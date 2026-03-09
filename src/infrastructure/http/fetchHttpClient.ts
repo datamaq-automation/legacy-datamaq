@@ -151,6 +151,7 @@ export class FetchHttpClient implements HttpClient {
   ): Promise<Response> {
     const retries = Math.max(0, options.retries ?? 0)
     const timeoutMs = Math.max(1, options.timeoutMs ?? FetchHttpClient.DEFAULT_TIMEOUT_MS)
+    const baseDelayMs = 1000 // Base para backoff exponencial: 1s, 2s, 4s
 
     let attempt = 0
     let lastError: unknown
@@ -164,6 +165,7 @@ export class FetchHttpClient implements HttpClient {
         })
         clearTimeout(timeoutId)
         if (response.status >= 500 && attempt < retries) {
+          await this.delay(baseDelayMs * Math.pow(2, attempt))
           attempt += 1
           continue
         }
@@ -174,11 +176,16 @@ export class FetchHttpClient implements HttpClient {
         if (attempt >= retries) {
           throw error
         }
+        await this.delay(baseDelayMs * Math.pow(2, attempt))
         attempt += 1
       }
     }
 
     throw lastError instanceof Error ? lastError : new Error('request failed')
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }
 

@@ -71,8 +71,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 
         <nav class="c-home-header__nav tw:hidden tw:lg:flex" aria-label="Navegacion principal">
           <RouterLink
-            v-for="link in headerLinks"
-            :key="link.label"
+            v-for="link in headerLinks" :key="link.href"
             class="c-home-header__nav-link"
             :to="link.to"
           >
@@ -82,8 +81,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 
         <div class="c-home-header__actions">
           <RouterLink
-            v-for="link in quickLinks"
-            :key="link.label"
+            v-for="link in quickLinks" :key="link.href"
             class="c-home-header__icon-link tw:lg:hidden"
             :to="link.to"
             :aria-label="link.label"
