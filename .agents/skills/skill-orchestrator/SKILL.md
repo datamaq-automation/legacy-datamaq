@@ -144,7 +144,7 @@ Sincroniza y mejora docs/ sin ejecutar otros cambios.
 - Skill <120 líneas
 - Funcionalidad muy específica
 - No justifica overhead de mantenimiento separado
-- Ejemplo: ui-ux-audit (112 líneas)
+- Ejemplo: docs-maintainer ya integrado en orchestrator
 
 ✅ ACCIÓN: Proponer absorción por skill más grande o unificación
 ```
@@ -210,12 +210,12 @@ function generateAdrIndex(): void {
 
 ### Skills que el Orchestrator Coordina
 
-- `code-audit` → Detecta problemas de seguridad/arquitectura
-- `frontend-best-practices-audit` → Detecta problemas Vue/TS
-- `ui-ux-audit` → Detecta problemas UI/UX (si aplica)
+- `code-audit` → Detecta problemas de seguridad/arquitectura/SOLID
+- `frontend-best-practices-audit` → Detecta problemas Vue/TS/UI/UX
 - `decision-helper` → Ayuda con decisiones de alto nivel
-- `todo-workflow` → Ejecuta tareas (ahora integrado en Orchestrator)
+- `todo-workflow` → Ejecuta tareas de bajo nivel
 - `gh-actions-audit` → Audita CI/CD (opcional)
+- `docs-maintainer` → Mantiene documentación sincronizada
 
 ### Flujo Automatizado
 
@@ -261,18 +261,25 @@ function generateAdrIndex(): void {
 ```markdown
 ## Análisis de Ecosistema de Skills
 
-### Skills Existentes (6)
+### Skills Existentes (7)
 | Skill | Líneas | Estado | Recomendación |
 |-------|--------|--------|---------------|
-| code-audit | 306 | ✅ OK | Mantener |
-| frontend-best-practices-audit | 356 | ⚠️ Grande | Considerar dividir |
-| ui-ux-audit | 112 | 📦 Pequeño | Unificar con frontend-best-practices |
-| ... | ... | ... | ... |
+| code-audit | 306 | ✅ OK | Mantener - especialista seguridad/arquitectura |
+| frontend-best-practices-audit | 361 | ⚠️ Grande | Considerar dividir si crece más |
+| decision-helper | 310 | ✅ OK | Mantener - flujo decisiones arquitectura |
+| todo-workflow | 348 | ✅ OK | Mantener - ejecución tareas |
+| gh-actions-audit | 166 | ✅ OK | Mantener - especializado CI/CD |
+| docs-maintainer | 339 | ✅ OK | Mantener - sincronización docs |
+| skill-orchestrator | 356 | ✅ OK | Mantener - coordinador meta |
 
-### Duplicaciones Detectadas
-- `code-audit` y `frontend-best-practices-audit` auditan TypeScript
-  - Solución: Especializar code-audit en seguridad/SOLID
-  - frontend-best-practices en Vue/naming
+### Especialización Clara
+- `code-audit` = Generalista: Ciberseguridad + Arquitectura Limpia + SOLID
+- `frontend-best-practices-audit` = Especialista: Vue 3 + TypeScript + Naming + UI/UX
+- `decision-helper` = Decisiones arquitectónicas de alto nivel
+- `todo-workflow` = Ejecución de tareas certeza/duda bajo nivel
+- `gh-actions-audit` = Diagnóstico CI/CD
+- `docs-maintainer` = Sincronización documentación
+- `skill-orchestrator` = Coordinación y optimización del ecosistema
 
 ### Gaps Detectados
 - No hay skill para mantener documentación
@@ -298,8 +305,8 @@ function generateAdrIndex(): void {
 - Tests: ✅ Pasaron (si aplica)
 
 ### Próximos Pasos Sugeridos
-- Unificar ui-ux-audit con frontend-best-practices-audit
-- Considerar división de frontend-best-practices-audit
+- Monitorizar tamaño de frontend-best-practices-audit (actual: 361 líneas)
+- Evaluar si skills pequeños (<200 líneas) podrían integrarse en orchestrator
 ```
 
 ## Reglas de Oro
