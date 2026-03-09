@@ -6,7 +6,11 @@ export interface WhatsAppQrConfig {
   sourceTag: string
 }
 
-export function getWhatsAppQrConfig(): WhatsAppQrConfig {
+/**
+ * Composable para obtener configuración de QR de WhatsApp.
+ * @deprecated Este módulo no está en uso activo - verificar necesidad antes de implementar
+ */
+export function useWhatsAppQrConfig(): WhatsAppQrConfig {
   const qr = useContainer().content.getBrandContent().whatsappQr
   return {
     phoneE164: qr.phoneE164?.trim() ?? '',
@@ -15,7 +19,7 @@ export function getWhatsAppQrConfig(): WhatsAppQrConfig {
   }
 }
 
-export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = getWhatsAppQrConfig()): string {
+export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = useWhatsAppQrConfig()): string {
   const normalizedMessage = config.message.trim()
   const normalizedTag = config.sourceTag.trim()
   if (!normalizedTag) {
@@ -24,7 +28,7 @@ export function buildWhatsAppQrMessage(config: WhatsAppQrConfig = getWhatsAppQrC
   return `${normalizedMessage}\n\nOrigen: ${normalizedTag}`
 }
 
-export function buildWhatsAppQrHref(config: WhatsAppQrConfig = getWhatsAppQrConfig()): string {
+export function buildWhatsAppQrHref(config: WhatsAppQrConfig = useWhatsAppQrConfig()): string {
   const phoneE164 = normalizePhone(config.phoneE164)
   if (!phoneE164) {
     return useContainer().content.getBrandContent().whatsappUrl?.trim() ?? ''

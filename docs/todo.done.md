@@ -4,6 +4,59 @@
 
 ---
 
+## [2026-03-09] Workflow: Procesamiento de Auditoría de Código
+
+### ✅ DUDAS BAJO NIVEL Ejecutadas
+
+#### Seguridad: Verificar localStorage no almacena datos sensibles
+- **Archivos**: `src/infrastructure/storage/browserStorage.ts`, `src/features/contact/infrastructure/contactDraftStorage.ts`
+- **Decisión**: Opción A - Verificar código + Documentar (suficiente para el proyecto actual)
+- **Cambio realizado**:
+  - Verificado: Solo almacena drafts de formularios y consentimiento
+  - Agregado comentario de advertencia de seguridad en BrowserStorage
+- **Validación**: `npm run typecheck` ✅ pasó
+- **Riesgo residual**: Bajo - el proyecto no maneja tokens de autenticación
+
+**Código resultante**:
+```typescript
+/**
+ * ⚠️ SEGURIDAD: Esta implementación usa localStorage (no encriptado).
+ * NO usar para almacenar: tokens de autenticación, contraseñas, datos sensibles.
+ * Uso actual válido: drafts de formularios, preferencias de consentimiento.
+ */
+export class BrowserStorage implements StoragePort {
+```
+
+---
+
+#### Arquitectura: Mover whatsappQr.ts de Application a UI
+- **Archivo origen**: `src/application/constants/whatsappQr.ts`
+- **Archivo destino**: `src/ui/composables/useWhatsAppQr.ts`
+- **Decisión**: Opción A - Mover a `src/ui/composables/` (correcto arquitectónicamente)
+- **Cambio realizado**:
+  - Movido archivo a ubicación correcta (es un composable, no una constante)
+  - Renombrado de `getWhatsAppQrConfig` a `useWhatsAppQrConfig` (convención composables)
+  - Agregado JSDoc con nota de deprecación (archivo no está en uso activo)
+  - Eliminada carpeta `src/application/constants/` (vacía)
+- **Validación**: `npm run typecheck` ✅ pasó (no tenía dependencias externas)
+- **Riesgo**: Ninguno - archivo no estaba siendo importado
+
+---
+
+### 🔴 DUDAS ALTO NIVEL Escaladas
+
+Las siguientes tareas fueron escaladas a `docs/decisions/preguntas-arquitectura.md` para decisión del usuario:
+
+1. **[2026-03-09] Refactor: Reducir complejidad de HomePage.ts**
+   - Impacto: Alto - afecta estructura del composable principal de la home
+   - Opciones: Extraer mapeadores, mantener cohesión, o extraer composables especializados
+
+2. **[2026-03-09] Consolidación: Tipos SEO dispersos en múltiples archivos**
+   - Impacto: Alto - cross-cutting, afecta SEO de toda la aplicación
+   - Opciones: Consolidar en domain/application, mantener separación por capas, o módulo SEO unificado
+
+---
+
 ## [2026-03-08] Workflow: Procesamiento de Auditoría de Código
 
 ### ✅ Certezas Ejecutadas
@@ -125,19 +178,21 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 
 ---
 
-## Resumen de Decisiones Arquitectónicas (2026-03-08)
+## Resumen de Decisiones Arquitectónicas
 
-| # | Pregunta | Decisión | ADR |
-|---|----------|----------|-----|
-| 1 | Centro de Preferencias Cookies | Mantener lógica simple | ADR-001 |
-| 2 | DI ContentRepository | Mantener con defaults | ADR-002 |
-| 3 | HomePage.vue estructura | Monolito + composable | ADR-003 |
-| 4 | ContactFormSection.vue | Extraer stepper | ADR-004 |
-| 5 | ContentRepository mega-repo | Mantener como Facade | ADR-005 |
-| 6 | Archivos TS grandes | Mantener por cohesión | ADR-006 |
+| Fecha | # | Pregunta | Decisión | ADR |
+|-------|---|----------|----------|-----|
+| 2026-03-08 | 1 | Centro de Preferencias Cookies | Mantener lógica simple | ADR-001 |
+| 2026-03-08 | 2 | DI ContentRepository | Mantener con defaults | ADR-002 |
+| 2026-03-08 | 3 | HomePage.vue estructura | Monolito + composable | ADR-003 |
+| 2026-03-08 | 4 | ContactFormSection.vue | Extraer stepper | ADR-004 |
+| 2026-03-08 | 5 | ContentRepository mega-repo | Mantener como Facade | ADR-005 |
+| 2026-03-08 | 6 | Archivos TS grandes | Mantener por cohesión | ADR-006 |
+| 2026-03-09 | 7 | localStorage seguridad | Documentar + verificar | Completado |
+| 2026-03-09 | 8 | whatsappQr.ts ubicación | Mover a composables | Completado |
 
-**Total**: 6 decisiones documentadas, 0 pendientes.
+**Total**: 8 decisiones/tareas documentadas, 2 pendientes de alto nivel en preguntas-arquitectura.md.
 
 ---
 
-*Inbox de decisiones arquitectónicas vacío. Todas las preguntas resueltas.*
+*Inbox de tareas procesado completamente.*
