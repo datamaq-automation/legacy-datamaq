@@ -1,6 +1,6 @@
 ---
 name: frontend-best-practices-audit
-description: "Auditoría integral de mejores prácticas frontend enfocada en Vue 3, TypeScript riguroso, naming conventions, estructura de carpetas, patrones de comunicación HTTP y UI/UX visual. Analiza src/ detectando inconsistencias, malas prácticas, problemas de usabilidad y oportunidades de mejora. Modo preventivo: solo lista hallazgos en docs/todo.md sin ejecutar fixes automáticos."
+description: "Auditoría especializada de mejores prácticas frontend enfocada en Vue 3, TypeScript riguroso, naming conventions, patrones de comunicación HTTP y UI/UX visual. Analiza src/ detectando inconsistencias, malas prácticas, problemas de usabilidad y oportunidades de mejora. Para auditoría de Arquitectura Limpia y SOLID, usar code-audit. Modo preventivo: solo lista hallazgos en docs/todo.md sin ejecutar fixes automáticos."
 ---
 
 # Auditoría de Mejores Prácticas Frontend
@@ -24,7 +24,7 @@ Skill especializado para auditoría de código fuente (`src/`) en cinco dimensio
 - Assets estáticos
 - Tests (salvo malas prácticas evidentes)
 
-## Seis Pilares de Análisis
+## Cinco Pilares de Análisis
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -55,13 +55,7 @@ Skill especializado para auditoría de código fuente (`src/`) en cinco dimensio
 │  ├─ Cancelación de requests                                                │
 │  └─ Offline handling                                                       │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Pilar 5: CODE ORGANIZATION                                                │
-│  ├─ Clean Architecture compliance                                          │
-│  ├─ Tamaño de componentes/funciones                                        │
-│  ├─ Cohesión y acoplamiento                                                │
-│  └─ Comentarios SOLID-DEBATE/TODO                                          │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  Pilar 6: UI/UX VISUAL (Integrado desde ui-ux-audit)                       │
+│  Pilar 5: UI/UX VISUAL (Integrado desde ui-ux-audit)                       │
 │  ├─ Jerarquía visual (títulos, CTAs, espaciado)                            │
 │  ├─ Consistencia de interfaz (tokens, estados, componentes)                │
 │  ├─ Usabilidad (flujos, mensajes de error, navegación)                     │
@@ -69,6 +63,9 @@ Skill especializado para auditoría de código fuente (`src/`) en cinco dimensio
 │  └─ Accesibilidad percibida (foco, orden visual, contraste)                │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+> **Nota:** Para auditoría de **Clean Architecture** y **principios SOLID**, usar el skill `code-audit`.
+> Este skill se enfoca exclusivamente en patrones frontend, TypeScript, naming y UI/UX.
 
 ## Metodología: Preventiva
 
@@ -89,13 +86,12 @@ El usuario decide qué fixes aplicar y cuándo.
 │     ├─→ Composables y utilidades                                           │
 │     └─→ Estructura de carpetas                                             │
 │     ↓                                                                       │
-│  2. ANALYZE - Seis pasadas de análisis                                     │
+│  2. ANALYZE - Cinco pasadas de análisis                                    │
 │     ├─→ Pasada 1: Vue Patterns                                             │
 │     ├─→ Pasada 2: TypeScript Rigoroso                                      │
 │     ├─→ Pasada 3: Naming & Structure                                       │
 │     ├─→ Pasada 4: Communication Patterns                                   │
-│     ├─→ Pasada 5: Code Organization                                        │
-│     └─→ Pasada 6: UI/UX Visual                                             │
+│     └─→ Pasada 5: UI/UX Visual                                             │
 │     ↓                                                                       │
 │  3. CLASSIFY - Clasificar hallazgos                                        │
 │     ├─→ 🔴 CRÍTICO: Bugs potenciales, malas prácticas críticas             │
@@ -287,12 +283,13 @@ clearTimeout(timeout)
 - [ ] Retry logic configurado
 - [ ] Cancelación de requests (AbortController)
 
-### Code Organization
-- [ ] Clean Architecture compliance (lint:layers)
+### Métricas de Código Frontend
 - [ ] Funciones <50 líneas
-- [ ] Componentes <600 líneas (o documentado)
-- [ ] Cohesión alta, acoplamiento bajo
-- [ ] Comentarios TODO/SOLID-DEBATE presentes
+- [ ] Componentes <600 líneas (o documentado con ADR)
+- [ ] Comentarios TODO presentes
+- [ ] Comentarios de decisión consciente (SOLID-DEBATE)
+
+> **Nota:** Para auditoría de **Clean Architecture compliance**, usar `code-audit` con `npm run lint:layers`.
 
 ## Formato de Output en docs/todo.md
 

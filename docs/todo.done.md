@@ -17,6 +17,23 @@
   - Eliminado directorio `.agents/skills/ui-ux-audit/`
 - **Ecosistema resultante**: 6 skills (reducido de 7)
 
+### ✅ Especialización de Skills
+
+#### Eliminación de duplicación code-audit vs frontend-best-practices
+- **Problema**: Ambos skills cubrían Clean Architecture y SOLID
+- **Decisión**: 
+  - Mantener `code-audit` como skill generalista (frontend + backend)
+  - Quitar pilar de Arquitectura/SOLID de `frontend-best-practices-audit`
+- **Cambios realizados**:
+  - `frontend-best-practices-audit`: De 6 pilares a 5 pilares
+  - Eliminado: Pilar 5 (Code Organization con Clean Architecture/SOLID)
+  - Renumerado: Pilar 6 (UI/UX) → Pilar 5
+  - Actualizada descripción y referencias
+- **Beneficio**: 
+  - `code-audit`: Único responsable de Arquitectura Limpia y SOLID
+  - `frontend-best-practices-audit`: Enfocado en Vue, TS, Naming, HTTP, UI/UX
+  - Sin duplicación, responsabilidades claras
+
 ### ✅ Skills Creados
 
 #### docs-maintainer (nuevo skill)
@@ -407,8 +424,9 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 | 2026-03-09 | 13 | Backoff exponencial HTTP | Implementar retry | Completado |
 | 2026-03-09 | 14 | Unificación ui-ux-audit | Integrar en frontend-best-practices | Completado |
 | 2026-03-09 | 15 | Crear docs-maintainer | Nuevo skill para documentación | Completado |
+| 2026-03-09 | 16 | Especializar skills | Quitar SOLID de frontend-best-practices | Completado |
 
-**Total**: 15 decisiones/tareas documentadas, 0 pendientes.
+**Total**: 16 decisiones/tareas documentadas, 0 pendientes.
 
 ---
 
