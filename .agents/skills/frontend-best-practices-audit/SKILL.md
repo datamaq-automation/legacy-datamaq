@@ -1,6 +1,6 @@
 ---
 name: frontend-best-practices-audit
-description: "Auditoría especializada de mejores prácticas frontend enfocada en Vue 3, TypeScript riguroso, naming conventions, estructura de carpetas y patrones de comunicación HTTP. Analiza src/ detectando inconsistencias, malas prácticas y oportunidades de mejora. Modo preventivo: solo lista hallazgos en docs/todo.md sin ejecutar fixes automáticos."
+description: "Auditoría integral de mejores prácticas frontend enfocada en Vue 3, TypeScript riguroso, naming conventions, estructura de carpetas, patrones de comunicación HTTP y UI/UX visual. Analiza src/ detectando inconsistencias, malas prácticas, problemas de usabilidad y oportunidades de mejora. Modo preventivo: solo lista hallazgos en docs/todo.md sin ejecutar fixes automáticos."
 ---
 
 # Auditoría de Mejores Prácticas Frontend
@@ -24,7 +24,7 @@ Skill especializado para auditoría de código fuente (`src/`) en cinco dimensio
 - Assets estáticos
 - Tests (salvo malas prácticas evidentes)
 
-## Cinco Pilares de Análisis
+## Seis Pilares de Análisis
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -60,6 +60,13 @@ Skill especializado para auditoría de código fuente (`src/`) en cinco dimensio
 │  ├─ Tamaño de componentes/funciones                                        │
 │  ├─ Cohesión y acoplamiento                                                │
 │  └─ Comentarios SOLID-DEBATE/TODO                                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  Pilar 6: UI/UX VISUAL (Integrado desde ui-ux-audit)                       │
+│  ├─ Jerarquía visual (títulos, CTAs, espaciado)                            │
+│  ├─ Consistencia de interfaz (tokens, estados, componentes)                │
+│  ├─ Usabilidad (flujos, mensajes de error, navegación)                     │
+│  ├─ Responsive y legibilidad (mobile/desktop, contraste)                   │
+│  └─ Accesibilidad percibida (foco, orden visual, contraste)                │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -82,12 +89,13 @@ El usuario decide qué fixes aplicar y cuándo.
 │     ├─→ Composables y utilidades                                           │
 │     └─→ Estructura de carpetas                                             │
 │     ↓                                                                       │
-│  2. ANALYZE - Cinco pasadas de análisis                                    │
+│  2. ANALYZE - Seis pasadas de análisis                                     │
 │     ├─→ Pasada 1: Vue Patterns                                             │
 │     ├─→ Pasada 2: TypeScript Rigoroso                                      │
 │     ├─→ Pasada 3: Naming & Structure                                       │
 │     ├─→ Pasada 4: Communication Patterns                                   │
-│     └─→ Pasada 5: Code Organization                                        │
+│     ├─→ Pasada 5: Code Organization                                        │
+│     └─→ Pasada 6: UI/UX Visual                                             │
 │     ↓                                                                       │
 │  3. CLASSIFY - Clasificar hallazgos                                        │
 │     ├─→ 🔴 CRÍTICO: Bugs potenciales, malas prácticas críticas             │

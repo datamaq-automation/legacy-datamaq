@@ -4,6 +4,47 @@
 
 ---
 
+## [2026-03-09] Workflow: Optimización de Ecosistema de Skills
+
+### ✅ Skills Unificados
+
+#### ui-ux-audit + frontend-best-practices-audit
+- **Decisión**: Unificar ui-ux-audit (112 líneas) en frontend-best-practices-audit
+- **Justificación**: ui-ux-audit era muy pequeño, funcionalidad complementaria
+- **Cambios realizados**:
+  - Agregado **Pilar 6: UI/UX Visual** a frontend-best-practices-audit
+  - Jerarquía visual, consistencia, usabilidad, responsive, accesibilidad
+  - Eliminado directorio `.agents/skills/ui-ux-audit/`
+- **Ecosistema resultante**: 6 skills (reducido de 7)
+
+### ✅ Skills Creados
+
+#### docs-maintainer (nuevo skill)
+- **Propósito**: Gestionar y sincronizar documentación en docs/
+- **Responsabilidades**:
+  - Mantener todo.md y todo.done.md
+  - Gestionar ADRs e índices
+  - Sincronizar preguntas-arquitectura.md
+  - Generar reportes de documentación
+- **Gap detectado**: No había skill dedicado a documentación
+- **Estado**: ✅ Creado y listo para usar
+
+### 📊 Estado del Ecosistema de Skills
+
+| Skill | Líneas | Estado | Función |
+|-------|--------|--------|---------|
+| skill-orchestrator | 356 | 🆕 Nuevo | Orquestador meta |
+| frontend-best-practices-audit | 356 | 🔄 Actualizado | Vue + TS + Naming + UI/UX |
+| todo-workflow | 348 | ✅ OK | Procesa tareas |
+| decision-helper | 310 | ✅ OK | Decisiones ADR |
+| code-audit | 306 | ✅ OK | Seguridad + SOLID |
+| docs-maintainer | 306 | 🆕 Nuevo | Gestión documentación |
+| gh-actions-audit | 166 | ✅ OK | CI/CD |
+
+**Total**: 7 skills optimizados (consolidado desde 8)
+
+---
+
 ## [2026-03-09] Workflow: Auditoría Frontend Best Practices - Verificación Completa
 
 ### ✅ Verificación de Mejoras Propuestas
@@ -364,8 +405,10 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 | 2026-03-09 | 11 | QuotePage.vue estructura | Mantener monolito | ADR-009 |
 | 2026-03-09 | 12 | v-for :key en HomePage | Agregar keys | Completado |
 | 2026-03-09 | 13 | Backoff exponencial HTTP | Implementar retry | Completado |
+| 2026-03-09 | 14 | Unificación ui-ux-audit | Integrar en frontend-best-practices | Completado |
+| 2026-03-09 | 15 | Crear docs-maintainer | Nuevo skill para documentación | Completado |
 
-**Total**: 13 decisiones/tareas documentadas, 0 pendientes.
+**Total**: 15 decisiones/tareas documentadas, 0 pendientes.
 
 ---
 

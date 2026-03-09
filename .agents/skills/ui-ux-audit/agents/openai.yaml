@@ -1,4 +1,0 @@
-﻿interface:
-  display_name: "UI UX Audit"
-  short_description: "Detectar oportunidades UI/UX y generar docs/todo.md"
-  default_prompt: "Audita la UI/UX en navegador y genera docs/todo.md priorizado"
