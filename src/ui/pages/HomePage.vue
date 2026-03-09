@@ -226,7 +226,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
             <div class="tw:col-span-1 tw:lg:col-span-5">
               <article class="c-home-panel c-home-profile__card">
                 <span class="c-home-eyebrow">{{ homePage.profileEyebrow }}</span>
-                <div class="c-home-profile__avatar-wrap" :class="{ 'tw:hidden tw:lg:flex': isDirectVariant }">
+                <div class="c-home-profile__avatar-wrap tw:flex">
                   <img
                     :src="about.image.src"
                     :alt="about.image.alt"
