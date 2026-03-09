@@ -4,6 +4,69 @@
 
 ---
 
+## [2026-03-09] Decisión Arquitectónica: Consolidación de Módulo SEO
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Consolidar tipos SEO dispersos en múltiples archivos o mantener separación?
+
+**Decisión**: Opción A - Eliminar barrel file `ui/seo/defaultSeo.ts`, usar imports directos
+
+**Justificación**:
+- El barrel file solo re-exportaba, añadía indirección sin valor
+- Imports directos son más claros y explícitos
+- Reduce de 4 a 3 archivos sin pérdida de funcionalidad
+- Mantiene integridad de capas (appSeo.ts permanece en UI)
+
+**ADR**: `docs/decisions/ADR-008-seo-module-consolidation.md`
+
+**Acciones**:
+- ✅ Crear ADR-008 documentando decisión
+- ✅ Actualizar imports en `src/ui/App.ts` (getDefaultSeo desde application)
+- ✅ Actualizar imports en `src/ui/seo/appSeo.ts` (types desde domain, jsonLd desde domain)
+- ✅ Eliminar barrel file `src/ui/seo/defaultSeo.ts`
+- ✅ Validar con typecheck y lint:layers
+
+**Validación**:
+- `npm run typecheck` ✅
+- `npm run lint:layers` ✅ (0 violaciones, 152 archivos escaneados)
+
+**Archivos modificados**:
+- `src/ui/App.ts` - import directo de application/seo/defaultSeo
+- `src/ui/seo/appSeo.ts` - imports directos de domain/seo/types y domain/seo/jsonLd
+- `src/ui/seo/defaultSeo.ts` - 🗑️ Eliminado
+
+---
+
+## [2026-03-09] Decisión Arquitectónica: Estructura de HomePage.ts
+
+### ✅ Decisión Tomada
+
+**Pregunta**: ¿Extraer helpers de mapeo de HomePage.ts a archivo separado o mantener cohesión?
+
+**Decisión**: Opción B - Mantener en archivo actual por cohesión funcional
+
+**Justificación**: 
+- Las funciones helper son específicas de HomePage, no reusables
+- 267 líneas es manejable (no excesivo)
+- El código ya anticipa su propio refactor (comentario SOLID-DEBATE para tercera variante)
+- Riesgo de refactor no justifica beneficio
+- Consistente con ADR-006 (cohesión > tamaño)
+
+**Límites de reconsideración**:
+- Se agrega tercera variante de página
+- Archivo supera 400 líneas  
+- Helpers necesitan reutilización
+
+**ADR**: `docs/decisions/ADR-007-homepage-ts-structure.md`
+
+**Acciones**:
+- ✅ Crear ADR-007 documentando decisión consciente
+- ✅ Eliminar pregunta de `preguntas-arquitectura.md`
+- ✅ No se requieren cambios de código (decisión de no-acción)
+
+---
+
 ## [2026-03-09] Workflow: Procesamiento de Auditoría de Código
 
 ### ✅ DUDAS BAJO NIVEL Ejecutadas
@@ -43,17 +106,15 @@ export class BrowserStorage implements StoragePort {
 
 ---
 
-### 🔴 DUDAS ALTO NIVEL Escaladas
+### 🔴 DUDAS ALTO NIVEL Escaladas/Resueltas
 
-Las siguientes tareas fueron escaladas a `docs/decisions/preguntas-arquitectura.md` para decisión del usuario:
+1. ✅ **[2026-03-09] Refactor: Reducir complejidad de HomePage.ts** → **RESUELTA (ADR-007)**
+   - Decisión: Mantener cohesión, no refactorizar
+   - ADR: `docs/decisions/ADR-007-homepage-ts-structure.md`
 
-1. **[2026-03-09] Refactor: Reducir complejidad de HomePage.ts**
-   - Impacto: Alto - afecta estructura del composable principal de la home
-   - Opciones: Extraer mapeadores, mantener cohesión, o extraer composables especializados
-
-2. **[2026-03-09] Consolidación: Tipos SEO dispersos en múltiples archivos**
-   - Impacto: Alto - cross-cutting, afecta SEO de toda la aplicación
-   - Opciones: Consolidar en domain/application, mantener separación por capas, o módulo SEO unificado
+2. ✅ **[2026-03-09] Consolidación: Tipos SEO dispersos en múltiples archivos** → **RESUELTA (ADR-008)**
+   - Decisión: Eliminar barrel file, usar imports directos
+   - ADR: `docs/decisions/ADR-008-seo-module-consolidation.md`
 
 ---
 
@@ -190,8 +251,33 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 | 2026-03-08 | 6 | Archivos TS grandes | Mantener por cohesión | ADR-006 |
 | 2026-03-09 | 7 | localStorage seguridad | Documentar + verificar | Completado |
 | 2026-03-09 | 8 | whatsappQr.ts ubicación | Mover a composables | Completado |
+| 2026-03-09 | 9 | HomePage.ts estructura | Mantener cohesión | ADR-007 |
+| 2026-03-09 | 10 | Consolidación módulo SEO | Eliminar barrel file | ADR-008 |
 
-**Total**: 8 decisiones/tareas documentadas, 2 pendientes de alto nivel en preguntas-arquitectura.md.
+**Total**: 10 decisiones/tareas documentadas, 0 pendientes.
+
+---
+
+---
+
+## [2026-03-09] Workflow: Implementación ADR-007 (sin cambios de código)
+
+### ✅ Tareas Completadas
+
+#### ADR-007: Estructura de HomePage.ts - Mantener Cohesión
+- **Decisión**: Opción B - Mantener archivo actual por cohesión funcional
+- **Tipo**: Decisión de no-acción (no requiere cambios de código)
+- **Acciones realizadas**:
+  - ✅ Documentar decisión en ADR-007
+  - ✅ Mantener código existente (sin refactor)
+  - ✅ Definir límites de reconsideración (tercera variante, 400 líneas, reuso)
+- **Validación**:
+  - `npm run typecheck` ✅
+  - `npm run lint:layers` ✅ (0 violaciones)
+- **Riesgo**: Ninguno - sin cambios en código fuente
+- **Estado**: Completada
+
+**Nota**: Esta decisión prioriza cohesión funcional sobre fragmentación arbitraria. El código ya anticipa su propio refactor futuro (comentario SOLID-DEBATE para tercera variante).
 
 ---
 

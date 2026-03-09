@@ -1,12 +1,12 @@
 import type { HeadObject } from '@vueuse/head'
 import type { AppContent } from '@/domain/types/content'
+import type { SeoMeta } from '@/domain/seo/types'
 import {
   buildLocalBusinessJsonLd,
   buildOfferCatalogJsonLd,
   buildOrganizationJsonLd,
-  buildWebsiteJsonLd,
-  SeoMeta
-} from '@/ui/seo/defaultSeo'
+  buildWebsiteJsonLd
+} from '@/domain/seo/jsonLd'
 
 export function buildAppHead(
   seo: SeoMeta,

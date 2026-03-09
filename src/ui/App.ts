@@ -6,7 +6,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
 import type { RemoteContentStatus } from '@/application/ports/Content'
-import { getDefaultSeo } from '@/ui/seo/defaultSeo'
+import { getDefaultSeo } from '@/application/seo/defaultSeo'
 import { buildAppHead } from '@/ui/seo/appSeo'
 import { useContainer } from '@/di/container'
 import {
