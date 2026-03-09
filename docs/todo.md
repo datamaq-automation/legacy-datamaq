@@ -8,4 +8,4 @@ Backlog activo. Las tareas cerradas se registran en `docs/todo.done.md`.
 
 ## Dudas de Alto Nivel (Registradas en docs/decisions/)
 
-Ver `docs/decisions/preguntas-arquitectura.md` para decisiones arquitectónicas pendientes.
+Ver `docs/decisions/preguntas-arquitectura.md` para decisiones arquitectonicas pendientes.

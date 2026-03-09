@@ -4,6 +4,37 @@
 
 ---
 
+## [2026-03-09] Workflow: Todo Workflow - Cierre de Backlog
+
+### ✅ Tareas completadas
+
+#### P0 - Smoke e2e para flujo de cotizador web
+- Completado: agregado test `quote flow opens the web quote view` en `tests/e2e/smoke.spec.ts`.
+- Completado: mock de `POST /v1/quote/diagnostic` para habilitar el flujo de generacion de propuesta en smoke.
+- Evidencia: `npm run test:e2e:smoke` -> `4 passed`.
+
+#### P1 - Fallback UX explicito en QuoteWebPage
+- Evaluacion de bajo nivel:
+  - Opcion A: validar fallback solo con unit test semantico (rapido, estable, enfocado en UX visible).
+  - Opcion B: agregar e2e dedicado para ausencia de snapshot (mas costo y redundancia con cobertura unitaria actual).
+- Decision: Opcion A, por menor fragilidad y mejor costo/beneficio en este contexto.
+- Completado: ampliado `tests/unit/ui/quoteWebPage.test.ts` con asserts de copy de fallback y link `Volver al cotizador`.
+- Evidencia: `npm run test -- tests/unit/ui/quoteWebPage.test.ts` -> `2 passed`.
+
+---
+
+## [2026-03-09] Workflow: Orchestrator - Testing Frontend
+
+### Tarea ejecutada
+
+#### Reactivar cobertura de `DynamicContentService`
+- Completado: se des-skippearon 2 pruebas en `tests/unit/infrastructure/dynamicContentService.test.ts`.
+- Completado: se corrigieron fixtures al contrato real (`payload.data`) y se stubeo `window` para ejecutar `bootstrap()` en entorno de test.
+- Evidencia: `npm run test -- tests/unit/infrastructure/dynamicContentService.test.ts` -> `2 passed`.
+- Evidencia: `npm run test` -> `61 passed`, `219 passed`, `0 skipped`.
+
+---
+
 ## [2026-03-09] Workflow: Optimización de Ecosistema de Skills
 
 ### ✅ Skills Unificados

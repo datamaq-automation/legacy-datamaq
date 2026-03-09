@@ -74,6 +74,10 @@ describe('QuoteWebPage', () => {
 
     expect(screen.getByText('No disponible')).toBeInTheDocument()
     expect(screen.getByText('Cotizacion no encontrada')).toBeInTheDocument()
+    expect(
+      screen.getByText('Esta vista depende de una cotizacion generada previamente en el cotizador del frontend.')
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Volver al cotizador' })).toHaveAttribute('href', '/cotizador')
     expect(screen.getByRole('link', { name: 'Ir al cotizador' })).toHaveAttribute('href', '#cotizador')
   })
 })

@@ -6,24 +6,22 @@ import { DynamicContentService } from '@/infrastructure/content/dynamicContentSe
 describe('DynamicContentService', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.stubGlobal('window', {})
   })
 
   afterEach(() => {
+    vi.unstubAllGlobals()
     vi.restoreAllMocks()
   })
 
-  it.skip('successfully fetches and applies remote site snapshot', async () => {
+  it('successfully fetches and applies remote site snapshot', async () => {
     const logger = createLoggerSpy()
     const http = createHttpClientMock({
       ok: true,
       status: 200,
       data: {
         status: 'ok',
-        request_id: 'req-content-123',
-        brand_id: 'datamaq',
-        version: 'v2',
-        content_revision: 'abcd1234',
-        content: {
+        data: {
           hero: {
             title: 'Titulo remoto'
           }
@@ -50,18 +48,14 @@ describe('DynamicContentService', () => {
     expect(onReady).toHaveBeenCalled()
   })
 
-  it.skip('calls onUnavailable when snapshot application fails', async () => {
+  it('calls onUnavailable when snapshot application fails', async () => {
     const logger = createLoggerSpy()
     const http = createHttpClientMock({
       ok: true,
       status: 200,
       data: {
         status: 'ok',
-        request_id: 'req-content-hero',
-        brand_id: 'datamaq',
-        version: 'v2',
-        content_revision: 'rev-hero',
-        content: {
+        data: {
           hero: {
             title: 'Titulo parcial remoto'
           }

@@ -85,6 +85,47 @@ test.describe('Smoke E2E', () => {
       })
     }
 
+    const fulfillQuoteApi = async (route: any) => {
+      const method = route.request().method()
+      if (method !== 'POST') {
+        await route.fulfill({ status: 405 })
+        return
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          quote_id: 'Q-20260309-000777',
+          list_price_ars: 280000,
+          discounts: [
+            {
+              code: 'pre-agenda',
+              label: 'Agenda confirmada',
+              amount_ars: 28000
+            }
+          ],
+          discount_pct: 10,
+          discount_total_ars: 28000,
+          final_price_ars: 252000,
+          deposit_pct: 50,
+          deposit_ars: 126000,
+          valid_until: '2026-03-15T00:00:00Z',
+          whatsapp_message: 'Hola Ada, confirmamos el servicio',
+          whatsapp_url: 'https://wa.me/5491111111111?text=Hola'
+        })
+      })
+    }
+
+    const quoteRoutes = [
+      '**/api/v1/quote/diagnostic*',
+      '**/v1/quote/diagnostic*',
+      '**/plantilla-www/public/api/v1/quote/diagnostic*'
+    ]
+    for (const pattern of quoteRoutes) {
+      await page.route(pattern, fulfillQuoteApi)
+    }
+
     const fulfillContactApi = async (route: any) => {
       const method = route.request().method()
       if (method === 'OPTIONS') {
@@ -168,6 +209,28 @@ test.describe('Smoke E2E', () => {
     await page.locator('.thanks-actions__home').click()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(HOME_H1_PATTERN)
+  })
+
+  test('quote flow opens the web quote view', async ({ page }) => {
+    await page.goto('/cotizador')
+
+    await page.getByLabel(/empresa/i).fill('Datamaq SRL')
+    await page.getByLabel(/nombre de contacto/i).fill('Ada')
+    await page.getByLabel(/localidad/i).fill('Escobar')
+
+    const yesButtons = page.getByRole('button', { name: /^Si$/ })
+    await yesButtons.nth(0).click()
+    await yesButtons.nth(1).click()
+    await yesButtons.nth(2).click()
+
+    await page.getByRole('button', { name: /generar propuesta/i }).click()
+    await expect(page.getByText('Q-20260309-000777')).toBeVisible()
+
+    await page.getByRole('button', { name: /ver version web/i }).click()
+
+    await expect(page).toHaveURL(/\/cotizador\/Q-20260309-000777\/web$/)
+    await expect(page.getByRole('heading', { level: 1, name: 'DATAMAQ' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Confirmar en un clic' })).toBeVisible()
   })
 })
 
