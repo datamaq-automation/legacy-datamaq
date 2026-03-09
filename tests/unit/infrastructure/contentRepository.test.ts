@@ -208,6 +208,11 @@ function createLoggerSpy(): LoggerPort & {
 async function flushAsync(): Promise<void> {
   await Promise.resolve()
   await Promise.resolve()
+  if (vi.isFakeTimers()) {
+    await vi.advanceTimersByTimeAsync(0)
+    return
+  }
+
   await new Promise((resolve) => setTimeout(resolve, 0))
 }
 

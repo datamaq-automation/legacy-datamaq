@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import {
-  buildOrganizationJsonLd,
-  buildWebsiteJsonLd,
-  getDefaultSeo
-} from '@/application/seo/defaultSeo'
+import { getDefaultSeo } from '@/application/seo/defaultSeo'
+import { buildOrganizationJsonLd, buildWebsiteJsonLd } from '@/domain/seo/jsonLd'
 import type { ContentPort, SeoContentPort } from '@/application/ports/Content'
 import type { LocationProvider } from '@/application/ports/Environment'
 import type { SeoContent } from '@/domain/types/site'
