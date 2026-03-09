@@ -141,6 +141,7 @@ describe('ContentRepository', () => {
   })
 
   it('marks remote content as unavailable when required site endpoint fails', async () => {
+    vi.useFakeTimers()
     const logger = createLoggerSpy()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('backend-down', { status: 503 }))
 
@@ -156,8 +157,13 @@ describe('ContentRepository', () => {
 
     repository.bootstrapRemoteData()
     await flushAsync()
+    
+    // Retry delay es de 1000ms (backoff exponencial base)
+    await vi.advanceTimersByTimeAsync(1500)
+    await flushAsync()
 
     expect(repository.getRemoteContentStatus()).toBe('unavailable')
+    vi.useRealTimers()
   })
 
   it('marks remote content as ready when required site endpoint succeeds', async () => {

@@ -3,7 +3,7 @@ import {
   buildOrganizationJsonLd,
   buildWebsiteJsonLd,
   getDefaultSeo
-} from '@/ui/seo/defaultSeo'
+} from '@/application/seo/defaultSeo'
 import type { ContentPort, SeoContentPort } from '@/application/ports/Content'
 import type { LocationProvider } from '@/application/ports/Environment'
 import type { SeoContent } from '@/domain/types/site'
