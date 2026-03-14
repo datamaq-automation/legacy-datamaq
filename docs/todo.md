@@ -1,6 +1,6 @@
 ﻿# Agenda de Tareas de Codigo (`docs/todo.md`)
 
-Auditoria `code-audit` sobre `src/` (2026-03-14, segunda pasada).
+Auditoria `code-audit` sobre `src/` (2026-03-14, tercera pasada preventiva).
 
 ## Resumen Ejecutivo
 
@@ -10,6 +10,8 @@ Auditoria `code-audit` sobre `src/` (2026-03-14, segunda pasada).
 - `npm run lint:layers`: **0 violaciones**
 - `npm run lint:component-size`: **OK**
 - `npm run lint:usecase-deps`: **OK**
+- `npm run lint:origin-verify`: **OK**
+- `npm run lint:client-secrets`: **OK**
 
 ## ADVERTENCIA - Calidad y Arquitectura
 
@@ -62,3 +64,4 @@ Auditoria `code-audit` sobre `src/` (2026-03-14, segunda pasada).
 
 - No se detectaron hallazgos criticos de seguridad activos (sin `v-html`, `eval`, ni violaciones de capas).
 - Hardening de WhatsApp URL y controles de fan-in/tamano siguen vigentes y pasando checks.
+- Esta tercera pasada no agrega hallazgos nuevos abiertos; backlog permanece en cero.
