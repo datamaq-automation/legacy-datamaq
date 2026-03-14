@@ -1,3 +1,25 @@
+## [2026-03-14] Workflow: Todo Workflow - Cierre de backlog frontend-testing-vue-ts-tailwind
+
+### Certezas ejecutadas automaticamente
+
+#### MEJORA - Runner a11y automatizado
+- Completado: implementado runner real en `scripts/run-a11y.mjs` usando Playwright.
+- Completado: agregado spec `tests/e2e/a11y.spec.ts` con checks semanticos base (`main` + `h1`) en rutas criticas (`/`, `/cotizador`, `/gracias`).
+- Validacion: `npm run test:a11y` -> 3/3 OK.
+
+#### MEJORA - Smoke responsive mobile
+- Completado: ampliado `tests/e2e/smoke.spec.ts` con test mobile (`390x844`) para home, thanks y quote web (`/cotizador/:quoteId/web`).
+- Completado: estrategia estable para quote web en mobile con snapshot en `sessionStorage` (`quote-web:last-generated`).
+- Validacion: `npm run test:e2e:smoke` -> 5/5 OK.
+
+### Evidencia de validacion integral
+
+- `npm run quality:fast` -> OK.
+- `npm run typecheck` -> OK.
+- `npm run test` -> OK.
+- `npm run lint:todo-sync` -> OK.
+
+---
 ## [2026-03-14] Workflow: Todo Workflow - Ejecucion de hallazgos frontend-best-practices-audit
 
 ### Certezas ejecutadas automaticamente

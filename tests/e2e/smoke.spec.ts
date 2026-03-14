@@ -233,6 +233,40 @@ test.describe('Smoke E2E', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'DATAMAQ' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Confirmar en un clic' })).toBeVisible()
   })
+
+  test('mobile viewport keeps core flows operable', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+
+    await page.goto('/')
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(HOME_H1_PATTERN)
+
+    await page.goto('/gracias')
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+
+    await page.addInitScript(() => {
+      window.sessionStorage.setItem(
+        'quote-web:last-generated',
+        JSON.stringify({
+          quote: {
+            quote_id: 'Q-20260309-000777',
+            list_price_ars: 280000,
+            discounts: [],
+            discount_pct: 0,
+            discount_total_ars: 0,
+            final_price_ars: 280000,
+            deposit_pct: 50,
+            deposit_ars: 140000,
+            valid_until: '2026-03-15T00:00:00Z',
+            whatsapp_message: 'Hola',
+            whatsapp_url: 'https://wa.me/5491111111111?text=Hola'
+          },
+          savedAt: '2026-03-09T12:00:00Z'
+        })
+      )
+    })
+    await page.goto('/cotizador/Q-20260309-000777/web')
+    await expect(page.getByRole('heading', { level: 1, name: 'DATAMAQ' })).toBeVisible()
+  })
 })
 
 

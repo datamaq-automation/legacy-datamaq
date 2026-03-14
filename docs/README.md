@@ -7,6 +7,7 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 - `fastapi-backend-migration-guide.md`: documento maestro de migracion backend.
 - `todo.md`: backlog activo del frontend.
 - `todo.done.md`: historial archivado de tareas cerradas.
+- `preguntas-arquitectura.md`: inbox canonico de preguntas abiertas de arquitectura.
 
 ## Contratos canonicos
 
@@ -28,7 +29,8 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 - `backend-audit-checklist.md`: checklist de verificacion backend.
 - `ux_audit_report.md`: auditoria UX/UI.
 - `decision_offline_vs_fallback.md`: decision sobre resiliencia de formularios.
-- `preguntas-arquitectura.md`: preguntas abiertas de arquitectura.
+- `preguntas-arquitectura.md`: preguntas abiertas de arquitectura (fuente canonica).
+- `decisions/preguntas-arquitectura.md`: shim de compatibilidad de ruta para tooling/skills.
 
 ## Infraestructura
 

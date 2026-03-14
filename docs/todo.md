@@ -1,8 +1,11 @@
-# Agenda de Tareas de Codigo (`docs/todo.md`)
+# Agenda de Tareas Frontend (`docs/todo.md`)
 
-Sin tareas abiertas en este momento.
+Backlog activo. Las tareas cerradas se registran en `docs/todo.done.md`.
 
-## Estado actual
+## Tareas Pendientes
 
-- Backlog operativo: vacio.
-- Ultimo cierre: ver registro en `docs/todo.done.md`.
+*No hay tareas activas actualmente.*
+
+## Dudas de Alto Nivel (Registradas en docs/decisions/)
+
+Ver `docs/decisions/preguntas-arquitectura.md` para decisiones arquitectonicas pendientes.
