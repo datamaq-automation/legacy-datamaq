@@ -5,9 +5,9 @@ import {
   clampContactLeadStep,
   CONTACT_LEAD_STEP_LABELS,
   CONTACT_LEAD_TOTAL_STEPS,
+  type ContactPersistedDraft,
   hasContactLeadStepErrors,
   normalizePreferredContact,
-  type ContactLeadDraft,
   readContactDraft,
   removeContactDraft,
   validateContactLeadStep,
@@ -115,12 +115,8 @@ onMounted(() => {
   if (!draft) {
     return
   }
-  form.firstName = draft.firstName ?? form.firstName
-  form.lastName = draft.lastName ?? form.lastName
   form.company = draft.company ?? form.company
-  form.email = draft.email ?? form.email
   form.comment = draft.comment ?? form.comment
-  form.phone = draft.phone ?? form.phone
   preferredContact.value = normalizePreferredContact(draft.preferredContact)
   currentStep.value = clampContactLeadStep(draft.currentStep)
 })
@@ -137,13 +133,9 @@ watch(
     currentStep.value
   ],
   () => {
-    const draft: ContactLeadDraft = {
-      firstName: form.firstName,
-      lastName: form.lastName,
+    const draft: ContactPersistedDraft = {
       company: form.company,
-      email: form.email,
       comment: form.comment,
-      phone: form.phone,
       preferredContact: preferredContact.value,
       currentStep: currentStep.value
     }

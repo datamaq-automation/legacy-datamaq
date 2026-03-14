@@ -4,6 +4,34 @@
 
 ---
 
+## [2026-03-14] Workflow: Todo Workflow - Implementacion ADR-010
+
+### ✅ Certezas ejecutadas automaticamente
+
+#### ADR-010 - Politica de draft con TTL y minimizacion de datos
+- Completado: agregado tipo `ContactPersistedDraft` en `src/features/contact/application/leadWizard.ts`.
+- Completado: `src/features/contact/infrastructure/contactDraftStorage.ts` migrado a persistencia con:
+  - envelope `{ expiresAt, data }`
+  - TTL fijo de 12 horas
+  - validacion de esquema en lectura
+  - limpieza automatica de drafts corruptos o expirados.
+- Completado: `src/ui/features/contact/ContactFormSection.vue` actualizado para:
+  - persistir solo `company`, `comment`, `preferredContact`, `currentStep`
+  - restaurar solo esos campos al montar
+  - dejar fuera `firstName`, `lastName`, `email`, `phone` (PII).
+- Validacion: `npm run quality:fast` ✅ (typecheck, tests, security, colors, layers).
+
+### 🟡 Dudas de bajo nivel resueltas por el agente
+
+- Duda: formato de compatibilidad con drafts legacy en `localStorage`.
+- Opciones evaluadas:
+  - Opcion A: migrar automaticamente drafts legacy al nuevo formato.
+  - Opcion B: invalidar drafts legacy y limpiarlos.
+- Decision: **Opcion B** (invalidar y limpiar) por menor riesgo de mantener PII historica y menor complejidad.
+- Impacto: un draft previo puede perderse una unica vez tras despliegue, alineado con privacy-by-default.
+
+---
+
 ## [2026-03-14] Workflow: Todo Workflow - Procesamiento de Backlog Code-Audit
 
 ### ✅ Certezas ejecutadas automáticamente

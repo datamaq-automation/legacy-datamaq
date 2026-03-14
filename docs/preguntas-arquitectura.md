@@ -4,16 +4,6 @@
 
 ---
 
-### [2026-03-14] Politica de almacenamiento de drafts con PII en contacto
-- **Contexto**: el borrador del formulario de contacto persiste `firstName`, `lastName`, `company`, `email` y `phone` en `localStorage`.
-- **Pregunta**: ¿se prioriza UX (persistencia larga) o privacy-by-default (sesion/TTL corto y minimizacion)?
-- **Opciones consideradas**:
-  1. Mantener `localStorage` actual.
-  2. Migrar a `sessionStorage`.
-  3. Mantener `localStorage` con TTL + minimizacion de campos.
-- **Decision**: pendiente (escalado desde `docs/todo.md` por impacto de politica de datos).
-- **ADR resultante**: pendiente.
-
 ### [2026-03-14] Estrategia de refactor para componentes de gran tamano
 - **Contexto**: `HomePage.vue` (~1274 lineas) y `ContactFormSection.vue` (~695 lineas) concentran mucha logica/estructura.
 - **Pregunta**: ¿se adopta un plan de modularizacion por secciones/composables en iteraciones o se mantiene cohesion actual hasta gatillar umbral?

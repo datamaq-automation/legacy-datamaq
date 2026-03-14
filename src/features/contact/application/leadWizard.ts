@@ -14,6 +14,13 @@ export interface ContactLeadDraft {
   currentStep: number
 }
 
+export interface ContactPersistedDraft {
+  company: string
+  comment: string
+  preferredContact: PreferredContact
+  currentStep: number
+}
+
 export interface ContactLeadStepErrors {
   firstName?: string
   lastName?: string
