@@ -63,8 +63,8 @@ export class ContentStore {
     }
 
     patchObjectInPlace(
-      this.getParsedSiteSnapshot() as unknown as Record<string, unknown>,
-      parsed.data as unknown as Record<string, unknown>
+      this.getParsedSiteSnapshot(),
+      parsed.data
     )
   }
 
@@ -98,8 +98,8 @@ export class ContentStore {
     }
 
     patchObjectInPlace(
-      this.getParsedSiteSnapshot() as unknown as Record<string, unknown>,
-      parsed.data as unknown as Record<string, unknown>
+      this.getParsedSiteSnapshot(),
+      parsed.data
     )
     this.hasRemoteSnapshotApplied = true
     return true
@@ -114,13 +114,16 @@ export class ContentStore {
   }
 }
 
-function patchObjectInPlace(target: Record<string, unknown>, source: Record<string, unknown>): void {
+function patchObjectInPlace(target: object, source: object): void {
+  const targetRecord = target as Record<string, unknown>
+  const sourceRecord = source as Record<string, unknown>
+
   // No eliminar campos del target que no están en source
   // Esto permite preservar campos opcionales del fallback local
   // cuando el backend remoto no los incluye
   
-  for (const [key, sourceValue] of Object.entries(source)) {
-    const targetValue = target[key]
+  for (const [key, sourceValue] of Object.entries(sourceRecord)) {
+    const targetValue = targetRecord[key]
 
     if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
       patchArrayInPlace(targetValue, sourceValue)
@@ -132,7 +135,7 @@ function patchObjectInPlace(target: Record<string, unknown>, source: Record<stri
       continue
     }
 
-    target[key] = sourceValue
+    targetRecord[key] = sourceValue
   }
 }
 

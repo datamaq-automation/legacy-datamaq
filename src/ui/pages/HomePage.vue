@@ -404,7 +404,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
   --fab-offset: 6.4rem;
   background:
     radial-gradient(circle at top left, rgba(var(--dm-data-cyan-rgb), 0.16), transparent 30%),
-    linear-gradient(180deg, #020c1b 0%, #081728 38%, #0a192f 100%);
+    linear-gradient(180deg, var(--dm-bg-0) 0%, var(--dm-bg-1) 38%, var(--dm-bg-2) 100%);
   color: var(--dm-text-0);
 }
 

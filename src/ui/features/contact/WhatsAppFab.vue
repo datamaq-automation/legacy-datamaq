@@ -21,7 +21,7 @@ function handleFabClick(event: MouseEvent): boolean | void {
   const trafficSource = utmSource || environment.referrer() || 'direct'
   engagementTracker.trackChat('whatsapp-fab', trafficSource)
 
-  const windowWithGtag = window as unknown as { gtag_report_conversion?: (url?: string) => boolean }
+  const windowWithGtag = window as Window & { gtag_report_conversion?: (url?: string) => boolean }
   if (typeof windowWithGtag.gtag_report_conversion === 'function') {
     return windowWithGtag.gtag_report_conversion(whatsappUrl)
   }
@@ -33,7 +33,7 @@ function handleFabClick(event: MouseEvent): boolean | void {
 <template>
   <a
     v-if="whatsappHref"
-    class="c-whatsapp-fab tw:fixed tw:right-4 tw:z-[1050] tw:flex tw:items-center tw:justify-center tw:w-14 tw:h-14 tw:bg-[#25D366] tw:text-white tw:rounded-full tw:shadow-lg tw:transition-transform hover:tw:scale-110 active:tw:scale-95"
+    class="c-whatsapp-fab tw:fixed tw:right-4 tw:z-[1050] tw:flex tw:items-center tw:justify-center tw:w-14 tw:h-14 tw:text-white tw:rounded-full tw:shadow-lg tw:transition-transform hover:tw:scale-110 active:tw:scale-95"
     :href="whatsappHref"
     target="_blank"
     rel="noopener noreferrer"
@@ -59,6 +59,7 @@ function handleFabClick(event: MouseEvent): boolean | void {
 <style scoped lang="scss">
 .c-whatsapp-fab {
   bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+  background: rgb(var(--dm-whatsapp-green-rgb));
 }
 
 .c-whatsapp-fab__icon {

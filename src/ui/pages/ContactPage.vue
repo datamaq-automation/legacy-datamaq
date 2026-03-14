@@ -164,7 +164,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 .app-shell--contact {
   background:
     radial-gradient(circle at top right, rgba(var(--dm-accent-orange-rgb), 0.14), transparent 24%),
-    linear-gradient(180deg, #020c1b 0%, #081728 40%, #0a192f 100%);
+    linear-gradient(180deg, var(--dm-bg-0) 0%, var(--dm-bg-1) 40%, var(--dm-bg-2) 100%);
   color: var(--dm-text-0);
 }
 

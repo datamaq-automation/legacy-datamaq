@@ -1,4 +1,31 @@
-﻿## [2026-03-14] Workflow: Todo Workflow - Procesamiento de backlog frontend-best-practices
+﻿## [2026-03-14] Workflow: Todo Workflow - Cierre de backlog frontend-best-practices (pasada 2)
+
+### Certezas ejecutadas automaticamente
+
+#### ADVERTENCIA - Key estable en ServiceCard
+- Completado: eliminado uso de indice en `v-for` de `src/ui/sections/ServiceCard.vue`.
+- Completado: key ahora basada en contenido (`${card.id}-item-${item}`).
+
+#### ADVERTENCIA - Migracion de HEX a tokens del sistema
+- Completado: removidos hardcodes HEX y RGB directos en:
+  - `src/ui/pages/QuoteWebPage.vue`
+  - `src/ui/pages/HomePage.vue`
+  - `src/ui/pages/ContactPage.vue`
+  - `src/ui/features/contact/WhatsAppFab.vue`
+- Completado: `WhatsAppFab.vue` reemplazo de `tw:bg-[#25D366]` por estilo tokenizado con `--dm-whatsapp-green-rgb`.
+
+#### MEJORA - Reduccion de casts `as unknown as`
+- Completado: `src/main.ts` usa alias tipado local (`VueAppProvidesContext`) en vez de cast doble.
+- Completado: `src/ui/features/contact/WhatsAppFab.vue` usa tipo `Window & { gtag_report_conversion?: ... }`.
+- Completado: `src/infrastructure/content/contentStore.ts` refactor de `patchObjectInPlace` para aceptar `object` y eliminar cast doble en call sites.
+
+### Evidencia de validacion
+
+- `npm run quality:fast` -> OK (security, typecheck, test, colors, layers, component-size, usecase-deps).
+- `rg -n -g '*.ts' -g '*.vue' '\bas unknown as\b' src` -> sin resultados en archivos intervenidos.
+
+---
+## [2026-03-14] Workflow: Todo Workflow - Procesamiento de backlog frontend-best-practices
 
 ### ✅ Certezas ejecutadas automaticamente
 
@@ -621,4 +648,5 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 ---
 
 *Inbox de tareas procesado completamente.*
+
 

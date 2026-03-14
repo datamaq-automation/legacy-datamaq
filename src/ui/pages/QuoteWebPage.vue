@@ -167,9 +167,9 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
   min-height: 100vh;
   padding-bottom: 8rem;
   background:
-    radial-gradient(circle at top center, rgba(249, 115, 22, 0.12), transparent 26%),
-    linear-gradient(180deg, #0f172a 0%, #111827 100%);
-  color: #e2e8f0;
+    radial-gradient(circle at top center, rgba(var(--dm-accent-orange-rgb), 0.12), transparent 26%),
+    linear-gradient(180deg, var(--dm-bg-0) 0%, var(--dm-bg-1) 100%);
+  color: var(--dm-text-0);
 }
 
 .quote-web-page__spacer {
@@ -197,7 +197,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
 
 .quote-web-page__brand {
   margin: 0;
-  color: #f97316;
+  color: rgb(var(--dm-accent-orange-rgb));
   font-size: 1.7rem;
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -208,14 +208,14 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
 .quote-web-page__validity,
 .quote-web-page__empty-copy {
   margin: 0.35rem 0 0;
-  color: #94a3b8;
+  color: rgba(var(--dm-text-0-rgb), 0.66);
 }
 
 .quote-web-page__status {
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
-  background: rgba(249, 115, 22, 0.12);
-  color: #fb923c;
+  background: rgba(var(--dm-accent-orange-rgb), 0.12);
+  color: rgb(var(--dm-accent-orange-rgb));
   font-size: 0.7rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -224,10 +224,10 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
 
 .quote-web-card,
 .quote-web-conditions__item {
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.12);
   border-radius: 1.35rem;
-  background: rgba(30, 41, 59, 0.88);
-  box-shadow: 0 0.75rem 2rem rgba(15, 23, 42, 0.32);
+  background: rgba(var(--dm-bg-0-rgb), 0.88);
+  box-shadow: 0 0.75rem 2rem rgba(var(--dm-bg-0-rgb), 0.32);
 }
 
 .quote-web-card {
@@ -250,7 +250,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
   letter-spacing: 0.12em;
   font-size: 0.7rem;
   font-weight: 800;
-  color: #94a3b8;
+  color: rgba(var(--dm-text-0-rgb), 0.66);
 }
 
 .quote-web-card__mono {
@@ -262,13 +262,13 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
 
 .quote-web-card__corner-icon,
 .quote-web-conditions__icon {
-  color: #94a3b8;
+  color: rgba(var(--dm-text-0-rgb), 0.66);
   font-size: 1.4rem;
 }
 
 .quote-web-card__client-name {
   margin: 0.45rem 0 0;
-  color: #fb923c;
+  color: rgb(var(--dm-accent-orange-rgb));
   font-size: 1.5rem;
   font-weight: 700;
   font-style: italic;
@@ -297,12 +297,12 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
   font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: rgba(var(--dm-text-0-rgb), 0.66);
 }
 
 .quote-web-conditions__value,
 .is-positive {
-  color: #4ade80;
+  color: rgba(var(--dm-whatsapp-green-rgb), 0.95);
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -313,13 +313,13 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
   align-items: center;
   gap: 1rem;
   padding-block: 0.4rem;
-  color: #cbd5e1;
+  color: rgba(var(--dm-text-0-rgb), 0.82);
 }
 
 .quote-web-pricing__row--total {
   margin-top: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.14);
+  border-top: 1px solid rgba(var(--dm-text-0-rgb), 0.14);
 }
 
 .quote-web-pricing__row--total strong {
@@ -334,7 +334,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
   margin-top: 1rem;
   padding: 1rem 1.1rem;
   border-radius: 1rem;
-  background: #f97316;
+  background: rgb(var(--dm-accent-orange-rgb));
   color: white;
 }
 
@@ -364,7 +364,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
 .quote-web-page__back-link {
   display: inline-flex;
   margin-top: 1rem;
-  color: #fb923c;
+  color: rgb(var(--dm-accent-orange-rgb));
   font-weight: 700;
   text-decoration: none;
 }
@@ -375,7 +375,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
   right: 0;
   bottom: 0;
   padding: 1.5rem 0 1.75rem;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0), rgba(15, 23, 42, 0.96) 45%);
+  background: linear-gradient(180deg, rgba(var(--dm-bg-0-rgb), 0), rgba(var(--dm-bg-0-rgb), 0.96) 45%);
 }
 
 .quote-web-page__confirm {
@@ -386,11 +386,11 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
   width: 100%;
   min-height: 3.75rem;
   border-radius: 1rem;
-  background: #25d366;
+  background: rgba(var(--dm-whatsapp-green-rgb), 0.95);
   color: white;
   text-decoration: none;
   font-weight: 800;
-  box-shadow: 0 1rem 2rem rgba(37, 211, 102, 0.2);
+  box-shadow: 0 1rem 2rem rgba(var(--dm-whatsapp-green-rgb), 0.2);
 }
 
 .quote-web-page__confirm i {

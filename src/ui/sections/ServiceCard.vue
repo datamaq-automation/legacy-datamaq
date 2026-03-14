@@ -34,8 +34,8 @@ Path: src/ui/sections/ServiceCard.vue
             </h4>
             <ul class="tw:text-sm tw:mb-3 tw:pl-3 c-services__list">
               <li
-                v-for="(item, index) in card.items"
-                :key="`${card.id}-item-${index}`"
+                v-for="item in card.items"
+                :key="`${card.id}-item-${item}`"
                 class="tw:mb-2 c-services__list-item"
               >
                 <span class="tw:text-dm-text-muted c-services__list-text">{{ item }}</span>

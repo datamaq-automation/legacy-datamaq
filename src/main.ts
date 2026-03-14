@@ -15,6 +15,7 @@ import { container, provideContainer } from './di/container'
 import { consentManagerKey } from './di/keys'
 
 const head = createHead()
+type VueAppProvidesContext = { _context?: { provides?: Record<string, unknown> } }
 
 function applyCriticalCssVariableFallbacks(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -90,8 +91,7 @@ export const createApp = ViteSSG(
     }
   },
   ({ app, isClient }) => {
-    const provides = (app as unknown as { _context?: { provides?: Record<string, unknown> } })._context
-      ?.provides
+    const provides = (app as VueAppProvidesContext)._context?.provides
     if (!provides || !('usehead' in provides)) {
       app.use(head)
     }
