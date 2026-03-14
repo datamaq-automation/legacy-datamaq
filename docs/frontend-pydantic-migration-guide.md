@@ -1,24 +1,24 @@
-# F2: Frontend Migration Guide - Pydantic Standard Format
+﻿# F2: Frontend Migration Guide - Pydantic Standard Format
 
-**Versión:** 1.0  
+**VersiÃ³n:** 1.0  
 **Fecha:** 2026-03-01  
-**Estado:** Plan de migración para equipo frontend  
-**Fase:** Post F2 Phase 1 (validación interna completada) → F2 Phase 3 (formato público)
+**Estado:** Plan de migraciÃ³n para equipo frontend  
+**Fase:** Post F2 Phase 1 (validaciÃ³n interna completada) â†’ F2 Phase 3 (formato pÃºblico)
 
 ---
 
-## 🎯 Objetivo
+## ðŸŽ¯ Objetivo
 
-Documentar los cambios de formato que sufrirán los endpoints cuando el backend complete la migración a **Pydantic standard format** en la Fase 3 de F2.
+Documentar los cambios de formato que sufrirÃ¡n los endpoints cuando el backend complete la migraciÃ³n a **Pydantic standard format** en la Fase 3 de F2.
 
 **Cronograma:**
-- ✅ **Fase 1 (2026-03-01):** Refactorización interna con validación Pydantic (sin cambios en contrato HTTP)
-- 📋 **Fase 2 (2026-03-04):** Este documento - Preparación del equipo frontend
-- 🔄 **Fase 3 (2026-03-11):** Implementación en backend - **Frontend debe estar preparado**
+- âœ… **Fase 1 (2026-03-01):** RefactorizaciÃ³n interna con validaciÃ³n Pydantic (sin cambios en contrato HTTP)
+- ðŸ“‹ **Fase 2 (2026-03-04):** Este documento - PreparaciÃ³n del equipo frontend
+- ðŸ”„ **Fase 3 (2026-03-11):** ImplementaciÃ³n en backend - **Frontend debe estar preparado**
 
 ---
 
-## 📊 Resumen de Cambios
+## ðŸ“Š Resumen de Cambios
 
 ### Por Endpoint
 
@@ -54,9 +54,9 @@ Documentar los cambios de formato que sufrirán los endpoints cuando el backend 
 - `detail` cambia de `string` a `array[object]`
 - Extraer primero error: `detail[0]`
 - Mostrar mensaje: `detail[0].msg`
-- Ubicación del error: `detail[0].loc[1]` (el segundo elemento es el nombre del campo)
+- UbicaciÃ³n del error: `detail[0].loc[1]` (el segundo elemento es el nombre del campo)
 
-**Validación Actual en Frontend:**
+**ValidaciÃ³n Actual en Frontend:**
 ```javascript
 if (response.status === 422) {
   const error = response.data;
@@ -65,7 +65,7 @@ if (response.status === 422) {
 }
 ```
 
-**Validación Futura en Frontend:**
+**ValidaciÃ³n Futura en Frontend:**
 ```javascript
 if (response.status === 422) {
   const error = response.data;
@@ -74,7 +74,7 @@ if (response.status === 422) {
     console.log(firstError.msg);      // "Field required"
     console.log(firstError.loc[1]);   // "email" (o "phone")
     console.log(firstError.type);     // "missing"
-    // Mostrar con lógica por tipo de error
+    // Mostrar con lÃ³gica por tipo de error
   }
 }
 ```
@@ -115,29 +115,29 @@ if (response.status === 422) {
 }
 ```
 
-**⚠️ NOTA:** Este endpoint YA usa formato Pydantic standard (cambio transparente documentado aquí por completitud).
+**âš ï¸ NOTA:** Este endpoint YA usa formato Pydantic standard (cambio transparente documentado aquÃ­ por completitud).
 
 ---
 
-## 🔄 Breaking Changes Matrix
+## ðŸ”„ Breaking Changes Matrix
 
 | Endpoint | Campo | Cambio | Tipo | Impacto |
 |----------|-------|--------|------|---------|
-| `/contact` | `detail` | `string` → `array` | Error response | **Alto** |
+| `/contact` | `detail` | `string` â†’ `array` | Error response | **Alto** |
 
 | `/quote/diagnostic` | `detail` | Ya es `array` | N/A | **Nulo** |
 | Todas | Success (200) | Sin cambios | N/A | **Nulo** |
 
 ---
 
-## 📋 Tipo de Errores en Pydantic Standard
+## ðŸ“‹ Tipo de Errores en Pydantic Standard
 
-Cuando migres a nuevo formato, estos son los tipos de errores que verás:
+Cuando migres a nuevo formato, estos son los tipos de errores que verÃ¡s:
 
-### Errores de Validación Comunes
+### Errores de ValidaciÃ³n Comunes
 
 ```javascript
-// Email inválido
+// Email invÃ¡lido
 {
   "loc": ["body", "email"],
   "msg": "value is not a valid email address",
@@ -159,7 +159,7 @@ Cuando migres a nuevo formato, estos son los tipos de errores que verás:
   "type": "string_too_short"
 }
 
-// Teléfono con formato inválido
+// TelÃ©fono con formato invÃ¡lido
 {
   "loc": ["body", "phone"],
   "msg": "phone format is invalid.",
@@ -169,16 +169,16 @@ Cuando migres a nuevo formato, estos son los tipos de errores que verás:
 
 ---
 
-## 🛠️ Migration Checklist para Frontend
+## ðŸ› ï¸ Migration Checklist para Frontend
 
-### Fase de Preparación (Ahora - 2026-03-04)
+### Fase de PreparaciÃ³n (Ahora - 2026-03-04)
 
-- [ ] **Crear nueva función de error handler:**
+- [ ] **Crear nueva funciÃ³n de error handler:**
   ```javascript
   function handleValidationError(errorResponse) {
     const errors = errorResponse.detail;
     if (!Array.isArray(errors)) {
-      // Fallback para errores no estándar
+      // Fallback para errores no estÃ¡ndar
       return errorResponse.detail;
     }
     
@@ -194,35 +194,35 @@ Cuando migres a nuevo formato, estos son los tipos de errores que verás:
   }
   ```
 
-- [ ] **Actualizar validación de respectivas formas:**
+- [ ] **Actualizar validaciÃ³n de respectivas formas:**
   - Form `/contact` (phone/email verification)
   - Form `/quote/diagnostic` (company, contact_name, locality)
 
 - [ ] **Crear tests unitarios que validen:**
   - Respuesta con error format nuevo
-  - Extracción correcta de mensajes de error
+  - ExtracciÃ³n correcta de mensajes de error
   - Mapping fields a UI elements
 
 - [ ] **Configurar QA para validar:**
   - Ambos formatos (legacy temp + nuevo en staging)
   - Cross-browser testing
-  - Casos edge (JSON inválido, timeouts, etc.)
+  - Casos edge (JSON invÃ¡lido, timeouts, etc.)
 
 ### Fase de Rollout (A partir 2026-03-11)
 
 - [ ] **Activar feature flag de API versioning** (si existe)
-- [ ] **Canary deployment:** 10% tráfico → nuevo formato
+- [ ] **Canary deployment:** 10% trÃ¡fico â†’ nuevo formato
 - [ ] **Monitor errores de parsing** en logs de cliente
 - [ ] **Rollback plan:** Si errores > 1%, reverify backend
-- [ ] **Progressive rollout:** 25% → 50% → 100%
+- [ ] **Progressive rollout:** 25% â†’ 50% â†’ 100%
 
 ---
 
-## 📚 Ejemplos Completos de Migración
+## ðŸ“š Ejemplos Completos de MigraciÃ³n
 
 ### Ejemplo 1: Formulario de Contacto
 
-**Código Legacy (Actual):**
+**CÃ³digo Legacy (Actual):**
 ```javascript
 async function submitContact(formData) {
   const response = await fetch('/v1/contact', {
@@ -235,13 +235,13 @@ async function submitContact(formData) {
     const error = await response.json();
     if (response.status === 422) {
       // Legacy: detail es string
-      showErrorMessage(error.detail);  // ❌ Will break with new format
+      showErrorMessage(error.detail);  // âŒ Will break with new format
     }
   }
 }
 ```
 
-**Código Futuro (Pydantic Standard):**
+**CÃ³digo Futuro (Pydantic Standard):**
 ```javascript
 async function submitContact(formData) {
   const response = await fetch('/v1/contact', {
@@ -277,7 +277,7 @@ function showFieldErrors(errors) {
 }
 ```
 
-**Para Soportar Ambos Formatos (Transición Suave):**
+**Para Soportar Ambos Formatos (TransiciÃ³n Suave):**
 ```javascript
 function handleValidationError(errorDetail) {
   // Support both legacy (string) and Pydantic (array) formats
@@ -303,7 +303,7 @@ function handleValidationError(errorDetail) {
 
 ### Ejemplo 2: Formulario de Presupuesto /quote/diagnostic
 
-**Ya está en Pydantic format** (sin cambios esperados):
+**Ya estÃ¡ en Pydantic format** (sin cambios esperados):
 
 ```javascript
 async function submitQuoteDiagnostic(data) {
@@ -326,7 +326,7 @@ async function submitQuoteDiagnostic(data) {
 
 ---
 
-## 🔌 API Response Format Reference
+## ðŸ”Œ API Response Format Reference
 
 ### Success Response (Sin cambios)
 
@@ -352,7 +352,7 @@ HTTP/1.1 422 Unprocessable Entity
   "request_id": "req-20260301120000-abcd1234",
   "status": "error",
   "error_code": "VALIDATION_ERROR",
-  "detail": "email or phone is required"  // ← STRING
+  "detail": "email or phone is required"  // â† STRING
 }
 ```
 
@@ -366,7 +366,7 @@ HTTP/1.1 422 Unprocessable Entity
   "request_id": "req-20260301120000-abcd1234",
   "status": "error",
   "error_code": "VALIDATION_ERROR",
-  "detail": [  // ← ARRAY
+  "detail": [  // â† ARRAY
     {
       "loc": ["body", "contact_info"],
       "msg": "at least email or phone is required",
@@ -378,14 +378,14 @@ HTTP/1.1 422 Unprocessable Entity
 
 ---
 
-## 🔗 Context & Philosophy
+## ðŸ”— Context & Philosophy
 
-**¿Por qué esta migración?**
+**Â¿Por quÃ© esta migraciÃ³n?**
 
-1. **Standardización:** Pydantic es el estándar de industria para validación en FastAPI
-2. **Tooling:** Frontend tools (TypeScript, Zod) generan mejor DX con formato estándar
-3. **Mantenibilidad:** Errores estructurados → más fáciles de parsear automáticamente
-4. **Debugging:** `loc` campo ayuda a identificar exactamente dónde falló validación
+1. **StandardizaciÃ³n:** Pydantic es el estÃ¡ndar de industria para validaciÃ³n en FastAPI
+2. **Tooling:** Frontend tools (TypeScript, Zod) generan mejor DX con formato estÃ¡ndar
+3. **Mantenibilidad:** Errores estructurados â†’ mÃ¡s fÃ¡ciles de parsear automÃ¡ticamente
+4. **Debugging:** `loc` campo ayuda a identificar exactamente dÃ³nde fallÃ³ validaciÃ³n
 
 **Fase 1 (Interno):** Solo backend refactoriza internamente - zero cambios en contrato  
 **Fase 2 (Prep):** Frontend se prepara - este documento + unit tests  
@@ -393,62 +393,64 @@ HTTP/1.1 422 Unprocessable Entity
 
 ---
 
-## ⏱️ Timeline & Dependencies
+## â±ï¸ Timeline & Dependencies
 
 ```
-2026-03-01  ✅ F2 Phase 1: Backend internal refactor (Pydantic)
-            └─ /contact, /quote/diagnostic con validación Pydantic
-            └─ 117/117 tests passing con formato legacy preservado
+2026-03-01  âœ… F2 Phase 1: Backend internal refactor (Pydantic)
+            â””â”€ /contact, /quote/diagnostic con validaciÃ³n Pydantic
+            â””â”€ 117/117 tests passing con formato legacy preservado
 
-2026-03-04  📋 F2 Phase 2: Frontend prep (THIS DOCUMENT)
-            └─ Frontend teams review migration guide
-            └─ Unit tests escritas para ambos formatos
-            └─ QA sets up test cases
+2026-03-04  ðŸ“‹ F2 Phase 2: Frontend prep (THIS DOCUMENT)
+            â””â”€ Frontend teams review migration guide
+            â””â”€ Unit tests escritas para ambos formatos
+            â””â”€ QA sets up test cases
 
-2026-03-11  🔄 F2 Phase 3: Backend publish Pydantic format
-            └─ Backend respuestas cambiar a formato estándar
-            └─ Frontend activar handlers para nuevo formato
-            └─ Canary deployment 10% → 100% tráfico
-            └─ Performance monitoring (parse overhead negligible)
+2026-03-11  ðŸ”„ F2 Phase 3: Backend publish Pydantic format
+            â””â”€ Backend respuestas cambiar a formato estÃ¡ndar
+            â””â”€ Frontend activar handlers para nuevo formato
+            â””â”€ Canary deployment 10% â†’ 100% trÃ¡fico
+            â””â”€ Performance monitoring (parse overhead negligible)
 ```
 
 ---
 
-## 📞 Questions & Support
+## ðŸ“ž Questions & Support
 
 **Para el equipo de Frontend:**
 
-1. **¿Necesito cambiar TODAS las llamadas a estos endpoints?**
-   - NO. Solo endpoints con errores de validación (POST /contact, /quote/diagnostic)
+1. **Â¿Necesito cambiar TODAS las llamadas a estos endpoints?**
+   - NO. Solo endpoints con errores de validaciÃ³n (POST /contact, /quote/diagnostic)
    - GET endpoints sin cambios
    - Success responses sin cambios
 
-2. **¿Puedo ignorar esto si utilizo framework con auto-validation?**
-   - Parcialmente. Vue/React/Angular form builders pueden adaptar automáticamente si usas Zod/OpenAPI generator
-   - Recomendado: Regenerar types from OpenAPI v3.1 spec (backend actualizará en Phase 3)
+2. **Â¿Puedo ignorar esto si utilizo framework con auto-validation?**
+   - Parcialmente. Vue/React/Angular form builders pueden adaptar automÃ¡ticamente si usas Zod/OpenAPI generator
+   - Recomendado: Regenerar types from OpenAPI v3.1 spec (backend actualizarÃ¡ en Phase 3)
 
-3. **¿Qué pasa si hago request mientras está en transición?**
+3. **Â¿QuÃ© pasa si hago request mientras estÃ¡ en transiciÃ³n?**
    - Phase 1-2: Legacy format (string)
    - Phase 3+: Pydantic format (array)
    - Tu cliente debe prepararse para ambos AHORA para smooth transition
 
-4. **¿Hay deprecation period?**
-   - No planificado. Format estándar es considerado "correcto"
+4. **Â¿Hay deprecation period?**
+   - No planificado. Format estÃ¡ndar es considerado "correcto"
    - Pero si hay issues en prod, rollback plan existe < 1 hora
 
 ---
 
-## 📎 Referencias Relacionadas
+## ðŸ“Ž Referencias Relacionadas
 
-- [architecture-decisions-backlog.md](./architecture-decisions-backlog.md) - Decisiones arquitectónicas
-- [fastapi-http-contract-target.md](./fastapi-http-contract-target.md) - Target contract (será actualizado en Phase 3)
-- [fastapi-testing.md](./fastapi-testing.md) - Testing strategy
+- [decisions/README.md](./decisions/README.md) - Decisiones arquitectÃ³nicas
+- [backend-content-brand-seo-contract.md](./backend-content-brand-seo-contract.md) - Target contract (serÃ¡ actualizado en Phase 3)
+- [backend-audit-checklist.md](./backend-audit-checklist.md) - Testing strategy
 - [fastapi-backend-migration-guide.md](./fastapi-backend-migration-guide.md) - Backend migration reference
 - [fastapi-contact-contract.md](./fastapi-contact-contract.md) - Contact endpoint contract
 - [fastapi-quote-contract.md](./fastapi-quote-contract.md) - Quote endpoint contract
 
 ---
 
-**Última actualización:** 2026-03-01  
-**Próxima revisión:** Post F2 Phase 3 (2026-03-15)
+**Ãšltima actualizaciÃ³n:** 2026-03-01  
+**PrÃ³xima revisiÃ³n:** Post F2 Phase 3 (2026-03-15)
+
+
 

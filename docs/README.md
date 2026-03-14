@@ -23,6 +23,7 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 
 ## Auditorias y decisiones
 
+- `decisions/README.md`: indice de ADRs vigentes.
 - `frontend-hardcoded-content-audit.md`: inventario de contenido hardcodeado y zonas a migrar.
 - `backend-audit-checklist.md`: checklist de verificacion backend.
 - `ux_audit_report.md`: auditoria UX/UI.

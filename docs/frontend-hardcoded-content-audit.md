@@ -1,4 +1,4 @@
-# Auditoria de contenido hardcodeado en frontend
+﻿# Auditoria de contenido hardcodeado en frontend
 
 Fecha: 2026-03-01
 
@@ -24,7 +24,7 @@ El repositorio tiene un constructor de contenido local que arma un `AppContent` 
 - decision flow / FAQ
 - vista de agradecimiento
 
-Referencia: [landingContentBuilder.ts](/C:/AppServ/www/plantilla-www/src/infrastructure/content/landingContentBuilder.ts#L7)
+Referencia: [landingContentBuilder.ts](../src/infrastructure/content/landingContentBuilder.ts#L7)
 
 Implicacion: aunque haya backend de contenido, el frontend hoy conserva una version local completa lista para renderizarse cuando el remoto no esta disponible o no aplica.
 
@@ -34,8 +34,8 @@ Implicacion: aunque haya backend de contenido, el frontend hoy conserva una vers
 
 Referencias:
 
-- [contentRepository.ts](/C:/AppServ/www/plantilla-www/src/infrastructure/content/contentRepository.ts#L57)
-- [dynamicContentService.ts](/C:/AppServ/www/plantilla-www/src/infrastructure/content/dynamicContentService.ts#L45)
+- [contentRepository.ts](../src/infrastructure/content/contentRepository.ts#L57)
+- [dynamicContentService.ts](../src/infrastructure/content/dynamicContentService.ts#L45)
 
 Implicacion: no todo lo hardcodeado esta "activo" todo el tiempo, pero si es contenido productivo de fallback y por eso forma parte real del comportamiento actual.
 
@@ -57,7 +57,7 @@ Hay varios textos visibles al usuario que no salen de `AppContent`, sino de stri
 - `Ayuda`.
 - `Preguntas frecuentes`.
 
-Referencia: [HomePage.vue](/C:/AppServ/www/plantilla-www/src/ui/pages/HomePage.vue#L73)
+Referencia: [HomePage.vue](../src/ui/pages/HomePage.vue#L73)
 
 Implicacion: aunque `hero`, `services`, `about`, `profile`, `legal` y `faqItems` vengan del repositorio de contenido, la homepage no esta totalmente desacoplada del frontend.
 
@@ -74,7 +74,7 @@ Hay texto funcional embebido en la logica de la pagina:
 
 Tambien hay orden de secciones fijo: `#servicios`, `#perfil`, `#faq`, `#contacto`.
 
-Referencia: [HomePage.ts](/C:/AppServ/www/plantilla-www/src/ui/pages/HomePage.ts#L15)
+Referencia: [HomePage.ts](../src/ui/pages/HomePage.ts#L15)
 
 Implicacion: si el backend define una landing con otra arquitectura de secciones, el frontend actual seguiria imponiendo parte de la navegacion.
 
@@ -89,7 +89,7 @@ El icono de cada servicio se resuelve por keywords embebidas en frontend:
 - `medic`
 - `diag`
 
-Referencia: [HomePage.ts](/C:/AppServ/www/plantilla-www/src/ui/pages/HomePage.ts#L16)
+Referencia: [HomePage.ts](../src/ui/pages/HomePage.ts#L16)
 
 Implicacion: el backend hoy no controla la presentacion iconografica de servicios; el frontend la infiere.
 
@@ -97,7 +97,7 @@ Implicacion: el backend hoy no controla la presentacion iconografica de servicio
 
 `useContactFormSection` prioriza `props.title`, `props.subtitle` y `props.submitLabel` sobre `content.getContactContent()`.
 
-Referencia: [ContactFormSection.ts](/C:/AppServ/www/plantilla-www/src/ui/features/contact/ContactFormSection.ts#L6)
+Referencia: [ContactFormSection.ts](../src/ui/features/contact/ContactFormSection.ts#L6)
 
 Y en la homepage esas props se pasan con copy literal:
 
@@ -105,7 +105,7 @@ Y en la homepage esas props se pasan con copy literal:
 - `Dejanos tus datos y te contactamos en menos de 24 horas.`
 - `Enviar solicitud`
 
-Referencia: [HomePage.vue](/C:/AppServ/www/plantilla-www/src/ui/pages/HomePage.vue#L322)
+Referencia: [HomePage.vue](../src/ui/pages/HomePage.vue#L322)
 
 Implicacion: el backend hoy no tiene control total sobre el copy del formulario mostrado en home.
 
@@ -119,7 +119,7 @@ Este componente embebe:
 - fallback: `Contacto no disponible`
 - imagen fija: `/media/tecnico-a-cargo.webp`
 
-Referencia: [TecnicoACargo.vue](/C:/AppServ/www/plantilla-www/src/components/TecnicoACargo.vue#L17)
+Referencia: [TecnicoACargo.vue](../src/components/TecnicoACargo.vue#L17)
 
 Implicacion: si el tecnico, la foto o el rol deben venir desde backend/CMS, hoy no estan modelados como contenido remoto.
 
@@ -130,7 +130,7 @@ Aunque `thanksContent` viene del repositorio, el encabezado superior sigue fijo 
 - `Solicitud Finalizada`
 - `Volver al inicio` en `aria-label`
 
-Referencia: [ThanksView.vue](/C:/AppServ/www/plantilla-www/src/ui/views/ThanksView.vue#L15)
+Referencia: [ThanksView.vue](../src/ui/views/ThanksView.vue#L15)
 
 ### 9. Los mensajes de estado global tambien estan hardcodeados
 
@@ -141,7 +141,7 @@ La shell principal muestra copy tecnico fijo cuando el backend no esta disponibl
 - `endpoint:`
 - `status:`
 
-Referencia: [App.vue](/C:/AppServ/www/plantilla-www/src/ui/App.vue#L12)
+Referencia: [App.vue](../src/ui/App.vue#L12)
 
 Implicacion: esto probablemente no deba migrarse como contenido de negocio, pero si es copy visible hardcodeado.
 
@@ -160,8 +160,8 @@ Ese archivo incluye por target:
 
 Referencias:
 
-- [runtimeProfiles.json](/C:/AppServ/www/plantilla-www/src/infrastructure/content/runtimeProfiles.json#L2)
-- [runtimeProfiles.json](/C:/AppServ/www/plantilla-www/src/infrastructure/content/runtimeProfiles.json#L56)
+- [runtimeProfiles.json](../src/infrastructure/content/runtimeProfiles.json#L2)
+- [runtimeProfiles.json](../src/infrastructure/content/runtimeProfiles.json#L56)
 
 Implicacion: aunque parte de esto es configuracion tecnica, otra parte es claramente contenido comercial y de marca que hoy sigue versionado en frontend.
 
@@ -169,7 +169,7 @@ Implicacion: aunque parte de esto es configuracion tecnica, otra parte es claram
 
 `FaqSection.vue` contiene 4 preguntas y respuestas literales, ademas con problemas de encoding visibles en el archivo.
 
-Referencia: [FaqSection.vue](/C:/AppServ/www/plantilla-www/src/ui/sections/FaqSection.vue#L1)
+Referencia: `src/ui/sections/FaqSection.vue` (referencia historica)
 
 Implicacion: es contenido hardcodeado verificable. No pude confirmar solo con ese archivo si hoy forma parte del flujo renderizado principal o si quedo residual.
 
@@ -189,13 +189,13 @@ Para una migracion limpia al backend, no alcanza con mover solo el payload de `c
 
 #### Configuracion de marca y SEO
 
-Con evidencia del repo, `siteName`, `siteDescription`, `contactEmail`, `brandName`, `brandAriaLabel`, `baseOperativa` y `whatsappQrMessage` viven en [runtimeProfiles.json](/C:/AppServ/www/plantilla-www/src/infrastructure/content/runtimeProfiles.json#L2) y luego impactan en SEO, configuracion publica, contacto y contenido.
+Con evidencia del repo, `siteName`, `siteDescription`, `contactEmail`, `brandName`, `brandAriaLabel`, `baseOperativa` y `whatsappQrMessage` viven en [runtimeProfiles.json](../src/infrastructure/content/runtimeProfiles.json#L2) y luego impactan en SEO, configuracion publica, contacto y contenido.
 
 Referencias:
 
-- [publicConfig.ts](/C:/AppServ/www/plantilla-www/src/infrastructure/config/publicConfig.ts)
-- [defaultSeo.ts](/C:/AppServ/www/plantilla-www/src/application/seo/defaultSeo.ts)
-- [appSeo.ts](/C:/AppServ/www/plantilla-www/src/ui/seo/appSeo.ts)
+- [publicConfig.ts](../src/infrastructure/config/publicConfig.ts)
+- [defaultSeo.ts](../src/application/seo/defaultSeo.ts)
+- [appSeo.ts](../src/ui/seo/appSeo.ts)
 
 Inferencia recomendada:
 
@@ -205,7 +205,7 @@ Inferencia recomendada:
 
 #### Mensajes tecnicos de fallback
 
-Los mensajes de estado tecnico en [App.vue](/C:/AppServ/www/plantilla-www/src/ui/App.vue#L12) y en [landingContentBuilder.ts](/C:/AppServ/www/plantilla-www/src/infrastructure/content/landingContentBuilder.ts#L7) existen para sostener operacion cuando falla el backend de contenido.
+Los mensajes de estado tecnico en [App.vue](../src/ui/App.vue#L12) y en [landingContentBuilder.ts](../src/infrastructure/content/landingContentBuilder.ts#L7) existen para sostener operacion cuando falla el backend de contenido.
 
 Inferencia recomendada:
 
@@ -215,11 +215,11 @@ Inferencia recomendada:
 
 #### Identidad del bloque tecnico a cargo
 
-`TecnicoACargo.vue` hardcodea nombre, rol, CTA e imagen en [TecnicoACargo.vue](/C:/AppServ/www/plantilla-www/src/components/TecnicoACargo.vue#L17).
+`TecnicoACargo.vue` hardcodea nombre, rol, CTA e imagen en [TecnicoACargo.vue](../src/components/TecnicoACargo.vue#L17).
 
 Inferencia recomendada:
 
-- Si el tecnico a cargo puede cambiar por marca, por unidad de negocio o por campaña, deberia migrarse a backend o al menos a `brand/config`.
+- Si el tecnico a cargo puede cambiar por marca, por unidad de negocio o por campaÃ±a, deberia migrarse a backend o al menos a `brand/config`.
 - Si la identidad es estable y forma parte fija de la marca personal, puede quedarse local.
 - Por buenas practicas de escalabilidad, conviene sacarlo del componente y modelarlo como contenido o configuracion.
 
@@ -227,7 +227,7 @@ Inferencia recomendada:
 
 `FaqSection.vue` contiene FAQ hardcodeada, pero el componente no aparece referenciado en el flujo actual segun busqueda en `src/router`, `src/ui` y `src/main.ts`.
 
-Referencia: [FaqSection.vue](/C:/AppServ/www/plantilla-www/src/ui/sections/FaqSection.vue#L1)
+Referencia: `src/ui/sections/FaqSection.vue` (referencia historica)
 
 Nueva certeza:
 
@@ -248,7 +248,7 @@ La `ContactPage` usa `contact.title` y `contact.subtitle`, pero mantiene copy lo
 - `Volver al inicio`
 - overrides de submit label y canal email
 
-Referencia: [ContactPage.vue](/C:/AppServ/www/plantilla-www/src/ui/pages/ContactPage.vue#L1)
+Referencia: [ContactPage.vue](../src/ui/pages/ContactPage.vue#L1)
 
 Nueva certeza:
 
@@ -274,3 +274,5 @@ Esta separacion coincide mejor con lo que hoy ya esta dividido de facto entre `c
 - No esta definido si `ContactPage.vue` debe quedar como pagina editorial configurable por backend o como pagina funcional con copy local estable.
 - No esta definido si el bloque `TecnicoACargo` representa una persona fija de marca o una entidad comercial variable por tenant/marca.
 - No esta definido si los perfiles `runtimeProfiles.json` deben sobrevivir solo como fallback local por entorno o desaparecer en favor de configuracion remota.
+
+

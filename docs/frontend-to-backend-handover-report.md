@@ -1,4 +1,4 @@
-# Informe Frontend -> Backend
+﻿# Informe Frontend -> Backend
 
 Fecha: 2026-03-01
 Estado: vigente
@@ -178,29 +178,29 @@ El frontend sigue esperando:
 
 Documento principal para backend de sitio:
 
-- [backend-content-brand-seo-contract.md](/C:/AppServ/www/plantilla-www/docs/backend-content-brand-seo-contract.md)
+- [backend-content-brand-seo-contract.md](./backend-content-brand-seo-contract.md)
 
 Documento maestro de migracion backend:
 
-- [fastapi-backend-migration-guide.md](/C:/AppServ/www/plantilla-www/docs/fastapi-backend-migration-guide.md)
+- [fastapi-backend-migration-guide.md](./fastapi-backend-migration-guide.md)
 
 Contratos HTTP complementarios:
 
-- [fastapi-contact-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-contact-contract.md)
-- [fastapi-content-pricing-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-content-pricing-contract.md) solo para `pricing`
-- [fastapi-quote-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-quote-contract.md)
+- [fastapi-contact-contract.md](./fastapi-contact-contract.md)
+- [fastapi-content-pricing-contract.md](./fastapi-content-pricing-contract.md) solo para `pricing`
+- [fastapi-quote-contract.md](./fastapi-quote-contract.md)
 
 Checklist backend:
 
-- [fastapi-router-implementation-checklist.md](/C:/AppServ/www/plantilla-www/docs/fastapi-router-implementation-checklist.md)
+- [fastapi-router-implementation-checklist.md](./fastapi-router-implementation-checklist.md)
 
 Contexto de origen del trabajo:
 
-- [frontend-hardcoded-content-audit.md](/C:/AppServ/www/plantilla-www/docs/frontend-hardcoded-content-audit.md)
+- [frontend-hardcoded-content-audit.md](./frontend-hardcoded-content-audit.md)
 
 Estado operativo de tareas:
 
-- [todo.md](/C:/AppServ/www/plantilla-www/docs/todo.md)
+- [todo.md](./todo.md)
 
 ## Pedido concreto del equipo frontend al equipo backend
 
@@ -208,3 +208,5 @@ Estado operativo de tareas:
 2. Emitir `content`, `brand` y `seo` completos en el mismo snapshot.
 3. No planificar compatibilidad con `GET /v1/content` para el sitio.
 4. Avisar cuando exista un endpoint funcional para correr validacion end-to-end desde frontend.
+
+

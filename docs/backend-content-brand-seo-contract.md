@@ -1,4 +1,4 @@
-# Backend Content, Brand And SEO Contract
+﻿# Backend Content, Brand And SEO Contract
 
 Estado: contrato objetivo decidido
 Fecha: 2026-03-01
@@ -61,7 +61,7 @@ Restriccion decidida:
 
 Este bloque debe mapear 1:1 con el schema ya existente del frontend.
 
-Referencia: [contentSchema.ts](/C:/AppServ/www/plantilla-www/src/domain/schemas/contentSchema.ts#L1)
+Referencia: [contentSchema.ts](../src/domain/schemas/contentSchema.ts#L1)
 
 ### Payload canonico
 
@@ -248,9 +248,9 @@ Este bloque concentra identidad comercial y configuracion visible de marca que h
 
 Referencias:
 
-- [runtimeProfiles.json](/C:/AppServ/www/plantilla-www/src/infrastructure/content/runtimeProfiles.json#L2)
-- [Config.ts](/C:/AppServ/www/plantilla-www/src/application/ports/Config.ts#L1)
-- [TecnicoACargo.vue](/C:/AppServ/www/plantilla-www/src/components/TecnicoACargo.vue#L17)
+- [runtimeProfiles.json](../src/infrastructure/content/runtimeProfiles.json#L2)
+- [Config.ts](../src/application/ports/Config.ts#L1)
+- [TecnicoACargo.vue](../src/components/TecnicoACargo.vue#L17)
 
 ### Decision fina
 
@@ -276,8 +276,8 @@ Este bloque debe reunir lo que hoy consume `defaultSeo`, `appSeo` y `jsonLd`.
 
 Referencias:
 
-- [Config.ts](/C:/AppServ/www/plantilla-www/src/application/ports/Config.ts#L1)
-- [types.ts](/C:/AppServ/www/plantilla-www/src/domain/seo/types.ts#L1)
+- [Config.ts](../src/application/ports/Config.ts#L1)
+- [types.ts](../src/domain/seo/types.ts#L1)
 
 ### Payload propuesto
 
@@ -329,8 +329,8 @@ Esto no deberia salir del backend como fuente principal:
 
 Referencias:
 
-- [App.vue](/C:/AppServ/www/plantilla-www/src/ui/App.vue#L12)
-- [landingContentBuilder.ts](/C:/AppServ/www/plantilla-www/src/infrastructure/content/landingContentBuilder.ts#L7)
+- [App.vue](../src/ui/App.vue#L12)
+- [landingContentBuilder.ts](../src/infrastructure/content/landingContentBuilder.ts#L7)
 
 ### Recomendacion
 
@@ -431,3 +431,5 @@ Decision:
 - no usar SEO como fuente de verdad de UI
 - no mover mensajes tecnicos de resiliencia al backend
 - no seguir ampliando `runtimeProfiles.json` con contenido editorial
+
+

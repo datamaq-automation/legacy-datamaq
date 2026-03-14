@@ -1,4 +1,4 @@
-# Checklist de Auditoria Backend
+﻿# Checklist de Auditoria Backend
 
 Fecha: 2026-03-01
 Destinatario: frontend + backend
@@ -171,13 +171,13 @@ No recomendamos:
 
 ## 6. Referencias en `docs/`
 
-- [frontend-to-backend-handover-report.md](/C:/AppServ/www/plantilla-www/docs/frontend-to-backend-handover-report.md)
-- [backend-content-brand-seo-contract.md](/C:/AppServ/www/plantilla-www/docs/backend-content-brand-seo-contract.md)
-- [fastapi-backend-migration-guide.md](/C:/AppServ/www/plantilla-www/docs/fastapi-backend-migration-guide.md)
-- [fastapi-contact-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-contact-contract.md)
-- [fastapi-content-pricing-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-content-pricing-contract.md) solo para `pricing`
-- [fastapi-quote-contract.md](/C:/AppServ/www/plantilla-www/docs/fastapi-quote-contract.md)
-- [fastapi-router-implementation-checklist.md](/C:/AppServ/www/plantilla-www/docs/fastapi-router-implementation-checklist.md)
+- [frontend-to-backend-handover-report.md](./frontend-to-backend-handover-report.md)
+- [backend-content-brand-seo-contract.md](./backend-content-brand-seo-contract.md)
+- [fastapi-backend-migration-guide.md](./fastapi-backend-migration-guide.md)
+- [fastapi-contact-contract.md](./fastapi-contact-contract.md)
+- [fastapi-content-pricing-contract.md](./fastapi-content-pricing-contract.md) solo para `pricing`
+- [fastapi-quote-contract.md](./fastapi-quote-contract.md)
+- [fastapi-router-implementation-checklist.md](./fastapi-router-implementation-checklist.md)
 
 ## Resultado esperado de una auditoria sana
 
@@ -187,3 +187,5 @@ La auditoria se considera correcta si:
 - `Network` confirma el shape correcto de cada endpoint
 - `Console` muestra conexion estructurada sin descartes de snapshot
 - los flujos visuales criticos renderizan con datos remotos
+
+
