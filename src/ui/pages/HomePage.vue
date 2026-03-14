@@ -114,7 +114,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
         }"
         aria-labelledby="hero-title"
         :style="{
-          backgroundImage: `linear-gradient(180deg, rgba(4, 18, 35, 0.42), rgba(2, 12, 27, 0.96)), url('${isAuthorityVariant ? about.image.src : hero.image.src}')`
+          backgroundImage: `linear-gradient(180deg, rgba(var(--dm-surface-0-rgb), 0.42), rgba(var(--dm-bg-0-rgb), 0.96)), url('${isAuthorityVariant ? about.image.src : hero.image.src}')`
         }"
       >
         <div class="tw:container tw:mx-auto tw:px-4">
@@ -418,7 +418,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
   z-index: 1040;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background: rgba(2, 12, 27, 0.82);
+  background: rgba(var(--dm-bg-0-rgb), 0.82);
   border-bottom: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
 }
 
@@ -530,7 +530,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(2, 12, 27, 0.72), transparent 60%),
+    linear-gradient(90deg, rgba(var(--dm-bg-0-rgb), 0.72), transparent 60%),
     linear-gradient(rgba(var(--dm-line-blueprint-rgb), 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(var(--dm-line-blueprint-rgb), 0.18) 1px, transparent 1px);
   background-size: auto, 56px 56px, 56px 56px;
@@ -547,8 +547,8 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 .c-home-panel {
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.12);
   border-radius: 1.5rem;
-  background: rgba(6, 20, 38, 0.78);
-  box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.28);
+  background: rgba(var(--dm-surface-0-rgb), 0.78);
+  box-shadow: 0 1.4rem 3rem rgba(var(--dm-shadow-rgb), 0.28);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -684,7 +684,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 
 .c-home-profile,
 .c-home-faq {
-  background: linear-gradient(180deg, rgba(3, 15, 30, 0.88), rgba(8, 23, 40, 0.88));
+  background: linear-gradient(180deg, rgba(var(--dm-bg-0-rgb), 0.88), rgba(var(--dm-surface-0-rgb), 0.88));
 }
 
 .c-home-panel {
@@ -711,7 +711,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
   object-fit: cover;
   border-radius: 999px;
   border: 3px solid rgba(var(--dm-accent-orange-rgb), 0.7);
-  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.32);
+  box-shadow: 0 1rem 2rem rgba(var(--dm-shadow-rgb), 0.32);
 }
 
 .c-home-profile__name {
@@ -814,7 +814,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 .c-home-services {
   background:
     radial-gradient(circle at top right, rgba(var(--dm-accent-orange-rgb), 0.12), transparent 24%),
-    linear-gradient(180deg, rgba(2, 12, 27, 0.96), rgba(8, 23, 40, 0.96));
+    linear-gradient(180deg, rgba(var(--dm-bg-0-rgb), 0.96), rgba(var(--dm-surface-0-rgb), 0.96));
 }
 
 .c-home-services__grid {
@@ -825,7 +825,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 .c-home-service-card {
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
   border-radius: 1.25rem;
-  background: rgba(10, 26, 48, 0.9);
+  background: rgba(var(--dm-surface-0-rgb), 0.9);
   overflow: hidden;
 }
 
@@ -916,7 +916,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 
 .c-home-footer {
   padding: 2rem 0 7rem;
-  background: rgba(2, 12, 27, 0.92);
+  background: rgba(var(--dm-bg-0-rgb), 0.92);
   border-top: 1px solid rgba(var(--dm-text-0-rgb), 0.08);
 }
 
@@ -962,8 +962,8 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
   padding: 0.5rem;
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
   border-radius: 1.35rem;
-  background: rgba(4, 17, 33, 0.9);
-  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.35);
+  background: rgba(var(--dm-surface-0-rgb), 0.9);
+  box-shadow: 0 1rem 2rem rgba(var(--dm-shadow-rgb), 0.35);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -1010,13 +1010,13 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 }
 
 .app-shell--home :deep(.c-contact) {
-  background: linear-gradient(180deg, rgba(3, 15, 30, 0.96), rgba(10, 26, 48, 0.96));
+  background: linear-gradient(180deg, rgba(var(--dm-bg-0-rgb), 0.96), rgba(var(--dm-surface-0-rgb), 0.96));
 }
 
 .app-shell--home :deep(.c-contact__card) {
-  background: rgba(8, 23, 40, 0.92) !important;
+  background: rgba(var(--dm-surface-0-rgb), 0.92) !important;
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1) !important;
-  box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 1.4rem 3rem rgba(var(--dm-shadow-rgb), 0.3) !important;
 }
 
 .app-shell--home :deep(.c-contact__title) {
@@ -1040,7 +1040,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 }
 
 .app-shell--home :deep(.c-contact .form-control) {
-  background: rgba(17, 34, 64, 0.88);
+  background: rgba(var(--dm-surface-1-rgb), 0.88);
   border-color: rgba(var(--dm-text-0-rgb), 0.12);
   color: var(--dm-text-0);
   min-height: 3.15rem;
@@ -1062,8 +1062,8 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
   bottom: calc(var(--floating-cta-height, 5rem) + 0.75rem);
   border-radius: 1.1rem;
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.12);
-  background: rgba(8, 23, 40, 0.94);
-  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.35);
+  background: rgba(var(--dm-surface-0-rgb), 0.94);
+  box-shadow: 0 1rem 2rem rgba(var(--dm-shadow-rgb), 0.35);
 }
 
 .app-shell--home :deep(.whatsapp-fab) {

@@ -174,7 +174,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
   z-index: 1040;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background: rgba(2, 12, 27, 0.82);
+  background: rgba(var(--dm-bg-0-rgb), 0.82);
   border-bottom: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
 }
 
@@ -241,8 +241,8 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
   padding: clamp(1.4rem, 3vw, 2rem);
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
   border-radius: 1.5rem;
-  background: rgba(6, 20, 38, 0.82);
-  box-shadow: 0 1.2rem 2.6rem rgba(0, 0, 0, 0.28);
+  background: rgba(var(--dm-surface-0-rgb), 0.82);
+  box-shadow: 0 1.2rem 2.6rem rgba(var(--dm-shadow-rgb), 0.28);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -316,9 +316,9 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 }
 
 .app-shell--contact :deep(.c-contact__card) {
-  background: rgba(8, 23, 40, 0.94) !important;
+  background: rgba(var(--dm-surface-0-rgb), 0.94) !important;
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1) !important;
-  box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 1.4rem 3rem rgba(var(--dm-shadow-rgb), 0.3) !important;
 }
 
 .app-shell--contact :deep(.c-contact__title) {
@@ -338,7 +338,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 }
 
 .app-shell--contact :deep(.c-contact .form-control) {
-  background: rgba(17, 34, 64, 0.88);
+  background: rgba(var(--dm-surface-1-rgb), 0.88);
   border-color: rgba(var(--dm-text-0-rgb), 0.12);
   color: var(--dm-text-0);
 }
@@ -350,7 +350,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 .c-contact-page-footer {
   padding: 2rem 0 5rem;
   border-top: 1px solid rgba(var(--dm-text-0-rgb), 0.08);
-  background: rgba(2, 12, 27, 0.92);
+  background: rgba(var(--dm-bg-0-rgb), 0.92);
 }
 
 .c-contact-page-footer__inner {

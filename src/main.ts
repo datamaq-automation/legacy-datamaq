@@ -16,6 +16,14 @@ import { consentManagerKey } from './di/keys'
 
 const head = createHead()
 type VueAppProvidesContext = { _context?: { provides?: Record<string, unknown> } }
+// EXCEPCION: fallback minimo de bootstrap para primera pintura si el CSS de tokens no cargo.
+const CRITICAL_CSS_FALLBACKS: Readonly<Record<string, string>> = {
+  '--dm-bg-0': '#0c092f',
+  '--dm-text-0': '#e2e9f3',
+  '--bs-body-bg': '#0c092f',
+  '--bs-body-color': '#e2e9f3',
+  '--bs-emphasis-color': '#e2e9f3'
+}
 
 function applyCriticalCssVariableFallbacks(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -24,16 +32,8 @@ function applyCriticalCssVariableFallbacks(): void {
 
   const root = document.documentElement
   const computed = getComputedStyle(root)
-  const fallbackMap: Record<string, string> = {
-    '--dm-bg-0': '#0c092f',
-    '--dm-text-0': '#e2e9f3',
-    '--bs-body-bg': '#0c092f',
-    '--bs-body-color': '#e2e9f3',
-    '--bs-emphasis-color': '#e2e9f3'
-  }
-
   let applied = false
-  Object.entries(fallbackMap).forEach(([variableName, fallbackValue]) => {
+  Object.entries(CRITICAL_CSS_FALLBACKS).forEach(([variableName, fallbackValue]) => {
     const currentValue = computed.getPropertyValue(variableName).trim()
     if (currentValue.length > 0) {
       return

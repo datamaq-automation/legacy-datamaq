@@ -36,7 +36,7 @@ defineProps<{
 .c-home-faq__item {
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
   border-radius: 1.25rem;
-  background: rgba(10, 26, 48, 0.9);
+  background: rgba(var(--dm-surface-0-rgb), 0.9);
   overflow: hidden;
 }
 

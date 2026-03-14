@@ -339,7 +339,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
 }
 
 .quote-web-pricing__deposit-label {
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(var(--dm-text-0-rgb), 0.76);
 }
 
 .quote-web-pricing__deposit-value {

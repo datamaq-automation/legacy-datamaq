@@ -1,4 +1,31 @@
-﻿## [2026-03-14] Workflow: Todo Workflow - Cierre de backlog frontend-best-practices (pasada 2)
+## [2026-03-14] Workflow: Todo Workflow - Ejecucion de hallazgos frontend-best-practices-audit
+
+### Certezas ejecutadas automaticamente
+
+#### ADVERTENCIA - Migracion de RGBA hardcodeado a tokens
+- Completado: reemplazo de `rgba(r,g,b,alpha)` numerico por variables tokenizadas en:
+  - `src/ui/pages/HomePage.vue`
+  - `src/ui/pages/ContactPage.vue`
+  - `src/ui/pages/QuoteWebPage.vue`
+  - `src/ui/pages/home/HomeFaqList.vue`
+- Completado: normalizacion de sombras a `rgba(var(--dm-shadow-rgb), alpha)`.
+- Completado: extension de tokens RGB en `src/styles/scss/_dm.tokens.scss` con:
+  - `--dm-surface-0-rgb`
+  - `--dm-surface-1-rgb`
+
+#### MEJORA - Fallback CSS centralizado en bootstrap
+- Completado: extraccion de mapa de fallback a constante `CRITICAL_CSS_FALLBACKS` en `src/main.ts`.
+- Completado: documentacion de excepcion de bootstrap para primera pintura.
+
+### Evidencia de validacion
+
+- `rg -n "rgba\([0-9]{1,3},\s*[0-9]{1,3},\s*[0-9]{1,3}" src/ui/pages/HomePage.vue src/ui/pages/ContactPage.vue src/ui/pages/QuoteWebPage.vue src/ui/pages/home/HomeFaqList.vue` -> sin resultados.
+- `npm run typecheck` -> OK.
+- `npm run lint:colors` -> OK.
+- `npm run lint:component-size` -> OK.
+
+---
+## [2026-03-14] Workflow: Todo Workflow - Cierre de backlog frontend-best-practices (pasada 2)
 
 ### Certezas ejecutadas automaticamente
 

@@ -1,4 +1,4 @@
-﻿# Agenda de Tareas de Codigo (`docs/todo.md`)
+# Agenda de Tareas de Codigo (`docs/todo.md`)
 
 Sin tareas abiertas en este momento.
 
