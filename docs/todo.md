@@ -39,6 +39,16 @@ Auditoria `code-audit` sobre `src/` (2026-03-14, segunda pasada).
   - `npm run typecheck`: OK.
   - `npm run lint:component-size`: OK (`HomePage.vue` en 1219 lineas).
 
+### 3) Encapsular trust signals repetitivos en Hero (Etapa 2)
+- [x] [MEJORA] Extraer bloque reutilizable de trust logos/chips con props tipadas
+- **Archivos**: `src/ui/pages/HomePage.vue`, `src/ui/pages/home/HomeHeroTrustSignals.vue`
+- **Estado**: resuelto (2026-03-14).
+- **Evidencia**:
+  - bloque `c-home-hero__trust-inline` extraido a `HomeHeroTrustSignals.vue`.
+  - props tipadas con `ImageContent[]` y `string[]` desde `src/domain/types/content`.
+  - `HomePage.vue` delega render de trust logos/chips al nuevo componente.
+  - validaciones: `npm run typecheck` y `npm run lint:component-size` (HomePage en 1168 lineas).
+
 ## Notas de Auditoria
 
 - No se detectaron hallazgos criticos de seguridad activos (sin `v-html`, `eval`, ni violaciones de capas).
