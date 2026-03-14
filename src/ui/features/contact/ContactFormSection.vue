@@ -17,7 +17,7 @@ import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps } from './contactTypes'
 import { useContactFormSection } from './ContactFormSection'
 
-// TODO(arch): Mover este componente a src/features/contact/ui cuando se migren las paginas por feature.
+// ARCH-ROADMAP: migracion pendiente de ubicacion. Seguimiento en docs/feature-migration-roadmap.md (ITEM-2).
 
 const props = withDefaults(defineProps<ContactFormProps>(), {
   showTechnicianCard: true

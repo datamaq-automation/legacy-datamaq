@@ -6,7 +6,7 @@ Auditoria `code-audit` sobre `src/` (2026-03-14).
 
 - Hallazgos criticos: **0**
 - Hallazgos de advertencia: **0** (+3 resueltos)
-- Hallazgos de mejora: **3**
+- Hallazgos de mejora: **2** (+1 resuelta)
 - Verificacion de capas: `npm run lint:layers` -> **0 violaciones**
 
 ## ADVERTENCIA - Ciberseguridad y Arquitectura
@@ -66,12 +66,16 @@ Auditoria `code-audit` sobre `src/` (2026-03-14).
 - **Prioridad**: Media
 
 ### 6) Deuda de migracion arquitectonica documentada
-- [ ] [MEJORA] Resolver TODOs de migracion a estructura por features
+- [x] [MEJORA] Resolver TODOs de migracion a estructura por features
 - **Archivos**:
   - `src/ui/pages/quoteWebState.ts:1`
   - `src/ui/features/contact/ContactFormSection.vue:20`
 - **Problema**: deuda tecnica declarada en comentarios `TODO(arch)`.
-- **Recomendacion**: convertir TODOs en tareas de roadmap con alcance y criterio de done.
+- **Estado**: resuelto (2026-03-14) con roadmap tecnico.
+- **Evidencia**:
+  - nuevo documento: `docs/feature-migration-roadmap.md` (ITEM-1/ITEM-2 + criterios de done).
+  - comentarios `TODO(arch)` reemplazados por referencias `ARCH-ROADMAP`.
+  - validacion ejecutada: `npm run typecheck`.
 - **Prioridad**: Baja
 
 ## Notas de Auditoria
