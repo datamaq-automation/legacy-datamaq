@@ -50,3 +50,13 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
   - bugs recurrentes vinculados a acoplamiento interno del componente.
 - Control automatizado: `npm run lint:component-size` (integrado en `npm run quality:fast`).
 - Referencia de decision: `docs/decisions/ADR-011-large-components-refactor-strategy.md`.
+
+## Triggers de Refactor (ADR-012)
+
+- Se mantiene inyeccion explicita en use-cases mientras no haya trigger tecnico.
+- Trigger principal:
+  - constructor de un use-case > 10 dependencias.
+- Triggers adicionales:
+  - nuevas preocupaciones transversales reutilizadas por multiples use-cases.
+  - friccion repetida en wiring DI o tests por setup excesivo.
+- Referencia de decision: `docs/decisions/ADR-012-submit-contact-dependency-strategy.md`.

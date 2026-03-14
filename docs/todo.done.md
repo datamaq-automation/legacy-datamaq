@@ -4,6 +4,27 @@
 
 ---
 
+## [2026-03-14] Workflow: Todo Workflow - Implementacion ADR-012
+
+### ✅ Certezas ejecutadas automaticamente
+
+#### ADR-012 - Gobernanza de dependencias en SubmitContactUseCase
+- Completado: creado ADR `docs/decisions/ADR-012-submit-contact-dependency-strategy.md`.
+- Completado: removida la ultima pregunta activa de `docs/preguntas-arquitectura.md`.
+- Completado: agregado trigger documental en `docs/README.md` para reconsiderar cuando un use-case supere 10 dependencias.
+- Completado: agregado checklist de senales de revision dentro de ADR-012.
+- Validacion: `npm run lint:component-size` ✅.
+
+### 🟡 Dudas de bajo nivel resueltas por el agente
+
+- Duda: definir el trigger solo por cantidad de dependencias o combinar con señales cualitativas.
+- Opciones evaluadas:
+  - Opcion A: solo umbral numerico estricto.
+  - Opcion B: umbral numerico + señales de mantenimiento/testing.
+- Decision: **Opcion B** por mejor equilibrio entre objetividad y contexto real de evolucion.
+
+---
+
 ## [2026-03-14] Workflow: Todo Workflow - Implementacion ADR-011
 
 ### ✅ Certezas ejecutadas automaticamente
