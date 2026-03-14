@@ -5,8 +5,8 @@ import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import HomeFaqList from '@/ui/pages/home/HomeFaqList.vue'
 import HomeHeroTrustSignals from '@/ui/pages/home/HomeHeroTrustSignals.vue'
+import { createFooterWhatsAppClickHandler } from '@/ui/pages/home/homePageUiHandlers'
 import { useHomePage } from './HomePage'
-import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 // ARCH-ROADMAP: modularizacion incremental documentada en docs/homepage-modularization-plan.md.
 
@@ -43,15 +43,7 @@ const {
   handleContactSubmit
 } = useHomePage()
 
-function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
-  const whatsappUrl = whatsappHref.value
-  if (!isWhatsAppUrl(whatsappUrl)) {
-    return
-  }
-
-  event.preventDefault()
-  return reportGtagConversion(whatsappUrl)
-}
+const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 </script>
 
 <template>

@@ -49,6 +49,15 @@ Auditoria `code-audit` sobre `src/` (2026-03-14, segunda pasada).
   - `HomePage.vue` delega render de trust logos/chips al nuevo componente.
   - validaciones: `npm run typecheck` y `npm run lint:component-size` (HomePage en 1168 lineas).
 
+### 4) Consolidacion de handlers UI en utilidades de pagina (Etapa 3)
+- [x] [MEJORA] Mover handler visual de click footer WhatsApp fuera del SFC principal
+- **Archivos**: `src/ui/pages/HomePage.vue`, `src/ui/pages/home/homePageUiHandlers.ts`
+- **Estado**: resuelto (2026-03-14).
+- **Evidencia**:
+  - `handleFooterWhatsAppClick` ahora se crea desde `createFooterWhatsAppClickHandler(whatsappHref)`.
+  - `HomePage.vue` reduce logica local de eventos visuales y mantiene `useHomePage()` como orquestador.
+  - validaciones: `npm run typecheck`, `npm run lint:layers`, `npm run lint:component-size` (HomePage en 1160 lineas).
+
 ## Notas de Auditoria
 
 - No se detectaron hallazgos criticos de seguridad activos (sin `v-html`, `eval`, ni violaciones de capas).
