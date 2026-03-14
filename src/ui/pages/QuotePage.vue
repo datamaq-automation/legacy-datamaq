@@ -222,7 +222,7 @@ function applyQuoteFormErrors(nextErrors: QuoteFormErrors): void {
 
 function buildQuoteCreationErrorMessage(error: unknown): string {
   if (!QuoteApiError.is(error)) {
-    return 'No pudimos generar la propuesta en este momento. Podes continuar por WhatsApp.'
+    return 'No pudimos generar la propuesta en este momento. Podés continuar por WhatsApp.'
   }
 
   if (error.status === 422) {
@@ -241,21 +241,21 @@ function buildQuoteCreationErrorMessage(error: unknown): string {
   return (
     normalizeText(error.detail) ??
     normalizeText(error.message) ??
-    'No pudimos generar la propuesta en este momento. Podes continuar por WhatsApp.'
+    'No pudimos generar la propuesta en este momento. Podés continuar por WhatsApp.'
   )
 }
 
 function buildQuotePdfErrorMessage(error: unknown): string {
   if (!QuoteApiError.is(error)) {
-    return 'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
+    return 'No pudimos descargar el PDF. Probá nuevamente o escribinos por WhatsApp.'
   }
 
   if (error.status === 422) {
-    return 'El identificador de la cotizacion no es valido.'
+    return 'El identificador de la cotización no es válido.'
   }
 
   if (error.status === 404) {
-    return 'La cotizacion no esta disponible para descarga.'
+    return 'La cotización no está disponible para descarga.'
   }
 
   if (error.status === 429) {
@@ -265,22 +265,22 @@ function buildQuotePdfErrorMessage(error: unknown): string {
   return (
     normalizeText(error.detail) ??
     normalizeText(error.message) ??
-    'No pudimos descargar el PDF. Proba nuevamente o escribinos por WhatsApp.'
+    'No pudimos descargar el PDF. Probá nuevamente o escribinos por WhatsApp.'
   )
 }
 
 function buildRateLimitMessage(retryAfterSeconds: number | undefined, action: string): string {
   if (typeof retryAfterSeconds !== 'number') {
-    return `Demasiadas solicitudes. Espera un momento y volve a intentar ${action}.`
+    return `Demasiadas solicitudes. Esperá un momento y volvé a intentar ${action}.`
   }
 
   const normalizedWait = Math.max(Math.ceil(retryAfterSeconds), 0)
   if (normalizedWait === 0) {
-    return `Demasiadas solicitudes. Volve a intentar ${action} ahora.`
+    return `Demasiadas solicitudes. Volvé a intentar ${action} ahora.`
   }
 
   const unit = normalizedWait === 1 ? 'segundo' : 'segundos'
-  return `Demasiadas solicitudes. Espera ${normalizedWait} ${unit} y volve a intentar ${action}.`
+  return `Demasiadas solicitudes. Esperá ${normalizedWait} ${unit} y volvé a intentar ${action}.`
 }
 
 function normalizeText(value: unknown): string | undefined {
@@ -372,10 +372,10 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
     <main id="contenido-principal" class="tw:flex-grow tw:py-16">
       <div class="tw:container tw:mx-auto tw:px-4">
         <section class="tw:mb-12">
-          <p class="tw:uppercase tw:font-bold tw:text-sm tw:text-dm-primary tw:mb-2">Cotizador publico</p>
-          <h1 class="tw:text-4xl tw:font-extrabold tw:mb-4">Propuesta tecnica en minutos</h1>
+          <p class="tw:uppercase tw:font-bold tw:text-sm tw:text-dm-primary tw:mb-2">Cotizador público</p>
+          <h1 class="tw:text-4xl tw:font-extrabold tw:mb-4">Propuesta técnica en minutos</h1>
           <p class="tw:text-xl tw:text-dm-text-muted tw:max-w-2xl">
-            Completa los datos minimos y generamos una propuesta premium con reserva y envio por WhatsApp.
+            Completá los datos mínimos y generamos una propuesta premium con reserva y envío por WhatsApp.
           </p>
         </section>
 
@@ -412,7 +412,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                       :class="form.scheduled === true ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('scheduled', true)"
                     >
-                      Si
+                      Sí
                     </button>
                     <button
                       type="button"
@@ -435,7 +435,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                       :class="form.access_ready === true ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('access_ready', true)"
                     >
-                      Si
+                      Sí
                     </button>
                     <button
                       type="button"
@@ -458,7 +458,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                       :class="form.safe_window_confirmed === true ? 'tw:bg-green-600 tw:text-white' : 'tw:border tw:border-dm-border tw:text-dm-text-muted hover:tw:bg-white/5'"
                       @click="setBinaryChoice('safe_window_confirmed', true)"
                     >
-                      Si
+                      Sí
                     </button>
                     <button
                       type="button"
@@ -491,7 +491,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                 </div>
 
                 <div class="tw:col-span-1">
-                  <label class="tw:form-label" for="quote-phone">Telefono (opcional)</label>
+                  <label class="tw:form-label" for="quote-phone">Teléfono (opcional)</label>
                   <input id="quote-phone" v-model="form.phone" class="tw:form-control" type="tel" />
                   <small v-if="errors.phone" class="tw:text-red-500 tw:mt-1 tw:block">{{ errors.phone }}</small>
                 </div>
@@ -516,7 +516,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
               <h2 class="tw:text-xl tw:font-semibold tw:mb-4">Propuesta generada</h2>
 
               <p v-if="!quote" class="tw:text-dm-text-muted tw:mb-0">
-                Al generar la propuesta vas a ver aqui el resumen premium con precio final, sena y vigencia.
+                Al generar la propuesta vas a ver aquí el resumen premium con precio final, seña y vigencia.
               </p>
 
               <template v-else>
@@ -527,8 +527,8 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                   -{{ formatArs(quote.discount_total_ars) }}
                 </p>
                 <p class="tw:mb-1"><strong>Final:</strong> {{ formatArs(quote.final_price_ars) }}</p>
-                <p class="tw:mb-1"><strong>Sena ({{ quote.deposit_pct }}%):</strong> {{ formatArs(quote.deposit_ars) }}</p>
-                <p class="tw:mb-3"><strong>Valida hasta:</strong> {{ formatDateTime(quote.valid_until) }}</p>
+                <p class="tw:mb-1"><strong>Seña ({{ quote.deposit_pct }}%):</strong> {{ formatArs(quote.deposit_ars) }}</p>
+                <p class="tw:mb-3"><strong>Válida hasta:</strong> {{ formatDateTime(quote.valid_until) }}</p>
 
                 <div v-if="normalizedDiscounts.length" class="tw:mb-4">
                   <p class="tw:font-semibold tw:mb-2">Descuentos aplicados</p>
@@ -546,7 +546,7 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
                     class="btn c-ui-btn c-ui-btn--outline"
                     @click="handleOpenWebView"
                   >
-                    Ver version web
+                    Ver versión web
                   </button>
                   <button
                     v-if="canDownloadPdf"
@@ -584,9 +584,9 @@ function logQuoteUiWarn(event: string, context: Record<string, unknown>): void {
               <hr class="tw:my-8 tw:border-dm-border" />
 
               <ul class="mb-0 ps-3 text-white-50">
-                <li>Sena 50% para reservar agenda</li>
-                <li>1 reprogramacion sin costo con 24h</li>
-                <li>No-show: sena se pierde / Seguridad primero</li>
+                <li>Seña 50% para reservar agenda</li>
+                <li>1 reprogramación sin costo con 24h</li>
+                <li>No-show: seña se pierde / Seguridad primero</li>
               </ul>
             </div>
           </aside>

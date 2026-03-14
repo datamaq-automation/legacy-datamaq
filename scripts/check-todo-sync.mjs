@@ -35,7 +35,14 @@ const hasAnyEvidenceLink = /`[^`]+`|\[[^\]]+\]\([^)]+\)/m.test(todo)
 const hasCompletedEvidence = /\bCompletado:\b/i.test(done)
 
 if (!hasAnyOpenTask) {
-  fail('docs/todo.md has no open tasks ([ ] or [/])')
+  if (args.has('--require-no-done-tasks') && hasDoneMarkersInTodo) {
+    fail('docs/todo.md still includes done markers ("Completado:")')
+  }
+  if (args.has('--require-merge-evidence') && !hasCompletedEvidence) {
+    fail('docs/todo.done.md has no completion evidence ("Completado:")')
+  }
+  info('docs/todo.md has no open tasks; treating empty backlog as valid')
+  process.exit(0)
 }
 
 if (args.has('--require-open-p0') && !hasP0Section) {

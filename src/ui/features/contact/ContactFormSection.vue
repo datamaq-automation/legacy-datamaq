@@ -43,7 +43,7 @@ const {
 
 const currentStep = ref(1)
 const totalSteps = CONTACT_LEAD_TOTAL_STEPS
-const preferredContact = ref<'whatsapp' | 'phone'>('whatsapp')
+const preferredContact = ref<'whatsapp' | 'email'>('whatsapp')
 const contactEmail = computed(() => getContactEmail())
 
 const progressPercent = computed(() => Math.round((currentStep.value / totalSteps) * 100))
@@ -82,12 +82,17 @@ function goNextStep() {
 function validateCurrentStep(): boolean {
   const stepErrors = validateContactLeadStep(currentStep.value, {
     firstName: form.firstName,
+    lastName: form.lastName,
+    company: form.company,
     email: form.email,
     comment: form.comment,
-    phone: form.phone
+    phone: form.phone,
+    preferredContact: preferredContact.value
   })
 
   fieldErrors.firstName = stepErrors.firstName ?? ''
+  fieldErrors.lastName = stepErrors.lastName ?? ''
+  fieldErrors.company = stepErrors.company ?? ''
   fieldErrors.email = stepErrors.email ?? ''
   fieldErrors.comment = stepErrors.comment ?? ''
   fieldErrors.phone = stepErrors.phone ?? ''
@@ -111,6 +116,8 @@ onMounted(() => {
     return
   }
   form.firstName = draft.firstName ?? form.firstName
+  form.lastName = draft.lastName ?? form.lastName
+  form.company = draft.company ?? form.company
   form.email = draft.email ?? form.email
   form.comment = draft.comment ?? form.comment
   form.phone = draft.phone ?? form.phone
@@ -119,10 +126,21 @@ onMounted(() => {
 })
 
 watch(
-  () => [form.firstName, form.email, form.comment, form.phone, preferredContact.value, currentStep.value],
+  () => [
+    form.firstName,
+    form.lastName,
+    form.company,
+    form.email,
+    form.comment,
+    form.phone,
+    preferredContact.value,
+    currentStep.value
+  ],
   () => {
     const draft: ContactLeadDraft = {
       firstName: form.firstName,
+      lastName: form.lastName,
+      company: form.company,
       email: form.email,
       comment: form.comment,
       phone: form.phone,
@@ -201,7 +219,7 @@ watch(
                 <Transition name="step-fade" mode="out-in">
                   <div :key="currentStep" class="c-contact__step-panel">
                 <template v-if="currentStep === 1">
-                  <h3 class="c-contact__step-title">1. Datos de contacto</h3>
+                  <h3 class="c-contact__step-title">1. Identidad</h3>
                   <div>
                     <label class="c-contact__label" :for="fieldMeta.firstName.inputId">Nombre</label>
                     <input
@@ -214,7 +232,91 @@ watch(
                       :disabled="!isChannelEnabled"
                       :aria-invalid="Boolean(fieldErrors.firstName)"
                     />
+                    <small class="c-contact__helper">Opcional</small>
                     <small v-if="fieldErrors.firstName" class="c-contact__error">{{ fieldErrors.firstName }}</small>
+                  </div>
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.lastName.inputId">Apellido</label>
+                    <input
+                      :id="fieldMeta.lastName.inputId"
+                      v-model="form.lastName"
+                      type="text"
+                      class="c-contact__input"
+                      autocomplete="family-name"
+                      maxlength="80"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.lastName)"
+                    />
+                    <small class="c-contact__helper">Opcional</small>
+                    <small v-if="fieldErrors.lastName" class="c-contact__error">{{ fieldErrors.lastName }}</small>
+                  </div>
+                </template>
+
+                <template v-else-if="currentStep === 2">
+                  <h3 class="c-contact__step-title">2. Proyecto</h3>
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.company.inputId">Empresa</label>
+                    <input
+                      :id="fieldMeta.company.inputId"
+                      v-model="form.company"
+                      type="text"
+                      class="c-contact__input"
+                      autocomplete="organization"
+                      maxlength="120"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.company)"
+                    />
+                    <small class="c-contact__helper">Opcional</small>
+                    <small v-if="fieldErrors.company" class="c-contact__error">{{ fieldErrors.company }}</small>
+                  </div>
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.comment.inputId">Descripción del proyecto</label>
+                    <textarea
+                      :id="fieldMeta.comment.inputId"
+                      v-model="form.comment"
+                      class="c-contact__input c-contact__input--textarea"
+                      rows="6"
+                      maxlength="2000"
+                      :disabled="!isChannelEnabled"
+                      :aria-invalid="Boolean(fieldErrors.comment)"
+                    />
+                    <small class="c-contact__helper">Opcional</small>
+                    <small v-if="fieldErrors.comment" class="c-contact__error">{{ fieldErrors.comment }}</small>
+                  </div>
+                </template>
+
+                <template v-else>
+                  <h3 class="c-contact__step-title">3. Medio de contacto preferido</h3>
+                  <fieldset class="c-contact__choice-group">
+                    <legend class="c-contact__label">Elegí cómo querés que te contactemos</legend>
+                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'whatsapp' }">
+                      <input v-model="preferredContact" type="radio" value="whatsapp" name="preferredContact" />
+                      WhatsApp
+                    </label>
+                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'email' }">
+                      <input v-model="preferredContact" type="radio" value="email" name="preferredContact" />
+                      E-mail
+                    </label>
+                  </fieldset>
+
+                  <div>
+                    <label class="c-contact__label" :for="fieldMeta.phone.inputId">WhatsApp</label>
+                    <input
+                      :id="fieldMeta.phone.inputId"
+                      v-model="form.phone"
+                      type="tel"
+                      class="c-contact__input"
+                      autocomplete="tel"
+                      maxlength="40"
+                      inputmode="tel"
+                      :disabled="!isChannelEnabled"
+                      :aria-required="preferredContact === 'whatsapp'"
+                      :aria-invalid="Boolean(fieldErrors.phone)"
+                    />
+                    <small class="c-contact__helper">
+                      {{ preferredContact === 'whatsapp' ? 'Obligatorio en esta opcion.' : 'Opcional.' }}
+                    </small>
+                    <small v-if="fieldErrors.phone" class="c-contact__error">{{ fieldErrors.phone }}</small>
                   </div>
                   <div>
                     <label class="c-contact__label" :for="fieldMeta.email.inputId">E-mail</label>
@@ -227,61 +329,13 @@ watch(
                       maxlength="160"
                       inputmode="email"
                       :disabled="!isChannelEnabled"
+                      :aria-required="preferredContact === 'email'"
                       :aria-invalid="Boolean(fieldErrors.email)"
                     />
+                    <small class="c-contact__helper">
+                      {{ preferredContact === 'email' ? 'Obligatorio en esta opcion.' : 'Opcional.' }}
+                    </small>
                     <small v-if="fieldErrors.email" class="c-contact__error">{{ fieldErrors.email }}</small>
-                  </div>
-                </template>
-
-                <template v-else-if="currentStep === 2">
-                  <h3 class="c-contact__step-title">2. Contanos tu proyecto</h3>
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.comment.inputId">Descripcion del proyecto</label>
-                    <textarea
-                      :id="fieldMeta.comment.inputId"
-                      v-model="form.comment"
-                      class="c-contact__input c-contact__input--textarea"
-                      rows="6"
-                      maxlength="2000"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.comment)"
-                    />
-                    <small class="c-contact__helper">Inclui objetivos, tiempos estimados y alcance.</small>
-                    <small v-if="fieldErrors.comment" class="c-contact__error">{{ fieldErrors.comment }}</small>
-                  </div>
-                </template>
-
-                <template v-else>
-                  <h3 class="c-contact__step-title">3. Medio de contacto preferido</h3>
-                  <fieldset class="c-contact__choice-group">
-                    <legend class="c-contact__label">Elegi como queres que te contactemos</legend>
-                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'whatsapp' }">
-                      <input v-model="preferredContact" type="radio" value="whatsapp" name="preferredContact" />
-                      WhatsApp
-                    </label>
-                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'phone' }">
-                      <input v-model="preferredContact" type="radio" value="phone" name="preferredContact" />
-                      Telefono
-                    </label>
-                  </fieldset>
-
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.phone.inputId">
-                      {{ preferredContact === 'whatsapp' ? 'Numero de WhatsApp' : 'Numero de telefono' }}
-                    </label>
-                    <input
-                      :id="fieldMeta.phone.inputId"
-                      v-model="form.phone"
-                      type="tel"
-                      class="c-contact__input"
-                      autocomplete="tel"
-                      maxlength="40"
-                      inputmode="tel"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.phone)"
-                    />
-                    <small class="c-contact__helper">Formato sugerido: +54 9 11 1234 5678</small>
-                    <small v-if="fieldErrors.phone" class="c-contact__error">{{ fieldErrors.phone }}</small>
                   </div>
                 </template>
                   </div>
@@ -354,7 +408,7 @@ watch(
 
           <article v-if="contactEmail" class="c-contact__email-card" aria-label="Contacto alternativo por email">
             <p class="c-contact__email-label">Contacto alternativo</p>
-            <p class="c-contact__email-title">Contactanos via email</p>
+            <p class="c-contact__email-title">Contáctanos vía e-mail</p>
             <a class="c-contact__email-link" :href="`mailto:${contactEmail}`">{{ contactEmail }}</a>
           </article>
         </div>

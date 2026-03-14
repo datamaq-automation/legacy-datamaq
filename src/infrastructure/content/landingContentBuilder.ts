@@ -9,9 +9,9 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
 
   return {
     hero: {
-      badge: `Servicio tecnico ${config.brandName}`,
+      badge: `Servicio técnico ${config.brandName}`,
       title: 'Contenido no disponible',
-      subtitle: 'Estamos actualizando la informacion de esta landing.',
+      subtitle: 'Estamos actualizando la información de esta landing.',
       responseNote: `Base operativa: ${config.baseOperativa}.`,
       primaryCta: {
         label: 'Contactar',
@@ -24,11 +24,11 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         action: 'services'
       },
       benefits: [
-        { title: 'Sincronizacion', text: 'Esperando contenido remoto.', variant: 'primary' },
+        { title: 'Sincronización', text: 'Esperando contenido remoto.', variant: 'primary' },
         { title: 'Integridad', text: 'Validando contrato de contenido.', variant: 'success' },
-        { title: 'Estado', text: 'Mostrando fallback tecnico.', variant: 'warning' }
+        { title: 'Estado', text: 'Mostrando fallback técnico.', variant: 'warning' }
       ],
-      image: { src: '/media/hero-energy.svg', alt: 'Energia y tablero industrial', width: 900, height: 700 }
+      image: { src: '/media/hero-energy.svg', alt: 'Energía y tablero industrial', width: 900, height: 700 }
     },
     services: {
       title: 'Contenido',
@@ -36,9 +36,9 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         {
           id: 'placeholder-1',
           title: 'Bloque temporal',
-          description: 'Este contenido sera provisto por backend.',
-          subtitle: 'Pendiente de sincronizacion',
-          media: { src: '/media/install-tools.svg', alt: 'Herramientas de instalacion', width: 900, height: 700 },
+          description: 'Este contenido será provisto por backend.',
+          subtitle: 'Pendiente de sincronización',
+          media: { src: '/media/install-tools.svg', alt: 'Herramientas de instalación', width: 900, height: 700 },
           items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           figure: {
             src: '/media/install-tools.svg',
@@ -52,9 +52,9 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         {
           id: 'placeholder-2',
           title: 'Bloque temporal',
-          description: 'Este contenido sera provisto por backend.',
-          subtitle: `Instrumentacion: ${config.equipos.medidorNombre}`,
-          media: { src: '/media/analytics-dashboard.svg', alt: 'Panel de medicion', width: 900, height: 700 },
+          description: 'Este contenido será provisto por backend.',
+          subtitle: `Instrumentación: ${config.equipos.medidorNombre}`,
+          media: { src: '/media/analytics-dashboard.svg', alt: 'Panel de medición', width: 900, height: 700 },
           items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           note: diagnosticListNote,
           cta: { label: 'Contactar', href: '#contacto', action: 'contact', section: 'contacto' }
@@ -62,9 +62,9 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         {
           id: 'placeholder-3',
           title: 'Bloque temporal',
-          description: 'Este contenido sera provisto por backend.',
-          subtitle: 'Pendiente de sincronizacion',
-          media: { src: '/media/team-training.svg', alt: 'Capacitacion de equipo', width: 900, height: 700 },
+          description: 'Este contenido será provisto por backend.',
+          subtitle: 'Pendiente de sincronización',
+          media: { src: '/media/team-training.svg', alt: 'Capacitación de equipo', width: 900, height: 700 },
           items: ['Esperando payload', 'Esperando payload', 'Esperando payload'],
           cta: { label: 'Contactar', href: '#contacto', action: 'contact', section: 'contacto' }
         }
@@ -76,14 +76,14 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         'Contenido temporal de fallback.',
         'Este bloque se reemplaza por backend.'
       ],
-      image: { src: '/media/tecnico-a-cargo.webp', alt: 'Tecnico a cargo', width: 700, height: 933 }
+      image: { src: '/media/tecnico-a-cargo.webp', alt: 'Técnico a cargo', width: 700, height: 933 }
     },
     profile: {
       title: 'Perfil',
       bullets: [
         'Contenido temporal.',
         'Esperando backend.',
-        'Sincronizacion pendiente.'
+        'Sincronización pendiente.'
       ]
     },
     navbar: {
@@ -110,8 +110,8 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
         lastName: 'Apellido',
         company: 'Empresa',
         email: 'E-mail',
-        phone: 'Nro telefono',
-        geographicLocation: 'Ubicacion geografica',
+        phone: 'Nro. teléfono',
+        geographicLocation: 'Ubicación geográfica',
         comment: 'Comentario',
         message: 'Comentario'
       },
@@ -119,12 +119,12 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       checkingMessage: 'Verificando backend...',
       unavailableMessage: 'Servicio temporalmente no disponible.',
       successMessage: 'Mensaje enviado. Gracias por contactarte.',
-      errorMessage: 'No se pudo enviar. Intentalo nuevamente.',
-      unexpectedErrorMessage: 'Ocurrio un error inesperado.'
+      errorMessage: 'No se pudo enviar. Inténtalo nuevamente.',
+      unexpectedErrorMessage: 'Ocurrió un error inesperado.'
     },
     consent: {
       title: 'Privacidad',
-      description: 'Configuracion temporal de consentimiento.',
+      description: 'Configuración temporal de consentimiento.',
       acceptLabel: 'Aceptar',
       rejectLabel: 'Rechazar'
     },
@@ -144,7 +144,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       coverageAreas: ['Contenido temporal.'],
       responseTimesTitle: 'Tiempo de respuesta',
       responseTimes: ['Contenido temporal.'],
-      whatsappLabel: 'Pedir coordinacion por WhatsApp',
+      whatsappLabel: 'Pedir coordinación por WhatsApp',
       contactFormLabel: 'Ir al formulario de contacto',
       faqTitle: 'Preguntas frecuentes',
       processSteps: [
@@ -179,7 +179,7 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       faqTitle: 'Preguntas frecuentes',
       quickLinks: {
         services: 'Explorar servicios',
-        profile: 'Ver perfil tecnico'
+        profile: 'Ver perfil técnico'
       },
       dockLabels: {
         home: 'Inicio',
@@ -198,13 +198,13 @@ export function buildLandingAppContent(config: CommercialConfig): AppContent {
       homeButtonLabel: 'Inicio',
       supportTitle: 'Canales disponibles',
       supportItems: [
-        'Formulario principal para consultas tecnicas y comerciales.',
-        'WhatsApp directo para coordinacion rapida cuando este habilitado.'
+        'Formulario principal para consultas técnicas y comerciales.',
+        'WhatsApp directo para coordinación rápida cuando esté habilitado.'
       ],
       supportBackHomeLabel: 'Volver al inicio',
       introLinks: {
         services: 'Servicios',
-        profile: 'Perfil tecnico',
+        profile: 'Perfil técnico',
         faq: 'FAQ'
       },
       primaryFormSubmitLabel: 'Enviar solicitud'

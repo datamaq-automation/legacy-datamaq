@@ -1,10 +1,12 @@
 export const CONTACT_LEAD_TOTAL_STEPS = 3
 export const CONTACT_LEAD_STEP_LABELS = ['Identidad', 'Proyecto', 'Contacto'] as const
 
-export type PreferredContact = 'whatsapp' | 'phone'
+export type PreferredContact = 'whatsapp' | 'email'
 
 export interface ContactLeadDraft {
   firstName: string
+  lastName: string
+  company: string
   email: string
   comment: string
   phone: string
@@ -14,6 +16,8 @@ export interface ContactLeadDraft {
 
 export interface ContactLeadStepErrors {
   firstName?: string
+  lastName?: string
+  company?: string
   email?: string
   comment?: string
   phone?: string
@@ -23,40 +27,52 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function validateContactLeadStep(
   step: number,
-  values: Pick<ContactLeadDraft, 'firstName' | 'email' | 'comment' | 'phone'>
+  values: Pick<ContactLeadDraft, 'firstName' | 'lastName' | 'company' | 'email' | 'comment' | 'phone' | 'preferredContact'>
 ): ContactLeadStepErrors {
   if (step === 1) {
-    const errors: ContactLeadStepErrors = {}
-    if (!values.firstName.trim()) {
-      errors.firstName = 'Ingresa tu nombre.'
-    }
-    if (!EMAIL_REGEX.test(values.email.trim())) {
-      errors.email = 'Ingresa un e-mail valido.'
-    }
-    return errors
-  }
-
-  if (step === 2) {
-    if (values.comment.trim().length < 10) {
-      return { comment: 'Describe el proyecto en al menos 10 caracteres.' }
-    }
-
     return {}
   }
 
-  if (values.phone.trim().length < 8) {
-    return { phone: 'Ingresa un numero de contacto valido.' }
+  if (step === 2) {
+    return {}
+  }
+
+  const phone = values.phone.trim()
+  const email = values.email.trim()
+
+  if (values.preferredContact === 'whatsapp') {
+    if (phone.length < 8) {
+      return { phone: 'Ingresa un número de WhatsApp válido.' }
+    }
+    if (email && !EMAIL_REGEX.test(email)) {
+      return { email: 'Ingresa un e-mail válido.' }
+    }
+    return {}
+  }
+
+  if (!EMAIL_REGEX.test(email)) {
+    return { email: 'Ingresa un e-mail válido.' }
+  }
+  if (phone && phone.length < 8) {
+    return { phone: 'Ingresa un número de WhatsApp válido.' }
   }
 
   return {}
 }
 
 export function hasContactLeadStepErrors(errors: ContactLeadStepErrors): boolean {
-  return Boolean(errors.firstName || errors.email || errors.comment || errors.phone)
+  return Boolean(
+    errors.firstName ||
+      errors.lastName ||
+      errors.company ||
+      errors.email ||
+      errors.comment ||
+      errors.phone
+  )
 }
 
 export function normalizePreferredContact(value: unknown): PreferredContact {
-  return value === 'phone' ? 'phone' : 'whatsapp'
+  return value === 'email' ? 'email' : 'whatsapp'
 }
 
 export function clampContactLeadStep(step: unknown): number {

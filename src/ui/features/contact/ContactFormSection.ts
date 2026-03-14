@@ -12,8 +12,8 @@ export function useContactFormSection(props: ContactFormProps) {
       lastName: 'Apellido',
       company: 'Empresa',
       email: 'E-mail',
-      phone: 'Nro telefono',
-      geographicLocation: 'Ubicacion geografica',
+      phone: 'Nro. teléfono',
+      geographicLocation: 'Ubicación geográfica',
       comment: 'Comentario',
       message: 'Comentario',
       ...contactContent.labels

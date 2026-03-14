@@ -47,13 +47,13 @@ export function validateQuoteForm(form: QuoteFormState): QuoteFormErrors {
     errors.locality = 'Ingresa la localidad.'
   }
   if (form.scheduled === null) {
-    errors.scheduled = 'Selecciona Si o No.'
+    errors.scheduled = 'Selecciona Sí o No.'
   }
   if (form.access_ready === null) {
-    errors.access_ready = 'Selecciona Si o No.'
+    errors.access_ready = 'Selecciona Sí o No.'
   }
   if (form.safe_window_confirmed === null) {
-    errors.safe_window_confirmed = 'Selecciona Si o No.'
+    errors.safe_window_confirmed = 'Selecciona Sí o No.'
   }
 
   return errors

@@ -128,7 +128,7 @@ describe('QuoteApiGateway', () => {
       if (!QuoteApiError.is(error)) {
         throw error
       }
-      expect(error.message).toContain('Error al generar cotizacion (503)')
+      expect(error.message).toContain('Error al generar cotización (503)')
       expect(error.status).toBe(503)
       expect(error.detail).toBe('backend error')
     })
@@ -154,7 +154,7 @@ describe('QuoteApiGateway', () => {
       if (!QuoteApiError.is(error)) {
         throw error
       }
-      expect(error.message).toBe('Error de red al generar cotizacion')
+      expect(error.message).toBe('Error de red al generar cotización')
       expect(error.status).toBe(0)
       expect(error.kind).toBe('network')
     })
@@ -355,7 +355,7 @@ describe('QuoteApiGateway', () => {
         new Response(blobBody, {
           status: 200,
           headers: {
-            'Content-Disposition': "attachment; filename*=UTF-8''cotizacion%20Q-2.pdf"
+            'Content-Disposition': "attachment; filename*=UTF-8''cotización%20Q-2.pdf"
           }
         })
       )
@@ -364,7 +364,7 @@ describe('QuoteApiGateway', () => {
     const gateway = new QuoteApiGateway(createConfig())
     const result = await gateway.fetchQuotePdf('Q-20260222-000002')
 
-    expect(result.filename).toBe('cotizacion Q-2.pdf')
+    expect(result.filename).toBe('cotización Q-2.pdf')
   })
 
   it('maps 429 with retry-after header for quote PDF download', async () => {
@@ -472,7 +472,7 @@ describe('QuoteApiGateway', () => {
         throw error
       }
       expect(error.status).toBe(422)
-      expect(error.detail).toBe('quote_id invalido')
+      expect(error.detail).toBe('quote_id inválido')
     })
   })
 
@@ -487,7 +487,7 @@ describe('QuoteApiGateway', () => {
         throw error
       }
       expect(error.status).toBe(422)
-      expect(error.detail).toBe('quote_id invalido')
+      expect(error.detail).toBe('quote_id inválido')
     })
   })
 
@@ -504,10 +504,10 @@ describe('QuoteApiGateway', () => {
         safe_window_confirmed: true,
         bureaucracy: 'medium'
       })
-    ).rejects.toThrow('Cotizador no disponible: falta configuracion de backend')
+    ).rejects.toThrow('Cotizador no disponible: falta configuración de backend')
 
     await expect(gateway.fetchQuotePdf('Q-1')).rejects.toThrow(
-      'Cotizador no disponible: falta configuracion de backend'
+      'Cotizador no disponible: falta configuración de backend'
     )
   })
 })

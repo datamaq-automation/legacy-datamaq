@@ -41,9 +41,9 @@ describe('quoteFormValidation', () => {
       company: 'Ingresa la empresa.',
       contact_name: 'Ingresa el nombre de contacto.',
       locality: 'Ingresa la localidad.',
-      scheduled: 'Selecciona Si o No.',
-      access_ready: 'Selecciona Si o No.',
-      safe_window_confirmed: 'Selecciona Si o No.'
+      scheduled: 'Selecciona Sí o No.',
+      access_ready: 'Selecciona Sí o No.',
+      safe_window_confirmed: 'Selecciona Sí o No.'
     })
   })
 
@@ -51,7 +51,7 @@ describe('quoteFormValidation', () => {
     const errors = {
       company: 'Ingresa la empresa.',
       locality: '  ',
-      scheduled: 'Selecciona Si o No.'
+      scheduled: 'Selecciona Sí o No.'
     }
 
     expect(collectInvalidQuoteFields(errors)).toEqual(['company', 'scheduled'])

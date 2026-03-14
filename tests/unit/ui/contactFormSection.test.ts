@@ -57,8 +57,8 @@ vi.mock('@/di/container', () => ({
           lastName: 'Apellido',
           company: 'Empresa',
           email: 'E-mail',
-          phone: 'Nro telefono',
-          geographicLocation: 'Ubicacion geografica',
+          phone: 'Nro. teléfono',
+          geographicLocation: 'Ubicación geográfica',
           comment: 'Comentario',
           message: 'Comentario'
         },
@@ -113,14 +113,15 @@ describe('ContactFormSection', () => {
     })
 
     await fireEvent.update(screen.getByLabelText('Nombre'), 'Ana')
-    await fireEvent.update(screen.getByLabelText('E-mail'), 'ana@example.com')
+    await fireEvent.update(screen.getByLabelText('Apellido'), 'Perez')
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(screen.getByLabelText('Empresa'), 'ACME')
     await fireEvent.update(
-      screen.getByLabelText('Descripcion del proyecto'),
+      screen.getByLabelText('Descripción del proyecto'),
       'Necesito una propuesta para mi planta'
     )
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
-    await fireEvent.update(screen.getByLabelText('Numero de WhatsApp'), '+54 11 5555 4444')
+    await fireEvent.update(screen.getByLabelText('WhatsApp', { selector: 'input[type="tel"]' }), '+54 11 5555 4444')
     await fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }))
 
     await waitFor(() => {
@@ -129,7 +130,8 @@ describe('ContactFormSection', () => {
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         firstName: 'Ana',
-        email: 'ana@example.com',
+        lastName: 'Perez',
+        company: 'ACME',
         phone: '+54 11 5555 4444',
         comment: 'Necesito una propuesta para mi planta'
       })
@@ -185,19 +187,20 @@ describe('ContactFormSection', () => {
     })
 
     await fireEvent.update(screen.getByLabelText('Nombre'), 'Ana')
-    await fireEvent.update(screen.getByLabelText('E-mail'), 'ana@example.com')
+    await fireEvent.update(screen.getByLabelText('Apellido'), 'Perez')
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.update(screen.getByLabelText('Empresa'), 'ACME')
     await fireEvent.update(
-      screen.getByLabelText('Descripcion del proyecto'),
+      screen.getByLabelText('Descripción del proyecto'),
       'Mensaje valido en longitud para forzar error de email.'
     )
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
-    await fireEvent.update(screen.getByLabelText('Numero de WhatsApp'), '+54 11 5555 4444')
+    await fireEvent.update(screen.getByLabelText('WhatsApp', { selector: 'input[type="tel"]' }), '+54 11 5555 4444')
     await fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }))
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(
-        'Ingresa e-mail o teléfono (al menos uno). Codigo de seguimiento: req_422.'
+        'Ingresa e-mail o teléfono (al menos uno). Código de seguimiento: req_422.'
       )
     })
   })

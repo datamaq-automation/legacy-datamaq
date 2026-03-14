@@ -39,5 +39,5 @@ function appendTrackingId(message: string, requestId: string | undefined): strin
     return message
   }
 
-  return `${message} Codigo de seguimiento: ${requestId}.`
+  return `${message} Código de seguimiento: ${requestId}.`
 }

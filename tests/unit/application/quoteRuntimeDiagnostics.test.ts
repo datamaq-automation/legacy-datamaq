@@ -80,7 +80,7 @@ describe('quoteRuntimeDiagnostics', () => {
     expect(
       summarizeQuoteError(
         new QuoteApiError({
-          message: 'Error al generar cotizacion (429): rate limit exceeded',
+          message: 'Error al generar cotización (429): rate limit exceeded',
           status: 429,
           detail: 'rate limit exceeded',
           retryAfterSeconds: 12,
@@ -90,7 +90,7 @@ describe('quoteRuntimeDiagnostics', () => {
       )
     ).toEqual({
       name: 'QuoteApiError',
-      message: 'Error al generar cotizacion (429): rate limit exceeded',
+      message: 'Error al generar cotización (429): rate limit exceeded',
       kind: 'http',
       status: 429,
       detail: 'rate limit exceeded',

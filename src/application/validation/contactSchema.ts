@@ -10,12 +10,12 @@ const OptionalTextField = (maxLength: number) =>
 
 const OptionalEmailField = OptionalTextField(160).refine(
   (value) => value.length === 0 || Email.create(value).ok,
-  'Ingresa un e-mail valido.'
+  'Ingresa un e-mail válido.'
 )
 
 const OptionalPhoneField = OptionalTextField(40).refine(
   (value) => value.length === 0 || Phone.create(value).ok,
-  'Ingresa un telefono valido.'
+  'Ingresa un teléfono válido.'
 )
 
 export const ContactLeadSchema = z
@@ -51,7 +51,7 @@ export const EmailContactSchema = z.object({
     .string()
     .max(160)
     .transform((value) => value.trim())
-    .refine((value) => Email.create(value).ok, 'Ingresa un e-mail valido.'),
+    .refine((value) => Email.create(value).ok, 'Ingresa un e-mail válido.'),
   phone: OptionalPhoneField,
   geographicLocation: OptionalTextField(160),
   comment: z

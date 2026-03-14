@@ -28,7 +28,7 @@ export class QuoteApiGateway implements QuoteGateway {
   async createDiagnosticQuote(payload: DiagnosticQuoteRequest): Promise<DiagnosticQuoteResponse> {
     const endpoint = this.config.quoteDiagnosticApiUrl
     if (!endpoint) {
-      throw new Error('Cotizador no disponible: falta configuracion de backend')
+      throw new Error('Cotizador no disponible: falta configuración de backend')
     }
     const endpointContext = buildQuoteEndpointLogContext(endpoint)
 
@@ -49,9 +49,9 @@ export class QuoteApiGateway implements QuoteGateway {
           status: 0,
           reason: 'network-error'
         })
-        throw QuoteApiError.network('Error de red al generar cotizacion')
+        throw QuoteApiError.network('Error de red al generar cotización')
       }
-      const quoteError = await buildQuoteApiError(response, 'Error al generar cotizacion')
+      const quoteError = await buildQuoteApiError(response, 'Error al generar cotización')
       logQuoteGatewayWarn('generar propuesta respuesta no OK', {
         ...endpointContext,
         status: quoteError.status,
@@ -161,14 +161,14 @@ export class QuoteApiGateway implements QuoteGateway {
   private buildQuotePdfEndpoint(quoteId: string): string {
     const endpoint = this.config.quoteDiagnosticApiUrl
     if (!endpoint) {
-      throw new Error('Cotizador no disponible: falta configuracion de backend')
+      throw new Error('Cotizador no disponible: falta configuración de backend')
     }
     const normalizedQuoteId = quoteId.trim()
     if (!isValidQuoteId(normalizedQuoteId)) {
       throw new QuoteApiError({
-        message: 'Error al descargar PDF (422): quote_id invalido',
+        message: 'Error al descargar PDF (422): quote_id inválido',
         status: 422,
-        detail: 'quote_id invalido'
+        detail: 'quote_id inválido'
       })
     }
     const explicitPdfEndpoint = normalizeText(this.config.quotePdfApiUrl ?? '')

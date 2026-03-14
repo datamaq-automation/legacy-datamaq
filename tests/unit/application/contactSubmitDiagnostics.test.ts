@@ -76,7 +76,7 @@ describe('contactSubmitDiagnostics', () => {
 
     expect(
       collectInvalidContactFields({
-        email: 'Ingresa un e-mail valido.',
+        email: 'Ingresa un e-mail válido.',
         comment: 'Ingresa un comentario.'
       })
     ).toEqual(['comment', 'email'])

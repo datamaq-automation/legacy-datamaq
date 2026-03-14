@@ -183,19 +183,20 @@ test.describe('Smoke E2E', () => {
     await expect(leadSection).toBeVisible()
     await test.step('Paso 1: completar identidad', async () => {
       await leadSection.getByLabel(/nombre/i).fill('Ada')
-      await leadSection.getByRole('textbox', { name: /e-mail/i }).fill('ada@example.com')
+      await leadSection.getByLabel(/apellido/i).fill('Lovelace')
       await leadSection.getByRole('button', { name: /continuar/i }).click()
     })
 
     await test.step('Paso 2: completar proyecto', async () => {
-      const projectDescription = leadSection.getByLabel(/descripcion del proyecto/i)
+      await leadSection.getByLabel(/empresa/i).fill('Datamaq SRL')
+      const projectDescription = leadSection.getByLabel(/descripci[oó]n del proyecto/i)
       await expect(projectDescription).toBeVisible()
       await projectDescription.fill('Necesito una propuesta para mantenimiento industrial.')
       await leadSection.getByRole('button', { name: /continuar/i }).click()
     })
 
     await test.step('Paso 3: completar contacto y enviar', async () => {
-      await leadSection.getByLabel(/numero de (whatsapp|telefono)/i).fill('+54 9 11 1234 5678')
+      await leadSection.locator('input[type="tel"]').fill('+54 9 11 1234 5678')
       await page.getByRole('button', { name: /enviar solicitud/i }).click()
     })
 
@@ -218,7 +219,7 @@ test.describe('Smoke E2E', () => {
     await page.getByLabel(/nombre de contacto/i).fill('Ada')
     await page.getByLabel(/localidad/i).fill('Escobar')
 
-    const yesButtons = page.getByRole('button', { name: /^Si$/ })
+    const yesButtons = page.getByRole('button', { name: /^Sí$/ })
     await yesButtons.nth(0).click()
     await yesButtons.nth(1).click()
     await yesButtons.nth(2).click()
@@ -226,7 +227,7 @@ test.describe('Smoke E2E', () => {
     await page.getByRole('button', { name: /generar propuesta/i }).click()
     await expect(page.getByText('Q-20260309-000777')).toBeVisible()
 
-    await page.getByRole('button', { name: /ver version web/i }).click()
+    await page.getByRole('button', { name: /ver versión web/i }).click()
 
     await expect(page).toHaveURL(/\/cotizador\/Q-20260309-000777\/web$/)
     await expect(page.getByRole('heading', { level: 1, name: 'DATAMAQ' })).toBeVisible()

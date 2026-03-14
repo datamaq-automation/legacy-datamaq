@@ -71,9 +71,9 @@ function buildDomainFieldErrors(
 ): Partial<ContactFieldErrors> {
   switch (errorType) {
     case 'InvalidEmail':
-      return { email: 'Ingresa un e-mail valido.' }
+      return { email: 'Ingresa un e-mail válido.' }
     case 'InvalidPhone':
-      return { phone: 'Ingresa un telefono valido.' }
+      return { phone: 'Ingresa un teléfono válido.' }
     case 'MissingContactMethod':
       return {
         email: 'Ingresa e-mail o teléfono (al menos uno).',

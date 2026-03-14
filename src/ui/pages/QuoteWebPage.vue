@@ -16,7 +16,7 @@ const technicalConditions = computed(() => {
   }
 
   return [
-    { label: 'Agendado', value: 'Si', stateClass: 'is-positive', icon: 'bi-calendar2-check' },
+    { label: 'Agendado', value: 'Sí', stateClass: 'is-positive', icon: 'bi-calendar2-check' },
     { label: 'Acceso', value: 'Listo', stateClass: 'is-positive', icon: 'bi-key-fill' },
     { label: 'Segura', value: 'Conf.', stateClass: 'is-positive', icon: 'bi-shield-check' }
   ]
@@ -69,7 +69,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
       <header class="quote-web-page__header">
         <div>
           <h1 class="quote-web-page__brand">DATAMAQ</h1>
-          <p class="quote-web-page__subtitle">Cotizacion de diagnostico</p>
+          <p class="quote-web-page__subtitle">Cotización de diagnóstico</p>
         </div>
         <div class="quote-web-page__status">
           {{ hasQuote ? 'Pendiente' : 'No disponible' }}
@@ -79,7 +79,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
       <section v-if="quote" class="quote-web-card">
         <div class="quote-web-card__top">
           <div>
-            <p class="quote-web-label">ID de cotizacion</p>
+            <p class="quote-web-label">ID de cotización</p>
             <p class="quote-web-card__mono">{{ quote.quote_id }}</p>
           </div>
           <i class="bi bi-receipt-cutoff quote-web-card__corner-icon" aria-hidden="true"></i>
@@ -93,7 +93,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
       </section>
 
       <section v-if="quote" class="quote-web-section">
-        <h2 class="quote-web-section__title">Condiciones tecnicas</h2>
+        <h2 class="quote-web-section__title">Condiciones técnicas</h2>
         <div class="quote-web-conditions">
           <article
             v-for="condition in technicalConditions"
@@ -124,7 +124,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
           </div>
           <div class="quote-web-pricing__deposit">
             <div>
-              <p class="quote-web-pricing__deposit-label">Sena requerida ({{ quote.deposit_pct }}%)</p>
+              <p class="quote-web-pricing__deposit-label">Seña requerida ({{ quote.deposit_pct }}%)</p>
               <p class="quote-web-pricing__deposit-value">{{ formatArs(quote.deposit_ars) }}</p>
             </div>
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
@@ -137,9 +137,9 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
       </p>
 
       <section v-else class="quote-web-card quote-web-card--empty">
-        <h2 class="quote-web-section__title">Cotizacion no encontrada</h2>
+        <h2 class="quote-web-section__title">Cotización no encontrada</h2>
         <p class="quote-web-page__empty-copy">
-          Esta vista depende de una cotizacion generada previamente en el cotizador del frontend.
+          Esta vista depende de una cotización generada previamente en el cotizador del frontend.
         </p>
         <a class="quote-web-page__back-link" href="/cotizador">Volver al cotizador</a>
       </section>

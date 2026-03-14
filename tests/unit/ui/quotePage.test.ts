@@ -77,7 +77,7 @@ async function fillRequiredFields() {
   await fireEvent.update(screen.getByLabelText('Nombre de contacto *'), 'Ada Lovelace')
   await fireEvent.update(screen.getByLabelText('Localidad *'), 'Escobar')
 
-  const yesButtons = screen.getAllByRole('button', { name: 'Si' })
+  const yesButtons = screen.getAllByRole('button', { name: 'Sí' })
   await fireEvent.click(yesButtons[0])
   await fireEvent.click(yesButtons[1])
   await fireEvent.click(yesButtons[2])
@@ -103,7 +103,7 @@ describe('QuotePage', () => {
     expect(screen.getByText('Ingresa la empresa.')).toBeInTheDocument()
     expect(screen.getByText('Ingresa el nombre de contacto.')).toBeInTheDocument()
     expect(screen.getByText('Ingresa la localidad.')).toBeInTheDocument()
-    expect(screen.getAllByText('Selecciona Si o No.')).toHaveLength(3)
+    expect(screen.getAllByText('Selecciona Sí o No.')).toHaveLength(3)
   })
 
   it('maps backend 422 issues to field errors and user-visible alert', async () => {
@@ -160,7 +160,7 @@ describe('QuotePage', () => {
     await fireEvent.click(screen.getByRole('button', { name: 'Descargar PDF' }))
     expect(mocks.fetchQuotePdf).toHaveBeenCalledWith('Q-20260309-000001')
 
-    await fireEvent.click(screen.getByRole('button', { name: 'Ver version web' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Ver versión web' }))
     await waitFor(() => {
       expect(router.currentRoute.value.name).toBe('cotizador-web')
     })

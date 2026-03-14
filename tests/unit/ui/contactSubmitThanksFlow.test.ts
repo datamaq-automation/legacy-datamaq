@@ -50,8 +50,8 @@ vi.mock('@/di/container', () => ({
           lastName: 'Apellido',
           company: 'Empresa',
           email: 'E-mail',
-          phone: 'Nro telefono',
-          geographicLocation: 'Ubicacion geografica',
+          phone: 'Nro. teléfono',
+          geographicLocation: 'Ubicación geográfica',
           comment: 'Comentario',
           message: 'Comentario'
         },
@@ -123,14 +123,14 @@ describe('Contact submit and thanks flow', () => {
     })
 
     await fireEvent.update(screen.getByLabelText('Nombre'), 'Maria')
-    await fireEvent.update(screen.getByLabelText('E-mail'), 'maria@example.com')
+    await fireEvent.update(screen.getByLabelText('Apellido'), 'Perez')
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
     await fireEvent.update(
-      screen.getByLabelText('Descripcion del proyecto'),
+      screen.getByLabelText('Descripción del proyecto'),
       'Necesito una propuesta para una planta.'
     )
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
-    await fireEvent.update(screen.getByLabelText('Numero de WhatsApp'), '+54 11 5555 4444')
+    await fireEvent.update(screen.getByLabelText('WhatsApp', { selector: 'input[type="tel"]' }), '+54 11 5555 4444')
     await fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }))
 
     await waitFor(() => {
