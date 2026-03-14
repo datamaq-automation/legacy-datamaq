@@ -48,6 +48,7 @@ vi.mock('@/ui/features/contact/useContactFacade', () => ({
 
 describe('contactController', () => {
   beforeEach(() => {
+    vi.restoreAllMocks()
     mocks.trackChat.mockReset()
     mocks.trackSectionScroll.mockReset()
     mocks.submitContact.mockReset()
@@ -90,6 +91,17 @@ describe('contactController', () => {
     expect(getWhatsAppHref()).toBeUndefined()
   })
 
+  it('returns undefined when hero CTA points to non-whatsapp domain', () => {
+    mocks.getHeroContent.mockReturnValue({
+      primaryCta: {
+        href: 'https://example.com/chat'
+      }
+    })
+
+    expect(getWhatsAppEnabled()).toBe(false)
+    expect(getWhatsAppHref()).toBeUndefined()
+  })
+
   it('returns contact email when configured', () => {
     mocks.config.contactEmail = 'contacto@example.com'
 
@@ -115,6 +127,19 @@ describe('contactController', () => {
     expect(typeof openedUrl).toBe('string')
     expect(new URL(openedUrl as string).searchParams.get('text')).toBe(EXPECTED_WHATSAPP_MESSAGE)
     expect(mocks.trackChat).toHaveBeenCalledWith('tecnico-a-cargo', 'google')
+  })
+
+  it('does not open or track when provided href is untrusted', () => {
+    mocks.getHeroContent.mockReturnValue({
+      primaryCta: {
+        href: 'https://wa.me/5491156297160'
+      }
+    })
+
+    openWhatsApp('tecnico-a-cargo', 'https://evilwhatsapp.com/phishing')
+
+    expect(window.open).not.toHaveBeenCalled()
+    expect(mocks.trackChat).not.toHaveBeenCalled()
   })
 
   it('tracks section scroll using normalized anchor', () => {

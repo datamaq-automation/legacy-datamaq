@@ -4,9 +4,11 @@ import { useContactFacade } from '@/ui/features/contact/useContactFacade'
 
 const DEFAULT_BRAND_NAME = 'DataMaq'
 const DEFAULT_MACHINE_PLACEHOLDER = '[Tipo de Maquina]'
+const WHATSAPP_BASE_DOMAIN = 'whatsapp.com'
+const WA_SHORT_DOMAIN = 'wa.me'
 
 export function getWhatsAppEnabled(): boolean {
-  return Boolean(resolveWhatsAppUrl())
+  return Boolean(getWhatsAppHref())
 }
 
 export function getWhatsAppHref(): string | undefined {
@@ -93,11 +95,11 @@ function buildPrefilledWhatsAppUrl(href: string | undefined): string | undefined
   try {
     parsedUrl = new URL(normalizedHref)
   } catch {
-    return normalizedHref
+    return undefined
   }
 
-  if (!isWhatsAppHostname(parsedUrl.hostname)) {
-    return normalizedHref
+  if (!isTrustedWhatsAppUrl(parsedUrl)) {
+    return undefined
   }
 
   parsedUrl.searchParams.set('text', buildDefaultWhatsAppMessage())
@@ -115,7 +117,15 @@ function isExternalHref(href: string): boolean {
 
 function isWhatsAppHostname(hostname: string): boolean {
   const normalized = hostname.trim().toLowerCase()
-  return normalized === 'wa.me' || normalized.endsWith('.wa.me') || normalized.endsWith('whatsapp.com')
+  return hasDomain(normalized, WA_SHORT_DOMAIN) || hasDomain(normalized, WHATSAPP_BASE_DOMAIN)
+}
+
+function isTrustedWhatsAppUrl(url: URL): boolean {
+  return url.protocol === 'https:' && isWhatsAppHostname(url.hostname)
+}
+
+function hasDomain(hostname: string, domain: string): boolean {
+  return hostname === domain || hostname.endsWith(`.${domain}`)
 }
 
 function normalizeSection(sectionHref: string): string | undefined {

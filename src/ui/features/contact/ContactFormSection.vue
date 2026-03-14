@@ -50,6 +50,7 @@ const progressPercent = computed(() => Math.round((currentStep.value / totalStep
 const isLastStep = computed(() => currentStep.value === totalSteps)
 const stepLabels = CONTACT_LEAD_STEP_LABELS
 const draftStorageKey = `dm-contact-draft-${sectionId}`
+const draftNotice = 'Guardamos un borrador temporal de este formulario por hasta 12 horas en este dispositivo.'
 
 function goPrevStep() {
   if (currentStep.value > 1) {
@@ -193,6 +194,7 @@ watch(
                   <div class="c-contact__progress-fill" :style="{ width: `${progressPercent}%` }"></div>
                 </div>
                 <p class="c-contact__progress-text">Paso {{ currentStep }} de {{ totalSteps }}</p>
+                <p class="c-contact__privacy-note">{{ draftNotice }}</p>
               </div>
 
               <TecnicoACargo
@@ -506,6 +508,12 @@ watch(
   margin: 0.5rem 0 1rem;
   font-size: 0.82rem;
   color: #d1d9e2;
+}
+
+.c-contact__privacy-note {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  color: #b8c6d8;
 }
 
 .c-contact__step-title {
