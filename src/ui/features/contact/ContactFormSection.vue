@@ -245,7 +245,7 @@ watch(
                     <small v-if="fieldErrors.company" class="c-contact__error">{{ fieldErrors.company }}</small>
                   </div>
                   <div>
-                    <label class="c-contact__label" :for="fieldMeta.comment.inputId">DescripciÃ³n del proyecto</label>
+                    <label class="c-contact__label" :for="fieldMeta.comment.inputId">Descripci&oacute;n del proyecto</label>
                     <textarea
                       :id="fieldMeta.comment.inputId"
                       v-model="form.comment"
@@ -263,7 +263,7 @@ watch(
                 <template v-else>
                   <h3 class="c-contact__step-title">3. Medio de contacto preferido</h3>
                   <fieldset class="c-contact__choice-group">
-                    <legend class="c-contact__label">ElegÃ­ cÃ³mo querÃ©s que te contactemos</legend>
+                    <legend class="c-contact__label">Eleg&iacute; c&oacute;mo quer&eacute;s que te contactemos</legend>
                     <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'whatsapp' }">
                       <input v-model="preferredContact" type="radio" value="whatsapp" name="preferredContact" />
                       WhatsApp
@@ -383,7 +383,7 @@ watch(
 
           <article v-if="contactEmail" class="c-contact__email-card" aria-label="Contacto alternativo por email">
             <p class="c-contact__email-label">Contacto alternativo</p>
-            <p class="c-contact__email-title">ContÃ¡ctanos vÃ­a e-mail</p>
+            <p class="c-contact__email-title">Cont&aacute;ctanos v&iacute;a e-mail</p>
             <a class="c-contact__email-link" :href="`mailto:${contactEmail}`">{{ contactEmail }}</a>
           </article>
         </div>

@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
+import HomeFaqList from '@/ui/pages/home/HomeFaqList.vue'
 import { useHomePage } from './HomePage'
 import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
@@ -361,24 +362,7 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
             <h2 id="faq-title" class="c-home-section-title">{{ homePage.faqTitle }}</h2>
           </div>
 
-          <div class="c-home-faq__stack">
-            <details
-              v-for="(item, index) in faqItems"
-              :key="item.question"
-              class="c-home-faq__item"
-              :open="index === 0"
-            >
-              <summary class="c-home-faq__summary">
-                <span>{{ item.question }}</span>
-                <span class="c-home-faq__toggle" aria-hidden="true">
-                  <i class="bi bi-plus-lg"></i>
-                </span>
-              </summary>
-              <p class="c-home-faq__answer">
-                {{ item.answer }}
-              </p>
-            </details>
-          </div>
+          <HomeFaqList :faq-items="faqItems" />
         </div>
       </section>
 
@@ -892,14 +876,12 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
     linear-gradient(180deg, rgba(2, 12, 27, 0.96), rgba(8, 23, 40, 0.96));
 }
 
-.c-home-services__grid,
-.c-home-faq__stack {
+.c-home-services__grid {
   display: grid;
   gap: 1rem;
 }
 
-.c-home-service-card,
-.c-home-faq__item {
+.c-home-service-card {
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.1);
   border-radius: 1.25rem;
   background: rgba(10, 26, 48, 0.9);
@@ -908,15 +890,6 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 
 .c-home-service-card {
   border-top: 3px solid rgba(var(--dm-accent-orange-rgb), 0.9);
-}
-
-.c-home-faq__summary {
-  list-style: none;
-  cursor: pointer;
-}
-
-.c-home-faq__summary::-webkit-details-marker {
-  display: none;
 }
 
 .c-home-service-card__summary {
@@ -953,18 +926,6 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 .c-home-service-card__description {
   color: rgba(var(--dm-text-0-rgb), 0.7);
   line-height: 1.55;
-}
-
-.c-home-faq__toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(var(--dm-accent-orange-rgb));
-  transition: transform 0.24s ease;
-}
-
-.c-home-faq__item[open] .c-home-faq__toggle {
-  transform: rotate(180deg);
 }
 
 .c-home-service-card__content {
@@ -1010,23 +971,6 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
 .c-home-service-card__cta {
   width: 100%;
   margin-top: 1rem;
-}
-
-.c-home-faq__summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.2rem 1.25rem;
-  color: var(--dm-text-0);
-  font-weight: 700;
-}
-
-.c-home-faq__answer {
-  margin: 0;
-  padding: 0 1.25rem 1.25rem;
-  color: rgba(var(--dm-text-0-rgb), 0.74);
-  line-height: 1.65;
 }
 
 .c-home-footer {
@@ -1263,13 +1207,11 @@ function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
     border-radius: 1.2rem;
   }
 
-  .c-home-service-card__summary,
-  .c-home-faq__summary {
+  .c-home-service-card__summary {
     padding-inline: 1rem;
   }
 
-  .c-home-service-card__content,
-  .c-home-faq__answer {
+  .c-home-service-card__content {
     padding-inline: 1rem;
   }
 }
