@@ -1,5 +1,5 @@
 import { useContainer } from '@/di/container'
-import { useContactForm } from './contactHooks'
+import { useContactForm } from './useContactForm'
 import type { ContactFormProps, ResolvedContactFormContent } from './contactTypes'
 
 export function useContactFormSection(props: ContactFormProps) {

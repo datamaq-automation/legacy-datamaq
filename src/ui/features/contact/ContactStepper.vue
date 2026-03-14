@@ -52,10 +52,10 @@ function handleGoToStep(targetStep: number) {
 }
 
 .c-contact__stepper-item {
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.16);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  color: #cfd8e3;
+  background: rgba(var(--dm-text-0-rgb), 0.03);
+  color: rgba(var(--dm-text-0-rgb), 0.78);
   min-width: 0;
 }
 
@@ -73,7 +73,7 @@ function handleGoToStep(targetStep: number) {
 }
 
 .c-contact__stepper-trigger:focus-visible {
-  outline: 2px solid #ff8c00;
+  outline: 2px solid rgb(var(--dm-accent-orange-rgb));
   outline-offset: 2px;
 }
 
@@ -84,7 +84,7 @@ function handleGoToStep(targetStep: number) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(var(--dm-text-0-rgb), 0.25);
   font-size: 0.72rem;
   font-weight: 700;
   flex-shrink: 0;
@@ -99,25 +99,25 @@ function handleGoToStep(targetStep: number) {
 }
 
 .c-contact__stepper-item.is-active {
-  border-color: rgba(255, 140, 0, 0.8);
-  background: rgba(255, 140, 0, 0.14);
-  color: #ffffff;
+  border-color: rgba(var(--dm-accent-orange-rgb), 0.8);
+  background: rgba(var(--dm-accent-orange-rgb), 0.14);
+  color: var(--dm-text-0);
 }
 
 .c-contact__stepper-item.is-active .c-contact__stepper-dot {
-  border-color: #ff8c00;
-  background: rgba(255, 140, 0, 0.2);
+  border-color: rgb(var(--dm-accent-orange-rgb));
+  background: rgba(var(--dm-accent-orange-rgb), 0.2);
 }
 
 .c-contact__stepper-item.is-completed {
-  border-color: rgba(255, 140, 0, 0.6);
-  color: #ffe4bf;
+  border-color: rgba(var(--dm-accent-orange-rgb), 0.6);
+  color: rgba(var(--dm-accent-orange-rgb), 0.95);
 }
 
 .c-contact__stepper-item.is-completed .c-contact__stepper-dot {
-  border-color: #ff8c00;
-  background: #ff8c00;
-  color: #0a192f;
+  border-color: rgb(var(--dm-accent-orange-rgb));
+  background: rgb(var(--dm-accent-orange-rgb));
+  color: var(--dm-bg-0);
 }
 
 @media (max-width: 767.98px) {
