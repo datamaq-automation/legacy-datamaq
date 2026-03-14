@@ -29,6 +29,7 @@ jobs:
     name: Quality / Fast
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -36,14 +37,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and install dependencies
+        uses: ./.github/actions/setup-node-npm
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+          node-version: "20"
 
       - name: Print toolchain diagnostics
         run: |
@@ -58,6 +55,7 @@ jobs:
     name: Quality / E2E Smoke (Navigation)
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     needs:
       - quality-fast
 
@@ -67,83 +65,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and install dependencies
+        uses: ./.github/actions/setup-node-npm
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+          node-version: "20"
 
       - name: Build app (Datamaq)
         run: npm run build:datamaq
 
-      - name: Print E2E diagnostics
-        run: |
-          node -v
-          npm -v
-          npx playwright --version
-          git rev-parse --short HEAD
-          echo "CI=$CI"
-          echo "PLAYWRIGHT_MODE=${PLAYWRIGHT_MODE:-<unset>}"
-          echo "VITE_API_PROXY_TARGET=${VITE_API_PROXY_TARGET:-<unset>}"
-          echo "GITHUB_SHA=$GITHUB_SHA"
-          echo "GITHUB_REF=$GITHUB_REF"
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
+      - name: Run smoke E2E (navigation) and publish artifacts
+        uses: ./.github/actions/playwright-smoke
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright browser (Chromium)
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Run smoke E2E (navigation)
-        env:
-          VITE_PROXY_VERBOSE: 'true'
-        run: npm run test:e2e:smoke:navigation
-
-      - name: Print Playwright error contexts
-        if: failure()
-        run: |
-          find test-results -name "error-context.md" -print -exec sed -n '1,200p' {} \; || true
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-        with:
-          name: playwright-report-smoke-navigation
-          path: playwright-report/
-          retention-days: 7
-
-      - name: Upload Playwright raw results
-        if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-        with:
-          name: playwright-test-results-smoke-navigation
-          path: test-results/
-          retention-days: 7
-
-      - name: Upload Vite debug logs
-        if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-        with:
-          name: vite-logs-smoke-navigation
-          path: |
-            .tmp-vite-dev.log
-            .tmp-vite-dev.err.log
-            .tmp-vite-node.log
-            .tmp-vite-node.err.log
-          retention-days: 7
+          test-command: npm run test:e2e:smoke:navigation
+          artifact-suffix: smoke-navigation
+          vite-proxy-verbose: "true"
 
   quality-e2e-smoke-lead:
     name: Quality / E2E Smoke (Lead)
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     needs:
       - quality-fast
 
@@ -153,83 +94,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and install dependencies
+        uses: ./.github/actions/setup-node-npm
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+          node-version: "20"
 
       - name: Build app (Datamaq)
         run: npm run build:datamaq
 
-      - name: Print E2E diagnostics
-        run: |
-          node -v
-          npm -v
-          npx playwright --version
-          git rev-parse --short HEAD
-          echo "CI=$CI"
-          echo "PLAYWRIGHT_MODE=${PLAYWRIGHT_MODE:-<unset>}"
-          echo "VITE_API_PROXY_TARGET=${VITE_API_PROXY_TARGET:-<unset>}"
-          echo "GITHUB_SHA=$GITHUB_SHA"
-          echo "GITHUB_REF=$GITHUB_REF"
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
+      - name: Run smoke E2E (lead) and publish artifacts
+        uses: ./.github/actions/playwright-smoke
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright browser (Chromium)
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Run smoke E2E (lead)
-        env:
-          VITE_PROXY_VERBOSE: 'true'
-        run: npm run test:e2e:smoke:lead
-
-      - name: Print Playwright error contexts
-        if: failure()
-        run: |
-          find test-results -name "error-context.md" -print -exec sed -n '1,200p' {} \; || true
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-        with:
-          name: playwright-report-smoke-lead
-          path: playwright-report/
-          retention-days: 7
-
-      - name: Upload Playwright raw results
-        if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-        with:
-          name: playwright-test-results-smoke-lead
-          path: test-results/
-          retention-days: 7
-
-      - name: Upload Vite debug logs
-        if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-        with:
-          name: vite-logs-smoke-lead
-          path: |
-            .tmp-vite-dev.log
-            .tmp-vite-dev.err.log
-            .tmp-vite-node.log
-            .tmp-vite-node.err.log
-          retention-days: 7
+          test-command: npm run test:e2e:smoke:lead
+          artifact-suffix: smoke-lead
+          vite-proxy-verbose: "true"
 
   quality-nightly-gate:
     name: Quality / Nightly Gate
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.run_full_gate)
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -237,14 +121,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and install dependencies
+        uses: ./.github/actions/setup-node-npm
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+          node-version: "20"
 
       - name: Print nightly diagnostics
         run: |

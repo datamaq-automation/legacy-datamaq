@@ -1,0 +1,82 @@
+name: Playwright smoke common
+description: Shared smoke E2E steps for Playwright-based jobs.
+
+inputs:
+  test-command:
+    description: npm command to execute smoke test.
+    required: true
+  artifact-suffix:
+    description: Suffix used to name artifacts (for example, smoke-navigation).
+    required: true
+  vite-proxy-verbose:
+    description: Value for VITE_PROXY_VERBOSE environment variable.
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Print E2E diagnostics
+      shell: bash
+      run: |
+        node -v
+        npm -v
+        npx playwright --version
+        git rev-parse --short HEAD
+        echo "CI=$CI"
+        echo "PLAYWRIGHT_MODE=${PLAYWRIGHT_MODE:-<unset>}"
+        echo "VITE_API_PROXY_TARGET=${VITE_API_PROXY_TARGET:-<unset>}"
+        echo "GITHUB_SHA=$GITHUB_SHA"
+        echo "GITHUB_REF=$GITHUB_REF"
+
+    - name: Cache Playwright browsers
+      id: playwright-cache
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Install Playwright browser (Chromium)
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npx playwright install --with-deps chromium
+
+    - name: Run smoke E2E
+      shell: bash
+      env:
+        VITE_PROXY_VERBOSE: ${{ inputs.vite-proxy-verbose }}
+      run: ${{ inputs.test-command }}
+
+    - name: Print Playwright error contexts
+      if: failure()
+      shell: bash
+      run: |
+        find test-results -name "error-context.md" -print -exec sed -n '1,200p' {} \; || true
+
+    - name: Upload Playwright report
+      if: always()
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+      with:
+        name: playwright-report-${{ inputs.artifact-suffix }}
+        path: playwright-report/
+        retention-days: 7
+
+    - name: Upload Playwright raw results
+      if: always()
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+      with:
+        name: playwright-test-results-${{ inputs.artifact-suffix }}
+        path: test-results/
+        retention-days: 7
+
+    - name: Upload Vite debug logs
+      if: always()
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+      with:
+        name: vite-logs-${{ inputs.artifact-suffix }}
+        path: |
+          .tmp-vite-dev.log
+          .tmp-vite-dev.err.log
+          .tmp-vite-node.log
+          .tmp-vite-node.err.log
+        retention-days: 7

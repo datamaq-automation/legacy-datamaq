@@ -19,6 +19,7 @@ jobs:
   preflight-ftps:
     name: Preflight / FTPS (${{ matrix.target }})
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: >
       (github.event_name == 'workflow_dispatch' &&
        github.ref == 'refs/heads/main') ||
@@ -72,9 +73,32 @@ jobs:
       - name: Preflight / FTPS connectivity and auth
         run: bash scripts/ftps-deploy.sh preflight
 
+      - name: Preflight / Debug context
+        if: failure()
+        run: |
+          echo "::group::Runner environment"
+          env | grep -E '^(GITHUB|RUNNER|CI)' || true
+          echo "::endgroup::"
+          echo "::group::Workspace snapshot"
+          pwd
+          ls -la
+          echo "::endgroup::"
+
+      - name: Preflight / Upload debug artifacts
+        if: failure()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: preflight-debug-${{ matrix.target }}
+          path: |
+            .tmp-*.log
+            .tmp-*.err.log
+          if-no-files-found: ignore
+          retention-days: 7
+
   build-artifact:
     name: Build / Artifact (${{ matrix.target }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: preflight-ftps
     if: >
       (github.event_name == 'workflow_dispatch' &&
@@ -117,7 +141,7 @@ jobs:
           git rev-parse --short HEAD
 
       - name: Build / Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -162,6 +186,7 @@ jobs:
   deploy-ftps:
     name: Deploy / FTPS (${{ matrix.target }})
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs:
       - preflight-ftps
       - build-artifact
@@ -233,9 +258,34 @@ jobs:
       - name: Deploy dist via FTPS
         run: bash scripts/ftps-deploy.sh upload
 
+      - name: Deploy / Debug context
+        if: failure()
+        run: |
+          echo "::group::Runner environment"
+          env | grep -E '^(GITHUB|RUNNER|CI)' || true
+          echo "::endgroup::"
+          echo "::group::Workspace snapshot"
+          pwd
+          ls -la
+          if [ -d dist ]; then ls -la dist; fi
+          echo "::endgroup::"
+
+      - name: Deploy / Upload debug artifacts
+        if: failure()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: deploy-debug-${{ matrix.target }}
+          path: |
+            dist/index.html
+            .tmp-*.log
+            .tmp-*.err.log
+          if-no-files-found: ignore
+          retention-days: 7
+
   post-deploy-verify:
     name: Post-deploy / Verify (${{ matrix.target }})
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs:
       - build-artifact
       - deploy-ftps
@@ -284,8 +334,4 @@ jobs:
       - name: Post-deploy / Health check
         run: |
           echo "Verifying deployment for ${{ matrix.target }}..."
-          # Note: We use a generic check here as specific URLs might vary per target.
-          # In a real scenario, we would use a target-specific health URL.
-          # For now, we just check if the server responds.
-          # sleep 5 # Wait for caches to clear if needed
-          curl -Ifs --retry 3 --retry-delay 5 "${{ matrix.health_url }}" || echo "Warning: Health check failed or target URL not reachable."
+          curl -Ifs --retry 3 --retry-delay 5 --max-time 20 "${{ matrix.health_url }}"
