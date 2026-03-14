@@ -4,6 +4,30 @@
 
 ---
 
+## [2026-03-14] Workflow: Todo Workflow - Implementacion ADR-011
+
+### ✅ Certezas ejecutadas automaticamente
+
+#### ADR-011 - Gobernanza de componentes grandes
+- Completado: creado `scripts/check-component-size-thresholds.mjs` con control de umbrales:
+  - `src/ui/pages/HomePage.vue` max 1300 lineas
+  - `src/ui/features/contact/ContactFormSection.vue` max 750 lineas
+- Completado: agregado script `lint:component-size` en `package.json`.
+- Completado: integrado `lint:component-size` en `quality:fast`.
+- Completado: documentados triggers tecnicos de refactor en `docs/README.md` con referencia a ADR-011.
+- Validacion: `npm run quality:fast` ✅ (incluye nuevo check y sin falsos positivos).
+
+### 🟡 Dudas de bajo nivel resueltas por el agente
+
+- Duda: en caso de superar umbral, ¿warning o error de CI/local?
+- Opciones evaluadas:
+  - Opcion A: warning informativo sin cortar calidad.
+  - Opcion B: error bloqueante en quality gate.
+- Decision: **Opcion B** por alineacion con objetivo de gobernanza activa y deteccion temprana.
+- Impacto: evita crecimiento no controlado de componentes y fuerza decision explicita via ADR cuando se cruza umbral.
+
+---
+
 ## [2026-03-14] Workflow: Todo Workflow - Implementacion ADR-010
 
 ### ✅ Certezas ejecutadas automaticamente

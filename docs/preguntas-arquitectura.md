@@ -4,16 +4,6 @@
 
 ---
 
-### [2026-03-14] Estrategia de refactor para componentes de gran tamano
-- **Contexto**: `HomePage.vue` (~1274 lineas) y `ContactFormSection.vue` (~695 lineas) concentran mucha logica/estructura.
-- **Pregunta**: ¿se adopta un plan de modularizacion por secciones/composables en iteraciones o se mantiene cohesion actual hasta gatillar umbral?
-- **Opciones consideradas**:
-  1. Refactor incremental inmediato por secciones.
-  2. Mantener como esta con limites de reconsideracion (umbral de lineas/complejidad).
-  3. Refactor completo en una rama dedicada.
-- **Decision**: pendiente (escalado por impacto transversal en multiples vistas/tests).
-- **ADR resultante**: pendiente.
-
 ### [2026-03-14] Reestructuracion de dependencias en SubmitContactUseCase
 - **Contexto**: `SubmitContactUseCase` inyecta 8 dependencias (servicio, gateway, monitor, location, navigator, bus, tracking, clock).
 - **Pregunta**: ¿conviene agrupar dependencias transversales en facade/policy object o mantener inyeccion explicita actual?

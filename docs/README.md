@@ -39,3 +39,14 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 - Si un documento define la decision vigente, debe enlazarlo `todo.md` o este indice.
 - Si un documento describe un estado puntual con fecha, tratarlo como snapshot, no como contrato maestro.
 - Si dos documentos cubren el mismo contrato, uno debe quedar explicitamente como canonico y el otro como contexto historico o de migracion.
+
+## Triggers de Refactor (ADR-011)
+
+- Se mantiene cohesion actual en componentes grandes mientras no se activen triggers tecnicos.
+- Triggers vigentes:
+  - `src/ui/pages/HomePage.vue` > 1300 lineas.
+  - `src/ui/features/contact/ContactFormSection.vue` > 750 lineas.
+  - necesidad de reutilizacion real de secciones/pasos en otra vista.
+  - bugs recurrentes vinculados a acoplamiento interno del componente.
+- Control automatizado: `npm run lint:component-size` (integrado en `npm run quality:fast`).
+- Referencia de decision: `docs/decisions/ADR-011-large-components-refactor-strategy.md`.
