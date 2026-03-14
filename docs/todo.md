@@ -6,7 +6,7 @@ Auditoria `code-audit` sobre `src/` (2026-03-14).
 
 - Hallazgos criticos: **0**
 - Hallazgos de advertencia: **0** (+3 resueltos)
-- Hallazgos de mejora: **2** (+1 resuelta)
+- Hallazgos de mejora: **1** (+2 resueltas)
 - Verificacion de capas: `npm run lint:layers` -> **0 violaciones**
 
 ## ADVERTENCIA - Ciberseguridad y Arquitectura
@@ -59,10 +59,14 @@ Auditoria `code-audit` sobre `src/` (2026-03-14).
 - **Prioridad**: Media
 
 ### 5) Componente wizard de contacto de tamano elevado
-- [ ] [MEJORA] Continuar extracciones puntuales en `ContactFormSection.vue`
+- [x] [MEJORA] Continuar extracciones puntuales en `ContactFormSection.vue`
 - **Archivo**: `src/ui/features/contact/ContactFormSection.vue` (~619 lineas)
 - **Problema**: mezcla de UI, flujo wizard y estados locales complejos.
-- **Recomendacion**: priorizar extracciones presentacionales/composables de bajo riesgo cuando haya cambio funcional relacionado.
+- **Estado**: resuelto parcialmente (2026-03-14) con extraccion presentacional de bajo riesgo.
+- **Evidencia**:
+  - nuevo componente: `src/ui/features/contact/ContactStepper.vue`.
+  - `ContactFormSection.vue` usa ahora `ContactStepper` y elimina estilos duplicados del stepper.
+  - validacion ejecutada: `npm run test -- tests/unit/ui/contactFormSection.test.ts` y `npm run typecheck`.
 - **Prioridad**: Media
 
 ### 6) Deuda de migracion arquitectonica documentada

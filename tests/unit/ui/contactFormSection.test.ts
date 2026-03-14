@@ -117,7 +117,7 @@ describe('ContactFormSection', () => {
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
     await fireEvent.update(screen.getByLabelText('Empresa'), 'ACME')
     await fireEvent.update(
-      screen.getByLabelText('Descripción del proyecto'),
+      screen.getByLabelText(/proyecto/i, { selector: 'textarea' }),
       'Necesito una propuesta para mi planta'
     )
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
@@ -191,7 +191,7 @@ describe('ContactFormSection', () => {
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
     await fireEvent.update(screen.getByLabelText('Empresa'), 'ACME')
     await fireEvent.update(
-      screen.getByLabelText('Descripción del proyecto'),
+      screen.getByLabelText(/proyecto/i, { selector: 'textarea' }),
       'Mensaje valido en longitud para forzar error de email.'
     )
     await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
