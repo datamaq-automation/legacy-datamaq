@@ -15,6 +15,7 @@ REMOTE_DIR=""
 ALLOW_INSECURE_DATA_CHANNEL="false"
 PRUNE_REMOTE="false"
 LFTP_DEBUG_LEVEL="4"
+ATTEMPT_SUMMARY=()
 
 trim_compact() {
   printf '%s' "${1:-}" | tr -d '\r\n\t '
@@ -39,6 +40,34 @@ require_non_empty() {
   if [[ -z "$value" ]]; then
     error "$message"
   fi
+}
+
+record_attempt_summary() {
+  local phase="$1"
+  local attempt="$2"
+  local ftps_mode="$3"
+  local attempt_port="$4"
+  local status="$5"
+  local diagnosis="$6"
+  ATTEMPT_SUMMARY+=("${phase}|${attempt}|${ftps_mode}|${attempt_port}|${status}|${diagnosis}")
+}
+
+print_attempt_summary() {
+  local phase="$1"
+  local found="false"
+  echo "::group::${phase^} summary"
+  for item in "${ATTEMPT_SUMMARY[@]:-}"; do
+    IFS='|' read -r row_phase row_attempt row_mode row_port row_status row_diagnosis <<< "$item"
+    if [[ "$row_phase" != "$phase" ]]; then
+      continue
+    fi
+    found="true"
+    echo "attempt=${row_attempt} mode=${row_mode} port=${row_port} status=${row_status} diagnosis=${row_diagnosis}"
+  done
+  if [[ "$found" != "true" ]]; then
+    echo "No attempts recorded."
+  fi
+  echo "::endgroup::"
 }
 
 print_debug_context() {
@@ -193,6 +222,36 @@ log_peer_close_hint() {
   fi
 }
 
+build_failure_diagnosis() {
+  local log_file="$1"
+  local diagnoses=()
+
+  if grep -Eqi '(530[[:space:]].*(Login|authentication)|Login failed|Authentication failed|incorrect password)' "${log_file}"; then
+    diagnoses+=("auth-failed: verify FTPS username/password and account permissions")
+  fi
+  if grep -Eqi '(Name or service not known|Temporary failure in name resolution|getaddrinfo|Could not resolve host)' "${log_file}"; then
+    diagnoses+=("dns-failed: verify FTPS_DATAMAQ_SERVER host and DNS availability")
+  fi
+  if grep -Eqi '(Connection refused|No route to host|Operation timed out|Network is unreachable|Connection timed out)' "${log_file}"; then
+    diagnoses+=("network-failed: verify host reachability, port, firewall and FTPS mode")
+  fi
+  if grep -Eqi '(certificate|SSL certificate|certificate verify failed|hostname does not match|handshake failed)' "${log_file}"; then
+    diagnoses+=("tls-verify-failed: verify certificate chain, hostname and FTPS mode/port")
+  fi
+  if grep -Eqi '(425|426|Data connection|PASV|EPSV)' "${log_file}"; then
+    diagnoses+=("data-channel-failed: try FTPS_ALLOW_INSECURE_DATA_CHANNEL=true and validate passive mode policy")
+  fi
+  if grep -Eqi '(550|Permission denied|Access denied)' "${log_file}"; then
+    diagnoses+=("remote-path-permission: verify FTPS remote dir and user write permissions")
+  fi
+
+  if [[ "${#diagnoses[@]}" -eq 0 ]]; then
+    diagnoses+=("unknown: inspect raw lftp output and TLS probe in this attempt")
+  fi
+
+  printf '%s' "${diagnoses[*]}"
+}
+
 run_preflight_attempt() {
   local attempt="$1"
   local attempt_port="$2"
@@ -203,6 +262,7 @@ run_preflight_attempt() {
   local open_target
   local lftp_command
   local status
+  local diagnosis
 
   log_file="$(mktemp)"
   open_target="$(open_target_for_mode "${ftps_mode}")"
@@ -220,7 +280,12 @@ run_preflight_attempt() {
   cat "${log_file}"
   log_peer_close_hint "${log_file}"
   if [[ "${status}" -ne 0 ]]; then
+    diagnosis="$(build_failure_diagnosis "${log_file}")"
+    warning "Preflight attempt ${attempt} failed: ${diagnosis}"
     print_tls_probe "${ftps_mode}" "${attempt_port}"
+    record_attempt_summary "preflight" "${attempt}" "${ftps_mode}" "${attempt_port}" "failed" "${diagnosis}"
+  else
+    record_attempt_summary "preflight" "${attempt}" "${ftps_mode}" "${attempt_port}" "ok" "connected-and-authenticated"
   fi
   rm -f "${log_file}"
   echo "::endgroup::"
@@ -239,6 +304,7 @@ run_upload_attempt() {
   local lftp_command
   local mirror_delete_flag=""
   local status
+  local diagnosis
 
   if [[ "${PRUNE_REMOTE}" == "true" ]]; then
     mirror_delete_flag="--delete"
@@ -260,7 +326,12 @@ run_upload_attempt() {
   cat "${log_file}"
   log_peer_close_hint "${log_file}"
   if [[ "${status}" -ne 0 ]]; then
+    diagnosis="$(build_failure_diagnosis "${log_file}")"
+    warning "Upload attempt ${attempt} failed: ${diagnosis}"
     print_tls_probe "${ftps_mode}" "${attempt_port}"
+    record_attempt_summary "upload" "${attempt}" "${ftps_mode}" "${attempt_port}" "failed" "${diagnosis}"
+  else
+    record_attempt_summary "upload" "${attempt}" "${ftps_mode}" "${attempt_port}" "ok" "transfer-completed"
   fi
   rm -f "${log_file}"
   echo "::endgroup::"
@@ -280,7 +351,8 @@ run_preflight_sequence() {
     run_preflight_attempt 4 990 implicit true false && return 0
   fi
 
-  error "FTPS preflight failed for target=${TARGET_LABEL}."
+  print_attempt_summary "preflight"
+  error "FTPS preflight failed for target=${TARGET_LABEL}. Review attempt diagnosis above and set FTPS_DATAMAQ_MODE/PORT explicitly if needed."
 }
 
 run_upload_sequence() {
@@ -294,7 +366,8 @@ run_upload_sequence() {
     run_upload_attempt 4 990 implicit true false && return 0
   fi
 
-  error "FTPS upload failed for target=${TARGET_LABEL}."
+  print_attempt_summary "upload"
+  error "FTPS upload failed for target=${TARGET_LABEL}. Review attempt diagnosis above for auth/TLS/network/root-dir hints."
 }
 
 case "${COMMAND}" in
