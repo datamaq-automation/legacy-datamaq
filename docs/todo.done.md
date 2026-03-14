@@ -4,6 +4,25 @@
 
 ---
 
+## [2026-03-14] Workflow: Todo Workflow - Procesamiento de Backlog Code-Audit
+
+### ✅ Certezas ejecutadas automáticamente
+
+#### P0 - Eliminar apertura insegura de URL en ServiceCard
+- Completado: eliminado `window.open(href, '_blank')` en `src/ui/sections/ServiceCard.vue`.
+- Completado: delegada la acción al flujo centralizado mediante `emit('contact', { section, href })`.
+- Impacto: se evita bypass de controles de navegación/analytics y se elimina la superficie de reverse tabnabbing en ese componente.
+- Evidencia: cambio en `src/ui/sections/ServiceCard.vue:110-112`.
+
+### 🔴 Dudas de alto nivel escaladas
+
+- Escalada: política de persistencia de PII en drafts de contacto (localStorage vs sessionStorage/TTL).
+- Escalada: estrategia de refactor para componentes extensos (`HomePage.vue`, `ContactFormSection.vue`).
+- Escalada: posible reestructuración de dependencias en `SubmitContactUseCase` (fan-in de constructor).
+- Registro: `docs/preguntas-arquitectura.md`.
+
+---
+
 ## [2026-03-09] Workflow: Todo Workflow - Cierre de Backlog
 
 ### ✅ Tareas completadas

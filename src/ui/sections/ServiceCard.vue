@@ -108,8 +108,7 @@ const isCollapsible = computed(() => props.card.items.length > 2 || Boolean(prop
 const detailsId = computed(() => `service-card-details-${props.card.id}`)
 
 function handleWhatsAppClick(href: string, section: string) {
-  // Abrir directamente sin emit para evitar openWhatsApp fallback
-  window.open(href, '_blank')
+  emit('contact', { section, href })
 }
 
 function toggleDetails() {
