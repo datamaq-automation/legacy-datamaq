@@ -10,6 +10,7 @@ function createConfig(overrides: Partial<ConfigPort> = {}): ConfigPort {
     pricingApiUrl: undefined,
     quoteDiagnosticApiUrl: 'https://api.example.com/v1/quote/diagnostic',
     quotePdfApiUrl: undefined,
+    quoteReadApiKey: undefined,
     contactEmail: undefined,
     contactFormActive: true,
     analyticsEnabled: true,
@@ -343,6 +344,37 @@ describe('QuoteApiGateway', () => {
       '/api/v1/quote/Q-20260222-000321/pdf',
       expect.objectContaining({
         method: 'GET'
+      })
+    )
+  })
+
+  it('sends X-API-Key for quote read calls when configured', async () => {
+    const blobBody = new Blob(['pdf-bytes'], { type: 'application/pdf' })
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(blobBody, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/pdf'
+        }
+      })
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const gateway = new QuoteApiGateway(
+      createConfig({
+        quoteReadApiKey: 'secure-read-key'
+      })
+    )
+    await gateway.fetchQuotePdf('Q-20260222-000654')
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.example.com/v1/quote/Q-20260222-000654/pdf',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Accept: 'application/pdf, application/json',
+          'X-API-Key': 'secure-read-key'
+        })
       })
     )
   })

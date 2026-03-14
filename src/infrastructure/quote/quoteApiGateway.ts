@@ -81,7 +81,8 @@ export class QuoteApiGateway implements QuoteGateway {
     })
     const response = await this.http.get<QuotePdfResponsePayload>(endpoint, {
       headers: {
-        Accept: 'application/pdf, application/json'
+        Accept: 'application/pdf, application/json',
+        ...this.buildQuoteReadAuthHeaders()
       },
       timeoutMs: 10_000,
       retries: 1
@@ -178,6 +179,17 @@ export class QuoteApiGateway implements QuoteGateway {
     return endpoint
       .replace(/\/v1\/quote\/diagnostic\/?$/, '')
       .concat(`/v1/quote/${encodeURIComponent(normalizedQuoteId)}/pdf`)
+  }
+
+  private buildQuoteReadAuthHeaders(): Record<string, string> {
+    const apiKey = normalizeText(this.config.quoteReadApiKey ?? '')
+    if (!apiKey) {
+      return {}
+    }
+
+    return {
+      'X-API-Key': apiKey
+    }
   }
 }
 

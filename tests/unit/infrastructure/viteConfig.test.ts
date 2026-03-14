@@ -11,11 +11,13 @@ type PublicConfigStub = {
   siteApiUrl?: string
   quoteDiagnosticApiUrl?: string
   quotePdfApiUrl?: string
+  quoteReadApiKey?: string
 }
 
 describe('ViteConfig', () => {
   beforeEach(() => {
     vi.resetModules()
+    vi.unstubAllEnvs()
   })
 
   it('preserves relative canonical endpoints (/api/v1/...)', async () => {
@@ -61,6 +63,23 @@ describe('ViteConfig', () => {
     expect(config.siteApiUrl).toBeUndefined()
     expect(config.quoteDiagnosticApiUrl).toBeUndefined()
     expect(config.quotePdfApiUrl).toBeUndefined()
+  })
+
+  it('loads quote read api key from QUOTE_READ_API_KEYS list', async () => {
+    vi.stubEnv('QUOTE_READ_API_KEYS', 'active-key,old-key')
+    const ViteConfig = await importViteConfigWithPublicConfig({})
+    const config = new ViteConfig()
+
+    expect(config.quoteReadApiKey).toBe('active-key')
+  })
+
+  it('falls back to VITE_QUOTE_READ_API_KEY when list is missing', async () => {
+    vi.stubEnv('QUOTE_READ_API_KEYS', '')
+    vi.stubEnv('VITE_QUOTE_READ_API_KEY', 'fallback-key')
+    const ViteConfig = await importViteConfigWithPublicConfig({})
+    const config = new ViteConfig()
+
+    expect(config.quoteReadApiKey).toBe('fallback-key')
   })
 })
 

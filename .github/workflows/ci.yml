@@ -71,6 +71,8 @@ jobs:
           node-version: "20"
 
       - name: Build app (Datamaq)
+        env:
+          QUOTE_READ_API_KEYS: ${{ secrets.QUOTE_READ_API_KEYS }}
         run: npm run build:datamaq
 
       - name: Run smoke E2E (navigation) and publish artifacts
@@ -100,6 +102,8 @@ jobs:
           node-version: "20"
 
       - name: Build app (Datamaq)
+        env:
+          QUOTE_READ_API_KEYS: ${{ secrets.QUOTE_READ_API_KEYS }}
         run: npm run build:datamaq
 
       - name: Run smoke E2E (lead) and publish artifacts

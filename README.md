@@ -32,6 +32,11 @@ npm run test:contracts:fastapi
 npm run test:e2e:smoke
 ```
 
+## Variables de Entorno Sensibles
+
+- `QUOTE_READ_API_KEYS`: listado de API keys para lecturas de cotizaciones (`GET /v1/quote*`). El frontend toma la primera key no vacia como vigente.
+- No commitear la key en el repositorio. Obtener la vigente desde `QUOTE_READ_API_KEYS` por canal seguro.
+
 `npm run build:local` limpia solo los artefactos del frontend en `C:\AppServ\www`, compila ahi en modo `local-preview` y fuerza los endpoints backend a `http://127.0.0.1:8899/v1/...`.
 
 ## Flujo Local Recomendado

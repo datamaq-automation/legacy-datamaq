@@ -10,6 +10,7 @@ export interface ConfigPort {
   requireRemoteContent?: boolean
   quoteDiagnosticApiUrl: NullableString
   quotePdfApiUrl: NullableString
+  quoteReadApiKey?: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
   analyticsEnabled: boolean | undefined

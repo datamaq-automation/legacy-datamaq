@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    envPrefix: ['VITE_', 'QUOTE_'],
     plugins,
     server: {
       proxy: {
