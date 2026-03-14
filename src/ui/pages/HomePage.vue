@@ -6,6 +6,8 @@ import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import { useHomePage } from './HomePage'
 import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
 
+// ARCH-ROADMAP: modularizacion incremental documentada en docs/homepage-modularization-plan.md.
+
 const {
   navbar,
   hero,

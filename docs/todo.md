@@ -6,7 +6,7 @@ Auditoria `code-audit` sobre `src/` (2026-03-14).
 
 - Hallazgos criticos: **0**
 - Hallazgos de advertencia: **0** (+3 resueltos)
-- Hallazgos de mejora: **1** (+2 resueltas)
+- Hallazgos de mejora: **0** (+3 resueltas)
 - Verificacion de capas: `npm run lint:layers` -> **0 violaciones**
 
 ## ADVERTENCIA - Ciberseguridad y Arquitectura
@@ -52,10 +52,14 @@ Auditoria `code-audit` sobre `src/` (2026-03-14).
 ## MEJORA - SOLID (Mantenibilidad)
 
 ### 4) Componente de pagina con alto tamano
-- [ ] [MEJORA] Plan de modularizacion incremental para `HomePage.vue`
+- [x] [MEJORA] Plan de modularizacion incremental para `HomePage.vue`
 - **Archivo**: `src/ui/pages/HomePage.vue` (~1122 lineas)
 - **Problema**: tamano alto para SRP y costo de review.
-- **Recomendacion**: mantener criterio ADR-011 y extraer piezas solo ante triggers de reuso/complejidad.
+- **Estado**: resuelto (2026-03-14) con plan incremental ejecutable.
+- **Evidencia**:
+  - nuevo documento: `docs/homepage-modularization-plan.md` (etapas + criterios de done).
+  - referencia de roadmap agregada en `src/ui/pages/HomePage.vue`.
+  - enfoque alineado a ADR-011 (sin refactor masivo en un solo paso).
 - **Prioridad**: Media
 
 ### 5) Componente wizard de contacto de tamano elevado
