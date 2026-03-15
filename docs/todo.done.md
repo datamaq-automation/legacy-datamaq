@@ -1,3 +1,30 @@
+## [2026-03-15] Workflow: Todo Workflow - Auditoria y unificacion de GitHub Actions CI
+
+### Certezas ejecutadas automaticamente
+
+#### [GHA][ALTA] Diagnostico en fallo para `quality-fast`
+- Completado: agregado bloque `if: failure()` con contexto de runner/workspace en `.github/workflows/ci.yml`.
+- Completado: agregado upload de artifact `quality-fast-debug-${{ github.run_id }}` con `retention-days: 7`.
+
+#### [GHA][ALTA] Diagnostico en fallo para `quality-nightly-gate`
+- Completado: agregado bloque `if: failure()` con snapshot de entorno/workspace en `.github/workflows/ci.yml`.
+- Completado: agregado upload de artifact `quality-nightly-debug-${{ github.run_id }}` con `retention-days: 7`.
+
+#### [GHA][MEDIA] Debug minimo para `Actionlint`
+- Completado: workflow de lint unificado dentro de `.github/workflows/ci.yml` (el archivo `.github/workflows/ci-workflows-lint.yml` fue eliminado en la unificacion previa).
+- Completado: agregado contexto de debug y artifact `actionlint-debug-${{ github.run_id }}` en caso de fallo.
+
+### Dudas de alto nivel escaladas
+
+#### [GHA][MEDIA] Evaluar split del job monolitico `quality-nightly-gate`
+- Escalado a: `docs/preguntas-arquitectura.md`.
+- Estado: pendiente de decision arquitectonica (mantener job unico vs dividir en jobs por dominio).
+
+### Evidencia de validacion
+
+- `npm run quality:fast` -> OK.
+
+---
 ## [2026-03-14] Workflow: Todo Workflow - Cierre de backlog frontend-testing-vue-ts-tailwind
 
 ### Certezas ejecutadas automaticamente
@@ -697,5 +724,8 @@ script.textContent = "(function(c,l,a,r,i,t,y)..."
 ---
 
 *Inbox de tareas procesado completamente.*
+
+
+
 
 

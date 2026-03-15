@@ -38,6 +38,34 @@ jobs:
       - name: Run actionlint
         uses: raven-actions/actionlint@205b530c5d9fa8f44ae9ed59f341a0db994aa6f8 # v2
 
+      - name: Actionlint / Debug context
+        if: failure()
+        run: |
+          echo "::group::Runner environment"
+          env | grep -E '^(GITHUB|RUNNER|CI)' || true
+          echo "::endgroup::"
+          echo "::group::Workflow files snapshot"
+          ls -la .github/workflows || true
+          ls -la .github/actions || true
+          echo "::endgroup::"
+          {
+            echo "event_name=${GITHUB_EVENT_NAME}"
+            echo "ref=${GITHUB_REF}"
+            echo "sha=${GITHUB_SHA}"
+          } > .tmp-actionlint-debug.txt
+
+      - name: Actionlint / Upload debug artifacts
+        if: failure()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: actionlint-debug-${{ github.run_id }}
+          path: |
+            .tmp-actionlint-debug.txt
+            .github/workflows/
+            .github/actions/
+          if-no-files-found: ignore
+          retention-days: 7
+
   quality-fast:
     name: Quality / Fast
     if: github.event_name != 'schedule'
@@ -63,6 +91,34 @@ jobs:
 
       - name: Run fast quality checks
         run: npm run quality:fast
+
+      - name: Quality fast / Debug context
+        if: failure()
+        run: |
+          echo "::group::Runner environment"
+          env | grep -E '^(GITHUB|RUNNER|CI)' || true
+          echo "::endgroup::"
+          echo "::group::Workspace snapshot"
+          pwd
+          ls -la
+          echo "::endgroup::"
+          {
+            echo "node=$(node -v 2>/dev/null || true)"
+            echo "npm=$(npm -v 2>/dev/null || true)"
+            echo "sha=$(git rev-parse --short HEAD 2>/dev/null || true)"
+          } > .tmp-quality-fast-debug.txt
+
+      - name: Quality fast / Upload debug artifacts
+        if: failure()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: quality-fast-debug-${{ github.run_id }}
+          path: |
+            .tmp-quality-fast-debug.txt
+            package.json
+            package-lock.json
+          if-no-files-found: ignore
+          retention-days: 7
 
   quality-e2e-smoke-navigation:
     name: Quality / E2E Smoke (Navigation)
@@ -154,3 +210,31 @@ jobs:
 
       - name: Run full quality gate
         run: npm run quality:gate
+
+      - name: Nightly gate / Debug context
+        if: failure()
+        run: |
+          echo "::group::Runner environment"
+          env | grep -E '^(GITHUB|RUNNER|CI)' || true
+          echo "::endgroup::"
+          echo "::group::Workspace snapshot"
+          pwd
+          ls -la
+          echo "::endgroup::"
+          {
+            echo "node=$(node -v 2>/dev/null || true)"
+            echo "npm=$(npm -v 2>/dev/null || true)"
+            echo "sha=$(git rev-parse --short HEAD 2>/dev/null || true)"
+          } > .tmp-quality-gate-debug.txt
+
+      - name: Nightly gate / Upload debug artifacts
+        if: failure()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: quality-nightly-debug-${{ github.run_id }}
+          path: |
+            .tmp-quality-gate-debug.txt
+            package.json
+            package-lock.json
+          if-no-files-found: ignore
+          retention-days: 7
