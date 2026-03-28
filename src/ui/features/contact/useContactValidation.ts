@@ -42,7 +42,8 @@ export function useContactValidation() {
       email: parsed.data.email,
       phone: parsed.data.phone,
       geographicLocation: parsed.data.geographicLocation,
-      comment: parsed.data.comment
+      comment: parsed.data.comment,
+      captchaToken: parsed.data.captchaToken
     }
 
     return { ok: true, data: validatedPayload }

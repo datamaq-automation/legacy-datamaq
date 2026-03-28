@@ -15,9 +15,10 @@ function createHttpClient(status = 204): HttpClient {
   }
 }
 
-function createConfig(inquiryApiUrl?: string): ConfigPort {
+function createConfig(inquiryApiUrl?: string, healthApiUrl?: string): ConfigPort {
   return {
     inquiryApiUrl,
+    healthApiUrl,
     contactEmail: undefined
   } as ConfigPort
 }
@@ -102,6 +103,24 @@ describe('ContactBackendMonitor', () => {
     expect(status).toBe('available')
     expect(http.options).toHaveBeenCalledTimes(1)
     expect(http.options).toHaveBeenCalledWith('https://api.example.com/contact')
+  })
+
+  it('uses GET probe when health endpoint is /healthz', async () => {
+    const http = createHttpClient(200)
+    http.get = vi.fn().mockResolvedValue({ ok: true, status: 200 })
+    const monitor = new ContactBackendMonitor(
+      http,
+      createConfig('https://api.example.com/contact', 'https://n8n.datamaq.com.ar/healthz'),
+      createRuntime(true),
+      createLogger()
+    )
+
+    const status = await monitor.ensureStatus()
+
+    expect(status).toBe('available')
+    expect(http.get).toHaveBeenCalledTimes(1)
+    expect(http.get).toHaveBeenCalledWith('https://n8n.datamaq.com.ar/healthz')
+    expect(http.options).not.toHaveBeenCalled()
   })
 
   it('marks unavailable for Chatwoot Public contacts endpoint', async () => {

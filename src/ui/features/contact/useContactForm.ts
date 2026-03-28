@@ -36,7 +36,8 @@ function createEmptyForm(): ContactFormPayload {
     email: '',
     phone: '',
     geographicLocation: '',
-    comment: ''
+    comment: '',
+    captchaToken: ''
   }
 }
 
@@ -104,7 +105,8 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
       email: form.email,
       phone: form.phone,
       geographicLocation: form.geographicLocation,
-      comment: form.comment
+      comment: form.comment,
+      ...(form.captchaToken ? { captchaToken: form.captchaToken } : {})
     }
     feedback.message = ''
     feedback.success = false

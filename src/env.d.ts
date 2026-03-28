@@ -4,6 +4,9 @@ interface ImportMetaEnv {
   readonly DEV: boolean
   readonly VITE_BACKEND_BASE_URL?: string
   readonly VITE_BACKEND_POLICY_MODE?: string
+  readonly VITE_INQUIRY_API_URL?: string
+  readonly VITE_HEALTH_API_URL?: string
+  readonly VITE_TURNSTILE_SITE_KEY?: string
   readonly VITE_CONTENT_TARGET?: string
   readonly VITE_HEALTH_ENDPOINT?: string
   readonly QUOTE_READ_API_KEYS?: string
@@ -46,6 +49,20 @@ type ClarityFunction = {
 interface Window {
   gtag?: GtagFunction
   clarity?: ClarityFunction
+  turnstile?: {
+    render: (
+      container: HTMLElement,
+      options: {
+        sitekey: string
+        callback?: (token: string) => void
+        'expired-callback'?: () => void
+        'error-callback'?: () => void
+        theme?: 'light' | 'dark' | 'auto'
+      }
+    ) => string
+    reset: (widgetId: string) => void
+    remove: (widgetId: string) => void
+  }
 }
 
 declare module '*.svg' {

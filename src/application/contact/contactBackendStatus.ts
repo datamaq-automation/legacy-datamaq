@@ -112,7 +112,7 @@ export class ContactBackendMonitor {
 
     try {
       this.logger.debug(`[${this.monitorLabel}] Probe start`, { apiUrl })
-      const isHealthEndpoint = apiUrl.endsWith('/health')
+      const isHealthEndpoint = isHealthProbeEndpoint(apiUrl)
       const response = isHealthEndpoint ? await this.http.get(apiUrl) : await this.http.options(apiUrl)
       if (response.ok || response.status === 405 || response.status === 400) {
         this.status = 'available'
@@ -160,6 +160,15 @@ export class ContactBackendMonitor {
 
     return snapshot.reachable ? 'available' : 'unavailable'
   }
+}
+
+function isHealthProbeEndpoint(apiUrl: string): boolean {
+  const normalized = apiUrl.split(/[?#]/, 1)[0] ?? apiUrl
+  return (
+    normalized.endsWith('/health') ||
+    normalized.endsWith('/healthz') ||
+    normalized.endsWith('/healthz/readiness')
+  )
 }
 
 function logContactBackendWarnOnce(

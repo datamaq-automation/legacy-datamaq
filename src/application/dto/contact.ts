@@ -6,6 +6,7 @@ export interface ContactFormPayload {
   phone: string
   geographicLocation: string
   comment: string
+  captchaToken?: string
 }
 
 export interface ContactSubmitPayload {
@@ -17,6 +18,7 @@ export interface ContactSubmitPayload {
   lastName?: string
   geographicLocation?: string
   comment: string
+  captchaToken?: string
   pageLocation: string
   trafficSource: string
   userAgent: string

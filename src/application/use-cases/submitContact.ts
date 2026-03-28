@@ -72,7 +72,8 @@ export class SubmitContactUseCase {
         pageLocation: this.location.href(),
         trafficSource: getTrafficSource(this.location),
         userAgent: this.navigator.userAgent(),
-        createdAt: new Date(this.clock.now()).toISOString()
+        createdAt: new Date(this.clock.now()).toISOString(),
+        ...(normalizedPayload.captchaToken ? { captchaToken: normalizedPayload.captchaToken } : {})
       }
     )
     emitRuntimeDebug('[contact:use-case] payload listo para gateway', {
@@ -121,6 +122,7 @@ function normalizeContactFormPayload(payload: ContactFormPayload): {
   phone?: string
   geographicLocation?: string
   comment?: string
+  captchaToken?: string
 } {
   const firstName = normalizeOptional(payload.firstName)
   const lastName = normalizeOptional(payload.lastName)
@@ -129,6 +131,7 @@ function normalizeContactFormPayload(payload: ContactFormPayload): {
   const phone = normalizeOptional(payload.phone)
   const geographicLocation = normalizeOptional(payload.geographicLocation)
   const comment = normalizeOptional(payload.comment)
+  const captchaToken = normalizeOptional(payload.captchaToken ?? '')
 
   return {
     ...(firstName ? { firstName } : {}),
@@ -137,7 +140,8 @@ function normalizeContactFormPayload(payload: ContactFormPayload): {
     ...(email ? { email } : {}),
     ...(phone ? { phone } : {}),
     ...(geographicLocation ? { geographicLocation } : {}),
-    ...(comment ? { comment } : {})
+    ...(comment ? { comment } : {}),
+    ...(captchaToken ? { captchaToken } : {})
   }
 }
 

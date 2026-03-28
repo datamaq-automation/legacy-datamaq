@@ -77,7 +77,7 @@ export class FetchHttpClient implements HttpClient {
           method,
           headers: requestHeaders,
           mode: 'cors',
-          credentials: 'include',
+          credentials: resolveCredentialsMode(url),
           ...(method === 'GET' ? {} : { body: JSON.stringify(body) })
         },
         options
@@ -220,4 +220,27 @@ function normalizeErrorText(rawText: string | undefined): string | undefined {
 function extractResponseHeaders(headers: Headers): Record<string, string> {
   const entries = Array.from(headers.entries()).map(([key, value]) => [key.toLowerCase(), value] as const)
   return Object.fromEntries(entries)
+}
+
+function resolveCredentialsMode(url: string): RequestCredentials {
+  const normalizedUrl = url.trim()
+  if (!normalizedUrl) {
+    return 'same-origin'
+  }
+
+  if (normalizedUrl.startsWith('/')) {
+    return 'include'
+  }
+
+  const browserOrigin = globalThis.location?.origin?.trim()
+  if (!browserOrigin) {
+    return 'same-origin'
+  }
+
+  try {
+    const targetOrigin = new URL(normalizedUrl, browserOrigin).origin
+    return targetOrigin === browserOrigin ? 'include' : 'omit'
+  } catch {
+    return 'same-origin'
+  }
 }

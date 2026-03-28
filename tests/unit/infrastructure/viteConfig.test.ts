@@ -7,6 +7,7 @@ type PublicConfigStub = {
   contactFormActive?: boolean
   analyticsEnabled?: boolean
   inquiryApiUrl?: string
+  healthApiUrl?: string
   pricingApiUrl?: string
   siteApiUrl?: string
   quoteDiagnosticApiUrl?: string
@@ -80,6 +81,20 @@ describe('ViteConfig', () => {
     const config = new ViteConfig()
 
     expect(config.quoteReadApiKey).toBe('fallback-key')
+  })
+
+  it('prioritizes explicit inquiry/health endpoint overrides from env', async () => {
+    vi.stubEnv('VITE_INQUIRY_API_URL', 'https://n8n.datamaq.com.ar/webhook/form-contacto')
+    vi.stubEnv('VITE_HEALTH_API_URL', 'https://n8n.datamaq.com.ar/healthz')
+
+    const ViteConfig = await importViteConfigWithPublicConfig({
+      inquiryApiUrl: 'https://api.example.com/contact',
+      healthApiUrl: 'https://api.example.com/health'
+    })
+    const config = new ViteConfig()
+
+    expect(config.inquiryApiUrl).toBe('https://n8n.datamaq.com.ar/webhook/form-contacto')
+    expect(config.healthApiUrl).toBe('https://n8n.datamaq.com.ar/healthz')
   })
 })
 

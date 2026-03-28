@@ -56,8 +56,16 @@ export class ViteConfig implements ConfigPort {
       }),
       warn: (message: string) => console.warn(message)
     }
+    const inquiryApiUrl = resolveEndpointFromEnv(
+      import.meta.env.VITE_INQUIRY_API_URL,
+      publicConfig.inquiryApiUrl
+    )
+    const healthApiUrl = resolveEndpointFromEnv(
+      import.meta.env.VITE_HEALTH_API_URL,
+      publicConfig.healthApiUrl
+    )
     this.inquiryApiUrl = resolveBackendConfigEndpoint({
-      directUrl: normalize(publicConfig.inquiryApiUrl),
+      directUrl: inquiryApiUrl,
       configKey: 'inquiryApiUrl',
       ...endpointOptions
     })
@@ -72,7 +80,7 @@ export class ViteConfig implements ConfigPort {
       ...endpointOptions
     })
     this.healthApiUrl = resolveBackendConfigEndpoint({
-      directUrl: normalize(publicConfig.healthApiUrl),
+      directUrl: healthApiUrl,
       configKey: 'healthApiUrl',
       ...endpointOptions
     })
@@ -117,6 +125,13 @@ export class ViteConfig implements ConfigPort {
 function normalize(value: string | undefined): NullableString {
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
+}
+
+function resolveEndpointFromEnv(
+  envValue: string | undefined,
+  fallback: string | undefined
+): NullableString {
+  return normalize(envValue) ?? normalize(fallback)
 }
 
 function normalizePolicyMode(value: string | undefined) {

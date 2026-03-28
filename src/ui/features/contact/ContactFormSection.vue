@@ -17,6 +17,7 @@ import {
 import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps } from './contactTypes'
 import { useContactFormSection } from './ContactFormSection'
+import { useTurnstile } from './useTurnstile'
 
 // ARCH-ROADMAP: migracion pendiente de ubicacion. Seguimiento en docs/feature-migration-roadmap.md (ITEM-2).
 
@@ -52,6 +53,13 @@ const isLastStep = computed(() => currentStep.value === totalSteps)
 const stepLabels = CONTACT_LEAD_STEP_LABELS
 const draftStorageKey = `dm-contact-draft-${sectionId}`
 const draftNotice = 'Guardamos un borrador temporal de este formulario por hasta 12 horas en este dispositivo.'
+const {
+  enabled: turnstileEnabled,
+  token: turnstileToken,
+  errorMessage: turnstileErrorMessage,
+  containerRef: turnstileContainerRef,
+  reset: resetTurnstile
+} = useTurnstile()
 
 function goPrevStep() {
   if (currentStep.value > 1) {
@@ -106,9 +114,17 @@ async function onFinalSubmit() {
   if (!validateCurrentStep()) {
     return
   }
+  if (turnstileEnabled.value && !turnstileToken.value) {
+    feedback.success = false
+    feedback.message =
+      turnstileErrorMessage.value || 'Completa la verificacion anti-bot para enviar el formulario.'
+    return
+  }
+  form.captchaToken = turnstileToken.value
   await handleSubmit()
   if (feedback.success) {
     removeContactDraft(draftStorageKey)
+    resetTurnstile()
   }
 }
 
@@ -144,6 +160,10 @@ watch(
     writeContactDraft(draftStorageKey, draft)
   }
 )
+
+watch(turnstileToken, (value) => {
+  form.captchaToken = value
+})
 </script>
 
 <template>
@@ -316,6 +336,14 @@ watch(
                   </div>
                 </Transition>
 
+                <div v-if="turnstileEnabled" class="c-contact__turnstile">
+                  <p class="c-contact__helper c-contact__helper--turnstile">
+                    Verificacion anti-bot requerida para enviar.
+                  </p>
+                  <div ref="turnstileContainerRef" class="c-contact__turnstile-widget"></div>
+                  <small v-if="turnstileErrorMessage" class="c-contact__error">{{ turnstileErrorMessage }}</small>
+                </div>
+
                 <div class="c-contact__actions">
                   <button
                     v-if="currentStep > 1"
@@ -341,7 +369,7 @@ watch(
                     v-else
                     type="submit"
                     class="c-contact__btn c-contact__btn--primary"
-                    :disabled="!isChannelEnabled || isSubmitting"
+                    :disabled="!isChannelEnabled || isSubmitting || (turnstileEnabled && !turnstileToken)"
                     :aria-busy="isSubmitting"
                   >
                     <span v-if="isSubmitting" class="tw:flex tw:items-center tw:justify-center tw:gap-2">
@@ -446,6 +474,10 @@ watch(
   font-size: 0.78rem;
 }
 
+.c-contact__helper--turnstile {
+  margin: 0 0 0.55rem;
+}
+
 .c-contact__input {
   width: 100%;
   min-height: 2.9rem;
@@ -502,6 +534,14 @@ watch(
   justify-content: flex-end;
   gap: 0.8rem;
   margin-top: 0.35rem;
+}
+
+.c-contact__turnstile {
+  margin-top: 0.4rem;
+}
+
+.c-contact__turnstile-widget {
+  min-height: 66px;
 }
 
 .c-contact__btn {

@@ -8,6 +8,7 @@ export interface ContactPayloadBundle {
     email?: string
     message: string
     custom_attributes: Record<string, string>
+    captcha_token?: string
     meta: {
       page_location: string
       traffic_source: string
@@ -39,6 +40,7 @@ export function buildContactPayloadBundle(
       ...(enrichedPayload.email ? { email: enrichedPayload.email } : {}),
       message: payload.comment,
       custom_attributes: customAttributes,
+      ...(enrichedPayload.captchaToken ? { captcha_token: enrichedPayload.captchaToken } : {}),
       meta: {
         page_location: payload.pageLocation,
         traffic_source: payload.trafficSource,

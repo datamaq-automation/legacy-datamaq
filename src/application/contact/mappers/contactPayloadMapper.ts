@@ -6,6 +6,7 @@ type ContactSubmitMeta = {
   trafficSource: string
   userAgent: string
   createdAt: string
+  captchaToken?: string
 }
 
 export function mapContactRequestToSubmitPayload(
@@ -15,6 +16,7 @@ export function mapContactRequestToSubmitPayload(
   const submitPayload: ContactSubmitPayload = {
     name: contact.name.value,
     comment: contact.message ?? '',
+    ...(meta.captchaToken ? { captchaToken: meta.captchaToken } : {}),
     pageLocation: meta.pageLocation,
     trafficSource: meta.trafficSource,
     userAgent: meta.userAgent,

@@ -26,7 +26,8 @@ export const ContactLeadSchema = z
     email: OptionalEmailField,
     phone: OptionalPhoneField,
     geographicLocation: OptionalTextField(160),
-    comment: OptionalTextField(2000)
+    comment: OptionalTextField(2000),
+    captchaToken: OptionalTextField(2048).optional().default('')
   })
   .superRefine((payload, context) => {
     if (!payload.email && !payload.phone) {

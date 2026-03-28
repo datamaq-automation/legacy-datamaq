@@ -33,6 +33,7 @@ describe('FetchHttpClient', () => {
           'Content-Type': 'application/json',
           'X-Custom': '1'
         }),
+        credentials: 'omit',
         body: JSON.stringify({ foo: 'bar' })
       })
     )
@@ -121,6 +122,23 @@ describe('FetchHttpClient', () => {
       status: 0
     })
     expect(logger.warn).toHaveBeenCalled()
+  })
+
+  it('includes credentials for relative URLs (same-origin/proxy mode)', async () => {
+    const logger = createLoggerSpy()
+    const client = new FetchHttpClient(logger)
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), { status: 200 })
+    )
+
+    await client.postJson('/api/v1/contact', { foo: 'bar' })
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      '/api/v1/contact',
+      expect.objectContaining({
+        credentials: 'include'
+      })
+    )
   })
 })
 
