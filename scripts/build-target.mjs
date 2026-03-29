@@ -38,11 +38,14 @@ function resolveTarget(argv) {
   return target
 }
 
-function run(command, args) {
+function run(command, args, envOverrides = {}) {
   const result = spawnSync(command, args, {
     stdio: 'inherit',
     cwd: process.cwd(),
-    env: process.env
+    env: {
+      ...process.env,
+      ...envOverrides
+    }
   })
 
   if (typeof result.status === 'number' && result.status !== 0) {
@@ -57,9 +60,12 @@ function run(command, args) {
 function main() {
   const target = resolveTarget(process.argv.slice(2))
   const viteBin = path.resolve(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js')
+  const targetBuildEnv = target === 'datamaq'
+    ? { VITE_BACKEND_BASE_URL: 'https://api.datamaq.com.ar' }
+    : {}
 
   run(process.execPath, ['scripts/generate-sitemap.mjs', '--target', target])
-  run(process.execPath, [viteBin, 'build', '--mode', target])
+  run(process.execPath, [viteBin, 'build', '--mode', target], targetBuildEnv)
 }
 
 main()
