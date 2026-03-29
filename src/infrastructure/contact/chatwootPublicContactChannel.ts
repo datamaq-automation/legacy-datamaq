@@ -65,30 +65,37 @@ export async function submitChatwootPublicContact(
 
 function buildChatwootContactPayload(payloads: ContactPayloadBundle) {
   const payload = payloads.backendPayload
+  const customAttributes = payload.custom_attributes ?? {}
+  const pageLocation = readStringValue(customAttributes['page_location'])
+  const trafficSource = readStringValue(customAttributes['traffic_source'])
+  const createdAt = readStringValue(customAttributes['created_at'])
   const fallbackIdentifier =
-    payload.custom_attributes['phone']?.replace(/\s+/g, '') ?? payload.name.trim()
+    customAttributes['phone']?.replace(/\s+/g, '') ?? payload.name.trim()
 
   return {
     identifier: payload.email?.trim().toLowerCase() ?? fallbackIdentifier,
     name: payload.name,
     ...(payload.email ? { email: payload.email } : {}),
     custom_attributes: {
-      ...payload.custom_attributes,
+      ...customAttributes,
       source: 'landing_form',
-      page_location: payload.meta.page_location,
-      traffic_source: payload.meta.traffic_source,
-      created_at: payload.meta.created_at
+      ...(pageLocation ? { page_location: pageLocation } : {}),
+      ...(trafficSource ? { traffic_source: trafficSource } : {}),
+      ...(createdAt ? { created_at: createdAt } : {})
     }
   }
 }
 
 function buildConversationPayload(payloads: ContactPayloadBundle) {
   const payload = payloads.backendPayload
+  const customAttributes = payload.custom_attributes ?? {}
+  const pageLocation = readStringValue(customAttributes['page_location'])
+  const trafficSource = readStringValue(customAttributes['traffic_source'])
   return {
     custom_attributes: {
       source: 'landing_form',
-      page_location: payload.meta.page_location,
-      traffic_source: payload.meta.traffic_source
+      ...(pageLocation ? { page_location: pageLocation } : {}),
+      ...(trafficSource ? { traffic_source: trafficSource } : {})
     }
   }
 }

@@ -13,7 +13,7 @@ import tailwind from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const proxyTarget = env.VITE_API_PROXY_TARGET?.trim() || 'http://127.0.0.1:8899'
+  const proxyTarget = env.VITE_API_PROXY_TARGET?.trim() || 'https://api.datamaq.com.ar'
   const plugins = [
     tailwind(),
     vue()

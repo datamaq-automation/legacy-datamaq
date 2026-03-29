@@ -7,8 +7,8 @@ type NullableStringJson = string | null
 const APP_TARGETS = ['datamaq', 'upp', 'example', 'e2e', 'integration'] as const
 const DEFAULT_APP_TARGET = 'datamaq'
 const MODE_TARGET_ALIASES = {
-  // Keep plain `vite dev` on the local integration profile so all API calls stay behind `/api`.
-  development: 'integration'
+  // Keep plain `vite dev` on datamaq profile to use production backend endpoints by default.
+  development: 'datamaq'
 } as const
 
 export type AppTarget = (typeof APP_TARGETS)[number]
