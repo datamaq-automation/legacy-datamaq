@@ -30,11 +30,11 @@ jobs:
     environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] }}
+      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] }}
-      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] }}
+      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME }}
+      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 7
@@ -207,11 +207,11 @@ jobs:
     environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] }}
+      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] }}
-      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] }}
+      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME }}
+      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 5
