@@ -30,11 +30,11 @@ jobs:
     environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
+      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
-      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
+      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
+      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 7
@@ -66,6 +66,25 @@ jobs:
 
       - name: Preflight / Validate deploy inputs
         run: bash scripts/ftps-deploy.sh validate
+      
+      - name: Preflight / Diagnose FTPS env presence
+        if: failure()
+        run: |
+          echo "::group::FTPS env presence"
+          echo "environment_name=${{ matrix.environment_name }}"
+          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL; do
+            if [ -n "${!key:-}" ]; then
+              echo "::notice::${key}=present"
+            else
+              echo "::warning::${key}=missing"
+            fi
+          done
+          echo "Expected per-target keys:"
+          echo "  secrets/vars: ${{ matrix.ftps_server_secret }} | ${{ matrix.ftps_server_var }}"
+          echo "  secrets/vars: ${{ matrix.ftps_username_secret }} | ${{ matrix.ftps_username_var }}"
+          echo "  secrets/vars: ${{ matrix.ftps_password_secret }} | ${{ matrix.ftps_password_var }}"
+          echo "  secret/var:   ${{ matrix.ftps_remote_dir_secret }} | ${{ matrix.ftps_remote_dir_var }}"
+          echo "::endgroup::"
 
       - name: Preflight / Install lftp client
         run: |
@@ -207,11 +226,11 @@ jobs:
     environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
+      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
-      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
+      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
+      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 5
@@ -252,6 +271,25 @@ jobs:
 
       - name: Deploy / Validate deploy inputs
         run: bash scripts/ftps-deploy.sh validate
+      
+      - name: Deploy / Diagnose FTPS env presence
+        if: failure()
+        run: |
+          echo "::group::FTPS env presence"
+          echo "environment_name=${{ matrix.environment_name }}"
+          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL; do
+            if [ -n "${!key:-}" ]; then
+              echo "::notice::${key}=present"
+            else
+              echo "::warning::${key}=missing"
+            fi
+          done
+          echo "Expected per-target keys:"
+          echo "  secrets/vars: ${{ matrix.ftps_server_secret }} | ${{ matrix.ftps_server_var }}"
+          echo "  secrets/vars: ${{ matrix.ftps_username_secret }} | ${{ matrix.ftps_username_var }}"
+          echo "  secrets/vars: ${{ matrix.ftps_password_secret }} | ${{ matrix.ftps_password_var }}"
+          echo "  secret/var:   ${{ matrix.ftps_remote_dir_secret }} | ${{ matrix.ftps_remote_dir_var }}"
+          echo "::endgroup::"
 
       - name: Deploy / Install lftp client
         run: |
