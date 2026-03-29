@@ -6,14 +6,12 @@ import {
   clampContactLeadStep,
   CONTACT_LEAD_STEP_LABELS,
   CONTACT_LEAD_TOTAL_STEPS,
-  type ContactPersistedDraft,
   hasContactLeadStepErrors,
   normalizePreferredContact,
-  readContactDraft,
-  removeContactDraft,
-  validateContactLeadStep,
-  writeContactDraft
-} from '@/features/contact'
+  type ContactPersistedDraft,
+  validateContactLeadStep
+} from '@/features/contact/application/leadWizard'
+import { readContactDraft, removeContactDraft, writeContactDraft } from '@/features/contact/infrastructure/contactDraftStorage'
 import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps } from './contactTypes'
 import { useContactFormSection } from './ContactFormSection'
