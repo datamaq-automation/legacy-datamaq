@@ -5,6 +5,8 @@ import { attachAttributionToPayload } from '@/infrastructure/attribution/utm'
 export interface ContactPayloadBundle {
   backendPayload: {
     name: string
+    first_name?: string
+    last_name?: string
     email?: string
     message: string
     preferred_contact_channel?: 'whatsapp' | 'email'
@@ -22,11 +24,15 @@ export function buildContactPayloadBundle(
     company: payload.company,
     phone: payload.phone
   })
+  const firstName = normalizeOptionalText(payload.firstName)
+  const lastName = normalizeOptionalText(payload.lastName)
   const preferredContactChannel = normalizePreferredContactChannel(payload.preferredContactChannel)
 
   return {
     backendPayload: {
       name: enrichedPayload.name,
+      ...(firstName ? { first_name: firstName } : {}),
+      ...(lastName ? { last_name: lastName } : {}),
       ...(enrichedPayload.email ? { email: enrichedPayload.email } : {}),
       message: payload.comment,
       ...(preferredContactChannel ? { preferred_contact_channel: preferredContactChannel } : {}),
@@ -60,4 +66,12 @@ function normalizePreferredContactChannel(
     return value
   }
   return undefined
+}
+
+function normalizeOptionalText(value: string | undefined): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+  const trimmed = value.trim()
+  return trimmed || undefined
 }

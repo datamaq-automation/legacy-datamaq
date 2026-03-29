@@ -106,6 +106,8 @@ describe('ContactApiGateway', () => {
       'https://api.example.com/contact',
       expect.objectContaining({
         name: 'juan',
+        first_name: 'Juan',
+        last_name: 'Perez',
         email: 'juan@example.com',
         message: 'Necesito una propuesta para mantenimiento electrico.',
         custom_attributes: expect.objectContaining({
