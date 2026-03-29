@@ -21,6 +21,10 @@ trim_compact() {
   printf '%s' "${1:-}" | tr -d '\r\n\t '
 }
 
+sanitize_for_filename() {
+  printf '%s' "${1:-}" | tr -cs 'a-zA-Z0-9._-' '_'
+}
+
 notice() {
   echo "::notice::$1"
 }
@@ -195,6 +199,21 @@ print_tool_versions() {
   echo "::endgroup::"
 }
 
+persist_attempt_log() {
+  local phase="$1"
+  local attempt="$2"
+  local ftps_mode="$3"
+  local attempt_port="$4"
+  local log_file="$5"
+  local safe_target
+  local output_file
+
+  safe_target="$(sanitize_for_filename "${TARGET_LABEL}")"
+  output_file=".tmp-${phase}-${safe_target}-attempt${attempt}-${ftps_mode}-${attempt_port}.log"
+  cp "${log_file}" "${output_file}"
+  notice "Saved ${phase} log: ${output_file}"
+}
+
 print_tls_probe() {
   local ftps_mode="$1"
   local attempt_port="$2"
@@ -278,9 +297,14 @@ run_preflight_attempt() {
   set -e
 
   cat "${log_file}"
+  persist_attempt_log "preflight" "${attempt}" "${ftps_mode}" "${attempt_port}" "${log_file}"
   log_peer_close_hint "${log_file}"
   if [[ "${status}" -ne 0 ]]; then
     diagnosis="$(build_failure_diagnosis "${log_file}")"
+    if [[ "${status}" -eq 124 ]]; then
+      diagnosis="${diagnosis} timeout: lftp/openssl reached timeout"
+    fi
+    diagnosis="${diagnosis} exit_code=${status}"
     warning "Preflight attempt ${attempt} failed: ${diagnosis}"
     print_tls_probe "${ftps_mode}" "${attempt_port}"
     record_attempt_summary "preflight" "${attempt}" "${ftps_mode}" "${attempt_port}" "failed" "${diagnosis}"
@@ -324,9 +348,14 @@ run_upload_attempt() {
   set -e
 
   cat "${log_file}"
+  persist_attempt_log "upload" "${attempt}" "${ftps_mode}" "${attempt_port}" "${log_file}"
   log_peer_close_hint "${log_file}"
   if [[ "${status}" -ne 0 ]]; then
     diagnosis="$(build_failure_diagnosis "${log_file}")"
+    if [[ "${status}" -eq 124 ]]; then
+      diagnosis="${diagnosis} timeout: lftp/openssl reached timeout"
+    fi
+    diagnosis="${diagnosis} exit_code=${status}"
     warning "Upload attempt ${attempt} failed: ${diagnosis}"
     print_tls_probe "${ftps_mode}" "${attempt_port}"
     record_attempt_summary "upload" "${attempt}" "${ftps_mode}" "${attempt_port}" "failed" "${diagnosis}"
