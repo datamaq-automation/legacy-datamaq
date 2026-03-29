@@ -30,12 +30,12 @@ jobs:
     environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER }}
+      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME }}
-      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD }}
-      FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
+      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
+      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
+      FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 7
       FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
@@ -207,12 +207,12 @@ jobs:
     environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER }}
+      FTPS_SERVER: ${{ secrets.FTPS_DATAMAQ_SERVER || vars.FTPS_DATAMAQ_SERVER || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME }}
-      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD }}
-      FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
+      FTPS_USERNAME: ${{ secrets.FTPS_DATAMAQ_USERNAME || vars.FTPS_DATAMAQ_USERNAME || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
+      FTPS_PASSWORD: ${{ secrets.FTPS_DATAMAQ_PASSWORD || vars.FTPS_DATAMAQ_PASSWORD || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
+      FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 5
       FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
