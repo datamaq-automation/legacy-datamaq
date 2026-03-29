@@ -61,7 +61,10 @@ function main() {
   const target = resolveTarget(process.argv.slice(2))
   const viteBin = path.resolve(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js')
   const targetBuildEnv = target === 'datamaq'
-    ? { VITE_BACKEND_BASE_URL: 'https://api.datamaq.com.ar' }
+    ? {
+      VITE_BACKEND_BASE_URL: 'https://api.datamaq.com.ar',
+      VITE_INQUIRY_API_URL: 'https://n8n.datamaq.com.ar/webhook/contact-form'
+    }
     : {}
 
   run(process.execPath, ['scripts/generate-sitemap.mjs', '--target', target])

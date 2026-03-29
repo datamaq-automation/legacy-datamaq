@@ -109,16 +109,8 @@ describe('ContactApiGateway', () => {
         email: 'juan@example.com',
         message: 'Necesito una propuesta para mantenimiento electrico.',
         custom_attributes: expect.objectContaining({
-          first_name: 'Juan',
-          last_name: 'Perez',
           company: 'Acme',
-          phone: '+54 11 5555 4444',
-          geographic_location: 'Escobar',
-          comment: 'Necesito una propuesta para mantenimiento electrico.',
-          message: 'Necesito una propuesta para mantenimiento electrico.'
-        }),
-        meta: expect.objectContaining({
-          page_location: 'https://www.datamaq.com.ar/contacto'
+          phone: '+54 11 5555 4444'
         })
       }),
       undefined

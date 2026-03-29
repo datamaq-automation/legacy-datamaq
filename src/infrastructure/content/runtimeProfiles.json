@@ -24,7 +24,7 @@
     "businessArea": null,
     "contactEmail": "info@datamaq.com.ar",
     "contactFormActive": true,
-    "inquiryApiUrl": "https://api.datamaq.com.ar/v1/contact",
+    "inquiryApiUrl": "https://n8n.datamaq.com.ar/webhook/contact-form",
     "pricingApiUrl": "https://api.datamaq.com.ar/v1/pricing",
     "siteApiUrl": "https://api.datamaq.com.ar/v1/site",
     "healthApiUrl": "https://api.datamaq.com.ar/v1/health",
