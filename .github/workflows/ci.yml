@@ -7,12 +7,14 @@ on:
     paths-ignore:
       - '.github/workflows/cd.yml'
       - '.github/actions/**'
+      - 'scripts/ftps-deploy.sh'
   push:
     branches:
       - main
     paths-ignore:
       - '.github/workflows/cd.yml'
       - '.github/actions/**'
+      - 'scripts/ftps-deploy.sh'
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
