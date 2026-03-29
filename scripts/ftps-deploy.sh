@@ -323,6 +323,7 @@ run_upload_attempt() {
   local ftps_mode="$3"
   local prefer_epsv="$4"
   local fix_pasv_address="$5"
+  local allow_insecure_data_channel="$6"
   local log_file
   local open_target
   local lftp_command
@@ -337,11 +338,12 @@ run_upload_attempt() {
   log_file="$(mktemp)"
   open_target="$(open_target_for_mode "${ftps_mode}")"
   # Always force SSL protection unless explicitly relaxed for broken servers.
-  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data $( [[ "${ALLOW_INSECURE_DATA_CHANNEL}" == "true" ]] && printf false || printf true ); set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug ${LFTP_DEBUG_LEVEL}; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue ${mirror_delete_flag} --verbose dist .; bye"
+  lftp_command="set cmd:fail-exit true; set net:timeout 25; set net:max-retries 2; set net:persist-retries 0; set ftp:ssl-force true; set ftp:ssl-protect-data $( [[ "${allow_insecure_data_channel}" == "true" ]] && printf false || printf true ); set ftp:passive-mode true; set ftp:prefer-epsv ${prefer_epsv}; set ftp:fix-pasv-address ${fix_pasv_address}; set ssl:verify-certificate true; set ssl:check-hostname true; debug ${LFTP_DEBUG_LEVEL}; open -u \"${FTPS_USERNAME}\",\"${FTPS_PASSWORD}\" -p \"${attempt_port}\" \"${open_target}\"; mkdir -p \"${REMOTE_DIR}\"; cd \"${REMOTE_DIR}\"; mirror -R --continue ${mirror_delete_flag} --verbose dist .; bye"
 
   echo "::group::Upload attempt ${attempt} for target=${TARGET_LABEL} mode=${ftps_mode} port=${attempt_port}"
   echo "prefer_epsv=${prefer_epsv}"
   echo "fix_pasv_address=${fix_pasv_address}"
+  echo "allow_insecure_data_channel=${allow_insecure_data_channel}"
   set +e
   timeout 120 lftp -e "${lftp_command}" >"${log_file}" 2>&1
   status=$?
@@ -385,14 +387,28 @@ run_preflight_sequence() {
 }
 
 run_upload_sequence() {
+  local secure_mode="${ALLOW_INSECURE_DATA_CHANNEL}"
+
   if [[ -n "$MODE" ]]; then
-    run_upload_attempt 1 "${PORT}" "${MODE}" false true && return 0
-    run_upload_attempt 2 "${PORT}" "${MODE}" true false && return 0
+    run_upload_attempt 1 "${PORT}" "${MODE}" false true "${secure_mode}" && return 0
+    run_upload_attempt 2 "${PORT}" "${MODE}" true false "${secure_mode}" && return 0
+    if [[ "${secure_mode}" != "true" ]]; then
+      warning "Falling back to FTPS data channel without TLS protection (PROT C) for compatibility."
+      run_upload_attempt 3 "${PORT}" "${MODE}" false true "true" && return 0
+      run_upload_attempt 4 "${PORT}" "${MODE}" true false "true" && return 0
+    fi
   else
-    run_upload_attempt 1 21 explicit false true && return 0
-    run_upload_attempt 2 21 explicit true false && return 0
-    run_upload_attempt 3 990 implicit false true && return 0
-    run_upload_attempt 4 990 implicit true false && return 0
+    run_upload_attempt 1 21 explicit false true "${secure_mode}" && return 0
+    run_upload_attempt 2 21 explicit true false "${secure_mode}" && return 0
+    run_upload_attempt 3 990 implicit false true "${secure_mode}" && return 0
+    run_upload_attempt 4 990 implicit true false "${secure_mode}" && return 0
+    if [[ "${secure_mode}" != "true" ]]; then
+      warning "Falling back to FTPS data channel without TLS protection (PROT C) for compatibility."
+      run_upload_attempt 5 21 explicit false true "true" && return 0
+      run_upload_attempt 6 21 explicit true false "true" && return 0
+      run_upload_attempt 7 990 implicit false true "true" && return 0
+      run_upload_attempt 8 990 implicit true false "true" && return 0
+    fi
   fi
 
   print_attempt_summary "upload"
