@@ -5,3 +5,4 @@ public/
 coverage/
 test-results/
 dist/
+temp/

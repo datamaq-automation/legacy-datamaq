@@ -27,7 +27,7 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
-    environment: production
+    environment: deploy-production
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
       FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
@@ -107,7 +107,7 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
-    environment: production
+    environment: deploy-production
     outputs:
       expected_asset: ${{ steps.build-fingerprint.outputs.expected_asset }}
     strategy:
@@ -199,7 +199,7 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
-    environment: production
+    environment: deploy-production
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
       FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
@@ -306,6 +306,34 @@ jobs:
             health_url: https://datamaq.com.ar
 
     steps:
+      - name: Post-deploy / Purge Cloudflare cache
+        if: matrix.target == 'datamaq'
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ZONE_ID:-}" ]; then
+            echo "Cloudflare purge required but missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID."
+            echo "Define both secrets in environment 'production'."
+            exit 1
+          fi
+
+          echo "Purging Cloudflare cache for zone ${CF_ZONE_ID}..."
+          curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}' \
+            -o cf-purge-response.json
+
+          if ! grep -q '"success":true' cf-purge-response.json; then
+            echo "Cloudflare purge failed."
+            cat cf-purge-response.json
+            exit 1
+          fi
+
+          echo "Cloudflare purge successful."
+
       - name: Post-deploy / Verify remote index fingerprint
         env:
           DEPLOY_BASE_URL: ${{ matrix.health_url }}
