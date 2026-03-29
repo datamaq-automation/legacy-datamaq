@@ -7,6 +7,7 @@ export interface ContactPayloadBundle {
     name: string
     email?: string
     message: string
+    preferred_contact_channel?: 'whatsapp' | 'email'
     custom_attributes?: Record<string, string>
     captcha_token?: string
   }
@@ -21,12 +22,14 @@ export function buildContactPayloadBundle(
     company: payload.company,
     phone: payload.phone
   })
+  const preferredContactChannel = normalizePreferredContactChannel(payload.preferredContactChannel)
 
   return {
     backendPayload: {
       name: enrichedPayload.name,
       ...(enrichedPayload.email ? { email: enrichedPayload.email } : {}),
       message: payload.comment,
+      ...(preferredContactChannel ? { preferred_contact_channel: preferredContactChannel } : {}),
       ...(Object.keys(customAttributes).length > 0 ? { custom_attributes: customAttributes } : {}),
       ...(enrichedPayload.captchaToken ? { captcha_token: enrichedPayload.captchaToken } : {}),
     }
@@ -48,4 +51,13 @@ function sanitizeCustomAttributes(attrs: Record<string, unknown>): Record<string
     .filter(Boolean) as Array<[string, string]>
 
   return Object.fromEntries(entries)
+}
+
+function normalizePreferredContactChannel(
+  value: ContactSubmitPayload['preferredContactChannel']
+): 'whatsapp' | 'email' | undefined {
+  if (value === 'whatsapp' || value === 'email') {
+    return value
+  }
+  return undefined
 }

@@ -41,6 +41,7 @@ export function useContactValidation() {
       company: parsed.data.company,
       email: parsed.data.email,
       phone: parsed.data.phone,
+      preferredContactChannel: parsed.data.preferredContactChannel,
       geographicLocation: parsed.data.geographicLocation,
       comment: parsed.data.comment,
       captchaToken: parsed.data.captchaToken

@@ -7,6 +7,7 @@ type ContactSubmitMeta = {
   userAgent: string
   createdAt: string
   captchaToken?: string
+  preferredContactChannel?: 'whatsapp' | 'email'
 }
 
 export function mapContactRequestToSubmitPayload(
@@ -17,6 +18,7 @@ export function mapContactRequestToSubmitPayload(
     name: contact.name.value,
     comment: contact.message ?? '',
     ...(meta.captchaToken ? { captchaToken: meta.captchaToken } : {}),
+    ...(meta.preferredContactChannel ? { preferredContactChannel: meta.preferredContactChannel } : {}),
     pageLocation: meta.pageLocation,
     trafficSource: meta.trafficSource,
     userAgent: meta.userAgent,

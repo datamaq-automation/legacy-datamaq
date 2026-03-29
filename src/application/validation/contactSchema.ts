@@ -1,4 +1,4 @@
-import { z } from 'zod'
+﻿import { z } from 'zod'
 import type { Result } from '@/domain/shared/result'
 import type { ContactDomainError } from '@/domain/contact/errors'
 import { Email } from '@/domain/contact/value-objects/Email'
@@ -10,13 +10,18 @@ const OptionalTextField = (maxLength: number) =>
 
 const OptionalEmailField = OptionalTextField(160).refine(
   (value) => value.length === 0 || Email.create(value).ok,
-  'Ingresa un e-mail válido.'
+  'Ingresa un e-mail vÃ¡lido.'
 )
 
 const OptionalPhoneField = OptionalTextField(40).refine(
   (value) => value.length === 0 || Phone.create(value).ok,
-  'Ingresa un teléfono válido.'
+  'Ingresa un telÃ©fono vÃ¡lido.'
 )
+
+const PreferredContactChannelField = z
+  .enum(['whatsapp', 'email'])
+  .optional()
+  .default('whatsapp')
 
 export const ContactLeadSchema = z
   .object({
@@ -25,6 +30,7 @@ export const ContactLeadSchema = z
     company: OptionalTextField(120),
     email: OptionalEmailField,
     phone: OptionalPhoneField,
+    preferredContactChannel: PreferredContactChannelField,
     geographicLocation: OptionalTextField(160),
     comment: OptionalTextField(2000),
     captchaToken: OptionalTextField(2048).optional().default('')
@@ -34,12 +40,12 @@ export const ContactLeadSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['email'],
-        message: 'Ingresa e-mail o teléfono (al menos uno).'
+        message: 'Ingresa e-mail o telÃ©fono (al menos uno).'
       })
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['phone'],
-        message: 'Ingresa e-mail o teléfono (al menos uno).'
+        message: 'Ingresa e-mail o telÃ©fono (al menos uno).'
       })
     }
   })
@@ -52,8 +58,9 @@ export const EmailContactSchema = z.object({
     .string()
     .max(160)
     .transform((value) => value.trim())
-    .refine((value) => Email.create(value).ok, 'Ingresa un e-mail válido.'),
+    .refine((value) => Email.create(value).ok, 'Ingresa un e-mail vÃ¡lido.'),
   phone: OptionalPhoneField,
+  preferredContactChannel: PreferredContactChannelField,
   geographicLocation: OptionalTextField(160),
   comment: z
     .string()
@@ -91,3 +98,4 @@ export function validateContactDomainRules(
 
   return { ok: true, data: payload }
 }
+

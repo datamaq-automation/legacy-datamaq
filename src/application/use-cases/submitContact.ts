@@ -73,7 +73,10 @@ export class SubmitContactUseCase {
         trafficSource: getTrafficSource(this.location),
         userAgent: this.navigator.userAgent(),
         createdAt: new Date(this.clock.now()).toISOString(),
-        ...(normalizedPayload.captchaToken ? { captchaToken: normalizedPayload.captchaToken } : {})
+        ...(normalizedPayload.captchaToken ? { captchaToken: normalizedPayload.captchaToken } : {}),
+        ...(normalizedPayload.preferredContactChannel
+          ? { preferredContactChannel: normalizedPayload.preferredContactChannel }
+          : {})
       }
     )
     emitRuntimeDebug('[contact:use-case] payload listo para gateway', {
@@ -120,6 +123,7 @@ function normalizeContactFormPayload(payload: ContactFormPayload): {
   company?: string
   email?: string
   phone?: string
+  preferredContactChannel?: 'whatsapp' | 'email'
   geographicLocation?: string
   comment?: string
   captchaToken?: string
@@ -129,6 +133,7 @@ function normalizeContactFormPayload(payload: ContactFormPayload): {
   const company = normalizeOptional(payload.company)
   const email = normalizeOptional(payload.email)
   const phone = normalizeOptional(payload.phone)
+  const preferredContactChannel = normalizePreferredContactChannel(payload.preferredContactChannel)
   const geographicLocation = normalizeOptional(payload.geographicLocation)
   const comment = normalizeOptional(payload.comment)
   const captchaToken = normalizeOptional(payload.captchaToken ?? '')
@@ -139,10 +144,20 @@ function normalizeContactFormPayload(payload: ContactFormPayload): {
     ...(company ? { company } : {}),
     ...(email ? { email } : {}),
     ...(phone ? { phone } : {}),
+    ...(preferredContactChannel ? { preferredContactChannel } : {}),
     ...(geographicLocation ? { geographicLocation } : {}),
     ...(comment ? { comment } : {}),
     ...(captchaToken ? { captchaToken } : {})
   }
+}
+
+function normalizePreferredContactChannel(
+  value: ContactFormPayload['preferredContactChannel']
+): 'whatsapp' | 'email' | undefined {
+  if (value === 'whatsapp' || value === 'email') {
+    return value
+  }
+  return undefined
 }
 
 function buildContactDisplayName(payload: {

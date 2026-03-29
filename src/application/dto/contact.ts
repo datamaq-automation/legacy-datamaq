@@ -4,6 +4,7 @@ export interface ContactFormPayload {
   company: string
   email: string
   phone: string
+  preferredContactChannel?: 'whatsapp' | 'email'
   geographicLocation: string
   comment: string
   captchaToken?: string
@@ -13,6 +14,7 @@ export interface ContactSubmitPayload {
   name: string
   email?: string
   phone?: string
+  preferredContactChannel?: 'whatsapp' | 'email'
   company?: string
   firstName?: string
   lastName?: string

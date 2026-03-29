@@ -119,6 +119,7 @@ async function onFinalSubmit() {
     return
   }
   form.captchaToken = turnstileToken.value
+  form.preferredContactChannel = preferredContact.value
   await handleSubmit()
   if (feedback.success) {
     removeContactDraft(draftStorageKey)
@@ -161,6 +162,10 @@ watch(
 
 watch(turnstileToken, (value) => {
   form.captchaToken = value
+})
+
+watch(preferredContact, (value) => {
+  form.preferredContactChannel = value
 })
 </script>
 
