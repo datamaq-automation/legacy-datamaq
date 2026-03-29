@@ -27,14 +27,14 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
-    environment: deploy-production
+    environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
+      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
-      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
+      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] }}
+      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 7
@@ -44,9 +44,13 @@ jobs:
       matrix:
         include:
           - target: datamaq
+            environment_name: deploy-production
             ftps_server_secret: FTPS_DATAMAQ_SERVER
+            ftps_server_var: FTPS_DATAMAQ_SERVER
             ftps_username_secret: FTPS_DATAMAQ_USERNAME
+            ftps_username_var: FTPS_DATAMAQ_USERNAME
             ftps_password_secret: FTPS_DATAMAQ_PASSWORD
+            ftps_password_var: FTPS_DATAMAQ_PASSWORD
             ftps_remote_dir_secret: FTPS_DATAMAQ_REMOTE_DIR
             ftps_port_var: FTPS_DATAMAQ_PORT
             ftps_mode_var: FTPS_DATAMAQ_MODE
@@ -107,7 +111,7 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
-    environment: deploy-production
+    environment: ${{ matrix.environment_name }}
     outputs:
       expected_asset: ${{ steps.build-fingerprint.outputs.expected_asset }}
     strategy:
@@ -115,6 +119,7 @@ jobs:
       matrix:
         include:
           - target: datamaq
+            environment_name: deploy-production
             ftps_server_secret: FTPS_DATAMAQ_SERVER
             ftps_username_secret: FTPS_DATAMAQ_USERNAME
             ftps_password_secret: FTPS_DATAMAQ_PASSWORD
@@ -199,14 +204,14 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
-    environment: deploy-production
+    environment: ${{ matrix.environment_name }}
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] }}
+      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] }}
       FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
       FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
-      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] }}
-      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] }}
+      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] }}
+      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
       FTPS_LFTP_DEBUG_LEVEL: 5
@@ -216,9 +221,13 @@ jobs:
       matrix:
         include:
           - target: datamaq
+            environment_name: deploy-production
             ftps_server_secret: FTPS_DATAMAQ_SERVER
+            ftps_server_var: FTPS_DATAMAQ_SERVER
             ftps_username_secret: FTPS_DATAMAQ_USERNAME
+            ftps_username_var: FTPS_DATAMAQ_USERNAME
             ftps_password_secret: FTPS_DATAMAQ_PASSWORD
+            ftps_password_var: FTPS_DATAMAQ_PASSWORD
             ftps_remote_dir_secret: FTPS_DATAMAQ_REMOTE_DIR
             ftps_port_var: FTPS_DATAMAQ_PORT
             ftps_mode_var: FTPS_DATAMAQ_MODE
@@ -303,19 +312,21 @@ jobs:
       matrix:
         include:
           - target: datamaq
+            cloudflare_api_token_secret: CLOUDFLARE_API_TOKEN
+            cloudflare_zone_id_secret: CLOUDFLARE_ZONE_ID
             health_url: https://datamaq.com.ar
 
     steps:
       - name: Post-deploy / Purge Cloudflare cache
         if: matrix.target == 'datamaq'
         env:
-          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CF_API_TOKEN: ${{ secrets[matrix.cloudflare_api_token_secret] }}
+          CF_ZONE_ID: ${{ secrets[matrix.cloudflare_zone_id_secret] }}
         run: |
           set -euo pipefail
           if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ZONE_ID:-}" ]; then
             echo "Cloudflare purge required but missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID."
-            echo "Define both secrets in environment 'production'."
+            echo "Define both secrets in environment 'deploy-production'."
             exit 1
           fi
 
