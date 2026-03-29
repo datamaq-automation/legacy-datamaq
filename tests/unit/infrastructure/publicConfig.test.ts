@@ -15,14 +15,14 @@ describe('publicConfig', () => {
     expect(publicConfig.healthApiUrl).toBe('https://api.datamaq.com.ar/v1/health')
   })
 
-  it('resolves upp profile explicitly', async () => {
+  it('resolves datamaq profile explicitly', async () => {
     const { getRuntimeProfile } = await import('@/infrastructure/content/runtimeProfile')
-    const profile = getRuntimeProfile('upp')
+    const profile = getRuntimeProfile('datamaq')
 
-    expect(profile.brandId).toBe('upp')
-    expect(profile.storageNamespace).toBe('upp')
-    expect(profile.siteName).toBe('UPP')
-    expect(profile.inquiryApiUrl).toBe('https://api.datamaq.com.ar/v1/contact')
+    expect(profile.brandId).toBe('datamaq')
+    expect(profile.storageNamespace).toBe('datamaq')
+    expect(profile.siteName).toBe('DataMaq')
+    expect(profile.inquiryApiUrl).toBe('https://n8n.datamaq.com.ar/webhook/contact-form')
     expect(profile.siteApiUrl).toBe('https://api.datamaq.com.ar/v1/site')
     expect(profile.healthApiUrl).toBe('https://api.datamaq.com.ar/v1/health')
     expect(profile.quoteDiagnosticApiUrl).toBe('https://api.datamaq.com.ar/v1/quote/diagnostic')

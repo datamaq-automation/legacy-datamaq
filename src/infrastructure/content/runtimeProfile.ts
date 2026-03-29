@@ -4,7 +4,7 @@ import runtimeProfilesRaw from '@/infrastructure/content/runtimeProfiles.json'
 type NullableString = string | undefined
 type NullableStringJson = string | null
 
-const APP_TARGETS = ['datamaq', 'upp', 'example', 'e2e', 'integration'] as const
+const APP_TARGETS = ['datamaq', 'e2e', 'integration'] as const
 const DEFAULT_APP_TARGET = 'datamaq'
 const MODE_TARGET_ALIASES = {
   // Keep plain `vite dev` on datamaq profile to use production backend endpoints by default.
@@ -117,8 +117,6 @@ const rawProfiles = runtimeProfilesRaw as RuntimeProfilesRecordJson
 
 const runtimeProfilesByTarget: Record<AppTarget, RuntimeProfile> = {
   datamaq: mapProfile(rawProfiles.datamaq),
-  upp: mapProfile(rawProfiles.upp),
-  example: mapProfile(rawProfiles.example),
   e2e: mapProfile(rawProfiles.e2e),
   integration: mapProfile(rawProfiles.integration)
 }
