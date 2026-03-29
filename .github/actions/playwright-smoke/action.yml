@@ -55,7 +55,7 @@ runs:
 
     - name: Upload Playwright report
       if: always()
-      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+      uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
       with:
         name: playwright-report-${{ inputs.artifact-suffix }}
         path: playwright-report/
@@ -63,7 +63,7 @@ runs:
 
     - name: Upload Playwright raw results
       if: always()
-      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+      uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
       with:
         name: playwright-test-results-${{ inputs.artifact-suffix }}
         path: test-results/
@@ -71,7 +71,7 @@ runs:
 
     - name: Upload Vite debug logs
       if: always()
-      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+      uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
       with:
         name: vite-logs-${{ inputs.artifact-suffix }}
         path: |
