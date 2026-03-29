@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { getRuntimeProfile, resolveAppTarget } from '@/infrastructure/content/runtimeProfile'
 
 describe('runtimeProfile', () => {
-  it('maps development mode to the integration profile for local validation', () => {
-    expect(resolveAppTarget(undefined, 'development')).toBe('integration')
+  it('maps development mode to the datamaq profile by default', () => {
+    expect(resolveAppTarget(undefined, 'development')).toBe('datamaq')
   })
 
   it('keeps integration endpoints behind /api/v1 for local proxy validation', () => {

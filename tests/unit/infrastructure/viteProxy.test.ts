@@ -9,13 +9,13 @@ describe('vite proxy config', () => {
     vi.restoreAllMocks()
   })
 
-  it('uses the local FastAPI bridge on port 8899 by default', async () => {
+  it('uses api.datamaq.com.ar by default', async () => {
     const configFactory = (await import('../../../vite.config.js')).default
     const config = configFactory({ mode: 'development', command: 'serve' })
     const proxy = config.server.proxy['/api'] as any
     const rewrite = proxy.rewrite
 
-    expect(proxy.target).toBe('http://127.0.0.1:8899')
+    expect(proxy.target).toBe('https://api.datamaq.com.ar')
     expect(rewrite('/api/v1/health')).toBe('/v1/health')
   })
 
