@@ -31,7 +31,7 @@ runs:
 
     - name: Cache Playwright browsers
       id: playwright-cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      uses: actions/cache@v5.0.1 # Node 24 compatible
       with:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -59,6 +59,7 @@ runs:
       with:
         name: playwright-report-${{ inputs.artifact-suffix }}
         path: playwright-report/
+        if-no-files-found: ignore
         retention-days: 7
 
     - name: Upload Playwright raw results
@@ -67,6 +68,7 @@ runs:
       with:
         name: playwright-test-results-${{ inputs.artifact-suffix }}
         path: test-results/
+        if-no-files-found: ignore
         retention-days: 7
 
     - name: Upload Vite debug logs
@@ -79,4 +81,5 @@ runs:
           .tmp-vite-dev.err.log
           .tmp-vite-node.log
           .tmp-vite-node.err.log
+        if-no-files-found: ignore
         retention-days: 7
