@@ -6,7 +6,3 @@ export type Attribution = {
   utmContent?: string
   gclid?: string
 }
-
-export interface AttributionProvider {
-  getAttribution(): Attribution | null
-}

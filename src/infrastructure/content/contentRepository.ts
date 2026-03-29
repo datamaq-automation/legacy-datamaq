@@ -3,23 +3,8 @@ Path: src/infrastructure/content/contentRepository.ts
 */
 
 import type {
-  AboutContentPort,
-  BrandContentPort,
-  ContactPageContentPort,
-  ConsentContentPort,
-  ContactContentPort,
   ContentPort,
-  FooterContentPort,
-  HeroContentPort,
-  HomePageContentPort,
-  LegalContentPort,
-  NavbarContentPort,
-  ProfileContentPort,
-  RemoteContentStatus,
-  RemoteContentStatusPort,
-  SeoContentPort,
-  SiteSnapshotPort,
-  ServicesContentPort
+  RemoteContentStatus
 } from '@/application/ports/Content'
 import type { ConfigPort } from '@/application/ports/Config'
 import type { LoggerPort } from '@/application/ports/Logger'
@@ -39,25 +24,7 @@ import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import type { AppContent } from '@/domain/types/content'
 import type { SiteSnapshot } from '@/domain/types/site'
 
-export class ContentRepository
-  implements
-    ContentPort,
-    SiteSnapshotPort,
-    RemoteContentStatusPort,
-    NavbarContentPort,
-    FooterContentPort,
-    ContactContentPort,
-    HeroContentPort,
-    AboutContentPort,
-    ProfileContentPort,
-    LegalContentPort,
-    ConsentContentPort,
-    ServicesContentPort,
-    BrandContentPort,
-    SeoContentPort,
-    HomePageContentPort,
-    ContactPageContentPort
-{
+export class ContentRepository implements ContentPort {
   private readonly contentStore: ContentStore
   private readonly dynamicContentService: DynamicContentService
   private readonly dynamicPricingService: DynamicPricingService

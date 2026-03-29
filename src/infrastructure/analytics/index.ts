@@ -1,15 +1,10 @@
-import type { AnalyticsPort } from '@/application/ports/Analytics'
+import type { AnalyticsPort, PageViewPayload } from '@/application/ports/Analytics'
 import type { ConfigPort } from '@/application/ports/Config'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
 import { getAnalyticsConsent } from '../consent/consent'
 import { initClarity, updateClarityConsent } from './clarity'
 import { clearGa4PendingEvents, initGa4, trackGa4Event, trackGa4PageView, updateGa4Consent } from './ga4'
 import { clearAnalyticsCookies } from './cookies'
-
-type PageViewPayload = {
-  path: string
-  title?: string
-}
 
 export type AnalyticsConsentStatus = 'unknown' | 'granted' | 'denied'
 type AnalyticsRuntimeConfig = {
