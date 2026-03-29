@@ -34,12 +34,12 @@ jobs:
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
       FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
-      FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
-      FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
+      FTPS_PORT: ${{ vars[matrix.ftps_port_var] || '21' }}
+      FTPS_MODE: ${{ vars[matrix.ftps_mode_var] || 'explicit' }}
       FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
       FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
-      FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
+      FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] || 'false' }}
       FTPS_LFTP_DEBUG_LEVEL: 7
       FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
     strategy:
@@ -230,12 +230,12 @@ jobs:
     env:
       FTPS_TARGET_LABEL: ${{ matrix.target }}
       FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
-      FTPS_PORT: ${{ vars[matrix.ftps_port_var] }}
-      FTPS_MODE: ${{ vars[matrix.ftps_mode_var] }}
+      FTPS_PORT: ${{ vars[matrix.ftps_port_var] || '21' }}
+      FTPS_MODE: ${{ vars[matrix.ftps_mode_var] || 'explicit' }}
       FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
       FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
-      FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] }}
+      FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] || 'false' }}
       FTPS_LFTP_DEBUG_LEVEL: 5
       FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
     strategy:
@@ -388,9 +388,8 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ZONE_ID:-}" ]; then
-            echo "Cloudflare purge required but missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID."
-            echo "Define both secrets in environment 'production'."
-            exit 1
+            echo "::warning::Cloudflare purge skipped: missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID in environment 'production'."
+            exit 0
           fi
 
           echo "Purging Cloudflare cache for zone ${CF_ZONE_ID}..."
