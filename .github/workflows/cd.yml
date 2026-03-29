@@ -44,7 +44,7 @@ jobs:
       matrix:
         include:
           - target: datamaq
-            environment_name: deploy-production
+            environment_name: production
             ftps_server_secret: FTPS_DATAMAQ_SERVER
             ftps_server_var: FTPS_DATAMAQ_SERVER
             ftps_username_secret: FTPS_DATAMAQ_USERNAME
@@ -138,7 +138,7 @@ jobs:
       matrix:
         include:
           - target: datamaq
-            environment_name: deploy-production
+            environment_name: production
             ftps_server_secret: FTPS_DATAMAQ_SERVER
             ftps_username_secret: FTPS_DATAMAQ_USERNAME
             ftps_password_secret: FTPS_DATAMAQ_PASSWORD
@@ -240,7 +240,7 @@ jobs:
       matrix:
         include:
           - target: datamaq
-            environment_name: deploy-production
+            environment_name: production
             ftps_server_secret: FTPS_DATAMAQ_SERVER
             ftps_server_var: FTPS_DATAMAQ_SERVER
             ftps_username_secret: FTPS_DATAMAQ_USERNAME
@@ -364,7 +364,7 @@ jobs:
           set -euo pipefail
           if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ZONE_ID:-}" ]; then
             echo "Cloudflare purge required but missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID."
-            echo "Define both secrets in environment 'deploy-production'."
+            echo "Define both secrets in environment 'production'."
             exit 1
           fi
 
