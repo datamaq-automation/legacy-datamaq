@@ -6,7 +6,7 @@ import {
   resolveBackendOrigin,
   resolveBackendPathname,
   resolveBrowserOrigin
-} from '@/infrastructure/backend/backendEndpoint'
+} from '@/shared/backend/backendEndpoint'
 
 describe('backendEndpoint', () => {
   it('normalizes empty endpoints', () => {

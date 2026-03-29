@@ -2,7 +2,7 @@
 Path: src/ui/App.ts
 */
 
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
 import type { RemoteContentStatus } from '@/application/ports/Content'
@@ -48,7 +48,6 @@ export function useApp() {
     unsubscribeDevBackendAvailability = subscribeDevBackendAvailability((state) => {
       devBackendAvailability.value = state
     })
-    void logUiDebugSnapshot('mounted')
   })
 
   onBeforeUnmount(() => {
@@ -58,53 +57,11 @@ export function useApp() {
     unsubscribeDevBackendAvailability = undefined
   })
 
-  watch(
-    () => route.path,
-    () => {
-      void logUiDebugSnapshot('route-change')
-    }
-  )
-
-  watch(
-    () => remoteContentStatus.value,
-    () => {
-      void logUiDebugSnapshot('content-status-change')
-    }
-  )
-
   return {
     isContentReady,
     isContentPending,
     isContentUnavailable,
     showDevBackendOfflineBanner,
     devBackendAvailability
-  }
-
-  async function logUiDebugSnapshot(reason: string): Promise<void> {
-    await nextTick()
-
-    const selectors = ['h1', 'h2', '.c-hero__title', '.c-services__card-title', '.c-contact__title']
-    const rows = selectors.map((selector) => {
-      const element = document.querySelector(selector)
-      if (!(element instanceof HTMLElement)) {
-        return { selector, exists: false }
-      }
-
-      const style = window.getComputedStyle(element)
-      const rect = element.getBoundingClientRect()
-      return {
-        selector,
-        exists: true,
-        text: element.textContent?.trim().slice(0, 80),
-        color: style.color,
-        opacity: style.opacity,
-        visibility: style.visibility,
-        display: style.display,
-        zIndex: style.zIndex,
-        width: Math.round(rect.width),
-        height: Math.round(rect.height)
-      }
-    })
-
   }
 }

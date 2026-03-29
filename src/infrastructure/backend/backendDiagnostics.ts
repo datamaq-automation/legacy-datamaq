@@ -5,7 +5,7 @@ import {
   resolveBackendPathname,
   type BrowserLocationLike,
   type ResolvedBackendEndpoint
-} from '@/infrastructure/backend/backendEndpoint'
+} from '@/shared/backend/backendEndpoint'
 
 const isDevRuntime = Boolean(import.meta.env?.DEV)
 

@@ -9,7 +9,7 @@ import {
   emitBackendInfo,
   extractBackendResponseMetadata
 } from '@/infrastructure/backend/backendDiagnostics'
-import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
+import { resolveBackendPathname } from '@/shared/backend/backendEndpoint'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { resolveHealthEndpoint } from '@/infrastructure/health/healthEndpointResolver'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'

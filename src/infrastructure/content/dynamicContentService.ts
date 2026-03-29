@@ -7,7 +7,7 @@ import {
   extractBackendResponseMetadata,
   isRecord
 } from '@/infrastructure/backend/backendDiagnostics'
-import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
+import { resolveBackendPathname } from '@/shared/backend/backendEndpoint'
 
 export class DynamicContentService {
   private siteFetchStarted = false

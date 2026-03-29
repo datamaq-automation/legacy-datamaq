@@ -2,8 +2,7 @@
  * Constantes y builders para configuración de QR de WhatsApp.
  * 
  * Nota: Este módulo contiene la lógica pura (sin dependencias de Vue/composables)
- * para facilitar testing y reuso. El composable useWhatsAppQr.ts en ui/
- * es el punto de entrada para componentes Vue.
+ * para facilitar testing y reuso desde UI y tests.
  */
 
 export interface WhatsAppQrConfig {

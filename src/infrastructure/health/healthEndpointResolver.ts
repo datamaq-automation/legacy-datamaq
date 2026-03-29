@@ -6,7 +6,7 @@ import {
   normalizeBackendEndpoint,
   type BrowserLocationLike,
   type ResolvedBackendEndpoint
-} from '@/infrastructure/backend/backendEndpoint'
+} from '@/shared/backend/backendEndpoint'
 
 const DEFAULT_HEALTH_ENDPOINT = '/api/v1/health'
 

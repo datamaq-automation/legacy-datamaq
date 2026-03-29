@@ -1,5 +1,4 @@
 import { reactive } from 'vue'
-import { AppContentSchema } from '@/domain/schemas/contentSchema'
 import { SiteSnapshotSchema } from '@/domain/schemas/siteSchema'
 import type { AppContent, CommercialConfig } from '@/domain/types/content'
 import type { BrandContent, SeoContent, SiteSnapshot } from '@/domain/types/site'

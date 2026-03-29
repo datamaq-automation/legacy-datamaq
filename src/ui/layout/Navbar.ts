@@ -3,8 +3,6 @@ import { useContainer } from '@/di/container'
 import type { NavbarEmits, NavbarProps } from '@/ui/types/layout'
 
 export function useNavbar(props: NavbarProps, emit: NavbarEmits) {
-  const offcanvasRef = ref<HTMLElement | null>(null)
-  const toggleButtonRef = ref<HTMLButtonElement | null>(null)
   const isOffcanvasOpen = ref(false)
   const contactCtaEnabled = computed(() => props.contactCtaEnabled)
   const { content } = useContainer()

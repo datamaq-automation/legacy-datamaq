@@ -8,7 +8,7 @@ import {
   extractBackendResponseMetadata,
   isRecord
 } from '@/infrastructure/backend/backendDiagnostics'
-import { resolveBackendPathname } from '@/infrastructure/backend/backendEndpoint'
+import { resolveBackendPathname } from '@/shared/backend/backendEndpoint'
 
 const pricingConsoleWarnCache = new Set<string>()
 const pricingConsoleDebugCache = new Set<string>()
