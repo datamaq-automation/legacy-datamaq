@@ -7,7 +7,7 @@ const FILE_PATTERN = /\.(ts|tsx|js|jsx|vue|scss|css|json)$/
 
 const ALLOWED_FILES = new Set([
   normalizePath('src/infrastructure/config/publicConfig.ts'),
-  normalizePath('src/infrastructure/content/Appcontent.ts'),
+  normalizePath('src/infrastructure/content/Appcontent.active.ts'),
   normalizePath('src/infrastructure/content/Appcontent.datamaq.ts'),
   normalizePath('src/infrastructure/content/runtimeProfile.ts'),
   normalizePath('src/infrastructure/content/runtimeProfiles.json'),

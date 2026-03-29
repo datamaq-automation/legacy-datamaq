@@ -3,12 +3,18 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { readQuoteWebSnapshot } from './quoteWebState'
 import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
+import { useContainer } from '@/di/container'
 
 const route = useRoute()
+const { content } = useContainer()
 const quoteId = computed(() => String(route.params.quoteId ?? '').trim())
 const quote = computed(() => readQuoteWebSnapshot(quoteId.value))
 const hasQuote = computed(() => Boolean(quote.value))
 const confirmWhatsappHref = computed(() => quote.value?.whatsapp_url ?? '#cotizador')
+const brandLabel = computed(() => {
+  const value = content.getBrandContent().brandName?.trim()
+  return (value || 'Cotizador').toUpperCase()
+})
 
 const technicalConditions = computed(() => {
   if (!quote.value) {
@@ -68,7 +74,7 @@ function handleConfirmWhatsappClick(event: MouseEvent): boolean | void {
     <main class="quote-web-page__content">
       <header class="quote-web-page__header">
         <div>
-          <h1 class="quote-web-page__brand">DATAMAQ</h1>
+          <h1 class="quote-web-page__brand">{{ brandLabel }}</h1>
           <p class="quote-web-page__subtitle">Cotización de diagnóstico</p>
         </div>
         <div class="quote-web-page__status">

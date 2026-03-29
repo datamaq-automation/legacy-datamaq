@@ -2,7 +2,7 @@ import type { ContactFormPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 import { useContactFacade } from '@/ui/features/contact/useContactFacade'
 
-const DEFAULT_BRAND_NAME = 'DataMaq'
+const DEFAULT_BRAND_NAME = 'equipo tecnico'
 const DEFAULT_MACHINE_PLACEHOLDER = '[Tipo de Maquina]'
 const WHATSAPP_BASE_DOMAIN = 'whatsapp.com'
 const WA_SHORT_DOMAIN = 'wa.me'

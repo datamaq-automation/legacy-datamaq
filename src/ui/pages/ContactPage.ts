@@ -18,8 +18,7 @@ export function useContactPage() {
   const contactPage = content.getContactPageContent()
   const contactCtaEnabled = getWhatsAppEnabled()
   const isContactFormActive = getContactFormActive()
-  const navbarLinks = mapNavbarLinks(navbar)
-  const homeLinks = navbarLinks.filter((link) => link.href !== '#contacto')
+  const homeLinks = mapNavbarLinks(navbar).filter((link) => link.href !== '#contacto')
   const footerYear = new Date().getFullYear()
   const whatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
   const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(whatsappHref.value))
@@ -45,7 +44,6 @@ export function useContactPage() {
     contactPage,
     contactCtaEnabled,
     isContactFormActive,
-    navbarLinks,
     homeLinks,
     footerYear,
     whatsappHref,

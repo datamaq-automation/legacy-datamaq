@@ -8,7 +8,7 @@ import {
   trackSectionScroll
 } from '@/ui/controllers/contactController'
 
-const EXPECTED_WHATSAPP_MESSAGE = 'Hola DataMaq, necesito asistencia tecnica para [Tipo de Maquina].'
+const EXPECTED_WHATSAPP_MESSAGE = 'Hola equipo tecnico, necesito asistencia tecnica para [Tipo de Maquina].'
 
 const mocks = vi.hoisted(() => ({
   trackChat: vi.fn(),
