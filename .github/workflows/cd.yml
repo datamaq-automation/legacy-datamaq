@@ -458,6 +458,7 @@ jobs:
         with:
           name: remote-index-${{ matrix.target }}
           path: remote-index.html
+          if-no-files-found: ignore
           retention-days: 7
 
       - name: Post-deploy / Health check
