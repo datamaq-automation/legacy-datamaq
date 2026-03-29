@@ -348,16 +348,38 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
+    environment: ${{ matrix.environment_name }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - target: datamaq
+            environment_name: production
             cloudflare_api_token_secret: CLOUDFLARE_API_TOKEN
             cloudflare_zone_id_secret: CLOUDFLARE_ZONE_ID
             health_url: https://datamaq.com.ar
 
     steps:
+      - name: Post-deploy / Diagnose Cloudflare env presence
+        env:
+          CF_API_TOKEN: ${{ secrets[matrix.cloudflare_api_token_secret] }}
+          CF_ZONE_ID: ${{ secrets[matrix.cloudflare_zone_id_secret] }}
+        run: |
+          echo "::group::Cloudflare env presence"
+          echo "environment_name=${{ matrix.environment_name }}"
+          if [ -n "${CF_API_TOKEN:-}" ]; then
+            echo "::notice::CF_API_TOKEN=present"
+          else
+            echo "::warning::CF_API_TOKEN=missing"
+          fi
+          if [ -n "${CF_ZONE_ID:-}" ]; then
+            echo "::notice::CF_ZONE_ID=present"
+          else
+            echo "::warning::CF_ZONE_ID=missing"
+          fi
+          echo "Expected secrets: ${{ matrix.cloudflare_api_token_secret }} and ${{ matrix.cloudflare_zone_id_secret }}"
+          echo "::endgroup::"
+
       - name: Post-deploy / Purge Cloudflare cache
         if: matrix.target == 'datamaq'
         env:
