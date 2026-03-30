@@ -1,4 +1,4 @@
-# plantilla-www
+﻿# plantilla-www
 
 Frontend Vue 3 + Vite con configuracion multi-target desde un solo repositorio.
 
@@ -82,4 +82,5 @@ npm run build:local -- upp
 
 - Se usa `husky` con hook `pre-push` para bloquear `git push` si falla el gate local.
 - Gate actual: `npm run gate:push` (`lint:security` + `typecheck`).
-- Si necesitás bypass excepcional: `HUSKY=0 git push`.
+- Si necesitÃ¡s bypass excepcional: `HUSKY=0 git push`.
+

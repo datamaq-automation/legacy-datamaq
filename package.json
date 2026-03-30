@@ -40,7 +40,7 @@
     "lint:origin-verify": "node scripts/check-origin-verify-leaks.mjs",
     "lint:client-secrets": "node scripts/check-client-secrets.mjs",
     "lint:security": "npm run lint:origin-verify && npm run lint:client-secrets",
-    "gate:push": "npm run lint:security && npm run typecheck",
+    "gate:push": "npm run quality:fast && npm run quality:e2e",
     "lint:test-coverage": "npm run test:coverage && node scripts/check-test-coverage.mjs",
     "lint:testing": "npm run lint:test-coverage && npm run test:e2e:smoke",
     "lint:todo-sync": "node scripts/check-todo-sync.mjs --require-evidence --require-open-p0 --require-no-done-tasks",
