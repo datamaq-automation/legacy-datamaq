@@ -1,3 +1,27 @@
+## [2026-03-30] Operacion: CD FTPS estable + verificacion post-deploy
+
+### Certezas ejecutadas automaticamente
+
+#### CD por cambios en scripts sin depender de CI
+- Completado: `cd.yml` ahora se dispara por `push` en `main` cuando hay cambios en `scripts/**`.
+- Completado: condiciones `if` de jobs CD actualizadas para aceptar evento `push` directo.
+
+#### Hardening de FTPS ante timeouts de data channel
+- Completado: `scripts/ftps-deploy.sh` ahora soporta:
+  - `FTPS_PREFLIGHT_TIMEOUT_SECONDS` (default `120`)
+  - `FTPS_UPLOAD_TIMEOUT_SECONDS` (default `240`)
+- Completado: validacion numerica y salida de debug para ambos valores.
+
+### Evidencia de validacion
+- GitHub Actions: pipeline en verde tras los ajustes.
+- Smoke HTTP en produccion:
+  - `https://datamaq.com.ar/` -> `200`
+  - `https://datamaq.com.ar/contact` -> `200`
+  - `https://datamaq.com.ar/gracias` -> `200`
+  - `https://datamaq.com.ar/cotizador` -> `200`
+
+---
+
 ## [2026-03-15] Workflow: Todo Workflow - Auditoria y unificacion de GitHub Actions CI
 
 ### Certezas ejecutadas automaticamente
