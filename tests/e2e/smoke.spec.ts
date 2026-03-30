@@ -1,7 +1,7 @@
 ﻿import { expect, test } from '@playwright/test'
 
 const HOME_H1_PATTERN =
-  /Diagnostico e instalacion electrica|Servicio Tecnico Industrial Especializado|Contenido no disponible/i
+  /Diagnostico e instalacion electrica|Servicio Tecnico Industrial Especializado|Monitoreo energetico y automatizacion con Powermeter y Automate|Contenido no disponible/i
 
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
