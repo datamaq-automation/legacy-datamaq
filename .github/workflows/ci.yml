@@ -133,7 +133,7 @@ jobs:
 
   quality-e2e-smoke-navigation:
     name: Quality / E2E Smoke (Navigation)
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs:
@@ -164,7 +164,7 @@ jobs:
 
   quality-e2e-smoke-lead:
     name: Quality / E2E Smoke (Lead)
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs:
