@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildAppHead } from '@/ui/seo/appSeo'
-import { buildLandingAppContent } from '@/infrastructure/content/landingContentBuilder'
-import { commercialConfig } from '@/infrastructure/content/Appcontent.active'
+import { datamaqSiteSnapshot } from '@/infrastructure/content/siteSnapshot.datamaq'
 
 const baseSeo = {
   title: 'Datamaq',
@@ -104,7 +103,7 @@ describe('buildAppHead', () => {
   })
 
   it('builds Escobar landing SEO from backend AppContent payload', () => {
-    const appContent = buildLandingAppContent(commercialConfig)
+    const appContent = structuredClone(datamaqSiteSnapshot.content)
     appContent.hero.title = 'Medicion de consumo electrico en Escobar'
     appContent.hero.subtitle = 'Servicio tecnico con diagnostico y plan de accion.'
     appContent.decisionFlow.faqItems = [
