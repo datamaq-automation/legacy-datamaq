@@ -1,3 +1,4 @@
+// Centralized CTA labels used across UI entry points.
 export const CTA_COPY = {
   PRIMARY_WHATSAPP: 'Agendar diagnostico por WhatsApp',
   WHATSAPP_UNAVAILABLE: 'WhatsApp no disponible',
