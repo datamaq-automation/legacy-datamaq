@@ -11,9 +11,9 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 
 ## Contratos canonicos
 
-- `backend-content-brand-seo-contract.md`: contrato objetivo de `GET /v1/site`.
+- `backend-content-brand-seo-contract.md`: contrato historico/objetivo de `GET /v1/site` para backend. El frontend actual usa snapshot local congelado.
 - `fastapi-contact-contract.md`: contrato de `POST /v1/contact`.
-- `fastapi-content-pricing-contract.md`: referencia legacy/parcial de `content` y `pricing`. Revisar contra `GET /v1/site` antes de usarlo como fuente canonica.
+- `fastapi-content-pricing-contract.md`: referencia legacy/parcial de `content` y `pricing`. Ya no es fuente activa de runtime para el frontend.
 - `fastapi-quote-contract.md`: contrato de `quote`.
 
 ## Implementacion y rollout
@@ -38,6 +38,7 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 - `deploy-spa-fallback.md`: fallback SPA para deploy.
 - `ci-cd-baseline-2026-03-30.md`: baseline operativo de duracion/cantidad de runs para CI/CD tras optimizacion.
   Incluye nota sobre `Cloudflare purge` opcional en CD y su comportamiento cuando faltan secretos.
+- `src/infrastructure/content/siteSnapshot.datamaq.ts`: snapshot local de contenido usado por el frontend en runtime.
 
 ## Convenciones
 

@@ -15,8 +15,14 @@ Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfile
 
 - Indice de documentacion: `docs/README.md`
 - Guia principal para migracion de backend a FastAPI: `docs/fastapi-backend-migration-guide.md`
-- Contrato objetivo de `GET /v1/site`: `docs/backend-content-brand-seo-contract.md`
+- Contrato objetivo historico de `GET /v1/site`: `docs/backend-content-brand-seo-contract.md`
 - Contrato canonico de `contact` y `mail`: `docs/fastapi-contact-contract.md`
+
+## Estado actual de contenido
+
+- El contenido visible del frontend ya no depende de `GET /v1/site` ni de `GET /v1/pricing` en runtime.
+- La fuente actual de contenido es un snapshot local congelado en `src/infrastructure/content/siteSnapshot.datamaq.ts`.
+- Los endpoints `site` y `pricing` quedan como referencia de backend/documentacion historica, no como requisito de render del frontend.
 
 ## Comandos
 
