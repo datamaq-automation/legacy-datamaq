@@ -1,6 +1,11 @@
 name: CD / FTPS
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/**'
   workflow_run:
     workflows:
       - CI / Quality
@@ -25,6 +30,8 @@ jobs:
     timeout-minutes: 10
     if: >
       (github.event_name == 'workflow_dispatch' &&
+       github.ref == 'refs/heads/main') ||
+      (github.event_name == 'push' &&
        github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' &&
        github.event.workflow_run.conclusion == 'success' &&
@@ -136,6 +143,8 @@ jobs:
     if: >
       (github.event_name == 'workflow_dispatch' &&
        github.ref == 'refs/heads/main') ||
+      (github.event_name == 'push' &&
+       github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' &&
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
@@ -234,6 +243,8 @@ jobs:
       - build-artifact
     if: >
       (github.event_name == 'workflow_dispatch' &&
+       github.ref == 'refs/heads/main') ||
+      (github.event_name == 'push' &&
        github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' &&
        github.event.workflow_run.conclusion == 'success' &&
@@ -358,6 +369,8 @@ jobs:
     if: >
       (github.event_name == 'workflow_dispatch' &&
        github.ref == 'refs/heads/main') ||
+      (github.event_name == 'push' &&
+       github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' &&
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
@@ -431,6 +444,8 @@ jobs:
       - post-deploy-purge-cloudflare
     if: >
       ((github.event_name == 'workflow_dispatch' &&
+       github.ref == 'refs/heads/main') ||
+      (github.event_name == 'push' &&
        github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' &&
        github.event.workflow_run.conclusion == 'success' &&
