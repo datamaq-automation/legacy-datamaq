@@ -40,6 +40,7 @@ jobs:
       FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] || 'false' }}
+      FTPS_PREFLIGHT_TIMEOUT_SECONDS: ${{ vars.FTPS_PREFLIGHT_TIMEOUT_SECONDS || '120' }}
       FTPS_LFTP_DEBUG_LEVEL: 7
       FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
     strategy:
@@ -81,7 +82,7 @@ jobs:
         run: |
           echo "::group::FTPS env presence"
           echo "environment_name=${{ matrix.environment_name }}"
-          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL; do
+          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL FTPS_PREFLIGHT_TIMEOUT_SECONDS; do
             if [ -n "${!key:-}" ]; then
               echo "::notice::${key}=present"
             else
@@ -248,6 +249,7 @@ jobs:
       FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
       FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
       FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] || 'false' }}
+      FTPS_UPLOAD_TIMEOUT_SECONDS: ${{ vars.FTPS_UPLOAD_TIMEOUT_SECONDS || '240' }}
       FTPS_LFTP_DEBUG_LEVEL: 5
       FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
     strategy:
@@ -292,7 +294,7 @@ jobs:
         run: |
           echo "::group::FTPS env presence"
           echo "environment_name=${{ matrix.environment_name }}"
-          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL; do
+          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL FTPS_UPLOAD_TIMEOUT_SECONDS; do
             if [ -n "${!key:-}" ]; then
               echo "::notice::${key}=present"
             else

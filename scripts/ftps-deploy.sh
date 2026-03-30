@@ -15,6 +15,8 @@ REMOTE_DIR=""
 ALLOW_INSECURE_DATA_CHANNEL="false"
 PRUNE_REMOTE="false"
 LFTP_DEBUG_LEVEL="4"
+PREFLIGHT_TIMEOUT_SECONDS="120"
+UPLOAD_TIMEOUT_SECONDS="240"
 ATTEMPT_SUMMARY=()
 
 trim_compact() {
@@ -91,6 +93,8 @@ print_debug_context() {
   echo "normalized_remote_dir=${REMOTE_DIR}"
   echo "allow_insecure_data_channel=${ALLOW_INSECURE_DATA_CHANNEL}"
   echo "lftp_debug_level=${LFTP_DEBUG_LEVEL}"
+  echo "preflight_timeout_seconds=${PREFLIGHT_TIMEOUT_SECONDS}"
+  echo "upload_timeout_seconds=${UPLOAD_TIMEOUT_SECONDS}"
   if [[ "$include_dns" == "true" ]]; then
     getent hosts "${SERVER_HOST}" || true
   fi
@@ -125,6 +129,8 @@ normalize_inputs() {
   MODE="$(trim_compact "${FTPS_MODE:-}" | tr '[:upper:]' '[:lower:]')"
   ALLOW_INSECURE_DATA_CHANNEL="$(trim_compact "${FTPS_ALLOW_INSECURE_DATA_CHANNEL:-false}" | tr '[:upper:]' '[:lower:]')"
   LFTP_DEBUG_LEVEL="$(trim_compact "${FTPS_LFTP_DEBUG_LEVEL:-4}")"
+  PREFLIGHT_TIMEOUT_SECONDS="$(trim_compact "${FTPS_PREFLIGHT_TIMEOUT_SECONDS:-120}")"
+  UPLOAD_TIMEOUT_SECONDS="$(trim_compact "${FTPS_UPLOAD_TIMEOUT_SECONDS:-240}")"
   PORT="${explicit_port:-${SERVER_PORT_FROM_HOST:-}}"
   if [[ -z "$PORT" && "$MODE" == "implicit" ]]; then
     PORT="990"
@@ -156,6 +162,12 @@ normalize_inputs() {
   fi
   if ! printf '%s' "${LFTP_DEBUG_LEVEL}" | grep -Eq '^[0-9]+$'; then
     error "FTPS_LFTP_DEBUG_LEVEL must be numeric."
+  fi
+  if ! printf '%s' "${PREFLIGHT_TIMEOUT_SECONDS}" | grep -Eq '^[0-9]+$'; then
+    error "FTPS_PREFLIGHT_TIMEOUT_SECONDS must be numeric."
+  fi
+  if ! printf '%s' "${UPLOAD_TIMEOUT_SECONDS}" | grep -Eq '^[0-9]+$'; then
+    error "FTPS_UPLOAD_TIMEOUT_SECONDS must be numeric."
   fi
   if printf '%s' "${REMOTE_DIR}" | grep -q '\\'; then
     error "FTPS remote dir must use Unix-style slashes."
@@ -292,7 +304,7 @@ run_preflight_attempt() {
   echo "prefer_epsv=${prefer_epsv}"
   echo "fix_pasv_address=${fix_pasv_address}"
   set +e
-  timeout 90 lftp -e "${lftp_command}" >"${log_file}" 2>&1
+  timeout "${PREFLIGHT_TIMEOUT_SECONDS}" lftp -e "${lftp_command}" >"${log_file}" 2>&1
   status=$?
   set -e
 
@@ -345,7 +357,7 @@ run_upload_attempt() {
   echo "fix_pasv_address=${fix_pasv_address}"
   echo "allow_insecure_data_channel=${allow_insecure_data_channel}"
   set +e
-  timeout 120 lftp -e "${lftp_command}" >"${log_file}" 2>&1
+  timeout "${UPLOAD_TIMEOUT_SECONDS}" lftp -e "${lftp_command}" >"${log_file}" 2>&1
   status=$?
   set -e
 
