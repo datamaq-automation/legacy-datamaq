@@ -40,3 +40,23 @@ Mediciones de referencia (curl):
 - Algún endpoint crítico responde distinto de `200`.
 - `time_total` sostenido >0.20s para páginas de referencia (desde este mismo punto de medición).
 - Falla repetida de FTPS con `data-channel-failed` o `exit_code=124`.
+
+## Registro de controles
+
+### Control #1 (adelantado) - 2026-03-30
+
+- Estado: OK
+- Disponibilidad:
+  - `/` -> `200` (3/3)
+  - `/contact` -> `200` (3/3)
+  - `/gracias` -> `200` (3/3)
+  - `/cotizador` -> `200` (3/3)
+- Latencia (`time_total`):
+  - `/` max `0.088s`
+  - `/contact` max `0.087s`
+  - `/gracias` max `0.087s`
+  - `/cotizador` max `0.074s`
+- Umbral 2x baseline (`0.186s`): cumplido en todas las rutas.
+- Pendiente manual para siguiente control:
+  - prueba funcional de envio de formulario
+  - flujo completo de cotizador hasta `/cotizador/:id/web`
