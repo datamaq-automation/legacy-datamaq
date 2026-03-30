@@ -13,8 +13,6 @@ describe('runtimeProfile', () => {
     expect(profile.siteApiUrl).toBe('/api/v1/site')
     expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
     expect(profile.pricingApiUrl).toBe('/api/v1/pricing')
-    expect(profile.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
-    expect(profile.quotePdfApiUrl).toBe('/api/v1/quote/{quote_id}/pdf')
   })
 
   it('keeps e2e endpoints behind /api/v1 for local proxy validation', () => {
@@ -24,7 +22,5 @@ describe('runtimeProfile', () => {
     expect(profile.siteApiUrl).toBe('/api/v1/site')
     expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
     expect(profile.pricingApiUrl).toBe('/api/v1/pricing')
-    expect(profile.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
-    expect(profile.quotePdfApiUrl).toBe('/api/v1/quote/{quote_id}/pdf')
   })
 })

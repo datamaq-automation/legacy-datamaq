@@ -1,7 +1,6 @@
 import type { ConfigPort } from '@/application/ports/Config'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
 import {
-  ensureBackendConfigEndpointUrl,
   resolveBackendConfigEndpoint,
   resolveBackendEndpointPolicyMode
 } from '@/infrastructure/backend/backendConfigEndpoint'
@@ -18,9 +17,6 @@ export class ViteConfig implements ConfigPort {
   siteApiUrl: NullableString
   healthApiUrl: NullableString
   requireRemoteContent: boolean
-  quoteDiagnosticApiUrl: NullableString
-  quotePdfApiUrl: NullableString
-  quoteReadApiKey: NullableString
   contactEmail: NullableString
   contactFormActive: boolean
   analyticsEnabled: boolean | undefined
@@ -85,19 +81,6 @@ export class ViteConfig implements ConfigPort {
       ...endpointOptions
     })
     this.requireRemoteContent = Boolean(publicConfig.requireRemoteContent)
-    this.quoteDiagnosticApiUrl = resolveBackendConfigEndpoint({
-      directUrl: normalize(publicConfig.quoteDiagnosticApiUrl),
-      configKey: 'quoteDiagnosticApiUrl',
-      ...endpointOptions
-    })
-    this.quotePdfApiUrl = ensureBackendConfigEndpointUrl({
-      value: normalize(publicConfig.quotePdfApiUrl),
-      configKey: 'quotePdfApiUrl',
-      ...endpointOptions
-    })
-    this.quoteReadApiKey =
-      resolveQuoteReadApiKeyFromList(import.meta.env.QUOTE_READ_API_KEYS) ??
-      normalize(import.meta.env.VITE_QUOTE_READ_API_KEY)
     this.contactFormActive = publicConfig.contactFormActive
     this.analyticsEnabled = publicConfig.analyticsEnabled
     this.ga4Id = normalize(publicConfig.ga4Id)
@@ -145,16 +128,4 @@ function normalizePolicyMode(value: string | undefined) {
   }
 
   return undefined
-}
-
-function resolveQuoteReadApiKeyFromList(value: string | undefined): NullableString {
-  const normalized = normalize(value)
-  if (!normalized) {
-    return undefined
-  }
-
-  return normalized
-    .split(',')
-    .map((item) => item.trim())
-    .find((item) => item.length > 0)
 }

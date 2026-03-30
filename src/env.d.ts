@@ -9,8 +9,6 @@ interface ImportMetaEnv {
   readonly VITE_TURNSTILE_SITE_KEY?: string
   readonly VITE_CONTENT_TARGET?: string
   readonly VITE_HEALTH_ENDPOINT?: string
-  readonly QUOTE_READ_API_KEYS?: string
-  readonly VITE_QUOTE_READ_API_KEY?: string
   readonly VITE_RUNTIME_LOG_LEVEL?: 'debug' | 'info' | 'warn' | 'error'
 }
 

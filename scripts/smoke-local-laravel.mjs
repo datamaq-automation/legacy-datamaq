@@ -64,25 +64,6 @@ const smokeChecks = [
       'Content-Type': 'application/json'
     },
     body: {}
-  },
-  {
-    id: 'quote-diagnostic-post',
-    method: 'POST',
-    path: '/api/v1/quote/diagnostic',
-    expectedStatus: 422,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: {}
-  },
-  {
-    id: 'quote-pdf-get',
-    method: 'GET',
-    path: '/api/v1/quote/missing-test/pdf',
-    expectedStatus: 422,
-    headers: {
-      Accept: 'application/pdf, application/json'
-    }
   }
 ]
 

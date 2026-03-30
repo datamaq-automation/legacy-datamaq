@@ -25,7 +25,6 @@ import { ContactService } from '@/domain/contact/services/ContactService'
 import { NotificationFacade } from '@/application/notifications/notificationFacade'
 import { NoopNotificationProvider } from '@/infrastructure/notifications/noopNotificationProvider'
 import { ContentRepository } from '@/infrastructure/content/contentRepository'
-import { QuoteApiGateway } from '@/infrastructure/quote/quoteApiGateway'
 import type { App, InjectionKey } from 'vue'
 import { getCurrentInstance, inject } from 'vue'
 
@@ -49,7 +48,6 @@ const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, storage, logger)
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
 const contentRepository = new ContentRepository(config, logger, http)
-const quoteGateway = new QuoteApiGateway(config, http)
 
 const submitContact = new SubmitContactUseCase(
   contactService,
@@ -74,7 +72,6 @@ export const container = {
   consentPort,
   contactBackend,
   content: contentRepository,
-  quoteGateway,
   engagementTracker,
   eventBus,
   leadTracking,

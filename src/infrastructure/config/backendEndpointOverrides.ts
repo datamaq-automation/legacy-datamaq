@@ -5,16 +5,12 @@ type BackendEndpointKey =
   | 'pricingApiUrl'
   | 'siteApiUrl'
   | 'healthApiUrl'
-  | 'quoteDiagnosticApiUrl'
-  | 'quotePdfApiUrl'
 
 const LOCAL_BACKEND_PATHS: Record<BackendEndpointKey, string> = {
   inquiryApiUrl: 'v1/contact',
   pricingApiUrl: 'v1/pricing',
   siteApiUrl: 'v1/site',
-  healthApiUrl: 'v1/health',
-  quoteDiagnosticApiUrl: 'v1/quote/diagnostic',
-  quotePdfApiUrl: 'v1/quote/{quote_id}/pdf'
+  healthApiUrl: 'v1/health'
 }
 
 export function resolveBackendEndpointOverride(

@@ -28,7 +28,7 @@ describe('vite proxy config', () => {
     const rewrite = proxy.rewrite
 
     expect(rewrite('/api/v1/health')).toBe('/v1/health')
-    expect(rewrite('/api/v1/quote/Q-20260222-000321/pdf')).toBe('/v1/quote/Q-20260222-000321/pdf')
+    expect(rewrite('/api/v1/site')).toBe('/v1/site')
   })
 
   it('summarizes backend-offline proxy errors without stack noise', async () => {

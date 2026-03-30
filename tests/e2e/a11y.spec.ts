@@ -32,11 +32,6 @@ test.describe('A11y smoke', () => {
     await assertBasicA11ySemantics(page)
   })
 
-  test('quote page exposes main landmark and heading', async ({ page }) => {
-    await page.goto('/cotizador')
-    await assertBasicA11ySemantics(page)
-  })
-
   test('thanks page exposes main landmark and heading', async ({ page }) => {
     await page.goto('/gracias')
     await assertBasicA11ySemantics(page)

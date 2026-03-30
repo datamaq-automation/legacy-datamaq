@@ -38,8 +38,6 @@ export type PublicConfig = {
   siteApiUrl: NullableString
   healthApiUrl: NullableString
   requireRemoteContent: boolean
-  quoteDiagnosticApiUrl: NullableString
-  quotePdfApiUrl: NullableString
   whatsappUrl: NullableString
   whatsappQrPhoneE164: NullableString
   whatsappQrMessage: NullableString
@@ -76,11 +74,6 @@ export const publicConfig: PublicConfig = {
   siteApiUrl: resolveBackendEndpointOverride('siteApiUrl', activeRuntimeProfile.siteApiUrl),
   healthApiUrl: resolveBackendEndpointOverride('healthApiUrl', activeRuntimeProfile.healthApiUrl),
   requireRemoteContent: activeRuntimeProfile.requireRemoteContent,
-  quoteDiagnosticApiUrl: resolveBackendEndpointOverride(
-    'quoteDiagnosticApiUrl',
-    activeRuntimeProfile.quoteDiagnosticApiUrl
-  ),
-  quotePdfApiUrl: resolveBackendEndpointOverride('quotePdfApiUrl', activeRuntimeProfile.quotePdfApiUrl),
   whatsappUrl: activeRuntimeProfile.whatsappUrl,
   whatsappQrPhoneE164: activeRuntimeProfile.whatsappQrPhoneE164,
   whatsappQrMessage: activeRuntimeProfile.whatsappQrMessage,

@@ -1,4 +1,4 @@
-# Deploy Monitoring Checklist (24h)
+﻿# Deploy Monitoring Checklist (24h)
 
 Fecha base: 2026-03-30
 Scope: deploy FTPS + ajustes de CD
@@ -8,7 +8,6 @@ Scope: deploy FTPS + ajustes de CD
 - Endpoint `/`: `200` en 3/3 checks
 - Endpoint `/contact`: `200` en 3/3 checks
 - Endpoint `/gracias`: `200` en 3/3 checks
-- Endpoint `/cotizador`: `200` en 3/3 checks
 
 Mediciones de referencia (curl):
 - `time_connect`: ~0.016s a ~0.030s
@@ -22,14 +21,12 @@ Mediciones de referencia (curl):
   - `https://datamaq.com.ar/`
   - `https://datamaq.com.ar/contact`
   - `https://datamaq.com.ar/gracias`
-  - `https://datamaq.com.ar/cotizador`
 
 2. Rendimiento básico:
 - Confirmar que `time_total` no se degrada >2x respecto a baseline.
 
 3. Funcional crítico:
 - Enviar 1 formulario de contacto de prueba.
-- Ejecutar 1 flujo de cotizador hasta vista web (`/cotizador/:id/web`).
 
 4. Señales operativas:
 - Confirmar que no hubo nuevos fallos en `Deploy / FTPS (datamaq)` en GitHub Actions.
@@ -50,13 +47,10 @@ Mediciones de referencia (curl):
   - `/` -> `200` (3/3)
   - `/contact` -> `200` (3/3)
   - `/gracias` -> `200` (3/3)
-  - `/cotizador` -> `200` (3/3)
 - Latencia (`time_total`):
   - `/` max `0.088s`
   - `/contact` max `0.087s`
   - `/gracias` max `0.087s`
-  - `/cotizador` max `0.074s`
 - Umbral 2x baseline (`0.186s`): cumplido en todas las rutas.
 - Pendiente manual para siguiente control:
-  - prueba funcional de envio de formulario
-  - flujo completo de cotizador hasta `/cotizador/:id/web`
+  - prueba funcional de envío de formulario

@@ -6,7 +6,7 @@ Para usar `vue-router` en `history mode` con URLs limpias como `/contact`, el se
 
 - `/v1/*` sigue yendo a FastAPI.
 - `/api/*` sigue yendo a FastAPI si ese prefijo existe en el entorno.
-- cualquier otra ruta del frontend (`/`, `/contact`, `/gracias`, `/cotizador/...`) debe resolver `index.html` cuando no exista un archivo físico.
+- cualquier otra ruta del frontend (`/`, `/contact`, `/gracias`, etc.) debe resolver `index.html` cuando no exista un archivo físico.
 
 ## Nginx
 

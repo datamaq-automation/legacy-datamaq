@@ -25,8 +25,6 @@ describe('publicConfig', () => {
     expect(profile.inquiryApiUrl).toBe('https://n8n.datamaq.com.ar/webhook/contact-form')
     expect(profile.siteApiUrl).toBe('https://api.datamaq.com.ar/v1/site')
     expect(profile.healthApiUrl).toBe('https://api.datamaq.com.ar/v1/health')
-    expect(profile.quoteDiagnosticApiUrl).toBe('https://api.datamaq.com.ar/v1/quote/diagnostic')
-    expect(profile.quotePdfApiUrl).toBe('https://api.datamaq.com.ar/v1/quote/{quote_id}/pdf')
   })
 
   it('overrides backend endpoints from a local base url when requested at build time', async () => {
@@ -38,8 +36,6 @@ describe('publicConfig', () => {
     expect(publicConfig.pricingApiUrl).toBe('http://127.0.0.1:8899/v1/pricing')
     expect(publicConfig.siteApiUrl).toBe('http://127.0.0.1:8899/v1/site')
     expect(publicConfig.healthApiUrl).toBe('http://127.0.0.1:8899/v1/health')
-    expect(publicConfig.quoteDiagnosticApiUrl).toBe('http://127.0.0.1:8899/v1/quote/diagnostic')
-    expect(publicConfig.quotePdfApiUrl).toBe('http://127.0.0.1:8899/v1/quote/{quote_id}/pdf')
   })
 })
 

@@ -43,8 +43,6 @@ export interface RuntimeProfile {
   siteApiUrl: NullableString
   healthApiUrl: NullableString
   requireRemoteContent: boolean
-  quoteDiagnosticApiUrl: NullableString
-  quotePdfApiUrl: NullableString
   whatsappUrl: NullableString
   whatsappQrPhoneE164: NullableString
   whatsappQrMessage: NullableString
@@ -88,8 +86,6 @@ type RuntimeProfileJson = {
   siteApiUrl: NullableStringJson
   healthApiUrl: NullableStringJson
   requireRemoteContent: boolean
-  quoteDiagnosticApiUrl: NullableStringJson
-  quotePdfApiUrl: NullableStringJson
   whatsappUrl: NullableStringJson
   whatsappQrPhoneE164: NullableStringJson
   whatsappQrMessage: NullableStringJson
@@ -189,8 +185,6 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
     siteApiUrl: normalize(profile.siteApiUrl),
     healthApiUrl: normalize(profile.healthApiUrl),
     requireRemoteContent: profile.requireRemoteContent,
-    quoteDiagnosticApiUrl: normalize(profile.quoteDiagnosticApiUrl),
-    quotePdfApiUrl: normalize(profile.quotePdfApiUrl),
     whatsappUrl: normalize(profile.whatsappUrl),
     whatsappQrPhoneE164: normalize(profile.whatsappQrPhoneE164),
     whatsappQrMessage: normalize(profile.whatsappQrMessage),

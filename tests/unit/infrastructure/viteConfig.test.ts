@@ -10,9 +10,6 @@ type PublicConfigStub = {
   healthApiUrl?: string
   pricingApiUrl?: string
   siteApiUrl?: string
-  quoteDiagnosticApiUrl?: string
-  quotePdfApiUrl?: string
-  quoteReadApiKey?: string
 }
 
 describe('ViteConfig', () => {
@@ -25,34 +22,26 @@ describe('ViteConfig', () => {
     const ViteConfig = await importViteConfigWithPublicConfig({
       inquiryApiUrl: '/api/v1/contact',
       pricingApiUrl: '/api/v1/pricing',
-      siteApiUrl: '/api/v1/site',
-      quoteDiagnosticApiUrl: '/api/v1/quote/diagnostic',
-      quotePdfApiUrl: '/api/v1/quote/{quote_id}/pdf'
+      siteApiUrl: '/api/v1/site'
     })
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBe('/api/v1/contact')
     expect(config.pricingApiUrl).toBe('/api/v1/pricing')
     expect(config.siteApiUrl).toBe('/api/v1/site')
-    expect(config.quoteDiagnosticApiUrl).toBe('/api/v1/quote/diagnostic')
-    expect(config.quotePdfApiUrl).toBe('/api/v1/quote/{quote_id}/pdf')
   })
 
   it('accepts explicit https endpoints', async () => {
     const ViteConfig = await importViteConfigWithPublicConfig({
       inquiryApiUrl: 'https://api.example.com/contact',
       pricingApiUrl: 'https://api.example.com/pricing',
-      siteApiUrl: 'https://api.example.com/site',
-      quoteDiagnosticApiUrl: 'https://api.example.com/quote/diagnostic',
-      quotePdfApiUrl: 'https://api.example.com/quote/{quote_id}/pdf'
+      siteApiUrl: 'https://api.example.com/site'
     })
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBe('https://api.example.com/contact')
     expect(config.pricingApiUrl).toBe('https://api.example.com/pricing')
     expect(config.siteApiUrl).toBe('https://api.example.com/site')
-    expect(config.quoteDiagnosticApiUrl).toBe('https://api.example.com/quote/diagnostic')
-    expect(config.quotePdfApiUrl).toBe('https://api.example.com/quote/{quote_id}/pdf')
   })
 
   it('returns undefined when direct endpoints are missing', async () => {
@@ -62,25 +51,6 @@ describe('ViteConfig', () => {
     expect(config.inquiryApiUrl).toBeUndefined()
     expect(config.pricingApiUrl).toBeUndefined()
     expect(config.siteApiUrl).toBeUndefined()
-    expect(config.quoteDiagnosticApiUrl).toBeUndefined()
-    expect(config.quotePdfApiUrl).toBeUndefined()
-  })
-
-  it('loads quote read api key from QUOTE_READ_API_KEYS list', async () => {
-    vi.stubEnv('QUOTE_READ_API_KEYS', 'active-key,old-key')
-    const ViteConfig = await importViteConfigWithPublicConfig({})
-    const config = new ViteConfig()
-
-    expect(config.quoteReadApiKey).toBe('active-key')
-  })
-
-  it('falls back to VITE_QUOTE_READ_API_KEY when list is missing', async () => {
-    vi.stubEnv('QUOTE_READ_API_KEYS', '')
-    vi.stubEnv('VITE_QUOTE_READ_API_KEY', 'fallback-key')
-    const ViteConfig = await importViteConfigWithPublicConfig({})
-    const config = new ViteConfig()
-
-    expect(config.quoteReadApiKey).toBe('fallback-key')
   })
 
   it('prioritizes explicit inquiry/health endpoint overrides from env', async () => {

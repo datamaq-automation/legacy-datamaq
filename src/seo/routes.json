@@ -18,15 +18,5 @@
     "name": "medicion-consumo-escobar",
     "path": "/medicion-consumo-electrico-escobar",
     "indexable": true
-  },
-  {
-    "name": "cotizador",
-    "path": "/cotizador",
-    "indexable": true
-  },
-  {
-    "name": "cotizador-web",
-    "path": "/cotizador/:quoteId/web",
-    "indexable": false
   }
 ]
