@@ -1,49 +1,25 @@
 import type { RouteRecordRaw } from 'vue-router'
-import routeMetadata from '@/seo/routes.json'
-
-const metadataByName = new Map(routeMetadata.map((route) => [route.name, route]))
-
-const homeMeta = metadataByName.get('home')
-const thanksMeta = metadataByName.get('thanks')
-const contactMeta = metadataByName.get('contact')
-const medicionEscobarMeta = metadataByName.get('medicion-consumo-escobar')
 
 export const routes: RouteRecordRaw[] = [
   {
-    path: homeMeta?.path ?? '/',
+    path: '/',
     name: 'home',
-    component: () => import('@/ui/pages/HomePage.vue'),
-    meta: {
-      indexable: homeMeta?.indexable ?? true,
-      name: homeMeta?.name
-    }
+    component: () => import('@/ui/pages/HomePage.vue')
   },
   {
-    path: contactMeta?.path ?? '/contact',
+    path: '/contact',
     name: 'contact',
-    component: () => import('@/ui/pages/ContactPage.vue'),
-    meta: {
-      indexable: contactMeta?.indexable ?? true,
-      name: contactMeta?.name
-    }
+    component: () => import('@/ui/pages/ContactPage.vue')
   },
   {
-    path: thanksMeta?.path ?? '/gracias',
+    path: '/gracias',
     name: 'thanks',
-    component: () => import('@/ui/views/ThanksView.vue'),
-    meta: {
-      indexable: thanksMeta?.indexable ?? false,
-      name: thanksMeta?.name
-    }
+    component: () => import('@/ui/views/ThanksView.vue')
   },
   {
-    path: medicionEscobarMeta?.path ?? '/medicion-consumo-electrico-escobar',
+    path: '/medicion-consumo-electrico-escobar',
     name: 'medicion-consumo-escobar',
-    component: () => import('@/ui/pages/MedicionConsumoEscobar.vue'),
-    meta: {
-      indexable: medicionEscobarMeta?.indexable ?? true,
-      name: medicionEscobarMeta?.name
-    }
+    component: () => import('@/ui/pages/MedicionConsumoEscobar.vue')
   },
   {
     path: '/cotizador',
