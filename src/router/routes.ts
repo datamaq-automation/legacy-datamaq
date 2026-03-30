@@ -44,5 +44,13 @@ export const routes: RouteRecordRaw[] = [
       indexable: medicionEscobarMeta?.indexable ?? true,
       name: medicionEscobarMeta?.name
     }
+  },
+  {
+    path: '/cotizador',
+    redirect: '/contact'
+  },
+  {
+    path: '/cotizador/:quoteId/web',
+    redirect: '/contact'
   }
 ]
