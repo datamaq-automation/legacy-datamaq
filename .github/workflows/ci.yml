@@ -8,6 +8,10 @@ on:
       - '.github/workflows/cd.yml'
       - '.github/actions/**'
       - 'scripts/ftps-deploy.sh'
+      - 'docs/**'
+      - 'README.md'
+      - 'AGENTS.md'
+      - '.agents/**'
   push:
     branches:
       - main
@@ -15,6 +19,10 @@ on:
       - '.github/workflows/cd.yml'
       - '.github/actions/**'
       - 'scripts/ftps-deploy.sh'
+      - 'docs/**'
+      - 'README.md'
+      - 'AGENTS.md'
+      - '.agents/**'
   workflow_dispatch:
     inputs:
       run_full_gate:
@@ -135,13 +143,49 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  changes-e2e-scope:
+    name: Changes / E2E Scope
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && !inputs.run_full_gate)
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.resolve.outputs.should_run }}
+
+    steps:
+      - name: Detect changed files (pull_request)
+        id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            e2e:
+              - 'src/**'
+              - 'tests/e2e/**'
+              - 'playwright.config.ts'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'vite.config.js'
+              - '.github/actions/playwright-smoke/**'
+              - '.github/workflows/ci.yml'
+
+      - name: Resolve E2E scope
+        id: resolve
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.filter.outputs.e2e }}" = "true" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
   quality-e2e-smoke:
     name: Quality / E2E Smoke
-    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && !inputs.run_full_gate)
+    if: needs.changes-e2e-scope.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs:
       - quality-fast
+      - changes-e2e-scope
 
     steps:
       - name: Checkout
