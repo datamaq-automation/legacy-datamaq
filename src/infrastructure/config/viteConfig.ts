@@ -13,10 +13,7 @@ export class ViteConfig implements ConfigPort {
   brandId: NullableString
   storageNamespace: NullableString
   inquiryApiUrl: NullableString
-  pricingApiUrl: NullableString
-  siteApiUrl: NullableString
   healthApiUrl: NullableString
-  requireRemoteContent: boolean
   contactEmail: NullableString
   contactFormActive: boolean
   analyticsEnabled: boolean | undefined
@@ -65,22 +62,11 @@ export class ViteConfig implements ConfigPort {
       configKey: 'inquiryApiUrl',
       ...endpointOptions
     })
-    this.pricingApiUrl = resolveBackendConfigEndpoint({
-      directUrl: normalize(publicConfig.pricingApiUrl),
-      configKey: 'pricingApiUrl',
-      ...endpointOptions
-    })
-    this.siteApiUrl = resolveBackendConfigEndpoint({
-      directUrl: normalize(publicConfig.siteApiUrl),
-      configKey: 'siteApiUrl',
-      ...endpointOptions
-    })
     this.healthApiUrl = resolveBackendConfigEndpoint({
       directUrl: healthApiUrl,
       configKey: 'healthApiUrl',
       ...endpointOptions
     })
-    this.requireRemoteContent = Boolean(publicConfig.requireRemoteContent)
     this.contactFormActive = publicConfig.contactFormActive
     this.analyticsEnabled = publicConfig.analyticsEnabled
     this.ga4Id = normalize(publicConfig.ga4Id)

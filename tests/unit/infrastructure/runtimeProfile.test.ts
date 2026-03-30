@@ -10,17 +10,13 @@ describe('runtimeProfile', () => {
     const profile = getRuntimeProfile('integration')
 
     expect(profile.healthApiUrl).toBe('/api/v1/health')
-    expect(profile.siteApiUrl).toBe('/api/v1/site')
     expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
-    expect(profile.pricingApiUrl).toBe('/api/v1/pricing')
   })
 
   it('keeps e2e endpoints behind /api/v1 for local proxy validation', () => {
     const profile = getRuntimeProfile('e2e')
 
     expect(profile.healthApiUrl).toBe('/api/v1/health')
-    expect(profile.siteApiUrl).toBe('/api/v1/site')
     expect(profile.inquiryApiUrl).toBe('/api/v1/contact')
-    expect(profile.pricingApiUrl).toBe('/api/v1/pricing')
   })
 })

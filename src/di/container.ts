@@ -47,7 +47,7 @@ const eventBus = new InMemoryEventBus()
 const contactService = new ContactService()
 const contactGateway = new ContactApiGateway(http, config, storage, logger)
 const contactSubmittedHandler = new ContactSubmittedHandler(analytics, notifications, logger)
-const contentRepository = new ContentRepository(config, logger, http)
+const contentRepository = new ContentRepository()
 
 const submitContact = new SubmitContactUseCase(
   contactService,

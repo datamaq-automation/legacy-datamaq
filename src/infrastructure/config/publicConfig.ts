@@ -34,10 +34,7 @@ export type PublicConfig = {
   contactEmail: NullableString
   contactFormActive: boolean
   inquiryApiUrl: NullableString
-  pricingApiUrl: NullableString
-  siteApiUrl: NullableString
   healthApiUrl: NullableString
-  requireRemoteContent: boolean
   whatsappUrl: NullableString
   whatsappQrPhoneE164: NullableString
   whatsappQrMessage: NullableString
@@ -70,10 +67,7 @@ export const publicConfig: PublicConfig = {
   contactEmail: activeRuntimeProfile.contactEmail,
   contactFormActive: activeRuntimeProfile.contactFormActive,
   inquiryApiUrl: resolveBackendEndpointOverride('inquiryApiUrl', activeRuntimeProfile.inquiryApiUrl),
-  pricingApiUrl: resolveBackendEndpointOverride('pricingApiUrl', activeRuntimeProfile.pricingApiUrl),
-  siteApiUrl: resolveBackendEndpointOverride('siteApiUrl', activeRuntimeProfile.siteApiUrl),
   healthApiUrl: resolveBackendEndpointOverride('healthApiUrl', activeRuntimeProfile.healthApiUrl),
-  requireRemoteContent: activeRuntimeProfile.requireRemoteContent,
   whatsappUrl: activeRuntimeProfile.whatsappUrl,
   whatsappQrPhoneE164: activeRuntimeProfile.whatsappQrPhoneE164,
   whatsappQrMessage: activeRuntimeProfile.whatsappQrMessage,

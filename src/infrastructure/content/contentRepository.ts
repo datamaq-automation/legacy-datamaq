@@ -1,14 +1,4 @@
-/*
-Path: src/infrastructure/content/contentRepository.ts
-*/
-
-import type {
-  ContentPort,
-  RemoteContentStatus
-} from '@/application/ports/Content'
-import type { ConfigPort } from '@/application/ports/Config'
-import type { LoggerPort } from '@/application/ports/Logger'
-import type { HttpClient } from '@/application/ports/HttpClient'
+import type { ContentPort } from '@/application/ports/Content'
 import {
   buildAppContent,
   buildBrandContent,
@@ -16,72 +6,15 @@ import {
   commercialConfig
 } from '@/infrastructure/content/Appcontent.active'
 import { ContentStore } from '@/infrastructure/content/contentStore'
-import { DynamicContentService } from '@/infrastructure/content/dynamicContentService'
-import { DynamicPricingService } from '@/infrastructure/content/dynamicPricingService'
-import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
 import { normalizeNavbarContent } from '@/infrastructure/content/navbarNormalizer'
-import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import type { AppContent } from '@/domain/types/content'
 import type { SiteSnapshot } from '@/domain/types/site'
 
 export class ContentRepository implements ContentPort {
   private readonly contentStore: ContentStore
-  private readonly dynamicContentService: DynamicContentService
-  private readonly dynamicPricingService: DynamicPricingService
-  private readonly remoteContentStatusListeners = new Set<(status: RemoteContentStatus) => void>()
-  private remoteBootstrapStarted = false
-  private remoteContentStatus: RemoteContentStatus
 
-  constructor(
-    private config?: Pick<ConfigPort, 'pricingApiUrl' | 'siteApiUrl' | 'requireRemoteContent'>,
-    private logger: LoggerPort = new NoopLogger(),
-    private http: HttpClient = new FetchHttpClient(logger)
-  ) {
+  constructor() {
     this.contentStore = new ContentStore(commercialConfig, buildAppContent, buildBrandContent, buildSeoContent)
-    const requiresRemoteContent = Boolean(this.config?.requireRemoteContent)
-    this.remoteContentStatus = this.config?.siteApiUrl && requiresRemoteContent ? 'pending' : 'not-required'
-    this.dynamicContentService = new DynamicContentService(
-      this.http,
-      this.config?.siteApiUrl,
-      this.logger,
-      (snapshot) => this.contentStore.applyRemoteSiteSnapshot(snapshot, this.logger),
-      () => {
-        this.setRemoteContentStatus('ready')
-      },
-      () => {
-        if (requiresRemoteContent) {
-          this.setRemoteContentStatus('unavailable')
-        }
-      }
-    )
-    this.dynamicPricingService = new DynamicPricingService(
-      this.http,
-      this.config?.pricingApiUrl,
-      this.logger,
-      (snapshot) => this.contentStore.applyCommercialPricingSnapshot(snapshot, this.logger)
-    )
-  }
-
-  getRemoteContentStatus(): RemoteContentStatus {
-    return this.remoteContentStatus
-  }
-
-  subscribeRemoteContentStatus(listener: (status: RemoteContentStatus) => void): () => void {
-    this.remoteContentStatusListeners.add(listener)
-
-    return () => {
-      this.remoteContentStatusListeners.delete(listener)
-    }
-  }
-
-  bootstrapRemoteData(): void {
-    if (this.remoteBootstrapStarted) {
-      return
-    }
-
-    this.remoteBootstrapStarted = true
-    this.dynamicContentService.bootstrap()
-    this.dynamicPricingService.bootstrap()
   }
 
   getContent(): AppContent {
@@ -150,14 +83,5 @@ export class ContentRepository implements ContentPort {
 
   getContactPageContent() {
     return this.contentStore.getParsedContent().contactPage
-  }
-
-  private setRemoteContentStatus(status: RemoteContentStatus): void {
-    if (this.remoteContentStatus === status) {
-      return
-    }
-
-    this.remoteContentStatus = status
-    this.remoteContentStatusListeners.forEach((listener) => listener(status))
   }
 }

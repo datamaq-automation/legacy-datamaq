@@ -1,18 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/vue'
 
-vi.mock('@/ui/App', () => ({
-  useApp: vi.fn(() => ({
-    isContentReady: false,
-    isContentPending: true,
-    isContentUnavailable: false
-  }))
-}))
-
 import App from '@/ui/App.vue'
 
 describe('App', () => {
-  it('renders a loading view while remote content is pending', () => {
+  it('renders the router view directly', () => {
     render(App, {
       global: {
         stubs: {
@@ -23,7 +15,6 @@ describe('App', () => {
       }
     })
 
-    expect(screen.getByRole('heading', { name: 'Cargando contenido' })).toBeInTheDocument()
-    expect(screen.queryByTestId('router-view')).not.toBeInTheDocument()
+    expect(screen.getByTestId('router-view')).toBeInTheDocument()
   })
 })

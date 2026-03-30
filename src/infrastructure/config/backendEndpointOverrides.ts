@@ -2,14 +2,10 @@ type NullableString = string | undefined
 
 type BackendEndpointKey =
   | 'inquiryApiUrl'
-  | 'pricingApiUrl'
-  | 'siteApiUrl'
   | 'healthApiUrl'
 
 const LOCAL_BACKEND_PATHS: Record<BackendEndpointKey, string> = {
   inquiryApiUrl: 'v1/contact',
-  pricingApiUrl: 'v1/pricing',
-  siteApiUrl: 'v1/site',
   healthApiUrl: 'v1/health'
 }
 

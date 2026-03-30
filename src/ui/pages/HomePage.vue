@@ -36,7 +36,6 @@ const {
   profileBenefits,
   authorityHighlights,
   urgencyBadge,
-  emergencyLabel,
   footerYear,
   handleChat,
   getServiceIcon,
@@ -92,7 +91,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
             class="tw:btn-primary c-home-header__cta tw:hidden tw:lg:inline-flex"
             @click="handleChat('header-emergency', whatsappHref)"
           >
-            {{ isDirectVariant ? emergencyLabel : homePage.headerContactLabel }}
+            {{ homePage.headerContactLabel }}
           </button>
           <RouterLink
             v-else
@@ -123,7 +122,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
               <div class="c-home-hero__copy">
                 <span class="c-home-eyebrow">{{ hero.badge }}</span>
                 <h1 id="hero-title" class="c-home-hero__title">
-                  {{ isDirectVariant ? 'Servicio Tecnico Industrial Especializado' : hero.title }}
+                  {{ hero.title }}
                 </h1>
                 <p class="c-home-hero__subtitle">
                   {{ hero.subtitle }}
@@ -136,14 +135,14 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
                     class="tw:btn-primary c-home-hero__primary"
                     @click="handleChat('hero', hero.primaryCta.href)"
                   >
-                    {{ isDirectVariant ? 'Emergencia tecnica por WhatsApp' : 'Contactar por WhatsApp' }}
+                    {{ hero.primaryCta.label }}
                   </button>
                   <a
                     v-else
                     class="tw:btn-primary c-home-hero__primary"
                     href="#contacto"
                   >
-                    {{ isDirectVariant ? emergencyLabel : homePage.heroFallbackContactLabel }}
+                    {{ homePage.heroFallbackContactLabel }}
                   </a>
 
                   <RouterLink
@@ -222,7 +221,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
                   class="tw:btn-primary c-home-profile__cta"
                   @click="handleChat('profile-card', whatsappHref)"
                 >
-                  {{ isDirectVariant ? `${emergencyLabel} por WhatsApp` : homePage.profileWhatsappLabel }}
+                  {{ homePage.profileWhatsappLabel }}
                 </button>
                   <RouterLink
                     v-else
@@ -387,7 +386,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
         :key="link.label"
         :class="[
           'c-home-dock__link',
-          { 'c-home-dock__link--emergency': link.label === emergencyLabel }
+          { 'c-home-dock__link--emergency': isDirectVariant && link.href === '#contacto' }
         ]"
         :to="link.to"
       >

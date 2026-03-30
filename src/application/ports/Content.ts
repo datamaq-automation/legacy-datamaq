@@ -7,8 +7,6 @@ import type {
 } from '@/domain/types/content'
 import type { SeoContent } from '@/domain/types/site'
 
-export type RemoteContentStatus = 'pending' | 'ready' | 'unavailable' | 'not-required'
-
 export interface ContentPort {
   getContent(): AppContent
 }

@@ -1,7 +1,8 @@
 import type { CommercialConfig } from '@/domain/types/content'
 import { activeRuntimeProfile } from '@/infrastructure/content/runtimeProfile'
-import { buildLandingAppContent } from '@/infrastructure/content/landingContentBuilder'
-import { buildFallbackBrandContent, buildFallbackSeoContent } from '@/infrastructure/content/siteFallback'
+import type { AppContent } from '@/domain/types/content'
+import type { BrandContent, SeoContent } from '@/domain/types/site'
+import { datamaqSiteSnapshot } from '@/infrastructure/content/siteSnapshot.datamaq'
 
 const { brandName, brandAriaLabel, baseOperativa, whatsappUrl } = activeRuntimeProfile
 
@@ -13,6 +14,14 @@ export const commercialConfig: CommercialConfig = {
   ...activeRuntimeProfile.commercialConfig
 }
 
-export const buildAppContent = buildLandingAppContent
-export const buildBrandContent = buildFallbackBrandContent
-export const buildSeoContent = buildFallbackSeoContent
+export function buildAppContent(_config: CommercialConfig): AppContent {
+  return datamaqSiteSnapshot.content
+}
+
+export function buildBrandContent(_config: CommercialConfig): BrandContent {
+  return datamaqSiteSnapshot.brand
+}
+
+export function buildSeoContent(): SeoContent {
+  return datamaqSiteSnapshot.seo
+}

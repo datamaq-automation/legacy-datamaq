@@ -5,10 +5,8 @@ import { routes } from './router/routes'
 import './styles/main.scss'
 import './styles/tailwind.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { emitRuntimeInfo, emitRuntimeWarn } from './application/utils/runtimeConsole'
-import { setDevBackendAvailability } from './application/backend/devBackendAvailability'
+import { emitRuntimeWarn } from './application/utils/runtimeConsole'
 import { configureAnalytics, enableSpaPageTracking, syncAnalyticsConsent } from './infrastructure/analytics'
-import { probeBackendHealth } from './infrastructure/health/probeBackendHealth'
 import { initAttribution } from './infrastructure/attribution/utm'
 import { type ConsentStatus } from './application/consent/consentManager'
 import { container, provideContainer } from './di/container'
@@ -47,25 +45,6 @@ function applyCriticalCssVariableFallbacks(): void {
   }
 }
 
-async function bootstrapRemoteBackendData(): Promise<void> {
-  const health = await probeBackendHealth().catch(() => undefined)
-  if (import.meta.env.DEV) {
-    setDevBackendAvailability({
-      reachable: Boolean(health?.ok),
-      endpoint: health?.endpoint ?? null,
-      status: health?.status ?? null
-    })
-  }
-  if (import.meta.env.DEV && health && !health.ok) {
-    emitRuntimeInfo('[backend:bootstrap] backend no disponible en dev; se omite content/pricing remoto', {
-      endpoint: health.endpoint,
-      status: health.status
-    })
-    return
-  }
-  container.content.bootstrapRemoteData()
-}
-
 export const createApp = ViteSSG(
   App,
   {
@@ -100,7 +79,6 @@ export const createApp = ViteSSG(
 
     if (isClient) {
       applyCriticalCssVariableFallbacks()
-      void bootstrapRemoteBackendData()
       configureAnalytics(container.config)
       initAttribution(container.storage)
       syncAnalyticsConsent(container.consentManager.getStatus())

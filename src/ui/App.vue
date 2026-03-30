@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import ContentLoadingView from '@/ui/views/ContentLoadingView.vue'
-import ContentUnavailableView from '@/ui/views/ContentUnavailableView.vue'
-import { useApp } from './App'
+import { useHead } from '@vueuse/head'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useContainer } from '@/di/container'
+import { getDefaultSeo } from '@/application/seo/defaultSeo'
+import { buildAppHead } from '@/ui/seo/appSeo'
 
-const { isContentReady, isContentPending, isContentUnavailable, showDevBackendOfflineBanner, devBackendAvailability } =
-  useApp()
+const route = useRoute()
+const { content, environment } = useContainer()
+const isThanksPage = computed(() => route.path === '/gracias')
+
+useHead(() => buildAppHead(getDefaultSeo(content, environment), route.path, isThanksPage.value, content.getContent()))
 </script>
 
 <template>
-  <div v-if="showDevBackendOfflineBanner" class="c-dev-backend-banner" role="status" aria-live="polite">
-    <strong>Modo desarrollo sin backend.</strong>
-    Usando fallback frontend local.
-    <span v-if="devBackendAvailability.endpoint" class="c-dev-backend-banner__meta">
-      endpoint: {{ devBackendAvailability.endpoint }}
-      <template v-if="devBackendAvailability.status !== null">
-        · status: {{ devBackendAvailability.status }}
-      </template>
-    </span>
-  </div>
-  <RouterView v-if="isContentReady" />
-  <ContentLoadingView v-else-if="isContentPending" />
-  <ContentUnavailableView v-else-if="isContentUnavailable" />
+  <RouterView />
 </template>

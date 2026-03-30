@@ -39,10 +39,7 @@ export interface RuntimeProfile {
   contactEmail: NullableString
   contactFormActive: boolean
   inquiryApiUrl: NullableString
-  pricingApiUrl: NullableString
-  siteApiUrl: NullableString
   healthApiUrl: NullableString
-  requireRemoteContent: boolean
   whatsappUrl: NullableString
   whatsappQrPhoneE164: NullableString
   whatsappQrMessage: NullableString
@@ -82,10 +79,7 @@ type RuntimeProfileJson = {
   contactEmail: NullableStringJson
   contactFormActive: boolean
   inquiryApiUrl: NullableStringJson
-  pricingApiUrl: NullableStringJson
-  siteApiUrl: NullableStringJson
   healthApiUrl: NullableStringJson
-  requireRemoteContent: boolean
   whatsappUrl: NullableStringJson
   whatsappQrPhoneE164: NullableStringJson
   whatsappQrMessage: NullableStringJson
@@ -181,10 +175,7 @@ function mapProfile(profile: RuntimeProfileJson): RuntimeProfile {
     contactEmail: normalize(profile.contactEmail),
     contactFormActive: profile.contactFormActive,
     inquiryApiUrl: normalize(profile.inquiryApiUrl),
-    pricingApiUrl: normalize(profile.pricingApiUrl),
-    siteApiUrl: normalize(profile.siteApiUrl),
     healthApiUrl: normalize(profile.healthApiUrl),
-    requireRemoteContent: profile.requireRemoteContent,
     whatsappUrl: normalize(profile.whatsappUrl),
     whatsappQrPhoneE164: normalize(profile.whatsappQrPhoneE164),
     whatsappQrMessage: normalize(profile.whatsappQrMessage),

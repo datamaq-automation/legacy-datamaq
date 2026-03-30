@@ -4,10 +4,7 @@ export interface ConfigPort {
   brandId: NullableString
   storageNamespace: NullableString
   inquiryApiUrl: NullableString
-  pricingApiUrl: NullableString
-  siteApiUrl: NullableString
   healthApiUrl: NullableString
-  requireRemoteContent?: boolean
   contactEmail: NullableString
   contactFormActive: boolean
   analyticsEnabled: boolean | undefined

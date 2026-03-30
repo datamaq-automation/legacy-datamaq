@@ -9,32 +9,32 @@ describe('backendConfigEndpoint', () => {
   it('preserves relative canonical endpoints', () => {
     expect(
       resolveBackendConfigEndpoint({
-        directUrl: '/api/v1/site',
-        configKey: 'siteApiUrl',
+        directUrl: '/api/v1/contact',
+        configKey: 'inquiryApiUrl',
         isDev: true
       })
-    ).toBe('/api/v1/site')
+    ).toBe('/api/v1/contact')
   })
 
   it('accepts explicit https endpoints', () => {
     expect(
       resolveBackendConfigEndpoint({
-        directUrl: 'https://api.example.com/v1/pricing',
-        configKey: 'pricingApiUrl',
+        directUrl: 'https://api.example.com/v1/health',
+        configKey: 'healthApiUrl',
         isDev: false
       })
-    ).toBe('https://api.example.com/v1/pricing')
+    ).toBe('https://api.example.com/v1/health')
   })
 
   it('preserves loopback http endpoints when policy mode is local-preview', () => {
     expect(
       resolveBackendConfigEndpoint({
-        directUrl: 'http://127.0.0.1:8899/v1/pricing',
-        configKey: 'pricingApiUrl',
+        directUrl: 'http://127.0.0.1:8899/v1/health',
+        configKey: 'healthApiUrl',
         isDev: false,
         policyMode: 'local-preview'
       })
-    ).toBe('http://127.0.0.1:8899/v1/pricing')
+    ).toBe('http://127.0.0.1:8899/v1/health')
   })
 
   it('returns undefined when direct endpoint is missing', () => {
@@ -52,35 +52,35 @@ describe('backendConfigEndpoint', () => {
 
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://api.example.com/v1/site',
-        configKey: 'siteApiUrl',
+        value: 'http://api.example.com/v1/health',
+        configKey: 'healthApiUrl',
         isDev: false,
         warn
       })
     ).toBeUndefined()
     expect(warn).toHaveBeenCalledWith(
-      '[config] El campo siteApiUrl debe comenzar con "https://" en produccion. Valor recibido: http://api.example.com/v1/site'
+      '[config] El campo healthApiUrl debe comenzar con "https://" en produccion. Valor recibido: http://api.example.com/v1/health'
     )
   })
 
   it('accepts loopback http endpoints in local-preview mode', () => {
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://127.0.0.1:8899/v1/site',
-        configKey: 'siteApiUrl',
+        value: 'http://127.0.0.1:8899/v1/health',
+        configKey: 'healthApiUrl',
         isDev: false,
         policyMode: 'local-preview'
       })
-    ).toBe('http://127.0.0.1:8899/v1/site')
+    ).toBe('http://127.0.0.1:8899/v1/health')
 
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://localhost:8899/v1/site',
-        configKey: 'siteApiUrl',
+        value: 'http://localhost:8899/v1/health',
+        configKey: 'healthApiUrl',
         isDev: false,
         policyMode: 'local-preview'
       })
-    ).toBe('http://localhost:8899/v1/site')
+    ).toBe('http://localhost:8899/v1/health')
   })
 
   it('rejects arbitrary http hosts in local-preview mode', () => {
@@ -88,8 +88,8 @@ describe('backendConfigEndpoint', () => {
 
     expect(
       ensureBackendConfigEndpointUrl({
-        value: 'http://192.168.1.20:8899/v1/site',
-        configKey: 'siteApiUrl',
+        value: 'http://192.168.1.20:8899/v1/health',
+        configKey: 'healthApiUrl',
         isDev: false,
         policyMode: 'local-preview',
         warn
@@ -97,7 +97,7 @@ describe('backendConfigEndpoint', () => {
     ).toBeUndefined()
 
     expect(warn).toHaveBeenCalledWith(
-      '[config] El campo siteApiUrl debe comenzar con "https://" o apuntar a loopback local ("http://localhost" o "http://127.0.0.1") en local-preview. Valor recibido: http://192.168.1.20:8899/v1/site'
+      '[config] El campo healthApiUrl debe comenzar con "https://" o apuntar a loopback local ("http://localhost" o "http://127.0.0.1") en local-preview. Valor recibido: http://192.168.1.20:8899/v1/health'
     )
   })
 

@@ -8,8 +8,6 @@ type PublicConfigStub = {
   analyticsEnabled?: boolean
   inquiryApiUrl?: string
   healthApiUrl?: string
-  pricingApiUrl?: string
-  siteApiUrl?: string
 }
 
 describe('ViteConfig', () => {
@@ -21,27 +19,23 @@ describe('ViteConfig', () => {
   it('preserves relative canonical endpoints (/api/v1/...)', async () => {
     const ViteConfig = await importViteConfigWithPublicConfig({
       inquiryApiUrl: '/api/v1/contact',
-      pricingApiUrl: '/api/v1/pricing',
-      siteApiUrl: '/api/v1/site'
+      healthApiUrl: '/api/v1/health'
     })
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBe('/api/v1/contact')
-    expect(config.pricingApiUrl).toBe('/api/v1/pricing')
-    expect(config.siteApiUrl).toBe('/api/v1/site')
+    expect(config.healthApiUrl).toBe('/api/v1/health')
   })
 
   it('accepts explicit https endpoints', async () => {
     const ViteConfig = await importViteConfigWithPublicConfig({
       inquiryApiUrl: 'https://api.example.com/contact',
-      pricingApiUrl: 'https://api.example.com/pricing',
-      siteApiUrl: 'https://api.example.com/site'
+      healthApiUrl: 'https://api.example.com/health'
     })
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBe('https://api.example.com/contact')
-    expect(config.pricingApiUrl).toBe('https://api.example.com/pricing')
-    expect(config.siteApiUrl).toBe('https://api.example.com/site')
+    expect(config.healthApiUrl).toBe('https://api.example.com/health')
   })
 
   it('returns undefined when direct endpoints are missing', async () => {
@@ -49,8 +43,7 @@ describe('ViteConfig', () => {
     const config = new ViteConfig()
 
     expect(config.inquiryApiUrl).toBeUndefined()
-    expect(config.pricingApiUrl).toBeUndefined()
-    expect(config.siteApiUrl).toBeUndefined()
+    expect(config.healthApiUrl).toBeUndefined()
   })
 
   it('prioritizes explicit inquiry/health endpoint overrides from env', async () => {

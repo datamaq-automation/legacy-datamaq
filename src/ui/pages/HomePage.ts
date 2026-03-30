@@ -38,9 +38,6 @@ const PROFILE_ICON_BY_KEYWORD: Array<{ keyword: string; icon: string }> = [
   { keyword: 'parada', icon: 'bi-lightning-charge-fill' },
   { keyword: 'repuesto', icon: 'bi-box-seam' }
 ]
-const DEFAULT_URGENCY_BADGE = 'Respuesta en menos de 15 minutos'
-const DEFAULT_URGENCY_SUPPORT = 'Soporte tecnico 24/7'
-const DEFAULT_EMERGENCY_LABEL = 'Emergencia tecnica'
 
 export function useHomePage() {
   const { content } = useContainer()
@@ -82,8 +79,7 @@ export function useHomePage() {
     icon: getProfileBenefitIcon(bullet)
   }))
   const authorityHighlights = dedupeSignals([...heroConditions, ...profile.bullets, ...services.cards.map((card) => card.title)]).slice(0, 3)
-  const urgencyBadge = isDirectVariant ? DEFAULT_URGENCY_BADGE : DEFAULT_URGENCY_SUPPORT
-  const emergencyLabel = DEFAULT_EMERGENCY_LABEL
+  const urgencyBadge = hero.responseNote
   const footerYear = new Date().getFullYear()
 
   function handleChat(section: string, href?: string) {
@@ -151,7 +147,6 @@ export function useHomePage() {
     profileBenefits,
     authorityHighlights,
     urgencyBadge,
-    emergencyLabel,
     footerYear,
     handleChat,
     getServiceIcon,
@@ -168,8 +163,8 @@ function buildQuickLinks(
       {
         href: '#contacto',
         to: { path: '/contact' },
-        label: DEFAULT_EMERGENCY_LABEL,
-        shortLabel: 'Emergencia',
+        label: homePage.headerContactLabel,
+        shortLabel: homePage.dockLabels.contact,
         icon: 'bi-telephone-forward-fill'
       }
     ] as const
@@ -202,7 +197,7 @@ function buildDockLinks(
         { href: '#top', label: homePage.dockLabels.home },
         {
           href: '#contacto',
-          label: DEFAULT_EMERGENCY_LABEL,
+          label: homePage.dockLabels.contact,
           to: { path: '/contact' },
           icon: 'bi-telephone-forward-fill'
         }
