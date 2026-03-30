@@ -5,7 +5,11 @@ on:
     branches:
       - main
     paths:
-      - 'scripts/**'
+      # Keep direct push trigger only for files ignored by CI,
+      # so we avoid duplicate CD runs (push + workflow_run).
+      - 'scripts/ftps-deploy.sh'
+      - '.github/workflows/cd.yml'
+      - '.github/actions/**'
   workflow_run:
     workflows:
       - CI / Quality
