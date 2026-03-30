@@ -36,6 +36,7 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 
 - `cors-configuration.md`: configuracion CORS para API.
 - `deploy-spa-fallback.md`: fallback SPA para deploy.
+- `ci-cd-baseline-2026-03-30.md`: baseline operativo de duracion/cantidad de runs para CI/CD tras optimizacion.
 
 ## Convenciones
 
