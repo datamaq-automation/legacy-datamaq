@@ -40,6 +40,7 @@
     "lint:origin-verify": "node scripts/check-origin-verify-leaks.mjs",
     "lint:client-secrets": "node scripts/check-client-secrets.mjs",
     "lint:security": "npm run lint:origin-verify && npm run lint:client-secrets",
+    "gate:push": "npm run lint:security && npm run typecheck",
     "lint:test-coverage": "npm run test:coverage && node scripts/check-test-coverage.mjs",
     "lint:testing": "npm run lint:test-coverage && npm run test:e2e:smoke",
     "lint:todo-sync": "node scripts/check-todo-sync.mjs --require-evidence --require-open-p0 --require-no-done-tasks",
@@ -48,7 +49,8 @@
     "quality:e2e": "npm run test:e2e:smoke:navigation && npm run test:e2e:smoke:lead",
     "quality:gate": "npm run lint:todo-sync && npm run lint:security && npm run typecheck && npm run lint:test-coverage && npm run lint:colors && npm run lint:layers && npm run test:a11y && npm run check:css",
     "quality:merge": "node scripts/run-quality-merge.mjs",
-    "sitemap": "node scripts/generate-sitemap.mjs"
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@vueuse/head": "^2.0.0",
@@ -67,6 +69,7 @@
     "@vitest/coverage-v8": "^4.0.17",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.27",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "postcss": "^8.5.6",
     "sass": "^1.92.1",

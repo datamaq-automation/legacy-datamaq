@@ -77,3 +77,9 @@ npm run build:local -- upp
 
 - CI: `.github/workflows/ci-quality.yml`
 - CD FTPS: `.github/workflows/ci-cd-ftps.yml`
+
+## Git Hooks Locales
+
+- Se usa `husky` con hook `pre-push` para bloquear `git push` si falla el gate local.
+- Gate actual: `npm run gate:push` (`lint:security` + `typecheck`).
+- Si necesitás bypass excepcional: `HUSKY=0 git push`.
