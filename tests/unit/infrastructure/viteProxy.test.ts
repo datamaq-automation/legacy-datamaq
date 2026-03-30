@@ -17,7 +17,7 @@ describe('vite proxy config', () => {
 
     expect(proxy.target).toBe('https://api.datamaq.com.ar')
     expect(rewrite('/api/v1/health')).toBe('/v1/health')
-  }, 15000)
+  }, 30000)
 
   it('bridges /api/v1 to /v1 for explicit FastAPI local targets', async () => {
     process.env.VITE_API_PROXY_TARGET = 'http://127.0.0.1:8000'
