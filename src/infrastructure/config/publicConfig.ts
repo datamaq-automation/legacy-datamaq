@@ -2,11 +2,19 @@
 Path: src/infrastructure/config/publicConfig.ts
 */
 
-import { activeRuntimeProfile } from '@/infrastructure/content/runtimeProfile'
+import { datamaqSiteSnapshot } from '@/infrastructure/content/siteSnapshot.datamaq'
 import { resolveBackendEndpointOverride } from '@/infrastructure/config/backendEndpointOverrides'
 
 type NullableString = string | undefined
 type PublicBoolean = boolean | undefined
+
+const DATAMAQ_INQUIRY_API_URL = 'https://n8n.datamaq.com.ar/webhook/contact-form'
+const DATAMAQ_HEALTH_API_URL = 'https://api.datamaq.com.ar/v1/health'
+const DATAMAQ_STORAGE_NAMESPACE = 'datamaq'
+const DATAMAQ_GA4_ID = 'G-X1ZQB8QLJC'
+const DATAMAQ_CLARITY_PROJECT_ID = 'u24qtujrmg'
+
+const { brand, seo } = datamaqSiteSnapshot
 
 export type PublicConfig = {
   brandId: string
@@ -42,34 +50,34 @@ export type PublicConfig = {
 }
 
 export const publicConfig: PublicConfig = {
-  brandId: activeRuntimeProfile.brandId,
-  storageNamespace: activeRuntimeProfile.storageNamespace,
-  clarityProjectId: activeRuntimeProfile.clarityProjectId,
-  ga4Id: activeRuntimeProfile.ga4Id,
-  analyticsEnabled: activeRuntimeProfile.analyticsEnabled,
-  siteUrl: activeRuntimeProfile.siteUrl,
-  siteName: activeRuntimeProfile.siteName,
-  siteDescription: activeRuntimeProfile.siteDescription,
-  siteOgImage: activeRuntimeProfile.siteOgImage,
-  siteLocale: activeRuntimeProfile.siteLocale,
-  gscVerification: activeRuntimeProfile.gscVerification,
-  businessName: activeRuntimeProfile.businessName,
-  businessTelephone: activeRuntimeProfile.businessTelephone,
-  businessEmail: activeRuntimeProfile.businessEmail,
-  businessStreet: activeRuntimeProfile.businessStreet,
-  businessLocality: activeRuntimeProfile.businessLocality,
-  businessRegion: activeRuntimeProfile.businessRegion,
-  businessPostalCode: activeRuntimeProfile.businessPostalCode,
-  businessCountry: activeRuntimeProfile.businessCountry,
-  businessLat: activeRuntimeProfile.businessLat,
-  businessLng: activeRuntimeProfile.businessLng,
-  businessArea: activeRuntimeProfile.businessArea,
-  contactEmail: activeRuntimeProfile.contactEmail,
-  contactFormActive: activeRuntimeProfile.contactFormActive,
-  inquiryApiUrl: resolveBackendEndpointOverride('inquiryApiUrl', activeRuntimeProfile.inquiryApiUrl),
-  healthApiUrl: resolveBackendEndpointOverride('healthApiUrl', activeRuntimeProfile.healthApiUrl),
-  whatsappUrl: activeRuntimeProfile.whatsappUrl,
-  whatsappQrPhoneE164: activeRuntimeProfile.whatsappQrPhoneE164,
-  whatsappQrMessage: activeRuntimeProfile.whatsappQrMessage,
-  whatsappQrSourceTag: activeRuntimeProfile.whatsappQrSourceTag
+  brandId: brand.brandId,
+  storageNamespace: DATAMAQ_STORAGE_NAMESPACE,
+  clarityProjectId: DATAMAQ_CLARITY_PROJECT_ID,
+  ga4Id: DATAMAQ_GA4_ID,
+  analyticsEnabled: true,
+  siteUrl: seo.siteUrl,
+  siteName: seo.siteName,
+  siteDescription: seo.siteDescription,
+  siteOgImage: seo.siteOgImage,
+  siteLocale: seo.siteLocale,
+  gscVerification: seo.gscVerification,
+  businessName: seo.business.name,
+  businessTelephone: seo.business.telephone,
+  businessEmail: seo.business.email,
+  businessStreet: seo.business.street,
+  businessLocality: seo.business.locality,
+  businessRegion: seo.business.region,
+  businessPostalCode: seo.business.postalCode,
+  businessCountry: seo.business.country,
+  businessLat: typeof seo.business.lat === 'number' ? String(seo.business.lat) : undefined,
+  businessLng: typeof seo.business.lng === 'number' ? String(seo.business.lng) : undefined,
+  businessArea: seo.business.areaServed?.join(', '),
+  contactEmail: brand.contactEmail,
+  contactFormActive: brand.contactFormActive,
+  inquiryApiUrl: resolveBackendEndpointOverride('inquiryApiUrl', DATAMAQ_INQUIRY_API_URL),
+  healthApiUrl: resolveBackendEndpointOverride('healthApiUrl', DATAMAQ_HEALTH_API_URL),
+  whatsappUrl: brand.whatsappUrl,
+  whatsappQrPhoneE164: brand.whatsappQr.phoneE164,
+  whatsappQrMessage: brand.whatsappQr.message,
+  whatsappQrSourceTag: brand.whatsappQr.sourceTag
 }

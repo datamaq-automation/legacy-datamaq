@@ -1,5 +1,3 @@
-import type { AppTarget } from '@/infrastructure/content/runtimeProfile'
-import { activeAppTarget } from '@/infrastructure/content/runtimeProfile'
 import { publicConfig } from '@/infrastructure/config/publicConfig'
 import {
   describeBackendEndpoint,
@@ -14,7 +12,6 @@ export function resolveHealthEndpoint(
   options: {
     runtimeEndpoint?: string
     configuredEndpoint?: string
-    appTarget?: AppTarget
     currentLocation?: BrowserLocationLike
   } = {}
 ): ResolvedBackendEndpoint {
@@ -22,31 +19,15 @@ export function resolveHealthEndpoint(
   const configuredEndpoint = normalizeBackendEndpoint(
     options.configuredEndpoint ?? import.meta.env.VITE_HEALTH_ENDPOINT
   )
-  const appTarget = options.appTarget ?? activeAppTarget
   const currentLocation = options.currentLocation ?? globalThis.location
 
-  if (shouldPreferRelativeHealthEndpoint(appTarget)) {
-    if (configuredEndpoint?.startsWith('/')) {
-      return describeBackendEndpoint(configuredEndpoint, currentLocation)
-    }
-
-    if (runtimeEndpoint?.startsWith('/')) {
-      return describeBackendEndpoint(runtimeEndpoint, currentLocation)
-    }
-
-    if (runtimeEndpoint || configuredEndpoint) {
-      return describeBackendEndpoint(DEFAULT_HEALTH_ENDPOINT, currentLocation)
-    }
-
-    return describeBackendEndpoint(DEFAULT_HEALTH_ENDPOINT, currentLocation)
+  if (configuredEndpoint?.startsWith('/')) {
+    return describeBackendEndpoint(configuredEndpoint, currentLocation)
   }
 
-  return describeBackendEndpoint(
-    configuredEndpoint ?? runtimeEndpoint ?? DEFAULT_HEALTH_ENDPOINT,
-    currentLocation
-  )
-}
+  if (runtimeEndpoint?.startsWith('/')) {
+    return describeBackendEndpoint(runtimeEndpoint, currentLocation)
+  }
 
-function shouldPreferRelativeHealthEndpoint(appTarget: AppTarget): boolean {
-  return appTarget === 'integration' || appTarget === 'e2e'
+  return describeBackendEndpoint(configuredEndpoint ?? runtimeEndpoint ?? DEFAULT_HEALTH_ENDPOINT, currentLocation)
 }

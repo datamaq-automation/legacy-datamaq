@@ -6,24 +6,15 @@ describe('publicConfig', () => {
     vi.unstubAllEnvs()
   })
 
-  it('uses datamaq profile by default in test mode', async () => {
+  it('exposes the frozen datamaq runtime defaults', async () => {
     const { publicConfig } = await import('@/infrastructure/config/publicConfig')
 
     expect(publicConfig.brandId).toBe('datamaq')
     expect(publicConfig.storageNamespace).toBe('datamaq')
-    expect(publicConfig.siteUrl).toBe('https://www.datamaq.com.ar')
+    expect(publicConfig.siteUrl).toBe('https://datamaq.com.ar')
+    expect(publicConfig.siteName).toBe('DataMaq')
     expect(publicConfig.healthApiUrl).toBe('https://api.datamaq.com.ar/v1/health')
-  })
-
-  it('resolves datamaq profile explicitly', async () => {
-    const { getRuntimeProfile } = await import('@/infrastructure/content/runtimeProfile')
-    const profile = getRuntimeProfile('datamaq')
-
-    expect(profile.brandId).toBe('datamaq')
-    expect(profile.storageNamespace).toBe('datamaq')
-    expect(profile.siteName).toBe('DataMaq')
-    expect(profile.inquiryApiUrl).toBe('https://n8n.datamaq.com.ar/webhook/contact-form')
-    expect(profile.healthApiUrl).toBe('https://api.datamaq.com.ar/v1/health')
+    expect(publicConfig.inquiryApiUrl).toBe('https://n8n.datamaq.com.ar/webhook/contact-form')
   })
 
   it('overrides backend endpoints from a local base url when requested at build time', async () => {

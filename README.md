@@ -1,15 +1,6 @@
 ﻿# plantilla-www
 
-Frontend Vue 3 + Vite con configuracion multi-target desde un solo repositorio.
-
-## Targets
-
-- `datamaq`
-- `upp`
-- `example`
-- `e2e`
-
-Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfiles.json`.
+Frontend Vue 3 + Vite orientado a un frontend estatico de DataMaq.
 
 ## Documentacion
 
@@ -22,6 +13,7 @@ Configuracion runtime centralizada en `src/infrastructure/content/runtimeProfile
 
 - El contenido visible del frontend ya no depende de `GET /v1/site` ni de `GET /v1/pricing` en runtime.
 - La fuente actual de contenido es un snapshot local congelado en `src/infrastructure/content/siteSnapshot.datamaq.ts`.
+- La configuracion visible del frontend se resuelve desde `src/infrastructure/config/publicConfig.ts`, sin `runtimeProfiles.json`.
 - Los endpoints `site` y `pricing` quedan como referencia de backend/documentacion historica, no como requisito de render del frontend.
 
 ## Comandos
@@ -33,7 +25,6 @@ npm run build -- <target>
 npm run build:local
 npm run typecheck
 npm run test
-npm run test:contracts:fastapi
 npm run test:e2e:smoke
 ```
 
@@ -47,8 +38,7 @@ Para desarrollo interactivo:
 npm run dev
 ```
 
-- usa el perfil local de integracion
-- mantiene las llamadas API detras de `/api/v1/*`
+- mantiene las llamadas API detras de `/api/v1/*` cuando Vite proxy o el entorno lo configuran asi
 - deja el proxy de Vite resolver el backend local
 
 Para preview local compilado sobre Apache/AppServ:

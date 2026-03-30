@@ -9,8 +9,7 @@ const ALLOWED_FILES = new Set([
   normalizePath('src/infrastructure/config/publicConfig.ts'),
   normalizePath('src/infrastructure/content/Appcontent.active.ts'),
   normalizePath('src/infrastructure/content/Appcontent.datamaq.ts'),
-  normalizePath('src/infrastructure/content/runtimeProfile.ts'),
-  normalizePath('src/infrastructure/content/runtimeProfiles.json'),
+  normalizePath('src/infrastructure/content/siteSnapshot.datamaq.ts'),
   normalizePath('src/application/consent/consentStorage.ts'),
   normalizePath('src/infrastructure/attribution/utm.ts')
 ])

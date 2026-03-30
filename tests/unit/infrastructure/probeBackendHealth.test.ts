@@ -135,9 +135,6 @@ describe('probeBackendHealth', () => {
         healthApiUrl: 'https://api.example.com/v1/health'
       }
     }))
-    vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
-      activeAppTarget: 'datamaq'
-    }))
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ status: 'ok' }), {
         status: 200,
@@ -188,7 +185,7 @@ describe('probeBackendHealth', () => {
     expect(warnSpy).not.toHaveBeenCalled()
   })
 
-  it('uses the integration proxy health endpoint on localhost:5173', async () => {
+  it('uses the relative proxy health endpoint on localhost:5173', async () => {
     vi.resetModules()
     vi.stubEnv('VITE_HEALTH_ENDPOINT', 'https://api.example.com/v1/health')
     vi.stubGlobal('location', {
@@ -200,9 +197,6 @@ describe('probeBackendHealth', () => {
       publicConfig: {
         healthApiUrl: '/api/v1/health'
       }
-    }))
-    vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
-      activeAppTarget: 'integration'
     }))
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ status: 'ok' }), {
@@ -252,7 +246,7 @@ describe('probeBackendHealth', () => {
     })
   })
 
-  it('keeps the proxy health endpoint on 127.0.0.1 integration origins', async () => {
+  it('keeps the proxy health endpoint on 127.0.0.1 origins', async () => {
     vi.resetModules()
     vi.stubEnv('VITE_HEALTH_ENDPOINT', 'https://api.example.com/v1/health')
     vi.stubGlobal('location', {
@@ -264,9 +258,6 @@ describe('probeBackendHealth', () => {
       publicConfig: {
         healthApiUrl: '/api/v1/health'
       }
-    }))
-    vi.doMock('@/infrastructure/content/runtimeProfile', () => ({
-      activeAppTarget: 'integration'
     }))
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ status: 'ok' }), {

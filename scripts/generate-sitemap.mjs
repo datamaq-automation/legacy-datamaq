@@ -2,13 +2,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROUTES_PATH = path.resolve(process.cwd(), 'src', 'seo', 'routes.json')
-const RUNTIME_PROFILES_PATH = path.resolve(
-  process.cwd(),
-  'src',
-  'infrastructure',
-  'content',
-  'runtimeProfiles.json'
-)
 const PUBLIC_DIR = path.resolve(process.cwd(), 'public')
 const SITEMAP_PATH = path.resolve(PUBLIC_DIR, 'sitemap.xml')
 const ROBOTS_PATH = path.resolve(PUBLIC_DIR, 'robots.txt')
@@ -16,7 +9,7 @@ const WHATSAPP_REDIRECT_PATH = path.resolve(PUBLIC_DIR, 'w', 'index.html')
 
 const SUPPORTED_TARGETS = new Set(['datamaq', 'upp', 'example', 'e2e'])
 const DEFAULT_TARGET = 'datamaq'
-const DEFAULT_SITE_URL = 'https://www.datamaq.com.ar'
+const DEFAULT_SITE_URL = 'https://datamaq.com.ar'
 const DEFAULT_SITE_NAME = 'DataMaq'
 const DEFAULT_WHATSAPP_URL = 'https://wa.me/5491156297160'
 const DEFAULT_WHATSAPP_MESSAGE = 'Hola, te contacto desde la web. Podemos coordinar?'
@@ -102,15 +95,6 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;')
 }
 
-function loadRuntimeProfiles() {
-  const raw = fs.readFileSync(RUNTIME_PROFILES_PATH, 'utf8')
-  const parsed = JSON.parse(raw)
-  if (!parsed || typeof parsed !== 'object') {
-    throw new Error('runtimeProfiles.json must contain an object.')
-  }
-  return parsed
-}
-
 function resolveTarget(argv) {
   const maybePositional = argv.find((arg) => !arg.startsWith('--'))
   const explicitTargetArg = argv.find((arg) => arg.startsWith('--target='))
@@ -138,12 +122,26 @@ function resolveTarget(argv) {
   return target
 }
 
-function resolveProfile(target, profiles) {
-  const profile = profiles[target]
-  if (!profile || typeof profile !== 'object') {
-    throw new Error(`[sitemap] missing runtime profile for target "${target}"`)
+function resolveProfile(target) {
+  if (target === 'datamaq') {
+    return {
+      siteUrl: DEFAULT_SITE_URL,
+      siteName: DEFAULT_SITE_NAME,
+      whatsappUrl: DEFAULT_WHATSAPP_URL,
+      whatsappQrPhoneE164: '5491156297160',
+      whatsappQrMessage: 'Hola, te contacto por DataMaq. Quiero coordinar una implementacion con Powermeter y/o Automate.',
+      whatsappQrSourceTag: DEFAULT_WHATSAPP_SOURCE_TAG
+    }
   }
-  return profile
+
+  return {
+    siteUrl: DEFAULT_SITE_URL,
+    siteName: DEFAULT_SITE_NAME,
+    whatsappUrl: DEFAULT_WHATSAPP_URL,
+    whatsappQrPhoneE164: '',
+    whatsappQrMessage: DEFAULT_WHATSAPP_MESSAGE,
+    whatsappQrSourceTag: DEFAULT_WHATSAPP_SOURCE_TAG
+  }
 }
 
 function buildWhatsAppHref(profile) {
@@ -221,8 +219,7 @@ function buildWhatsAppRedirectHtml(siteName, href) {
 
 function main() {
   const target = resolveTarget(process.argv.slice(2))
-  const profiles = loadRuntimeProfiles()
-  const profile = resolveProfile(target, profiles)
+  const profile = resolveProfile(target)
   const siteUrl = normalizeSiteUrl(profile.siteUrl)
   const siteName = normalize(profile.siteName) ?? DEFAULT_SITE_NAME
   const whatsappHref = buildWhatsAppHref(profile)
