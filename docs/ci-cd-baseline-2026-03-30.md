@@ -37,6 +37,9 @@ Objetivo: dejar una referencia medible de costo/flujo despues de la optimizacion
 - Comando: `npm run gate:push` (`quality:fast` + `quality:e2e`).
 3. Full gate manual:
 - `workflow_dispatch` con `run_full_gate=true` cuando se quiera auditoria completa puntual.
+4. Purge de Cloudflare:
+- es opcional para `datamaq`.
+- si faltan `CLOUDFLARE_API_TOKEN` o `CLOUDFLARE_ZONE_ID` en `production`, el workflow deja `notice` y continua sin warning ni fallo.
 
 ## Monitoreo (proximas 48h)
 

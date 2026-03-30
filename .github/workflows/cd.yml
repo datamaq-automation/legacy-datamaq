@@ -401,12 +401,12 @@ jobs:
           if [ -n "${CF_API_TOKEN:-}" ]; then
             echo "::notice::CF_API_TOKEN=present"
           else
-            echo "::warning::CF_API_TOKEN=missing"
+            echo "::notice::CF_API_TOKEN=missing"
           fi
           if [ -n "${CF_ZONE_ID:-}" ]; then
             echo "::notice::CF_ZONE_ID=present"
           else
-            echo "::warning::CF_ZONE_ID=missing"
+            echo "::notice::CF_ZONE_ID=missing"
           fi
           echo "Expected secrets: ${{ matrix.cloudflare_api_token_secret }} and ${{ matrix.cloudflare_zone_id_secret }}"
           echo "::endgroup::"
@@ -419,7 +419,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ZONE_ID:-}" ]; then
-            echo "::warning::Cloudflare purge skipped: missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID in environment 'production'."
+            echo "::notice::Cloudflare purge skipped: missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID in environment 'production'."
             exit 0
           fi
 
