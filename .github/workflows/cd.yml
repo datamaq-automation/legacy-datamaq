@@ -356,6 +356,7 @@ jobs:
         uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
         with:
           name: deploy-debug-${{ matrix.target }}
+          include-hidden-files: true
           path: |
             dist/index.html
             .tmp-*.log

@@ -266,6 +266,9 @@ build_failure_diagnosis() {
   if grep -Eqi '(Connection refused|No route to host|Operation timed out|Network is unreachable|Connection timed out)' "${log_file}"; then
     diagnoses+=("network-failed: verify host reachability, port, firewall and FTPS mode")
   fi
+  if grep -Eqi '(Peer closed connection|unexpected eof while reading)' "${log_file}"; then
+    diagnoses+=("peer-closed-connection: server closed the FTPS control/TLS session; verify FTPS mode, port, server-side connection limits and transient hosting issues")
+  fi
   if grep -Eqi '(certificate|SSL certificate|certificate verify failed|hostname does not match|handshake failed)' "${log_file}"; then
     diagnoses+=("tls-verify-failed: verify certificate chain, hostname and FTPS mode/port")
   fi
