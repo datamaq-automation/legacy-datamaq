@@ -37,7 +37,7 @@ export type BackendInfoPayload = {
   details: Record<string, unknown> | null
 }
 
-export function extractBackendResponseMetadata(payload: unknown): BackendResponseMetadata {
+function extractBackendResponseMetadata(payload: unknown): BackendResponseMetadata {
   if (!isRecord(payload)) {
     return {}
   }
@@ -48,7 +48,7 @@ export function extractBackendResponseMetadata(payload: unknown): BackendRespons
   return Object.fromEntries(normalizedEntries) as BackendResponseMetadata
 }
 
-export function buildBackendEndpointContext(
+function buildBackendEndpointContext(
   endpoint: string,
   currentLocation: BrowserLocationLike | undefined = globalThis.location
 ): Pick<ResolvedBackendEndpoint, 'configuredUrl' | 'browserUrl' | 'transportMode'> {
@@ -82,7 +82,7 @@ export function buildBackendInfoPayload(options: {
   }
 }
 
-export function normalizeBackendString(value: unknown): string | null {
+function normalizeBackendString(value: unknown): string | null {
   if (typeof value !== 'string') {
     return null
   }
@@ -91,7 +91,7 @@ export function normalizeBackendString(value: unknown): string | null {
   return trimmed ? trimmed : null
 }
 
-export function isRecord(value: unknown): value is Record<string, unknown> {
+function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 

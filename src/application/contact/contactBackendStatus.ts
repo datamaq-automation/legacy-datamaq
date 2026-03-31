@@ -3,7 +3,6 @@ import type { RuntimeFlags } from '../ports/Environment'
 import type { HttpClient } from '../ports/HttpClient'
 import type { LoggerPort } from '../ports/Logger'
 import { emitRuntimeWarn } from '../utils/runtimeConsole'
-import { getDevBackendAvailability } from '../backend/devBackendAvailability'
 import {
   describeBackendEndpoint,
   resolveBackendOrigin,
@@ -47,13 +46,6 @@ export class ContactBackendMonitor {
 
   async ensureStatus(): Promise<ContactBackendStatus> {
     if (this.status !== 'unknown') {
-      return this.status
-    }
-
-    const devAvailabilityStatus = this.resolveDevAvailabilityStatus()
-    if (devAvailabilityStatus) {
-      this.status = devAvailabilityStatus
-      this.notify()
       return this.status
     }
 
@@ -145,20 +137,6 @@ export class ContactBackendMonitor {
 
     this.notify()
     return this.status
-  }
-
-  private resolveDevAvailabilityStatus(): ContactBackendStatus | null {
-    if (!this.runtime.isDev() || !this.runtime.isBrowser()) {
-      return null
-    }
-
-    const snapshot = getDevBackendAvailability()
-    const hasProbeSnapshot = snapshot.status !== null
-    if (!hasProbeSnapshot) {
-      return null
-    }
-
-    return snapshot.reachable ? 'available' : 'unavailable'
   }
 }
 
