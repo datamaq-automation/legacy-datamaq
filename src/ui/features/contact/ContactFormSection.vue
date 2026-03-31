@@ -1,5 +1,6 @@
 ﻿<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import { useContainer } from '@/di/container'
 import TecnicoACargo from '@/components/TecnicoACargo.vue'
 import ContactStepper from './ContactStepper.vue'
 import {
@@ -13,8 +14,8 @@ import {
 } from '@/features/contact/application/leadWizard'
 import { readContactDraft, removeContactDraft, writeContactDraft } from '@/features/contact/infrastructure/contactDraftStorage'
 import { getContactEmail } from '@/ui/controllers/contactController'
-import type { ContactFormProps } from './contactTypes'
-import { useContactFormSection } from './ContactFormSection'
+import type { ContactFormProps, ResolvedContactFormContent } from './contactTypes'
+import { useContactForm } from './useContactForm'
 import { useTurnstile } from './useTurnstile'
 
 // ARCH-ROADMAP: migracion pendiente de ubicacion. Seguimiento en docs/feature-migration-roadmap.md (ITEM-2).
@@ -23,8 +24,27 @@ const props = withDefaults(defineProps<ContactFormProps>(), {
   showTechnicianCard: true
 })
 
+const { content } = useContainer()
+const contactContent = content.getContactContent()
+const contact: ResolvedContactFormContent = {
+  ...contactContent,
+  labels: {
+    firstName: 'Nombre',
+    lastName: 'Apellido',
+    company: 'Empresa',
+    email: 'E-mail',
+    phone: 'Nro. teléfono',
+    geographicLocation: 'Ubicación geográfica',
+    comment: 'Comentario',
+    message: 'Comentario',
+    ...contactContent.labels
+  },
+  title: props.title ?? contactContent.title,
+  subtitle: props.subtitle ?? contactContent.subtitle,
+  submitLabel: props.submitLabel ?? contactContent.submitLabel
+}
+
 const {
-  contact,
   formRef,
   form,
   fieldErrors,
@@ -39,7 +59,7 @@ const {
   feedback,
   feedbackMessageRef,
   handleSubmit
-} = useContactFormSection(props)
+} = useContactForm(props, contact)
 
 const currentStep = ref(1)
 const totalSteps = CONTACT_LEAD_TOTAL_STEPS

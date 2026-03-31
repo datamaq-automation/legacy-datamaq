@@ -1,6 +1,5 @@
 import type { ContactFormPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
-import { useContactFacade } from '@/ui/features/contact/useContactFacade'
 
 const DEFAULT_BRAND_NAME = 'equipo tecnico'
 const DEFAULT_MACHINE_PLACEHOLDER = '[Tipo de Maquina]'
@@ -51,7 +50,7 @@ export function trackSectionScroll(sectionHref: string): void {
 }
 
 export function submitContact(payload: ContactFormPayload) {
-  return useContactFacade().submitContact(payload)
+  return useContainer().useCases.submitContact.execute(payload)
 }
 
 function getTrafficSource(location: { search(): string; referrer(): string }): string {

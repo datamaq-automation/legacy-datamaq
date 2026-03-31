@@ -4,7 +4,7 @@ import ContactFormSection from '@/ui/features/contact/ContactFormSection.vue'
 import ConsentBanner from '@/ui/features/contact/ConsentBanner.vue'
 import WhatsAppFab from '@/ui/features/contact/WhatsAppFab.vue'
 import { useContactPage } from './ContactPage'
-import { isWhatsAppUrl, reportGtagConversion } from '@/ui/utils/gtagConversion'
+import { createFooterWhatsAppClickHandler } from '@/ui/pages/home/homePageUiHandlers'
 
 const {
   navbar,
@@ -23,15 +23,7 @@ const {
   handleContactSubmit
 } = useContactPage()
 
-function handleFooterWhatsAppClick(event: MouseEvent): boolean | void {
-  const whatsappUrl = whatsappHref.value
-  if (!isWhatsAppUrl(whatsappUrl)) {
-    return
-  }
-
-  event.preventDefault()
-  return reportGtagConversion(whatsappUrl)
-}
+const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 </script>
 
 <template>

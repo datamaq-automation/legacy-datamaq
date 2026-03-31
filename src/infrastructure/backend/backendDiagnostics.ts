@@ -1,4 +1,3 @@
-import { buildRuntimeLogArgs } from '@/application/utils/runtimeConsole'
 import { mapKeysToCamelCase } from '@/infrastructure/mappers/caseMapper'
 import {
   describeBackendEndpoint,
@@ -6,8 +5,6 @@ import {
   type BrowserLocationLike,
   type ResolvedBackendEndpoint
 } from '@/shared/backend/backendEndpoint'
-
-const isDevRuntime = Boolean(import.meta.env?.DEV)
 
 const BACKEND_METADATA_KEYS = [
   'status',
@@ -82,54 +79,6 @@ export function buildBackendInfoPayload(options: {
     brandId: metadata.brandId ?? null,
     timestamp: metadata.timestamp ?? null,
     details: normalizeBackendInfoDetails(options.details)
-  }
-}
-
-export function emitBackendInfo(options: {
-  resource: BackendInfoResource
-  endpoint: string
-  status: number
-  payload?: unknown
-  metadata?: BackendResponseMetadata
-  details?: Record<string, unknown> | null
-  currentLocation?: BrowserLocationLike
-}): void {
-  if (!isDevRuntime) {
-    return
-  }
-
-  console.info(
-    ...buildRuntimeLogArgs(`[backend:${options.resource}] conexion OK`, buildBackendInfoPayload(options))
-  )
-}
-
-export function emitBackendError(options: {
-  resource: BackendInfoResource
-  endpoint: string
-  status: number
-  error?: unknown
-  payload?: unknown
-  currentLocation?: BrowserLocationLike
-}): void {
-  if (!isDevRuntime) {
-    return
-  }
-
-  console.error(
-    `❌ [backend:${options.resource}] Error ${options.status}`,
-    {
-      endpoint: options.endpoint,
-      status: options.status,
-      transportMode: buildBackendEndpointContext(options.endpoint, options.currentLocation).transportMode
-    }
-  )
-
-  if (options.error) {
-    console.error(`   Error details:`, options.error)
-  }
-
-  if (options.payload) {
-    console.error(`   Response payload:`, options.payload)
   }
 }
 

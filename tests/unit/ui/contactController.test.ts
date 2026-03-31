@@ -19,9 +19,6 @@ const mocks = vi.hoisted(() => ({
   environment: {
     search: () => '' as string,
     referrer: () => '' as string
-  },
-  config: {
-    contactEmail: 'contacto@example.com'
   }
 }))
 
@@ -31,18 +28,16 @@ vi.mock('@/di/container', () => ({
       getHeroContent: mocks.getHeroContent,
       getBrandContent: mocks.getBrandContent
     },
-    config: mocks.config,
+    useCases: {
+      submitContact: {
+        execute: mocks.submitContact
+      }
+    },
     engagementTracker: {
       trackChat: mocks.trackChat,
       trackSectionScroll: mocks.trackSectionScroll
     },
     environment: mocks.environment
-  })
-}))
-
-vi.mock('@/ui/features/contact/useContactFacade', () => ({
-  useContactFacade: () => ({
-    submitContact: mocks.submitContact
   })
 }))
 
@@ -60,7 +55,6 @@ describe('contactController', () => {
     })
     mocks.environment.search = () => ''
     mocks.environment.referrer = () => ''
-    mocks.config.contactEmail = 'contacto@example.com'
     vi.spyOn(window, 'open').mockImplementation(() => null)
   })
 
@@ -103,8 +97,6 @@ describe('contactController', () => {
   })
 
   it('returns contact email when configured', () => {
-    mocks.config.contactEmail = 'contacto@example.com'
-
     expect(getContactEmail()).toBe('contacto@example.com')
   })
 
@@ -150,7 +142,7 @@ describe('contactController', () => {
     expect(mocks.trackSectionScroll).toHaveBeenCalledWith('servicios', 'https://example.com')
   })
 
-  it('submits contact via facade', async () => {
+  it('submits contact via use case', async () => {
     mocks.submitContact.mockResolvedValue({ ok: true, data: {} })
 
     const payload = {

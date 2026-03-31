@@ -69,7 +69,6 @@ type ContactSubmitFeedbackState = {
 
 export function useContactForm(props: ContactFormProps, contact: ResolvedContactFormContent) {
   const backendChannel = 'contact'
-  const isLeadChannel = true
   const sectionId = props.sectionId?.trim() || 'contacto'
   const titleId = `${sectionId}-title`
   const fieldMeta = createFieldMeta(sectionId)
@@ -235,7 +234,6 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
     titleId,
     fieldMeta,
     tecnicoHeadingId,
-    isLeadChannel,
     isBackendAvailable,
     isCheckingBackend,
     isChannelEnabled,
