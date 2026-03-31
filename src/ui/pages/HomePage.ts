@@ -1,15 +1,9 @@
 import { useContainer } from '@/di/container'
-import {
-  getContactFormActive,
-  getWhatsAppEnabled,
-  getWhatsAppHref,
-  openWhatsApp,
-  submitContact,
-  trackSectionScroll
-} from '@/ui/controllers/contactController'
+import { trackSectionScroll } from '@/ui/controllers/contactController'
 import type { HomePageContent } from '@/domain/types/content'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { mapNavbarLinks, toHomeSectionRoute } from './landingNavigation'
+import { useContactPageActions } from './useContactPageActions'
 
 type HomeVariant = 'direct' | 'authority'
 // SOLID-DEBATE: Si aparece una tercera variante, evaluar estrategia inyectable por variante en lugar de branching local.
@@ -50,13 +44,18 @@ export function useHomePage() {
   const homePage = content.getHomePageContent()
   const footer = content.getFooterContent()
   const legal = content.getLegalContent()
+  const {
+    contactCtaEnabled,
+    isContactFormActive,
+    footerYear,
+    whatsappHref,
+    isExternalWhatsappHref,
+    handleChat,
+    handleContactSubmit
+  } = useContactPageActions()
   const homeVariant = resolveHomeVariant()
   const isDirectVariant = homeVariant === 'direct'
   const isAuthorityVariant = homeVariant === 'authority'
-  const contactCtaEnabled = getWhatsAppEnabled()
-  const isContactFormActive = getContactFormActive()
-  const whatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
-  const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(whatsappHref.value))
   const heroConditions = buildHeroConditions(hero.responseNote)
   const headerLinks = mapNavbarLinks(navbar)
     .filter((link) => HOME_SECTION_ORDER.includes(link.href))
@@ -80,19 +79,10 @@ export function useHomePage() {
   }))
   const authorityHighlights = dedupeSignals([...heroConditions, ...profile.bullets, ...services.cards.map((card) => card.title)]).slice(0, 3)
   const urgencyBadge = hero.responseNote
-  const footerYear = new Date().getFullYear()
-
-  function handleChat(section: string, href?: string) {
-    openWhatsApp(section, href)
-  }
 
   function getServiceIcon(cardId: string, title: string): string {
     const key = `${cardId} ${title}`.toLowerCase()
     return SERVICE_ICON_BY_KEYWORD.find((entry) => key.includes(entry.keyword))?.icon ?? 'bi-gear-wide-connected'
-  }
-
-  function handleContactSubmit(payload: Parameters<typeof submitContact>[0]) {
-    return submitContact(payload)
   }
 
   function handleHashChange() {

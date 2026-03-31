@@ -1,13 +1,6 @@
 import { useContainer } from '@/di/container'
-import {
-  getContactFormActive,
-  getWhatsAppEnabled,
-  getWhatsAppHref,
-  openWhatsApp,
-  submitContact
-} from '@/ui/controllers/contactController'
-import { computed } from 'vue'
 import { mapNavbarLinks, toHomeSectionRoute } from './landingNavigation'
+import { useContactPageActions } from './useContactPageActions'
 
 export function useContactPage() {
   const { content } = useContainer()
@@ -16,25 +9,21 @@ export function useContactPage() {
   const legal = content.getLegalContent()
   const contact = content.getContactContent()
   const contactPage = content.getContactPageContent()
-  const contactCtaEnabled = getWhatsAppEnabled()
-  const isContactFormActive = getContactFormActive()
+  const {
+    contactCtaEnabled,
+    isContactFormActive,
+    footerYear,
+    whatsappHref,
+    isExternalWhatsappHref,
+    handleChat,
+    handleContactSubmit
+  } = useContactPageActions()
   const homeLinks = mapNavbarLinks(navbar).filter((link) => link.href !== '#contacto')
-  const footerYear = new Date().getFullYear()
-  const whatsappHref = computed(() => getWhatsAppHref() ?? '#contacto')
-  const isExternalWhatsappHref = computed(() => /^https?:\/\//.test(whatsappHref.value))
   const contactIntroLinks = [
     { label: contactPage.introLinks.services, to: toHomeSectionRoute('#servicios') },
     { label: contactPage.introLinks.profile, to: toHomeSectionRoute('#perfil') },
     { label: contactPage.introLinks.faq, to: toHomeSectionRoute('#faq') }
   ]
-
-  function handleChat(section: string, href?: string) {
-    openWhatsApp(section, href)
-  }
-
-  function handleContactSubmit(payload: Parameters<typeof submitContact>[0]) {
-    return submitContact(payload)
-  }
 
   return {
     navbar,
