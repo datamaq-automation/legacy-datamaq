@@ -15,12 +15,12 @@ export function getWhatsAppHref(): string | undefined {
 }
 
 export function getContactEmail(): string | undefined {
-  const value = useContainer().content.getBrandContent().contactEmail
+  const value = getBrandContent().contactEmail
   return value?.trim() ? value : undefined
 }
 
 export function getContactFormActive(): boolean {
-  return useContainer().content.getBrandContent().contactFormActive
+  return getBrandContent().contactFormActive
 }
 
 export function openWhatsApp(section: string = 'whatsapp', href?: string): void {
@@ -33,8 +33,8 @@ export function openWhatsApp(section: string = 'whatsapp', href?: string): void 
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
   }
 
-  const { engagementTracker, environment } = useContainer()
-  const trafficSource = getTrafficSource(environment)
+  const { engagementTracker } = useContainer()
+  const trafficSource = getCurrentTrafficSource()
   engagementTracker.trackChat(section, trafficSource)
 }
 
@@ -44,8 +44,8 @@ export function trackSectionScroll(sectionHref: string): void {
     return
   }
 
-  const { engagementTracker, environment } = useContainer()
-  const trafficSource = getTrafficSource(environment)
+  const { engagementTracker } = useContainer()
+  const trafficSource = getCurrentTrafficSource()
   engagementTracker.trackSectionScroll(normalizedSection, trafficSource)
 }
 
@@ -106,8 +106,16 @@ function buildPrefilledWhatsAppUrl(href: string | undefined): string | undefined
 }
 
 function buildDefaultWhatsAppMessage(): string {
-  const brandName = useContainer().content.getBrandContent().brandName?.trim() || DEFAULT_BRAND_NAME
+  const brandName = getBrandContent().brandName?.trim() || DEFAULT_BRAND_NAME
   return `Hola ${brandName}, necesito asistencia tecnica para ${DEFAULT_MACHINE_PLACEHOLDER}.`
+}
+
+function getBrandContent() {
+  return useContainer().content.getBrandContent()
+}
+
+function getCurrentTrafficSource(): string {
+  return getTrafficSource(useContainer().environment)
 }
 
 function isExternalHref(href: string): boolean {
