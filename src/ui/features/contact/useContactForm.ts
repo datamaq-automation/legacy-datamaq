@@ -22,6 +22,8 @@ import {
   CONTACT_FORM_FIELDS,
   type ContactFieldErrors,
   type ContactFormField,
+  type ContactFormFieldMeta,
+  type ContactFormFieldMetaMap,
   type ResolvedContactFormContent
 } from './contactTypes'
 import { useContactValidation } from './useContactValidation'
@@ -53,14 +55,6 @@ function createEmptyFieldErrors(): ContactFieldErrors {
     comment: ''
   }
 }
-
-type ContactFormFieldMeta = {
-  inputId: string
-  errorId: string
-  helperId?: string
-}
-
-type ContactFormFieldMetaMap = Record<ContactFormField, ContactFormFieldMeta>
 
 type ContactSubmitFeedbackState = {
   message: string

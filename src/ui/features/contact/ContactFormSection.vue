@@ -1,21 +1,15 @@
 ﻿<script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useContainer } from '@/di/container'
 import TecnicoACargo from '@/components/TecnicoACargo.vue'
+import ContactChannelStep from './ContactChannelStep.vue'
+import ContactIdentityStep from './ContactIdentityStep.vue'
+import ContactProjectStep from './ContactProjectStep.vue'
 import ContactStepper from './ContactStepper.vue'
-import {
-  clampContactLeadStep,
-  CONTACT_LEAD_STEP_LABELS,
-  CONTACT_LEAD_TOTAL_STEPS,
-  hasContactLeadStepErrors,
-  normalizePreferredContact,
-  type ContactPersistedDraft,
-  validateContactLeadStep
-} from '@/features/contact/application/leadWizard'
-import { readContactDraft, removeContactDraft, writeContactDraft } from '@/features/contact/infrastructure/contactDraftStorage'
 import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps, ResolvedContactFormContent } from './contactTypes'
 import { useContactForm } from './useContactForm'
+import { useContactLeadWizard } from './useContactLeadWizard'
 import { useTurnstile } from './useTurnstile'
 
 // ARCH-ROADMAP: migracion pendiente de ubicacion. Seguimiento en docs/feature-migration-roadmap.md (ITEM-2).
@@ -61,16 +55,7 @@ const {
   handleSubmit
 } = useContactForm(props, contact)
 
-const currentStep = ref(1)
-const totalSteps = CONTACT_LEAD_TOTAL_STEPS
-const preferredContact = ref<'whatsapp' | 'email'>('whatsapp')
 const contactEmail = computed(() => getContactEmail())
-
-const progressPercent = computed(() => Math.round((currentStep.value / totalSteps) * 100))
-const isLastStep = computed(() => currentStep.value === totalSteps)
-const stepLabels = CONTACT_LEAD_STEP_LABELS
-const draftStorageKey = `dm-contact-draft-${sectionId}`
-const draftNotice = 'Guardamos un borrador temporal de este formulario por hasta 12 horas en este dispositivo.'
 const {
   enabled: turnstileEnabled,
   token: turnstileToken,
@@ -79,113 +64,28 @@ const {
   reset: resetTurnstile
 } = useTurnstile()
 
-function goPrevStep() {
-  if (currentStep.value > 1) {
-    currentStep.value -= 1
-  }
-}
-
-function goToStep(targetStep: number) {
-  if (targetStep === currentStep.value || targetStep < 1 || targetStep > totalSteps) {
-    return
-  }
-  if (targetStep < currentStep.value) {
-    currentStep.value = targetStep
-    return
-  }
-  if (validateCurrentStep()) {
-    currentStep.value = targetStep
-  }
-}
-
-function goNextStep() {
-  if (!validateCurrentStep()) {
-    return
-  }
-  if (currentStep.value < totalSteps) {
-    currentStep.value += 1
-  }
-}
-
-function validateCurrentStep(): boolean {
-  const stepErrors = validateContactLeadStep(currentStep.value, {
-    firstName: form.firstName,
-    lastName: form.lastName,
-    company: form.company,
-    email: form.email,
-    comment: form.comment,
-    phone: form.phone,
-    preferredContact: preferredContact.value
-  })
-
-  fieldErrors.firstName = stepErrors.firstName ?? ''
-  fieldErrors.lastName = stepErrors.lastName ?? ''
-  fieldErrors.company = stepErrors.company ?? ''
-  fieldErrors.email = stepErrors.email ?? ''
-  fieldErrors.comment = stepErrors.comment ?? ''
-  fieldErrors.phone = stepErrors.phone ?? ''
-
-  return !hasContactLeadStepErrors(stepErrors)
-}
-
-async function onFinalSubmit() {
-  if (!validateCurrentStep()) {
-    return
-  }
-  if (turnstileEnabled.value && !turnstileToken.value) {
-    feedback.success = false
-    feedback.message =
-      turnstileErrorMessage.value || 'Completa la verificacion anti-bot para enviar el formulario.'
-    return
-  }
-  form.captchaToken = turnstileToken.value
-  form.preferredContactChannel = preferredContact.value
-  await handleSubmit()
-  if (feedback.success) {
-    removeContactDraft(draftStorageKey)
-    resetTurnstile()
-  }
-}
-
-onMounted(() => {
-  const draft = readContactDraft(draftStorageKey)
-  if (!draft) {
-    return
-  }
-  form.company = draft.company ?? form.company
-  form.comment = draft.comment ?? form.comment
-  preferredContact.value = normalizePreferredContact(draft.preferredContact)
-  currentStep.value = clampContactLeadStep(draft.currentStep)
-})
-
-watch(
-  () => [
-    form.firstName,
-    form.lastName,
-    form.company,
-    form.email,
-    form.comment,
-    form.phone,
-    preferredContact.value,
-    currentStep.value
-  ],
-  () => {
-    const draft: ContactPersistedDraft = {
-      company: form.company,
-      comment: form.comment,
-      preferredContact: preferredContact.value,
-      currentStep: currentStep.value
-    }
-    writeContactDraft(draftStorageKey, draft)
-  }
-)
-
-watch(turnstileToken, (value) => {
-  form.captchaToken = value
-})
-
-watch(preferredContact, (value) => {
-  form.preferredContactChannel = value
+const {
+  currentStep,
+  totalSteps,
+  preferredContact,
+  progressPercent,
+  isLastStep,
+  stepLabels,
+  draftNotice,
+  goPrevStep,
+  goToStep,
+  goNextStep,
+  onFinalSubmit
+} = useContactLeadWizard({
+  form,
+  fieldErrors,
+  sectionId,
+  feedback,
+  handleSubmit,
+  turnstileEnabled,
+  turnstileToken,
+  turnstileErrorMessage,
+  resetTurnstile
 })
 </script>
 
@@ -235,127 +135,30 @@ watch(preferredContact, (value) => {
                 @submit.prevent="onFinalSubmit"
               >
                 <Transition name="step-fade" mode="out-in">
-                  <div :key="currentStep" class="c-contact__step-panel">
-                <template v-if="currentStep === 1">
-                  <h3 class="c-contact__step-title">1. Identidad</h3>
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.firstName.inputId">Nombre</label>
-                    <input
-                      :id="fieldMeta.firstName.inputId"
-                      v-model="form.firstName"
-                      type="text"
-                      class="c-contact__input"
-                      autocomplete="given-name"
-                      maxlength="80"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.firstName)"
+                  <div :key="currentStep">
+                    <ContactIdentityStep
+                      v-if="currentStep === 1"
+                      :form="form"
+                      :field-errors="fieldErrors"
+                      :field-meta="fieldMeta"
+                      :is-channel-enabled="isChannelEnabled"
                     />
-                    <small class="c-contact__helper">Opcional</small>
-                    <small v-if="fieldErrors.firstName" class="c-contact__error">{{ fieldErrors.firstName }}</small>
-                  </div>
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.lastName.inputId">Apellido</label>
-                    <input
-                      :id="fieldMeta.lastName.inputId"
-                      v-model="form.lastName"
-                      type="text"
-                      class="c-contact__input"
-                      autocomplete="family-name"
-                      maxlength="80"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.lastName)"
+                    <ContactProjectStep
+                      v-else-if="currentStep === 2"
+                      :form="form"
+                      :field-errors="fieldErrors"
+                      :field-meta="fieldMeta"
+                      :is-channel-enabled="isChannelEnabled"
                     />
-                    <small class="c-contact__helper">Opcional</small>
-                    <small v-if="fieldErrors.lastName" class="c-contact__error">{{ fieldErrors.lastName }}</small>
-                  </div>
-                </template>
-
-                <template v-else-if="currentStep === 2">
-                  <h3 class="c-contact__step-title">2. Proyecto</h3>
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.company.inputId">Empresa</label>
-                    <input
-                      :id="fieldMeta.company.inputId"
-                      v-model="form.company"
-                      type="text"
-                      class="c-contact__input"
-                      autocomplete="organization"
-                      maxlength="120"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.company)"
+                    <ContactChannelStep
+                      v-else
+                      :form="form"
+                      :field-errors="fieldErrors"
+                      :field-meta="fieldMeta"
+                      :is-channel-enabled="isChannelEnabled"
+                      :preferred-contact="preferredContact"
+                      @update:preferred-contact="preferredContact = $event"
                     />
-                    <small class="c-contact__helper">Opcional</small>
-                    <small v-if="fieldErrors.company" class="c-contact__error">{{ fieldErrors.company }}</small>
-                  </div>
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.comment.inputId">Descripci&oacute;n del proyecto</label>
-                    <textarea
-                      :id="fieldMeta.comment.inputId"
-                      v-model="form.comment"
-                      class="c-contact__input c-contact__input--textarea"
-                      rows="6"
-                      maxlength="2000"
-                      :disabled="!isChannelEnabled"
-                      :aria-invalid="Boolean(fieldErrors.comment)"
-                    />
-                    <small class="c-contact__helper">Opcional</small>
-                    <small v-if="fieldErrors.comment" class="c-contact__error">{{ fieldErrors.comment }}</small>
-                  </div>
-                </template>
-
-                <template v-else>
-                  <h3 class="c-contact__step-title">3. Medio de contacto preferido</h3>
-                  <fieldset class="c-contact__choice-group">
-                    <legend class="c-contact__label">Eleg&iacute; c&oacute;mo quer&eacute;s que te contactemos</legend>
-                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'whatsapp' }">
-                      <input v-model="preferredContact" type="radio" value="whatsapp" name="preferredContact" />
-                      WhatsApp
-                    </label>
-                    <label class="c-contact__choice" :class="{ 'is-active': preferredContact === 'email' }">
-                      <input v-model="preferredContact" type="radio" value="email" name="preferredContact" />
-                      E-mail
-                    </label>
-                  </fieldset>
-
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.phone.inputId">WhatsApp</label>
-                    <input
-                      :id="fieldMeta.phone.inputId"
-                      v-model="form.phone"
-                      type="tel"
-                      class="c-contact__input"
-                      autocomplete="tel"
-                      maxlength="40"
-                      inputmode="tel"
-                      :disabled="!isChannelEnabled"
-                      :aria-required="preferredContact === 'whatsapp'"
-                      :aria-invalid="Boolean(fieldErrors.phone)"
-                    />
-                    <small class="c-contact__helper">
-                      {{ preferredContact === 'whatsapp' ? 'Obligatorio en esta opcion.' : 'Opcional.' }}
-                    </small>
-                    <small v-if="fieldErrors.phone" class="c-contact__error">{{ fieldErrors.phone }}</small>
-                  </div>
-                  <div>
-                    <label class="c-contact__label" :for="fieldMeta.email.inputId">E-mail</label>
-                    <input
-                      :id="fieldMeta.email.inputId"
-                      v-model="form.email"
-                      type="email"
-                      class="c-contact__input"
-                      autocomplete="email"
-                      maxlength="160"
-                      inputmode="email"
-                      :disabled="!isChannelEnabled"
-                      :aria-required="preferredContact === 'email'"
-                      :aria-invalid="Boolean(fieldErrors.email)"
-                    />
-                    <small class="c-contact__helper">
-                      {{ preferredContact === 'email' ? 'Obligatorio en esta opcion.' : 'Opcional.' }}
-                    </small>
-                    <small v-if="fieldErrors.email" class="c-contact__error">{{ fieldErrors.email }}</small>
-                  </div>
-                </template>
                   </div>
                 </Transition>
 
@@ -470,7 +273,7 @@ watch(preferredContact, (value) => {
   color: rgba(var(--dm-text-0-rgb), 0.68);
 }
 
-.c-contact__step-title {
+:deep(.c-contact__step-title) {
   margin: 0 0 0.35rem;
   color: var(--dm-text-0);
   font-size: 1rem;
@@ -482,7 +285,7 @@ watch(preferredContact, (value) => {
   gap: 1rem;
 }
 
-.c-contact__label {
+:deep(.c-contact__label) {
   display: block;
   margin-bottom: 0.35rem;
   color: rgba(var(--dm-text-0-rgb), 0.92);
@@ -490,18 +293,18 @@ watch(preferredContact, (value) => {
   font-weight: 600;
 }
 
-.c-contact__helper {
+:deep(.c-contact__helper) {
   display: block;
   margin-top: 0.4rem;
   color: rgba(var(--dm-text-0-rgb), 0.76);
   font-size: 0.78rem;
 }
 
-.c-contact__helper--turnstile {
+:deep(.c-contact__helper--turnstile) {
   margin: 0 0 0.55rem;
 }
 
-.c-contact__input {
+:deep(.c-contact__input) {
   width: 100%;
   min-height: 2.9rem;
   padding: 0.7rem 0.9rem;
@@ -513,32 +316,32 @@ watch(preferredContact, (value) => {
   transition: border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.c-contact__input:focus-visible {
+:deep(.c-contact__input:focus-visible) {
   border-color: rgb(var(--dm-accent-orange-rgb));
   box-shadow: 0 0 0 3px rgba(var(--dm-accent-orange-rgb), 0.25);
 }
 
-.c-contact__input::placeholder {
+:deep(.c-contact__input::placeholder) {
   color: rgba(var(--dm-text-0-rgb), 0.64);
 }
 
-.c-contact__input[aria-invalid='true'] {
+:deep(.c-contact__input[aria-invalid='true']) {
   border-color: rgb(var(--dm-accent-orange-rgb));
 }
 
-.c-contact__input--textarea {
+:deep(.c-contact__input--textarea) {
   min-height: 7.5rem;
   resize: vertical;
 }
 
-.c-contact__choice-group {
+:deep(.c-contact__choice-group) {
   border: 1px solid rgba(var(--dm-text-0-rgb), 0.2);
   border-radius: 0.9rem;
   padding: 0.8rem;
   margin: 0;
 }
 
-.c-contact__choice {
+:deep(.c-contact__choice) {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -547,7 +350,7 @@ watch(preferredContact, (value) => {
   color: rgba(var(--dm-text-0-rgb), 0.82);
 }
 
-.c-contact__choice.is-active {
+:deep(.c-contact__choice.is-active) {
   background: rgba(var(--dm-accent-orange-rgb), 0.2);
   color: var(--dm-text-0);
 }
@@ -592,7 +395,7 @@ watch(preferredContact, (value) => {
   color: rgba(var(--dm-text-0-rgb), 0.95);
 }
 
-.c-contact__error {
+:deep(.c-contact__error) {
   display: block;
   margin-top: 0.4rem;
   color: rgba(var(--dm-accent-orange-rgb), 0.9);

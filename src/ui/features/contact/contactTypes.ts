@@ -21,6 +21,14 @@ export type ContactFormField = (typeof CONTACT_FORM_FIELDS)[number]
 
 export type ContactFieldErrors = Record<ContactFormField, string>
 
+export type ContactFormFieldMeta = {
+  inputId: string
+  errorId: string
+  helperId?: string
+}
+
+export type ContactFormFieldMetaMap = Record<ContactFormField, ContactFormFieldMeta>
+
 export type ResolvedContactFormContent = Omit<ContactContent, 'labels'> & {
   labels: Required<NonNullable<ContactContent['labels']>>
 }
