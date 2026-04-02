@@ -4,11 +4,9 @@ import type { Clock, LocationProvider, NavigatorProvider } from '../ports/Enviro
 import type { ContactError } from '../types/errors'
 import type { Result } from '@/domain/shared/result'
 import type { ContactFormPayload, ContactSubmitSuccess } from '../dto/contact'
-import { ContactService } from '@/domain/contact/services/ContactService'
-import { ContactSubmitted } from '@/application/contact/events/ContactSubmitted'
-import type { EventBus } from '../ports/EventBus'
 import type { LeadTracking } from '../analytics/leadTracking'
 import { mapContactRequestToSubmitPayload } from '@/application/contact/mappers/contactPayloadMapper'
+import { ContactRequest } from '@/domain/contact/entities/ContactRequest'
 import {
   summarizeContactDraft,
   summarizeContactError,
@@ -18,12 +16,10 @@ import { emitRuntimeDebug, emitRuntimeWarn } from '@/application/utils/runtimeCo
 
 export class SubmitContactUseCase {
   constructor(
-    private contactService: ContactService,
     private contactGateway: ContactGateway,
     private contactBackend: ContactBackendMonitor,
     private location: LocationProvider,
     private navigator: NavigatorProvider,
-    private eventBus: EventBus,
     private leadTracking: LeadTracking,
     private clock: Clock
   ) {}
@@ -50,7 +46,7 @@ export class SubmitContactUseCase {
       ...(normalizedPayload.comment ? { message: normalizedPayload.comment } : {})
     }
 
-    const contactResult = this.contactService.createContact(contactInput)
+    const contactResult = ContactRequest.createFromPrimitives(contactInput)
 
     if (!contactResult.ok) {
       emitRuntimeWarn('[contact:use-case] contacto invalido antes del gateway', {
@@ -105,7 +101,6 @@ export class SubmitContactUseCase {
     })
     this.contactBackend.markAvailable()
     this.leadTracking.registerLeadForThanksPage()
-    this.eventBus.publish(new ContactSubmitted(contactResult.data.id))
     return { ok: true, data: submitResult.data }
   }
 }

@@ -3,13 +3,10 @@ import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import type { ContactGateway } from '@/application/contact/ports/ContactGateway'
 import type { ContactBackendMonitor } from '@/application/contact/contactBackendStatus'
 import type { Clock, LocationProvider, NavigatorProvider } from '@/application/ports/Environment'
-import type { EventBus } from '@/application/ports/EventBus'
 import type { LeadTracking } from '@/application/analytics/leadTracking'
-import { ContactService } from '@/domain/contact/services/ContactService'
 
 describe('SubmitContactUseCase', () => {
-  it('submits, registers lead, and publishes event on success', async () => {
-    const contactService = new ContactService()
+  it('submits and registers lead on success', async () => {
     const contactGateway: ContactGateway = {
       submit: vi.fn().mockResolvedValue({ ok: true, data: {} })
     }
@@ -28,10 +25,6 @@ describe('SubmitContactUseCase', () => {
     const navigator: NavigatorProvider = {
       userAgent: () => 'test-agent'
     }
-    const eventBus: EventBus = {
-      publish: vi.fn(),
-      subscribe: vi.fn()
-    }
     const leadTracking: LeadTracking = {
       registerLeadForThanksPage: vi.fn().mockReturnValue('lead_1'),
       trackGenerateLeadOnce: vi.fn()
@@ -39,12 +32,10 @@ describe('SubmitContactUseCase', () => {
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
-      contactService,
       contactGateway,
       contactBackend,
       location,
       navigator,
-      eventBus,
       leadTracking,
       clock
     )
@@ -62,14 +53,10 @@ describe('SubmitContactUseCase', () => {
     expect(result.ok).toBe(true)
     expect(contactGateway.submit).toHaveBeenCalledTimes(1)
     expect(leadTracking.registerLeadForThanksPage).toHaveBeenCalledTimes(1)
-    expect(eventBus.publish).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'contact.submitted' })
-    )
     expect(contactBackend.markAvailable).toHaveBeenCalledTimes(1)
   })
 
   it('returns validation error when domain validation fails', async () => {
-    const contactService = new ContactService()
     const contactGateway: ContactGateway = {
       submit: vi.fn()
     }
@@ -88,10 +75,6 @@ describe('SubmitContactUseCase', () => {
     const navigator: NavigatorProvider = {
       userAgent: () => 'test-agent'
     }
-    const eventBus: EventBus = {
-      publish: vi.fn(),
-      subscribe: vi.fn()
-    }
     const leadTracking: LeadTracking = {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
@@ -99,12 +82,10 @@ describe('SubmitContactUseCase', () => {
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
-      contactService,
       contactGateway,
       contactBackend,
       location,
       navigator,
-      eventBus,
       leadTracking,
       clock
     )
@@ -127,7 +108,6 @@ describe('SubmitContactUseCase', () => {
   })
 
   it('returns unavailable when backend is not available', async () => {
-    const contactService = new ContactService()
     const contactGateway: ContactGateway = {
       submit: vi.fn()
     }
@@ -146,10 +126,6 @@ describe('SubmitContactUseCase', () => {
     const navigator: NavigatorProvider = {
       userAgent: () => 'test-agent'
     }
-    const eventBus: EventBus = {
-      publish: vi.fn(),
-      subscribe: vi.fn()
-    }
     const leadTracking: LeadTracking = {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
@@ -157,12 +133,10 @@ describe('SubmitContactUseCase', () => {
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
-      contactService,
       contactGateway,
       contactBackend,
       location,
       navigator,
-      eventBus,
       leadTracking,
       clock
     )
@@ -185,7 +159,6 @@ describe('SubmitContactUseCase', () => {
   })
 
   it('marks backend unavailable on 5xx errors', async () => {
-    const contactService = new ContactService()
     const contactGateway: ContactGateway = {
       submit: vi.fn().mockResolvedValue({
         ok: false,
@@ -207,10 +180,6 @@ describe('SubmitContactUseCase', () => {
     const navigator: NavigatorProvider = {
       userAgent: () => 'test-agent'
     }
-    const eventBus: EventBus = {
-      publish: vi.fn(),
-      subscribe: vi.fn()
-    }
     const leadTracking: LeadTracking = {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
@@ -218,12 +187,10 @@ describe('SubmitContactUseCase', () => {
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
-      contactService,
       contactGateway,
       contactBackend,
       location,
       navigator,
-      eventBus,
       leadTracking,
       clock
     )
@@ -243,7 +210,6 @@ describe('SubmitContactUseCase', () => {
   })
 
   it('marks backend available on non-network non-5xx errors', async () => {
-    const contactService = new ContactService()
     const contactGateway: ContactGateway = {
       submit: vi.fn().mockResolvedValue({
         ok: false,
@@ -265,10 +231,6 @@ describe('SubmitContactUseCase', () => {
     const navigator: NavigatorProvider = {
       userAgent: () => 'test-agent'
     }
-    const eventBus: EventBus = {
-      publish: vi.fn(),
-      subscribe: vi.fn()
-    }
     const leadTracking: LeadTracking = {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
@@ -276,12 +238,10 @@ describe('SubmitContactUseCase', () => {
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
-      contactService,
       contactGateway,
       contactBackend,
       location,
       navigator,
-      eventBus,
       leadTracking,
       clock
     )
@@ -301,7 +261,6 @@ describe('SubmitContactUseCase', () => {
   })
 
   it('does not update backend state on network errors', async () => {
-    const contactService = new ContactService()
     const contactGateway: ContactGateway = {
       submit: vi.fn().mockResolvedValue({
         ok: false,
@@ -323,10 +282,6 @@ describe('SubmitContactUseCase', () => {
     const navigator: NavigatorProvider = {
       userAgent: () => 'test-agent'
     }
-    const eventBus: EventBus = {
-      publish: vi.fn(),
-      subscribe: vi.fn()
-    }
     const leadTracking: LeadTracking = {
       registerLeadForThanksPage: vi.fn(),
       trackGenerateLeadOnce: vi.fn()
@@ -334,12 +289,10 @@ describe('SubmitContactUseCase', () => {
     const clock: Clock = { now: () => 1700000000000 }
 
     const useCase = new SubmitContactUseCase(
-      contactService,
       contactGateway,
       contactBackend,
       location,
       navigator,
-      eventBus,
       leadTracking,
       clock
     )

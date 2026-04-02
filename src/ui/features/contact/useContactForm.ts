@@ -5,6 +5,7 @@ import {
   subscribeToContactBackendStatus,
   type ContactBackendStatus
 } from '@/ui/controllers/contactBackendController'
+import type { ContactError } from '@/application/types/errors'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactFormPayload } from '@/application/dto/contact'
 import {
@@ -89,30 +90,16 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
   const { validate } = useContactValidation()
 
   const router = useRouter()
+  const feedbackMessages = {
+    unavailable: contact.unavailableMessage,
+    error: contact.errorMessage
+  }
 
   async function handleSubmit(): Promise<void> {
     const formElement = formRef.value
-    const payload: ContactFormPayload = {
-      firstName: form.firstName,
-      lastName: form.lastName,
-      company: form.company,
-      email: form.email,
-      phone: form.phone,
-      ...(form.preferredContactChannel ? { preferredContactChannel: form.preferredContactChannel } : {}),
-      geographicLocation: form.geographicLocation,
-      comment: form.comment,
-      ...(form.captchaToken ? { captchaToken: form.captchaToken } : {})
-    }
-    feedback.message = ''
-    feedback.success = false
-    clearFieldErrors()
-
-    emitRuntimeDebug('[contact:ui] submit iniciado', {
-      channel: backendChannel,
-      sectionId,
-      backendStatus: backendStatus.value,
-      payload: summarizeContactDraft(payload)
-    })
+    const payload = buildSubmitPayload(form)
+    resetSubmissionState()
+    logSubmitStarted(payload)
 
     if (!isChannelEnabled.value) {
       emitRuntimeWarn('[contact:ui] submit bloqueado', {
@@ -134,61 +121,19 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
     try {
       const parsed = validate(payload)
       if (!parsed.ok) {
-        applyFieldErrors(parsed.fieldErrors)
-        emitRuntimeWarn('[contact:ui] validacion local fallo', {
-          channel: backendChannel,
-          sectionId,
-          invalidFields: collectInvalidContactFields(parsed.fieldErrors)
-        })
-        await announceFeedback(contact.errorMessage, false)
+        await handleValidationFailure(parsed.fieldErrors)
         return
       }
 
-      emitRuntimeDebug('[contact:ui] validacion local OK', {
-        channel: backendChannel,
-        sectionId
-      })
-
-      emitRuntimeDebug('[contact:ui] enviando solicitud al caso de uso', {
-        channel: backendChannel,
-        sectionId
-      })
+      logValidSubmission()
 
       const result = await props.onSubmit(parsed.data)
       if (result?.ok === true) {
-        emitRuntimeInfo('[contact:ui] submit OK', {
-          channel: backendChannel,
-          sectionId,
-          requestId: result.data.requestId ?? null,
-          submissionId: result.data.submissionId ?? null,
-          submitStatus: result.data.submitStatus ?? null,
-          processingStatus: result.data.processingStatus ?? null
-        })
-        await router.push({ name: 'thanks' })
-        emitRuntimeDebug('[contact:ui] navegacion a thanks completada', {
-          channel: backendChannel,
-          sectionId
-        })
+        await handleSubmitSuccess(result.data)
         return
-      } else {
-        const normalizedError = summarizeContactError(result?.error) ?? { type: 'UnknownError' }
-        emitRuntimeWarn('[contact:ui] submit fallo', {
-          channel: backendChannel,
-          sectionId,
-          error: normalizedError
-        })
-        await announceFeedback(
-          mapContactError(result?.error, {
-            unavailable: contact.unavailableMessage,
-            error: contact.errorMessage
-          }),
-          false
-        )
-        emitRuntimeDebug('[contact:ui] feedback de error mostrado', {
-          channel: backendChannel,
-          sectionId
-        })
       }
+
+      await handleSubmitFailure(result?.error)
     } catch (error) {
       emitRuntimeError('[contact:ui] excepcion inesperada durante submit', {
         channel: backendChannel,
@@ -235,6 +180,96 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
     feedback,
     feedbackMessageRef,
     handleSubmit
+  }
+
+  function buildSubmitPayload(source: ContactFormPayload): ContactFormPayload {
+    return {
+      firstName: source.firstName,
+      lastName: source.lastName,
+      company: source.company,
+      email: source.email,
+      phone: source.phone,
+      ...(source.preferredContactChannel
+        ? { preferredContactChannel: source.preferredContactChannel }
+        : {}),
+      geographicLocation: source.geographicLocation,
+      comment: source.comment,
+      ...(source.captchaToken ? { captchaToken: source.captchaToken } : {})
+    }
+  }
+
+  function resetSubmissionState(): void {
+    feedback.message = ''
+    feedback.success = false
+    clearFieldErrors()
+  }
+
+  function logSubmitStarted(payload: ContactFormPayload): void {
+    emitRuntimeDebug('[contact:ui] submit iniciado', {
+      channel: backendChannel,
+      sectionId,
+      backendStatus: backendStatus.value,
+      payload: summarizeContactDraft(payload)
+    })
+  }
+
+  async function handleValidationFailure(nextErrors: Partial<ContactFieldErrors>): Promise<void> {
+    applyFieldErrors(nextErrors)
+    emitRuntimeWarn('[contact:ui] validacion local fallo', {
+      channel: backendChannel,
+      sectionId,
+      invalidFields: collectInvalidContactFields(nextErrors)
+    })
+    await announceFeedback(contact.errorMessage, false)
+  }
+
+  function logValidSubmission(): void {
+    emitRuntimeDebug('[contact:ui] validacion local OK', {
+      channel: backendChannel,
+      sectionId
+    })
+
+    emitRuntimeDebug('[contact:ui] enviando solicitud al caso de uso', {
+      channel: backendChannel,
+      sectionId
+    })
+  }
+
+  async function handleSubmitSuccess(data: {
+    requestId?: string
+    submissionId?: string
+    submitStatus?: string
+    processingStatus?: string
+  }): Promise<void> {
+    emitRuntimeInfo('[contact:ui] submit OK', {
+      channel: backendChannel,
+      sectionId,
+      requestId: data.requestId ?? null,
+      submissionId: data.submissionId ?? null,
+      submitStatus: data.submitStatus ?? null,
+      processingStatus: data.processingStatus ?? null
+    })
+    await router.push({ name: 'thanks' })
+    emitRuntimeDebug('[contact:ui] navegacion a thanks completada', {
+      channel: backendChannel,
+      sectionId
+    })
+  }
+
+  async function handleSubmitFailure(error: ContactError | undefined): Promise<void> {
+    const normalizedError = summarizeContactError(error) ?? {
+      type: 'UnknownError'
+    }
+    emitRuntimeWarn('[contact:ui] submit fallo', {
+      channel: backendChannel,
+      sectionId,
+      error: normalizedError
+    })
+    await announceFeedback(mapContactError(error, feedbackMessages), false)
+    emitRuntimeDebug('[contact:ui] feedback de error mostrado', {
+      channel: backendChannel,
+      sectionId
+    })
   }
 
   function clearFieldErrors(): void {
