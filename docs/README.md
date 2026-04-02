@@ -46,6 +46,18 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 - Si un documento describe un estado puntual con fecha, tratarlo como snapshot, no como contrato maestro.
 - Si dos documentos cubren el mismo contrato, uno debe quedar explicitamente como canonico y el otro como contexto historico o de migracion.
 
+## Anti-sobreingenieria
+
+- No introducir `adapter`, `facade`, `controller`, `service` o `event handler` que solo deleguen 1:1 sin agregar politica real.
+- Una abstraccion nueva debe justificar al menos uno de estos casos:
+  - encapsula una regla de negocio o de consentimiento,
+  - aisla una variacion real de implementacion,
+  - protege un boundary externo,
+  - reduce acoplamiento en mas de un consumidor activo.
+- Si una capa solo reexporta llamadas al container o a una implementacion concreta, preferir uso directo desde el consumidor.
+- Si un modulo solo tiene referencias desde tests y ninguna desde runtime, tratarlo como candidato a codigo muerto hasta demostrar un roadmap concreto.
+- Antes de agregar una nueva capa, verificar si la complejidad se puede resolver con una funcion pequena, un puerto inline o una utilidad local.
+
 ## Triggers de Refactor (ADR-011)
 
 - Se mantiene cohesion actual en componentes grandes mientras no se activen triggers tecnicos.
