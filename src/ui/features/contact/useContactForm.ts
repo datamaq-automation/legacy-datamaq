@@ -1,10 +1,6 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import {
-  ensureContactBackendStatus,
-  getContactBackendStatus,
-  subscribeToContactBackendStatus,
-  type ContactBackendStatus
-} from '@/ui/controllers/contactBackendController'
+import { useContainer } from '@/di/container'
+import type { ContactBackendStatus } from '@/application/contact/contactBackendStatus'
 import type { ContactError } from '@/application/types/errors'
 import type { ContactFormProps } from './contactTypes'
 import type { ContactFormPayload } from '@/application/dto/contact'
@@ -63,6 +59,7 @@ type ContactSubmitFeedbackState = {
 }
 
 export function useContactForm(props: ContactFormProps, contact: ResolvedContactFormContent) {
+  const { contactBackend } = useContainer()
   const backendChannel = 'contact'
   const sectionId = props.sectionId?.trim() || 'contacto'
   const titleId = `${sectionId}-title`
@@ -71,7 +68,7 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
   const formRef = ref<HTMLFormElement | null>(null)
   const form = reactive(createEmptyForm())
   const fieldErrors = reactive(createEmptyFieldErrors())
-  const backendStatus = ref<ContactBackendStatus>(getContactBackendStatus())
+  const backendStatus = ref<ContactBackendStatus>(contactBackend.getStatus())
   const isBackendAvailable = computed(() => backendStatus.value === 'available')
   const isCheckingBackend = computed(() => backendStatus.value === 'unknown')
   const isChannelEnabled = computed(() => isBackendAvailable.value)
@@ -151,10 +148,10 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
   }
 
   onMounted(() => {
-    unsubscribeFromStatus = subscribeToContactBackendStatus((status) => {
+    unsubscribeFromStatus = contactBackend.subscribe((status) => {
       backendStatus.value = status
     })
-    void ensureContactBackendStatus()
+    void contactBackend.ensureStatus()
       .then((status) => {
         void status
       })

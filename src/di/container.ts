@@ -8,11 +8,13 @@ import { EngagementTracker } from '@/application/analytics/engagementTracker'
 import { LeadTracking } from '@/application/analytics/leadTracking'
 import { SubmitContactUseCase } from '@/application/use-cases/submitContact'
 import { TrackingFacade } from '@/application/analytics/trackingFacade'
-import { BrowserAnalyticsAdapter } from '@/infrastructure/analytics/browserAnalyticsAdapter'
-import { BrowserConsentAdapter } from '@/infrastructure/consent/browserConsentAdapter'
+import type { AnalyticsPort } from '@/application/ports/Analytics'
+import type { ConsentPort } from '@/application/ports/Consent'
 import { ViteConfig } from '@/infrastructure/config/viteConfig'
 import { BrowserEnvironment } from '@/infrastructure/environment/browserEnvironment'
 import { FetchHttpClient } from '@/infrastructure/http/fetchHttpClient'
+import { trackEvent, trackPageView } from '@/infrastructure/analytics'
+import { getAnalyticsConsent, setAnalyticsConsent } from '@/infrastructure/consent/consent'
 import { NoopLogger } from '@/infrastructure/logging/noopLogger'
 import { BrowserStorage } from '@/infrastructure/storage/browserStorage'
 import { BrowserSessionStorage } from '@/infrastructure/storage/browserSessionStorage'
@@ -25,8 +27,22 @@ const environment = new BrowserEnvironment()
 const logger = new NoopLogger()
 const config = new ViteConfig()
 const http = new FetchHttpClient(logger)
-const analyticsPort = new BrowserAnalyticsAdapter()
-const consentPort = new BrowserConsentAdapter()
+const analyticsPort: AnalyticsPort = {
+  trackEvent(name, params) {
+    trackEvent(name, params)
+  },
+  trackPageView(payload) {
+    trackPageView(payload)
+  }
+}
+const consentPort: ConsentPort = {
+  getAnalyticsConsent() {
+    return getAnalyticsConsent()
+  },
+  setAnalyticsConsent(value) {
+    setAnalyticsConsent(value)
+  }
+}
 const tracking = new TrackingFacade(analyticsPort, consentPort)
 const contactBackend = new ContactBackendMonitor(http, config, environment, logger)
 const engagementTracker = new EngagementTracker(environment, environment, tracking, logger)

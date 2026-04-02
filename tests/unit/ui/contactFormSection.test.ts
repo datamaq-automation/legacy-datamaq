@@ -16,16 +16,15 @@ const backendMocks = vi.hoisted(() => {
   }
 })
 
-vi.mock('@/ui/controllers/contactBackendController', () => ({
-  getContactBackendStatus: () => backendMocks.getCurrentStatus(),
-  subscribeToContactBackendStatus: backendMocks.subscribeToContactBackendStatus,
-  ensureContactBackendStatus: backendMocks.ensureContactBackendStatus
-}))
-
 vi.mock('@/di/container', () => ({
   useContainer: () => ({
     config: {
       inquiryApiUrl: undefined
+    },
+    contactBackend: {
+      getStatus: () => backendMocks.getCurrentStatus(),
+      subscribe: backendMocks.subscribeToContactBackendStatus,
+      ensureStatus: backendMocks.ensureContactBackendStatus
     },
     content: {
       getBrandContent: () => ({
