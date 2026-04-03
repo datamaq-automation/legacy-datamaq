@@ -6,6 +6,7 @@ import type { Result } from '@/domain/shared/result'
 import type { ContactFormPayload, ContactSubmitSuccess } from '../dto/contact'
 import type { LeadTracking } from '../analytics/leadTracking'
 import { mapContactRequestToSubmitPayload } from '@/application/contact/mappers/contactPayloadMapper'
+import { normalizeContactFormPayload } from '@/application/contact/contactPayloadNormalization'
 import { ContactRequest } from '@/domain/contact/entities/ContactRequest'
 import {
   summarizeContactDraft,
@@ -112,49 +113,6 @@ function inferContactNameFromEmail(email: string): string {
   return normalizedLocalPart.length >= 2 ? normalizedLocalPart : fallback
 }
 
-function normalizeContactFormPayload(payload: ContactFormPayload): {
-  firstName?: string
-  lastName?: string
-  company?: string
-  email?: string
-  phone?: string
-  preferredContactChannel?: 'whatsapp' | 'email'
-  geographicLocation?: string
-  comment?: string
-  captchaToken?: string
-} {
-  const firstName = normalizeOptional(payload.firstName)
-  const lastName = normalizeOptional(payload.lastName)
-  const company = normalizeOptional(payload.company)
-  const email = normalizeOptional(payload.email)
-  const phone = normalizeOptional(payload.phone)
-  const preferredContactChannel = normalizePreferredContactChannel(payload.preferredContactChannel)
-  const geographicLocation = normalizeOptional(payload.geographicLocation)
-  const comment = normalizeOptional(payload.comment)
-  const captchaToken = normalizeOptional(payload.captchaToken ?? '')
-
-  return {
-    ...(firstName ? { firstName } : {}),
-    ...(lastName ? { lastName } : {}),
-    ...(company ? { company } : {}),
-    ...(email ? { email } : {}),
-    ...(phone ? { phone } : {}),
-    ...(preferredContactChannel ? { preferredContactChannel } : {}),
-    ...(geographicLocation ? { geographicLocation } : {}),
-    ...(comment ? { comment } : {}),
-    ...(captchaToken ? { captchaToken } : {})
-  }
-}
-
-function normalizePreferredContactChannel(
-  value: ContactFormPayload['preferredContactChannel']
-): 'whatsapp' | 'email' | undefined {
-  if (value === 'whatsapp' || value === 'email') {
-    return value
-  }
-  return undefined
-}
-
 function buildContactDisplayName(payload: {
   firstName?: string
   lastName?: string
@@ -180,11 +138,6 @@ function buildContactDisplayName(payload: {
   }
 
   return 'Contacto Web'
-}
-
-function normalizeOptional(value: string): string | undefined {
-  const trimmed = value.trim()
-  return trimmed || undefined
 }
 
 function buildContactId(now: number): string {
