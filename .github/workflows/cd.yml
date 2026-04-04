@@ -1,4 +1,4 @@
-name: CD / FTPS
+name: CD / SSH
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     paths:
       # Keep direct push trigger only for files ignored by CI,
       # so we avoid duplicate CD runs (push + workflow_run).
-      - 'scripts/ftps-deploy.sh'
+      - 'scripts/ssh-deploy.sh'
       - '.github/workflows/cd.yml'
       - '.github/actions/**'
   workflow_run:
@@ -22,128 +22,23 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  DEPLOY_TARGET: datamaq
+  DEPLOY_ENVIRONMENT: production
+  DEPLOY_HEALTH_URL: https://datamaq.com.ar
+  SSH_HOST: 168.181.184.103
+  SSH_PORT: "5932"
+  SSH_USER: root
+  SSH_REMOTE_DIR: /home/datamaq/public_html
 
 concurrency:
-  group: cd-ftps-${{ github.event.workflow_run.head_branch || github.ref }}
+  group: cd-ssh-${{ github.event.workflow_run.head_branch || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  preflight-ftps:
-    name: Preflight / FTPS (${{ matrix.target }})
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    if: >
-      (github.event_name == 'workflow_dispatch' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'push' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       github.event.workflow_run.head_branch == 'main')
-    environment: ${{ matrix.environment_name }}
-    env:
-      FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
-      FTPS_PORT: ${{ vars[matrix.ftps_port_var] || '21' }}
-      FTPS_MODE: ${{ vars[matrix.ftps_mode_var] || 'explicit' }}
-      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
-      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
-      FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
-      FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] || 'false' }}
-      FTPS_PREFLIGHT_TIMEOUT_SECONDS: ${{ vars.FTPS_PREFLIGHT_TIMEOUT_SECONDS || '120' }}
-      FTPS_LFTP_DEBUG_LEVEL: 7
-      FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: datamaq
-            environment_name: production
-            ftps_server_secret: FTPS_DATAMAQ_SERVER
-            ftps_server_var: FTPS_DATAMAQ_SERVER
-            ftps_username_secret: FTPS_DATAMAQ_USERNAME
-            ftps_username_var: FTPS_DATAMAQ_USERNAME
-            ftps_password_secret: FTPS_DATAMAQ_PASSWORD
-            ftps_password_var: FTPS_DATAMAQ_PASSWORD
-            ftps_remote_dir_secret: FTPS_DATAMAQ_REMOTE_DIR
-            ftps_port_var: FTPS_DATAMAQ_PORT
-            ftps_mode_var: FTPS_DATAMAQ_MODE
-            ftps_remote_dir_var: FTPS_DATAMAQ_REMOTE_DIR
-            ftps_allow_insecure_data_channel_var: FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
-            health_url: https://datamaq.com.ar
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6.0.2 # Node 24 compatible
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-
-      - name: Preflight / Script fingerprint
-        run: |
-          echo "Using commit: $(git rev-parse --short HEAD)"
-          sha256sum scripts/ftps-deploy.sh
-          head -n 20 scripts/ftps-deploy.sh
-
-      - name: Preflight / Validate deploy inputs
-        run: bash scripts/ftps-deploy.sh validate
-      
-      - name: Preflight / Diagnose FTPS env presence
-        if: failure()
-        run: |
-          echo "::group::FTPS env presence"
-          echo "environment_name=${{ matrix.environment_name }}"
-          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL FTPS_PREFLIGHT_TIMEOUT_SECONDS; do
-            if [ -n "${!key:-}" ]; then
-              echo "::notice::${key}=present"
-            else
-              echo "::warning::${key}=missing"
-            fi
-          done
-          echo "Expected per-target keys:"
-          echo "  secrets/vars: ${{ matrix.ftps_server_secret }} | ${{ matrix.ftps_server_var }}"
-          echo "  secrets/vars: ${{ matrix.ftps_username_secret }} | ${{ matrix.ftps_username_var }}"
-          echo "  secrets/vars: ${{ matrix.ftps_password_secret }} | ${{ matrix.ftps_password_var }}"
-          echo "  secret/var:   ${{ matrix.ftps_remote_dir_secret }} | ${{ matrix.ftps_remote_dir_var }}"
-          echo "::endgroup::"
-
-      - name: Preflight / Install lftp client
-        run: |
-          if ! command -v lftp &> /dev/null; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq lftp
-          fi
-
-      - name: Preflight / FTPS connectivity and auth
-        run: bash scripts/ftps-deploy.sh preflight
-
-      - name: Preflight / Debug context
-        if: failure()
-        run: |
-          echo "::group::Runner environment"
-          env | grep -E '^(GITHUB|RUNNER|CI)' || true
-          echo "::endgroup::"
-          echo "::group::Workspace snapshot"
-          pwd
-          ls -la
-          echo "::endgroup::"
-
-      - name: Preflight / Upload debug artifacts
-        if: failure()
-        uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
-        with:
-          name: preflight-debug-${{ matrix.target }}
-          path: |
-            .tmp-*.log
-            .tmp-*.err.log
-          if-no-files-found: ignore
-          retention-days: 7
-
   build-artifact:
-    name: Build / Artifact (${{ matrix.target }})
+    name: Build / Artifact (datamaq)
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: preflight-ftps
     if: >
       (github.event_name == 'workflow_dispatch' &&
        github.ref == 'refs/heads/main') ||
@@ -153,24 +48,9 @@ jobs:
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_branch == 'main')
-    environment: ${{ matrix.environment_name }}
+    environment: production
     outputs:
       expected_asset: ${{ steps.build-fingerprint.outputs.expected_asset }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: datamaq
-            environment_name: production
-            ftps_server_secret: FTPS_DATAMAQ_SERVER
-            ftps_username_secret: FTPS_DATAMAQ_USERNAME
-            ftps_password_secret: FTPS_DATAMAQ_PASSWORD
-            ftps_remote_dir_secret: FTPS_DATAMAQ_REMOTE_DIR
-            ftps_port_var: FTPS_DATAMAQ_PORT
-            ftps_mode_var: FTPS_DATAMAQ_MODE
-            ftps_remote_dir_var: FTPS_DATAMAQ_REMOTE_DIR
-            ftps_allow_insecure_data_channel_var: FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
-            health_url: https://datamaq.com.ar
 
     steps:
       - name: Checkout
@@ -178,13 +58,13 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
-      - name: Deploy / Script fingerprint
+      - name: Build / Script fingerprint
         run: |
           echo "Using commit: $(git rev-parse --short HEAD)"
-          sha256sum scripts/ftps-deploy.sh
-          head -n 20 scripts/ftps-deploy.sh
+          sha256sum scripts/ssh-deploy.sh
+          head -n 20 scripts/ssh-deploy.sh
 
-      - name: Deploy metadata
+      - name: Build metadata
         run: |
           echo "event_name=${{ github.event_name }}"
           echo "workflow_run.head_branch=${{ github.event.workflow_run.head_branch }}"
@@ -204,11 +84,11 @@ jobs:
 
       - name: Build / Dist
         env:
-          QUOTE_READ_API_KEYS: ${{ secrets[format('{0}', 'QUOTE_READ_API_KEYS')] || vars[format('{0}', 'QUOTE_READ_API_KEYS')] || '' }}
+          QUOTE_READ_API_KEYS: ${{ secrets.QUOTE_READ_API_KEYS || vars.QUOTE_READ_API_KEYS || '' }}
         run: |
           set -euo pipefail
           export BUILD_OUT_DIR=dist
-          npm run build -- ${{ matrix.target }}
+          npm run build -- datamaq
 
       - name: Build / Extract expected asset fingerprint
         id: build-fingerprint
@@ -225,66 +105,28 @@ jobs:
       - name: Upload dist artifact
         uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
         with:
-          name: dist-${{ matrix.target }}
+          name: dist-datamaq
           path: dist/
           retention-days: 7
 
       - name: Upload build debug metadata
         uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
         with:
-          name: build-debug-${{ matrix.target }}
+          name: build-debug-datamaq
           path: |
             dist/index.html
             dist/sitemap.xml
           retention-days: 7
 
-  deploy-ftps:
-    name: Deploy / FTPS (${{ matrix.target }})
+  deploy-ssh:
+    name: Deploy / SSH (datamaq)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs:
-      - preflight-ftps
       - build-artifact
-    if: >
-      (github.event_name == 'workflow_dispatch' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'push' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       github.event.workflow_run.head_branch == 'main')
-    environment: ${{ matrix.environment_name }}
+    environment: production
     env:
-      FTPS_TARGET_LABEL: ${{ matrix.target }}
-      FTPS_SERVER: ${{ secrets[matrix.ftps_server_secret] || vars[matrix.ftps_server_var] || secrets.FTPS_SERVER || vars.FTPS_SERVER }}
-      FTPS_PORT: ${{ vars[matrix.ftps_port_var] || '21' }}
-      FTPS_MODE: ${{ vars[matrix.ftps_mode_var] || 'explicit' }}
-      FTPS_USERNAME: ${{ secrets[matrix.ftps_username_secret] || vars[matrix.ftps_username_var] || secrets.FTPS_USERNAME || vars.FTPS_USERNAME }}
-      FTPS_PASSWORD: ${{ secrets[matrix.ftps_password_secret] || vars[matrix.ftps_password_var] || secrets.FTPS_PASSWORD || vars.FTPS_PASSWORD }}
-      FTPS_REMOTE_DIR: ${{ vars[matrix.ftps_remote_dir_var] || secrets[matrix.ftps_remote_dir_secret] || vars.FTPS_REMOTE_DIR || secrets.FTPS_REMOTE_DIR }}
-      FTPS_ALLOW_INSECURE_DATA_CHANNEL: ${{ vars[matrix.ftps_allow_insecure_data_channel_var] || 'false' }}
-      FTPS_UPLOAD_TIMEOUT_SECONDS: ${{ vars.FTPS_UPLOAD_TIMEOUT_SECONDS || '240' }}
-      FTPS_LFTP_DEBUG_LEVEL: 5
-      FTPS_PRUNE_REMOTE: ${{ vars.FTPS_PRUNE_REMOTE }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: datamaq
-            environment_name: production
-            ftps_server_secret: FTPS_DATAMAQ_SERVER
-            ftps_server_var: FTPS_DATAMAQ_SERVER
-            ftps_username_secret: FTPS_DATAMAQ_USERNAME
-            ftps_username_var: FTPS_DATAMAQ_USERNAME
-            ftps_password_secret: FTPS_DATAMAQ_PASSWORD
-            ftps_password_var: FTPS_DATAMAQ_PASSWORD
-            ftps_remote_dir_secret: FTPS_DATAMAQ_REMOTE_DIR
-            ftps_port_var: FTPS_DATAMAQ_PORT
-            ftps_mode_var: FTPS_DATAMAQ_MODE
-            ftps_remote_dir_var: FTPS_DATAMAQ_REMOTE_DIR
-            ftps_allow_insecure_data_channel_var: FTPS_DATAMAQ_ALLOW_INSECURE_DATA_CHANNEL
-            health_url: https://datamaq.com.ar
+      SSH_PRIVATE_KEY: ${{ secrets.FTP_SSH_PRIVATE_KEY }}
 
     steps:
       - name: Checkout
@@ -292,58 +134,37 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
-      - name: Deploy metadata
+      - name: Deploy / Validate SSH env presence
         run: |
-          echo "event_name=${{ github.event_name }}"
-          echo "workflow_run.head_branch=${{ github.event.workflow_run.head_branch }}"
-          echo "workflow_run.head_sha=${{ github.event.workflow_run.head_sha }}"
-          echo "github.ref=${{ github.ref }}"
-          echo "github.sha=${{ github.sha }}"
-          git rev-parse --short HEAD
-
-      - name: Deploy / Validate deploy inputs
-        run: bash scripts/ftps-deploy.sh validate
-      
-      - name: Deploy / Diagnose FTPS env presence
-        if: failure()
-        run: |
-          echo "::group::FTPS env presence"
-          echo "environment_name=${{ matrix.environment_name }}"
-          for key in FTPS_SERVER FTPS_USERNAME FTPS_PASSWORD FTPS_REMOTE_DIR FTPS_PORT FTPS_MODE FTPS_ALLOW_INSECURE_DATA_CHANNEL FTPS_UPLOAD_TIMEOUT_SECONDS; do
+          echo "::group::SSH env presence"
+          for key in SSH_HOST SSH_PORT SSH_USER SSH_REMOTE_DIR SSH_PRIVATE_KEY; do
             if [ -n "${!key:-}" ]; then
               echo "::notice::${key}=present"
             else
               echo "::warning::${key}=missing"
             fi
           done
-          echo "Expected per-target keys:"
-          echo "  secrets/vars: ${{ matrix.ftps_server_secret }} | ${{ matrix.ftps_server_var }}"
-          echo "  secrets/vars: ${{ matrix.ftps_username_secret }} | ${{ matrix.ftps_username_var }}"
-          echo "  secrets/vars: ${{ matrix.ftps_password_secret }} | ${{ matrix.ftps_password_var }}"
-          echo "  secret/var:   ${{ matrix.ftps_remote_dir_secret }} | ${{ matrix.ftps_remote_dir_var }}"
           echo "::endgroup::"
 
-      - name: Deploy / Install lftp client
+      - name: Deploy / Install rsync and openssh-client
         run: |
-          if ! command -v lftp &> /dev/null; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq lftp
-          fi
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq rsync openssh-client
 
       - name: Download dist artifact
         uses: actions/download-artifact@v8.0.1 # Node 24 compatible
         with:
-          name: dist-${{ matrix.target }}
+          name: dist-datamaq
           path: dist/
 
-      - name: Deploy dist via FTPS
-        run: bash scripts/ftps-deploy.sh upload
+      - name: Deploy dist via SSH
+        run: bash scripts/ssh-deploy.sh upload
 
       - name: Deploy / Debug context
         if: failure()
         run: |
           echo "::group::Runner environment"
-          env | grep -E '^(GITHUB|RUNNER|CI)' || true
+          env | grep -E '^(GITHUB|RUNNER|CI|SSH_)' || true
           echo "::endgroup::"
           echo "::group::Workspace snapshot"
           pwd
@@ -355,50 +176,31 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
         with:
-          name: deploy-debug-${{ matrix.target }}
+          name: deploy-debug-datamaq
           include-hidden-files: true
           path: |
             dist/index.html
-            .tmp-*.log
-            .tmp-*.err.log
+            .tmp-ssh-*.log
           if-no-files-found: ignore
           retention-days: 7
 
   post-deploy-purge-cloudflare:
-    name: Post-deploy / Purge Cloudflare (${{ matrix.target }})
+    name: Post-deploy / Purge Cloudflare (datamaq)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
       - build-artifact
-      - deploy-ftps
-    if: >
-      (github.event_name == 'workflow_dispatch' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'push' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       github.event.workflow_run.head_branch == 'main')
-    environment: ${{ matrix.environment_name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: datamaq
-            environment_name: production
-            cloudflare_api_token_secret: CLOUDFLARE_API_TOKEN
-            cloudflare_zone_id_secret: CLOUDFLARE_ZONE_ID
-            health_url: https://datamaq.com.ar
+      - deploy-ssh
+    environment: production
 
     steps:
       - name: Post-deploy / Diagnose Cloudflare env presence
         env:
-          CF_API_TOKEN: ${{ secrets[matrix.cloudflare_api_token_secret] }}
-          CF_ZONE_ID: ${{ secrets[matrix.cloudflare_zone_id_secret] }}
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
         run: |
           echo "::group::Cloudflare env presence"
-          echo "environment_name=${{ matrix.environment_name }}"
+          echo "environment_name=${DEPLOY_ENVIRONMENT}"
           if [ -n "${CF_API_TOKEN:-}" ]; then
             echo "::notice::CF_API_TOKEN=present"
           else
@@ -409,14 +211,13 @@ jobs:
           else
             echo "::notice::CF_ZONE_ID=missing"
           fi
-          echo "Expected secrets: ${{ matrix.cloudflare_api_token_secret }} and ${{ matrix.cloudflare_zone_id_secret }}"
+          echo "Expected secrets: CLOUDFLARE_API_TOKEN and CLOUDFLARE_ZONE_ID"
           echo "::endgroup::"
 
       - name: Post-deploy / Purge Cloudflare cache
-        if: matrix.target == 'datamaq'
         env:
-          CF_API_TOKEN: ${{ secrets[matrix.cloudflare_api_token_secret] }}
-          CF_ZONE_ID: ${{ secrets[matrix.cloudflare_zone_id_secret] }}
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
         run: |
           set -euo pipefail
           if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ZONE_ID:-}" ]; then
@@ -440,36 +241,22 @@ jobs:
           echo "Cloudflare purge successful."
 
   post-deploy-verify-site:
-    name: Post-deploy / Verify Site (${{ matrix.target }})
+    name: Post-deploy / Verify Site (datamaq)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
       - build-artifact
-      - deploy-ftps
+      - deploy-ssh
       - post-deploy-purge-cloudflare
     if: >
-      ((github.event_name == 'workflow_dispatch' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'push' &&
-       github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       github.event.workflow_run.head_branch == 'main')) &&
       always() &&
       needs.build-artifact.result == 'success' &&
-      needs.deploy-ftps.result == 'success'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: datamaq
-            health_url: https://datamaq.com.ar
+      needs.deploy-ssh.result == 'success'
 
     steps:
       - name: Post-deploy / Verify remote index fingerprint
         env:
-          DEPLOY_BASE_URL: ${{ matrix.health_url }}
+          DEPLOY_BASE_URL: ${{ env.DEPLOY_HEALTH_URL }}
           EXPECTED_ASSET: ${{ needs.build-artifact.outputs.expected_asset }}
         run: |
           set -euo pipefail
@@ -490,12 +277,12 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7.0.0 # Node 24 compatible
         with:
-          name: remote-index-${{ matrix.target }}
+          name: remote-index-datamaq
           path: remote-index.html
           if-no-files-found: ignore
           retention-days: 7
 
       - name: Post-deploy / Health check
         run: |
-          echo "Verifying deployment for ${{ matrix.target }}..."
-          curl -Ifs --retry 3 --retry-delay 5 --max-time 20 "${{ matrix.health_url }}"
+          echo "Verifying deployment for ${DEPLOY_TARGET}..."
+          curl -Ifs --retry 3 --retry-delay 5 --max-time 20 "${DEPLOY_HEALTH_URL}"
