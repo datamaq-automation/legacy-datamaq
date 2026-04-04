@@ -1,7 +1,7 @@
 ﻿import { expect, test } from '@playwright/test'
 
 const HOME_H1_PATTERN =
-  /Diagnostico e instalacion electrica|Servicio Tecnico Industrial Especializado|Automatizacion industrial y ciencia de datos para decisiones operativas|Contenido no disponible/i
+  /Diagnostico e instalacion electrica|Servicio Tecnico Industrial Especializado|Instalación e integración de equipos IoT para energía y producción|Contenido no disponible/i
 
 test.describe('Smoke E2E', () => {
   test.beforeEach(async ({ page }) => {
