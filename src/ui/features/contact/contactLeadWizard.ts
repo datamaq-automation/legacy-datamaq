@@ -3,17 +3,6 @@ export const CONTACT_LEAD_STEP_LABELS = ['Identidad', 'Proyecto', 'Contacto'] as
 
 export type PreferredContact = 'whatsapp' | 'email'
 
-export interface ContactLeadDraft {
-  firstName: string
-  lastName: string
-  company: string
-  email: string
-  comment: string
-  phone: string
-  preferredContact: PreferredContact
-  currentStep: number
-}
-
 export interface ContactPersistedDraft {
   company: string
   comment: string
@@ -22,28 +11,21 @@ export interface ContactPersistedDraft {
 }
 
 export interface ContactLeadStepErrors {
-  firstName?: string
-  lastName?: string
-  company?: string
   email?: string
-  comment?: string
   phone?: string
+}
+
+export interface FinalContactStepValues {
+  email: string
+  phone: string
+  preferredContact: PreferredContact
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function validateContactLeadStep(
-  step: number,
-  values: Pick<ContactLeadDraft, 'firstName' | 'lastName' | 'company' | 'email' | 'comment' | 'phone' | 'preferredContact'>
+  values: FinalContactStepValues
 ): ContactLeadStepErrors {
-  if (step === 1) {
-    return {}
-  }
-
-  if (step === 2) {
-    return {}
-  }
-
   const phone = values.phone.trim()
   const email = values.email.trim()
 
@@ -68,14 +50,7 @@ export function validateContactLeadStep(
 }
 
 export function hasContactLeadStepErrors(errors: ContactLeadStepErrors): boolean {
-  return Boolean(
-    errors.firstName ||
-      errors.lastName ||
-      errors.company ||
-      errors.email ||
-      errors.comment ||
-      errors.phone
-  )
+  return Boolean(errors.email || errors.phone)
 }
 
 export function normalizePreferredContact(value: unknown): PreferredContact {

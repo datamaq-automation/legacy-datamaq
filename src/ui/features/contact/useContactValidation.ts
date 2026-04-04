@@ -35,19 +35,7 @@ export function useContactValidation() {
       }
     }
 
-    const validatedPayload: ContactFormPayload = {
-      firstName: parsed.data.firstName,
-      lastName: parsed.data.lastName,
-      company: parsed.data.company,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      preferredContactChannel: parsed.data.preferredContactChannel,
-      geographicLocation: parsed.data.geographicLocation,
-      comment: parsed.data.comment,
-      captchaToken: parsed.data.captchaToken
-    }
-
-    return { ok: true, data: validatedPayload }
+    return { ok: true, data: parsed.data }
   }
 
   return {

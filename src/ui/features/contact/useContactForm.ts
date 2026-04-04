@@ -94,9 +94,8 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
 
   async function handleSubmit(): Promise<void> {
     const formElement = formRef.value
-    const payload = buildSubmitPayload(form)
     resetSubmissionState()
-    logSubmitStarted(payload)
+    logSubmitStarted(form)
 
     if (!isChannelEnabled.value) {
       emitRuntimeWarn('[contact:ui] submit bloqueado', {
@@ -116,7 +115,7 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
     }
     isSubmitting.value = true
     try {
-      const parsed = validate(payload)
+      const parsed = validate(form)
       if (!parsed.ok) {
         await handleValidationFailure(parsed.fieldErrors)
         return
@@ -177,22 +176,6 @@ export function useContactForm(props: ContactFormProps, contact: ResolvedContact
     feedback,
     feedbackMessageRef,
     handleSubmit
-  }
-
-  function buildSubmitPayload(source: ContactFormPayload): ContactFormPayload {
-    return {
-      firstName: source.firstName,
-      lastName: source.lastName,
-      company: source.company,
-      email: source.email,
-      phone: source.phone,
-      ...(source.preferredContactChannel
-        ? { preferredContactChannel: source.preferredContactChannel }
-        : {}),
-      geographicLocation: source.geographicLocation,
-      comment: source.comment,
-      ...(source.captchaToken ? { captchaToken: source.captchaToken } : {})
-    }
   }
 
   function resetSubmissionState(): void {

@@ -1,11 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SiteSnapshotSchema } from '@/domain/schemas/siteSchema'
-import { commercialConfig } from '@/infrastructure/content/Appcontent.active'
 import { ContentRepository } from '@/infrastructure/content/contentRepository'
 
 describe('ContentRepository', () => {
   afterEach(() => {
-    resetCommercialConfig()
     vi.restoreAllMocks()
   })
 
@@ -40,10 +38,3 @@ describe('ContentRepository', () => {
     expect(repository.getSeoContent().siteName).toBe('DataMaq')
   })
 })
-
-function resetCommercialConfig(): void {
-  commercialConfig.tarifaBaseDesdeARS = null
-  commercialConfig.trasladoMinimoARS = null
-  commercialConfig.visitaDiagnosticoHasta2hARS = null
-  commercialConfig.diagnosticoHoraAdicionalARS = null
-}

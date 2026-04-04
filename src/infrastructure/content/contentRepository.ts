@@ -1,24 +1,16 @@
 import type { ContentPort } from '@/application/ports/Content'
-import {
-  buildAppContent,
-  buildBrandContent,
-  buildSeoContent,
-  commercialConfig
-} from '@/infrastructure/content/Appcontent.active'
-import { ContentStore } from '@/infrastructure/content/contentStore'
+import { reactive } from 'vue'
+import { SiteSnapshotSchema } from '@/domain/schemas/siteSchema'
 import { normalizeNavbarContent } from '@/infrastructure/content/navbarNormalizer'
+import { datamaqSiteSnapshot } from '@/infrastructure/content/siteSnapshot.datamaq'
 import type { AppContent } from '@/domain/types/content'
 import type { SiteSnapshot } from '@/domain/types/site'
 
 export class ContentRepository implements ContentPort {
-  private readonly contentStore: ContentStore
-
-  constructor() {
-    this.contentStore = new ContentStore(commercialConfig, buildAppContent, buildBrandContent, buildSeoContent)
-  }
+  private parsedSiteCache: SiteSnapshot | undefined
 
   getContent(): AppContent {
-    const parsedContent = this.contentStore.getParsedContent()
+    const parsedContent = this.getParsedSiteSnapshot().content
     return {
       ...parsedContent,
       navbar: normalizeNavbarContent(parsedContent.navbar)
@@ -26,7 +18,7 @@ export class ContentRepository implements ContentPort {
   }
 
   getSiteSnapshot(): SiteSnapshot {
-    const snapshot = this.contentStore.getParsedSiteSnapshot()
+    const snapshot = this.getParsedSiteSnapshot()
     return {
       ...snapshot,
       content: this.getContent()
@@ -34,54 +26,68 @@ export class ContentRepository implements ContentPort {
   }
 
   getNavbarContent() {
-    return normalizeNavbarContent(this.contentStore.getParsedContent().navbar)
+    return normalizeNavbarContent(this.getParsedSiteSnapshot().content.navbar)
   }
 
   getFooterContent() {
-    return this.contentStore.getParsedContent().footer
+    return this.getParsedSiteSnapshot().content.footer
   }
 
   getContactContent() {
-    return this.contentStore.getParsedContent().contact
+    return this.getParsedSiteSnapshot().content.contact
   }
 
   getHeroContent() {
-    return this.contentStore.getParsedContent().hero
+    return this.getParsedSiteSnapshot().content.hero
   }
 
   getAboutContent() {
-    return this.contentStore.getParsedContent().about
+    return this.getParsedSiteSnapshot().content.about
   }
 
   getProfileContent() {
-    return this.contentStore.getParsedContent().profile
+    return this.getParsedSiteSnapshot().content.profile
   }
 
   getLegalContent() {
-    return this.contentStore.getParsedContent().legal
+    return this.getParsedSiteSnapshot().content.legal
   }
 
   getConsentContent() {
-    return this.contentStore.getParsedContent().consent
+    return this.getParsedSiteSnapshot().content.consent
   }
 
   getServicesContent() {
-    return this.contentStore.getParsedContent().services
+    return this.getParsedSiteSnapshot().content.services
   }
 
   getBrandContent() {
-    return this.contentStore.getParsedBrand()
+    return this.getParsedSiteSnapshot().brand
   }
 
   getSeoContent() {
-    return this.contentStore.getParsedSeo()
+    return this.getParsedSiteSnapshot().seo
   }
 
   getHomePageContent() {
-    return this.contentStore.getParsedContent().homePage
+    return this.getParsedSiteSnapshot().content.homePage
   }
 
   getContactPageContent() {
-    return this.contentStore.getParsedContent().contactPage
+    return this.getParsedSiteSnapshot().content.contactPage
+  }
+
+  private getParsedSiteSnapshot(): SiteSnapshot {
+    if (this.parsedSiteCache) {
+      return this.parsedSiteCache
+    }
+
+    const parsed = SiteSnapshotSchema.safeParse(datamaqSiteSnapshot)
+    if (!parsed.success) {
+      throw new Error('Invalid site schema')
+    }
+
+    this.parsedSiteCache = reactive(parsed.data as SiteSnapshot) as SiteSnapshot
+    return this.parsedSiteCache
   }
 }

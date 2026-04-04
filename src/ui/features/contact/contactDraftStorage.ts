@@ -1,4 +1,4 @@
-import type { ContactPersistedDraft } from '@/features/contact/application/leadWizard'
+import type { ContactPersistedDraft } from './contactLeadWizard'
 
 interface StoredContactDraft {
   expiresAt: number

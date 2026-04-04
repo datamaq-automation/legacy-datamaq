@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useContainer } from '@/di/container'
 import TecnicoACargo from '@/components/TecnicoACargo.vue'
 import ContactChannelStep from './ContactChannelStep.vue'
@@ -9,8 +9,16 @@ import ContactStepper from './ContactStepper.vue'
 import { getContactEmail } from '@/ui/controllers/contactController'
 import type { ContactFormProps, ResolvedContactFormContent } from './contactTypes'
 import { useContactForm } from './useContactForm'
-import { useContactLeadWizard } from './useContactLeadWizard'
 import { useTurnstile } from './useTurnstile'
+import {
+  clampContactLeadStep,
+  CONTACT_LEAD_STEP_LABELS,
+  CONTACT_LEAD_TOTAL_STEPS,
+  hasContactLeadStepErrors,
+  normalizePreferredContact,
+  validateContactLeadStep
+} from './contactLeadWizard'
+import { readContactDraft, removeContactDraft, writeContactDraft } from './contactDraftStorage'
 
 // ARCH-ROADMAP: migracion pendiente de ubicacion. Seguimiento en docs/feature-migration-roadmap.md (ITEM-2).
 
@@ -64,29 +72,103 @@ const {
   reset: resetTurnstile
 } = useTurnstile()
 
-const {
-  currentStep,
-  totalSteps,
-  preferredContact,
-  progressPercent,
-  isLastStep,
-  stepLabels,
-  draftNotice,
-  goPrevStep,
-  goToStep,
-  goNextStep,
-  onFinalSubmit
-} = useContactLeadWizard({
-  form,
-  fieldErrors,
-  sectionId,
-  feedback,
-  handleSubmit,
-  turnstileEnabled,
-  turnstileToken,
-  turnstileErrorMessage,
-  resetTurnstile
+const currentStep = ref(1)
+const totalSteps = CONTACT_LEAD_TOTAL_STEPS
+const preferredContact = ref<'whatsapp' | 'email'>('whatsapp')
+const progressPercent = computed(() => Math.round((currentStep.value / totalSteps) * 100))
+const isLastStep = computed(() => currentStep.value === totalSteps)
+const stepLabels = CONTACT_LEAD_STEP_LABELS
+const draftStorageKey = `dm-contact-draft-${sectionId}`
+const draftNotice = 'Guardamos un borrador temporal de este formulario por hasta 12 horas en este dispositivo.'
+
+function goPrevStep() {
+  if (currentStep.value > 1) {
+    currentStep.value -= 1
+  }
+}
+
+function goToStep(targetStep: number) {
+  if (targetStep === currentStep.value || targetStep < 1 || targetStep > totalSteps) {
+    return
+  }
+  if (targetStep < currentStep.value) {
+    currentStep.value = targetStep
+    return
+  }
+  if (validateCurrentStep()) {
+    currentStep.value = targetStep
+  }
+}
+
+function goNextStep() {
+  if (!validateCurrentStep()) {
+    return
+  }
+  if (currentStep.value < totalSteps) {
+    currentStep.value += 1
+  }
+}
+
+async function onFinalSubmit() {
+  if (!validateCurrentStep()) {
+    return
+  }
+  if (turnstileEnabled.value && !turnstileToken.value) {
+    feedback.success = false
+    feedback.message =
+      turnstileErrorMessage.value || 'Completa la verificacion anti-bot para enviar el formulario.'
+    return
+  }
+  form.captchaToken = turnstileToken.value
+  form.preferredContactChannel = preferredContact.value
+  await handleSubmit()
+  if (feedback.success) {
+    removeContactDraft(draftStorageKey)
+    resetTurnstile()
+  }
+}
+
+onMounted(() => {
+  const draft = readContactDraft(draftStorageKey)
+  if (!draft) {
+    return
+  }
+  form.company = draft.company ?? form.company
+  form.comment = draft.comment ?? form.comment
+  preferredContact.value = normalizePreferredContact(draft.preferredContact)
+  currentStep.value = clampContactLeadStep(draft.currentStep)
 })
+
+watch(
+  () => [form.company, form.comment, preferredContact.value, currentStep.value],
+  () => {
+    writeContactDraft(draftStorageKey, {
+      company: form.company,
+      comment: form.comment,
+      preferredContact: preferredContact.value,
+      currentStep: currentStep.value
+    })
+  }
+)
+
+function validateCurrentStep(): boolean {
+  if (currentStep.value < totalSteps) {
+    fieldErrors.email = ''
+    fieldErrors.phone = ''
+    return true
+  }
+
+  const stepErrors = validateContactLeadStep({
+    email: form.email,
+    phone: form.phone,
+    preferredContact: preferredContact.value
+  })
+
+  fieldErrors.email = stepErrors.email ?? ''
+  fieldErrors.phone = stepErrors.phone ?? ''
+
+  return !hasContactLeadStepErrors(stepErrors)
+}
 </script>
 
 <template>

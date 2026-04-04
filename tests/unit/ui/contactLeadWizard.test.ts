@@ -5,45 +5,25 @@ import {
   hasContactLeadStepErrors,
   normalizePreferredContact,
   validateContactLeadStep
-} from '@/features/contact/application/leadWizard'
+} from '@/ui/features/contact/contactLeadWizard'
 
-describe('leadWizard', () => {
+describe('contactLeadWizard', () => {
   it('keeps identity optional on step 1', () => {
     expect(
-      validateContactLeadStep(1, {
-        firstName: ' ',
-        lastName: '',
-        company: '',
+      validateContactLeadStep({
         email: 'invalid',
-        comment: 'Proyecto largo',
         phone: '+54 11 5555 4444',
         preferredContact: 'whatsapp'
       })
-    ).toEqual({})
-  })
-
-  it('keeps project fields optional on step 2', () => {
-    expect(
-      validateContactLeadStep(2, {
-        firstName: 'Ada',
-        lastName: 'Lovelace',
-        company: '',
-        email: 'ada@example.com',
-        comment: 'corto',
-        phone: '+54 11 5555 4444',
-        preferredContact: 'whatsapp'
-      })
-    ).toEqual({})
+    ).toEqual({
+      email: 'Ingresa un e-mail válido.'
+    })
   })
 
   it('validates whatsapp as required when selected on final step', () => {
     expect(
-      validateContactLeadStep(3, {
-        firstName: 'Ada',
-        lastName: 'Lovelace',
-        company: 'Analytical Engines',
+      validateContactLeadStep({
         email: 'ada@example.com',
-        comment: 'Descripcion valida',
         phone: '1234567',
         preferredContact: 'whatsapp'
       })
@@ -54,12 +34,8 @@ describe('leadWizard', () => {
 
   it('validates email as required when selected on final step', () => {
     expect(
-      validateContactLeadStep(3, {
-        firstName: 'Ada',
-        lastName: 'Lovelace',
-        company: 'Analytical Engines',
+      validateContactLeadStep({
         email: 'invalido',
-        comment: 'Descripcion valida',
         phone: '+54 11 5555 4444',
         preferredContact: 'email'
       })
