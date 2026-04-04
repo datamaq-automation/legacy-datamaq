@@ -142,7 +142,7 @@ test.describe('Smoke E2E', () => {
     await test.step('Paso 1: completar identidad', async () => {
       await leadSection.getByLabel(/nombre/i).fill('Ada')
       await leadSection.getByLabel(/apellido/i).fill('Lovelace')
-      await leadSection.getByRole('button', { name: /continuar/i }).click()
+      await leadSection.getByRole('button', { name: /continua|continuá/i }).click()
     })
 
     await test.step('Paso 2: completar proyecto', async () => {
@@ -150,12 +150,12 @@ test.describe('Smoke E2E', () => {
       const projectDescription = leadSection.getByLabel(/descripci[oó]n del proyecto/i)
       await expect(projectDescription).toBeVisible()
       await projectDescription.fill('Necesito una propuesta para mantenimiento industrial.')
-      await leadSection.getByRole('button', { name: /continuar/i }).click()
+      await leadSection.getByRole('button', { name: /continua|continuá/i }).click()
     })
 
     await test.step('Paso 3: completar contacto y enviar', async () => {
       await leadSection.locator('input[type="tel"]').fill('+54 9 11 1234 5678')
-      await page.getByRole('button', { name: /enviar solicitud/i }).click()
+      await page.getByRole('button', { name: /envia|enviá.*solicitud/i }).click()
     })
 
     await expect(page).toHaveURL(/\/gracias$/)
