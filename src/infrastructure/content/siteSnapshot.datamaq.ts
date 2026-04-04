@@ -1,14 +1,18 @@
+/*
+Path: src/infrastructure/content/siteSnapshot.datamaq.ts
+*/
+
 import type { SiteSnapshot } from '@/domain/types/site'
 
 export const datamaqSiteSnapshot: SiteSnapshot = {
   content: {
     hero: {
-      badge: 'Automatización, monitoreo y ciencia de datos aplicada',
-      title: 'Automatización industrial y ciencia de datos para decisiones operativas',
+      badge: 'Instalación IoT, análisis de datos y capacitación aplicada',
+      title: 'Captura automática de datos operativos para decidir mejor',
       subtitle:
-        'Implementación de Powermeter y Automate, más asesoramiento y capacitaciones en Python, NumPy, pandas, bases de datos, APIs y Matplotlib.',
+        'Instalación de equipos IoT para medir energía, producción y variables clave. Luego, asesoramiento y capacitaciones para transformar esos datos en decisiones útiles.',
       responseNote:
-        'Base operativa: Garín (GBA Norte). Relevamiento inicial y alcance por WhatsApp. Capacitaciones y asesoramiento también en formato remoto.',
+        'Base operativa: Garín (GBA Norte). Relevamiento inicial y alcance por WhatsApp. Implementación en campo y acompañamiento remoto según el caso.',
       primaryCta: {
         label: 'Escribime por WhatsApp',
         href: 'https://wa.me/5491156297160',
@@ -21,132 +25,104 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
       },
       benefits: [
         {
-          title: 'Medición útil',
-          text: 'Variables eléctricas y tendencias para entender cómo responde la instalación.',
+          title: 'Datos confiables',
+          text: 'Captura automática de kWh, potencia, factor de potencia, armónicas, kilos, unidades, metros o velocidades según el caso.',
           variant: 'primary'
         },
         {
-          title: 'Automatización aplicada',
-          text: 'Lógicas de control e integración para actuar con criterio operativo.',
+          title: 'Integración razonable',
+          text: 'Conexión a Powermate, dashboards o sistemas existentes según conectividad y objetivo operativo.',
           variant: 'success'
         },
         {
-          title: 'Ciencia de datos útil',
-          text: 'Análisis, automatización y formación para trabajar datos con Python en casos reales.',
+          title: 'Decisiones con base real',
+          text: 'Análisis y acompañamiento para pasar de la intuición a evidencia operativa.',
           variant: 'warning'
         }
       ],
       image: {
         src: '/media/hero-energy.svg',
-        alt: 'Monitoreo energético y automatización en tablero industrial',
+        alt: 'Captura y monitoreo de datos energéticos y operativos en entorno industrial',
         width: 900,
         height: 700
       }
     },
     services: {
-      title: 'Servicios técnicos y de ciencia de datos',
+      title: 'Instalación, análisis y capacitación con datos operativos',
       cards: [
         {
-          id: 'powermeter',
-          title: 'Powermeter',
+          id: 'iot-installation',
+          title: 'Instalación de equipos IoT para captura de datos',
           description:
-            'Instalación y configuración de medición eléctrica inteligente para tablero, línea o punto crítico.',
-          subtitle: 'Monitoreo, alertas e integración',
-          media: {
-            src: '/media/analytics-dashboard.svg',
-            alt: 'Medición eléctrica y tablero de datos',
-            width: 900,
-            height: 700
-          },
-          items: [
-            'Monitoreo remoto de variables eléctricas',
-            'Alertas y seguimiento de desvíos',
-            'Integración a Powermate o SCADA'
-          ],
-          figure: {
-            src: '/media/analytics-dashboard.svg',
-            alt: 'Visualización de datos energéticos',
-            width: 900,
-            height: 700,
-            caption: 'Aplicable a tableros generales, líneas, edificios y puntos de consumo relevantes.'
-          },
-          cta: {
-            label: 'Consultá por medición',
-            href: '#contacto',
-            action: 'contact',
-            section: 'contacto'
-          }
-        },
-        {
-          id: 'automate',
-          title: 'Automate',
-          description:
-            'Implementación de controlador para automatización, lógica de demanda e integración con señales y sistemas.',
-          subtitle: 'Control y digitalización operativa',
+            'Relevamiento, montaje, configuración y puesta en marcha de soluciones para capturar datos de energía, producción y variables críticas.',
+          subtitle: 'Del tablero y la máquina al dato útil',
           media: {
             src: '/media/install-tools.svg',
-            alt: 'Controlador y automatización en tablero',
+            alt: 'Instalación de equipos IoT y captura de datos en campo',
             width: 900,
             height: 700
           },
           items: [
-            'Lógicas locales y remotas',
-            'Integración por MQTT, Modbus y HTTP',
-            'Control de demanda y automatización'
-          ],
-          note: 'La lógica final depende del relevamiento, señales disponibles y objetivo operativo.',
-          cta: {
-            label: 'Consultá por automatización',
-            href: '#contacto',
-            action: 'contact',
-            section: 'contacto'
-          }
-        },
-        {
-          id: 'integracion',
-          title: 'Integración y puesta en marcha',
-          description:
-            'Relevamiento, montaje, parametrización, pruebas y cierre técnico sobre la solución Powermeter + Automate.',
-          subtitle: 'Del tablero a la operación',
-          media: {
-            src: '/media/team-training.svg',
-            alt: 'Puesta en marcha y acompañamiento técnico',
-            width: 900,
-            height: 700
-          },
-          items: [
-            'Relevamiento inicial y checklist',
-            'Configuración y pruebas de funcionamiento',
-            'Entrega técnica con observaciones y próximos pasos'
-          ],
-          cta: {
-            label: 'Coordiná un relevamiento',
-            href: '#contacto',
-            action: 'contact',
-            section: 'contacto'
-          }
-        },
-        {
-          id: 'data-science',
-          title: 'Ciencia de datos y capacitación en Python',
-          description:
-            'Asesoramiento técnico y capacitaciones aplicadas para análisis de datos, automatización y consumo de APIs.',
-          subtitle: 'Python para casos reales de negocio y operación',
-          media: {
-            src: '/media/analytics-dashboard.svg',
-            alt: 'Análisis de datos y capacitación en Python',
-            width: 900,
-            height: 700
-          },
-          items: [
-            'Capacitaciones en Python con NumPy, pandas y Matplotlib',
-            'Consultoría sobre bases de datos, APIs y limpieza de datos',
-            'Acompañamiento para dashboards, reportes y automatizaciones'
+            'Medición de kWh, potencia, factor de potencia y armónicas',
+            'Captura de kilos, unidades, metros, velocidades o estados',
+            'Integración inicial con Powermate, dashboards o sistemas de terceros'
           ],
           note:
-            'El enfoque puede ser 100% remoto y se adapta al nivel del equipo, objetivos del negocio y stack disponible.',
+            'Según el caso, la implementación puede apoyarse en Powermeter, Automate u otros equipos compatibles con el objetivo operativo.',
           cta: {
-            label: 'Consultá por ciencia de datos',
+            label: 'Consultá por instalación',
+            href: '#contacto',
+            action: 'contact',
+            section: 'contacto'
+          }
+        },
+        {
+          id: 'data-advisory',
+          title: 'Asesoramiento para decisiones basadas en datos',
+          description:
+            'Acompañamiento técnico para interpretar datos operativos y convertirlos en criterios de seguimiento, diagnóstico y mejora.',
+          subtitle: 'Del dato capturado a la decisión',
+          media: {
+            src: '/media/analytics-dashboard.svg',
+            alt: 'Análisis de datos operativos y energéticos',
+            width: 900,
+            height: 700
+          },
+          items: [
+            'Análisis de consumo energético y comportamiento operativo',
+            'Ordenamiento de datos desde bases, planillas, APIs o sistemas existentes',
+            'Soporte para reportes, dashboards y automatizaciones de seguimiento'
+          ],
+          note:
+            'El asesoramiento puede incluir Python, bases de datos, APIs e integraciones, según el nivel del equipo y el problema a resolver.',
+          cta: {
+            label: 'Consultá por asesoramiento',
+            href: '#contacto',
+            action: 'contact',
+            section: 'contacto'
+          }
+        },
+        {
+          id: 'training',
+          title: 'Capacitaciones aplicadas',
+          description:
+            'Capacitaciones técnicas orientadas a casos reales de trabajo, para que el equipo pueda usar mejor los datos disponibles.',
+          subtitle: 'Formación práctica para operación y análisis',
+          media: {
+            src: '/media/team-training.svg',
+            alt: 'Capacitación técnica aplicada en análisis de datos',
+            width: 900,
+            height: 700
+          },
+          items: [
+            'Python aplicado con NumPy, pandas y Matplotlib',
+            'Buenas prácticas para trabajar con bases de datos y APIs',
+            'Capacitación adaptada al nivel técnico y al caso real del equipo'
+          ],
+          note:
+            'Puede brindarse en formato remoto o combinado, según objetivos, disponibilidad y perfil del equipo.',
+          cta: {
+            label: 'Consultá por capacitación',
             href: '#contacto',
             action: 'contact',
             section: 'contacto'
@@ -157,8 +133,8 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
     about: {
       title: 'Sobre DataMaq',
       paragraphs: [
-        'DataMaq implementa soluciones de monitoreo energético, automatización aplicada y ciencia de datos con foco en continuidad operativa, medición útil y decisiones técnicas claras.',
-        'El servicio combina trabajo sobre tableros e integraciones con asesoramiento y capacitaciones prácticas en Python, análisis de datos, bases de datos y APIs.'
+        'DataMaq implementa soluciones para capturar datos operativos en forma automática, con foco en energía eléctrica, producción y variables críticas.',
+        'A partir de esa base, brinda asesoramiento para análisis de datos y capacitaciones aplicadas en Python, bases de datos, APIs e integraciones.'
       ],
       image: {
         src: '/media/tecnico-a-cargo.webp',
@@ -171,7 +147,7 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
       title: 'Perfil técnico',
       bullets: [
         'Relevamiento en sitio y criterio de implementación.',
-        'Instalación, integración y puesta en marcha.',
+        'Instalación, integración y puesta en marcha para captura automática de datos.',
         'Asesoramiento y capacitaciones en Python, datos, bases de datos y APIs.'
       ]
     },
@@ -192,12 +168,12 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
       note: 'DataMaq | Garín (GBA Norte)'
     },
     legal: {
-      text: 'La información publicada es referencial y puede actualizarse según alcance, tablero, conectividad y condiciones de implementación.'
+      text: 'La información publicada es referencial y puede actualizarse según alcance, tablero, conectividad, variables a capturar y condiciones de implementación.'
     },
     contact: {
       title: 'Contacto',
       subtitle:
-        'Contanos tu tablero, objetivo o necesidad de capacitación. Te respondemos con el siguiente paso para automatización, integración o ciencia de datos.',
+        'Contanos qué datos querés capturar, desde dónde y para qué objetivo operativo. Te respondemos con el siguiente paso para instalación, análisis o capacitación.',
       labels: {
         email: 'Email',
         message: 'Mensaje'
@@ -220,13 +196,13 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
       processStepPrefixLabel: 'Paso',
       pricingTitle: 'Alcance del servicio',
       pricingSummaryFallback:
-        'El alcance depende del tablero o caso de datos, cantidad de mediciones, stack disponible y objetivo técnico o de capacitación.',
+        'El alcance depende de qué datos haya que capturar, cantidad de mediciones, conectividad disponible, stack existente y objetivo técnico del proyecto.',
       pricingIncludesTitle: 'Incluye',
       pricingIncludes: [
         'Relevamiento inicial y checklist técnico.',
-        'Instalación y configuración básica de Powermeter o Automate según propuesta.',
+        'Instalación y configuración básica de la solución propuesta según el caso.',
         'Integración inicial a Powermate o sistema tercero si el alcance lo contempla.',
-        'Capacitación o transferencia técnica inicial según el alcance definido.'
+        'Transferencia técnica inicial o capacitación breve según el alcance definido.'
       ],
       pricingExcludesTitle: 'No incluye',
       pricingExcludes: [
@@ -238,7 +214,7 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
       pricingVariables: [
         'Cantidad de circuitos, señales o puntos a relevar.',
         'Conectividad disponible y necesidad de integración con terceros.',
-        'Nivel del equipo, fuentes de datos disponibles y criticidad operativa.'
+        'Fuentes de datos disponibles, criticidad operativa y nivel del equipo.'
       ],
       coverageTitle: 'Cobertura y tiempos',
       coverageAreasTitle: 'Zona',
@@ -261,57 +237,57 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
           order: 1,
           title: 'Relevamiento y objetivo operativo',
           description:
-            'Revisamos tablero, conectividad, variables a medir y objetivo de control para definir una implementación razonable.'
+            'Revisamos tablero, máquinas, conectividad, variables a capturar y objetivo del proyecto para definir una implementación razonable.'
         },
         {
           order: 2,
           title: 'Instalación y configuración',
           description:
-            'Montamos Powermeter y/o Automate, configuramos comunicación e integración inicial según el alcance acordado.'
+            'Montamos la solución, configuramos comunicación e integración inicial según el alcance acordado.'
         },
         {
           order: 3,
           title: 'Pruebas y validación',
           description:
-            'Verificamos lecturas, comunicaciones, lógica básica y condiciones mínimas de funcionamiento antes del cierre.'
+            'Verificamos lecturas, comunicaciones y condiciones mínimas de funcionamiento antes del cierre técnico.'
         },
         {
           order: 4,
           title: 'Cierre técnico y próximos pasos',
           description:
-            'Entregamos observaciones, pendientes y recomendaciones para estabilizar la solución y seguir escalando.'
+            'Entregamos observaciones, pendientes y recomendaciones para estabilizar la captura de datos y aprovecharla mejor.'
         }
       ],
       faqItems: [
         {
-          question: '¿Qué hace Powermeter?',
+          question: '¿Qué tipo de datos se pueden capturar?',
           answer:
-            'Permite medir variables eléctricas, ver tendencias, detectar desvíos e integrar la información con Powermate o sistemas de terceros.'
+            'Según el caso, se pueden capturar variables eléctricas como kWh, potencia, factor de potencia y armónicas, o variables operativas como kilos, unidades, metros, velocidades y estados.'
         },
         {
-          question: '¿También brindás capacitaciones en Python?',
+          question: '¿Trabajás solo con energía eléctrica?',
           answer:
-            'Sí. Puedo dar asesoramiento y capacitaciones prácticas en Python, NumPy, pandas, Matplotlib, bases de datos y consumo de APIs, adaptadas al nivel y objetivo del equipo.'
+            'No. La energía es uno de los focos principales, pero también puedo implementar soluciones para capturar datos de producción u otras variables operativas relevantes.'
         },
         {
-          question: '¿Qué hace Automate?',
+          question: '¿Usás Powermeter y Automate?',
           answer:
-            'Permite ejecutar lógicas de automatización, control e integración sobre señales y equipos según el objetivo operativo definido.'
+            'Sí. Según el proyecto, la implementación puede apoyarse en Powermeter para medición eléctrica y en Automate para captura e integración de señales y datos operativos.'
         },
         {
-          question: '¿Podés ayudar con bases de datos y APIs?',
+          question: '¿También brindás asesoramiento en análisis de datos?',
           answer:
-            'Sí. Puedo ayudar a consumir APIs, estructurar consultas, ordenar datos y conectar flujos de información para análisis, reportes o automatizaciones.'
+            'Sí. Puedo acompañar el análisis de datos operativos y energéticos, ayudar a ordenar información y proponer formas prácticas de usarla para decidir mejor.'
         },
         {
-          question: '¿Pueden integrarlo con Powermate o SCADA?',
+          question: '¿También brindás capacitaciones?',
           answer:
-            'Sí. El alcance exacto depende del equipo elegido, la conectividad disponible y el sistema al que haya que vincularse.'
+            'Sí. Doy capacitaciones aplicadas en Python, NumPy, pandas, Matplotlib, bases de datos y APIs, adaptadas al nivel del equipo y al problema real a resolver.'
         },
         {
           question: '¿Qué necesitás para cotizar rápido?',
           answer:
-            'Zona, fotos del tablero, objetivo del proyecto y una breve descripción de qué querés medir, controlar o automatizar.'
+            'Zona, fotos del tablero o proceso, objetivo del proyecto y una breve descripción de qué datos querés capturar o qué problema querés seguir con más claridad.'
         }
       ]
     },
@@ -337,7 +313,7 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
       profileSectionLabel: 'Enfoque técnico',
       servicesEyebrow: 'Servicios',
       servicesIntro:
-        'Servicios orientados a tablero, monitoreo, integración y formación técnica en análisis de datos con Python.',
+        'Servicios orientados a la captura automática de datos, su análisis aplicado y la capacitación técnica del equipo.',
       faqEyebrow: 'Ayuda',
       faqTitle: 'Preguntas frecuentes',
       quickLinks: {
@@ -384,7 +360,7 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
     whatsappQr: {
       phoneE164: '5491156297160',
       message:
-        'Hola, te contacto por DataMaq. Quiero coordinar una implementación o una capacitación en Python y ciencia de datos.',
+        'Hola, te contacto por DataMaq. Quiero coordinar una instalación para captura de datos o una consulta sobre análisis y capacitación aplicada.',
       sourceTag: 'qr_card'
     },
     technician: {
@@ -408,7 +384,7 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
     siteUrl: 'https://datamaq.com.ar',
     siteName: 'DataMaq',
     siteDescription:
-      'Automatización industrial, monitoreo energético y servicios de ciencia de datos con asesoramiento y capacitaciones en Python, pandas, APIs y bases de datos.',
+      'Instalación de equipos IoT para captura automática de datos de energía y producción, más asesoramiento y capacitaciones aplicadas en análisis de datos.',
     siteOgImage: 'https://datamaq.com.ar/og-default.png',
     siteLocale: 'es_AR',
     business: {

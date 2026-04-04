@@ -911,6 +911,43 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
 .c-home-service-card__cta {
   width: 100%;
   margin-top: 1rem;
+  border-color: rgba(var(--dm-accent-orange-rgb), 0.82);
+  background: rgba(var(--dm-accent-orange-rgb), 0.09);
+  color: rgba(var(--dm-text-0-rgb), 0.98);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--dm-accent-orange-rgb), 0.04),
+    0 0.2rem 0.65rem rgba(var(--dm-shadow-rgb), 0.1);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 140ms ease,
+    box-shadow 180ms ease;
+}
+
+.c-home-service-card__cta:hover,
+.c-home-service-card__cta:focus-visible {
+  border-color: rgba(var(--dm-accent-orange-rgb), 0.98);
+  background: rgba(var(--dm-accent-orange-rgb), 0.16);
+  color: rgb(var(--dm-text-0-rgb));
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--dm-accent-orange-rgb), 0.08),
+    0 0.45rem 1rem rgba(var(--dm-accent-orange-rgb), 0.12);
+  transform: translateY(-1px);
+}
+
+.c-home-service-card__cta:focus-visible {
+  outline: 2px solid rgba(var(--dm-accent-orange-rgb), 0.92);
+  outline-offset: 2px;
+}
+
+.c-home-service-card__cta:active {
+  border-color: rgba(var(--dm-accent-orange-rgb), 1);
+  background: rgba(var(--dm-accent-orange-rgb), 0.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--dm-accent-orange-rgb), 0.1),
+    0 0.2rem 0.6rem rgba(var(--dm-accent-orange-rgb), 0.1);
+  transform: translateY(0) scale(0.985);
 }
 
 .c-home-footer {
