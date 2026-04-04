@@ -15,10 +15,10 @@ export function useThanksView() {
     badge: thanksContent?.badge ?? '¡Gracias!',
     topbarTitle: thanksContent?.topbarTitle ?? 'Mensaje enviado',
     title: thanksContent?.title ?? '¡Listo! Recibimos tu mensaje',
-    subtitle: thanksContent?.subtitle ?? 'Te contactaremos a la brevedad',
-    whatsappButtonLabel: thanksContent?.whatsappButtonLabel ?? 'Continuar por WhatsApp',
-    goHomeButtonLabel: thanksContent?.goHomeButtonLabel ?? 'Volver al inicio',
-    closeButtonAriaLabel: thanksContent?.closeButtonAriaLabel ?? 'Cerrar y volver al inicio'
+    subtitle: thanksContent?.subtitle ?? 'Te vamos a contactar a la brevedad',
+    whatsappButtonLabel: thanksContent?.whatsappButtonLabel ?? 'Escribime por WhatsApp',
+    goHomeButtonLabel: thanksContent?.goHomeButtonLabel ?? 'Volvé al inicio',
+    closeButtonAriaLabel: thanksContent?.closeButtonAriaLabel ?? 'Cerrá y volvé al inicio'
   }
 
   function handleChat() {

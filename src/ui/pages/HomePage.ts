@@ -10,6 +10,10 @@ type HomeVariant = 'direct' | 'authority'
 
 const HOME_SECTION_ORDER = ['#servicios', '#perfil', '#faq', '#contacto']
 const SERVICE_ICON_BY_KEYWORD: Array<{ keyword: string; icon: string }> = [
+  { keyword: 'python', icon: 'bi-bar-chart-line-fill' },
+  { keyword: 'datos', icon: 'bi-bar-chart-line-fill' },
+  { keyword: 'base de datos', icon: 'bi-database-fill' },
+  { keyword: 'api', icon: 'bi-diagram-3-fill' },
   { keyword: 'mantenimiento', icon: 'bi-tools' },
   { keyword: 'repar', icon: 'bi-wrench-adjustable-circle-fill' },
   { keyword: 'consult', icon: 'bi-graph-up-arrow' },

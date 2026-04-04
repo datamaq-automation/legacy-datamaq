@@ -25,15 +25,15 @@ vi.mock('@/di/container', () => ({
         contactFormActive: true,
         technician: {
           name: 'Agustin Bustos',
-          role: 'Tecnico a cargo',
+          role: 'Técnico a cargo',
           photo: {
             src: '/media/tecnico-a-cargo.webp',
-            alt: 'Foto del tecnico a cargo',
+            alt: 'Foto del técnico a cargo',
             width: 100,
             height: 100
           },
           whatsappLabel: 'Coordinar por WhatsApp',
-          unavailableLabel: 'Tecnico no disponible'
+          unavailableLabel: 'Técnico no disponible'
         }
       }),
       getHeroContent: () => ({
@@ -43,7 +43,7 @@ vi.mock('@/di/container', () => ({
       }),
       getContactContent: () => ({
         title: 'Contacto',
-        subtitle: 'Dejanos tu consulta y te contactamos.',
+        subtitle: 'Dejanos tu consulta y te vamos a contactar.',
         labels: {
           firstName: 'Nombre',
           lastName: 'Apellido',
@@ -96,7 +96,7 @@ describe('Contact submit and thanks flow', () => {
     })
 
     const ThanksRoute = defineComponent({
-      template: '<h1>Gracias por contactarte</h1>'
+      template: '<h1>¡Gracias por escribirnos!</h1>'
     })
 
     const AppHost = defineComponent({
@@ -123,19 +123,19 @@ describe('Contact submit and thanks flow', () => {
 
     await fireEvent.update(screen.getByLabelText('Nombre'), 'Maria')
     await fireEvent.update(screen.getByLabelText('Apellido'), 'Perez')
-    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuá' }))
     await fireEvent.update(
       screen.getByLabelText('Descripción del proyecto'),
       'Necesito una propuesta para una planta.'
     )
-    await fireEvent.click(screen.getByRole('button', { name: 'Continuar' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Continuá' }))
     await fireEvent.update(screen.getByLabelText('WhatsApp', { selector: 'input[type="tel"]' }), '+54 11 5555 4444')
-    await fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Enviá tu solicitud' }))
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1)
       expect(router.currentRoute.value.name).toBe('thanks')
     })
-    expect(screen.getByRole('heading', { name: 'Gracias por contactarte' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '¡Gracias por escribirnos!' })).toBeInTheDocument()
   })
 })

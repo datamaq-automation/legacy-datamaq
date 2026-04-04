@@ -10,7 +10,7 @@ defineProps<{
 <template>
   <div
     class="c-home-hero__trust-inline"
-    :aria-label="trustLogos?.length ? 'Marcas que confian' : 'Capacidades destacadas'"
+    :aria-label="trustLogos?.length ? 'Marcas que confían' : 'Capacidades destacadas'"
   >
     <template v-if="trustLogos?.length">
       <img

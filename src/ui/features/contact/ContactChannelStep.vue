@@ -64,7 +64,7 @@ function updatePreferredContact(event: Event) {
         :aria-invalid="Boolean(fieldErrors.phone)"
       />
       <small class="c-contact__helper">
-        {{ props.preferredContact === 'whatsapp' ? 'Obligatorio en esta opcion.' : 'Opcional.' }}
+        {{ props.preferredContact === 'whatsapp' ? 'Obligatorio en esta opción.' : 'Opcional.' }}
       </small>
       <small v-if="fieldErrors.phone" class="c-contact__error">{{ fieldErrors.phone }}</small>
     </div>
@@ -83,7 +83,7 @@ function updatePreferredContact(event: Event) {
         :aria-invalid="Boolean(fieldErrors.email)"
       />
       <small class="c-contact__helper">
-        {{ props.preferredContact === 'email' ? 'Obligatorio en esta opcion.' : 'Opcional.' }}
+        {{ props.preferredContact === 'email' ? 'Obligatorio en esta opción.' : 'Opcional.' }}
       </small>
       <small v-if="fieldErrors.email" class="c-contact__error">{{ fieldErrors.email }}</small>
     </div>

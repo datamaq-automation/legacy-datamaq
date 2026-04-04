@@ -12,7 +12,7 @@ vi.mock('@/di/container', () => ({
           { label: 'Servicios', href: '#servicios' },
           { label: 'Perfil', href: '#perfil' }
         ],
-        contactLabel: 'Escribinos por WhatsApp'
+        contactLabel: 'Escribime por WhatsApp'
       })
     }
   })
@@ -45,7 +45,7 @@ describe('Navbar', () => {
       }
     })
 
-    const toggleButton = screen.getByRole('button', { name: 'Abrir navegacion' })
+    const toggleButton = screen.getByRole('button', { name: 'Abrí la navegación' })
     expect(toggleButton).toHaveAttribute('data-bs-toggle', 'offcanvas')
     expect(toggleButton).toHaveAttribute('data-bs-target', '#mainOffcanvas')
     expect(toggleButton).toHaveAttribute('aria-controls', 'mainOffcanvas')
@@ -55,7 +55,7 @@ describe('Navbar', () => {
     setViewportWidth(1366)
     const { emitted } = render(Navbar, { props: { contactCtaEnabled: true } })
 
-    const desktopCta = screen.getAllByRole('link', { name: 'Escribinos por WhatsApp' })[0]
+    const desktopCta = screen.getAllByRole('link', { name: 'Escribime por WhatsApp' })[0]
     await fireEvent.click(desktopCta)
 
     expect(emitted().contact).toHaveLength(1)

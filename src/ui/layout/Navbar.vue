@@ -10,7 +10,7 @@ Path: src/ui/layout/Navbar.vue
         class="tw:lg:hidden tw:p-2 tw:text-dm-text-muted hover:tw:text-dm-text-0 tw:transition-colors c-navbar__toggle"
         type="button"
         :aria-expanded="isOffcanvasOpen ? 'true' : 'false'"
-        aria-label="Abrir navegacion"
+        aria-label="Abrí la navegación"
         data-bs-toggle="offcanvas"
         data-bs-target="#mainOffcanvas"
         aria-controls="mainOffcanvas"

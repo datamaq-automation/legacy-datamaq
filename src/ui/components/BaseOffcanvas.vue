@@ -27,7 +27,7 @@
             <button
               type="button"
               class="tw:p-2 tw:text-dm-text-muted hover:tw:text-dm-text-0 tw:transition-colors"
-              aria-label="Cerrar"
+              aria-label="Cerrá"
               @click="close"
             >
               <svg viewBox="0 0 16 16" width="20" height="20" class="tw:fill-current">

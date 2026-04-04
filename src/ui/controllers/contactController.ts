@@ -1,7 +1,7 @@
 import type { ContactFormPayload } from '@/application/dto/contact'
 import { useContainer } from '@/di/container'
 
-const DEFAULT_BRAND_NAME = 'equipo tecnico'
+const DEFAULT_BRAND_NAME = 'equipo técnico'
 const DEFAULT_MACHINE_PLACEHOLDER = '[Tipo de Maquina]'
 const WHATSAPP_BASE_DOMAIN = 'whatsapp.com'
 const WA_SHORT_DOMAIN = 'wa.me'
@@ -107,7 +107,7 @@ function buildPrefilledWhatsAppUrl(href: string | undefined): string | undefined
 
 function buildDefaultWhatsAppMessage(): string {
   const brandName = getBrandContent().brandName?.trim() || DEFAULT_BRAND_NAME
-  return `Hola ${brandName}, necesito asistencia tecnica para ${DEFAULT_MACHINE_PLACEHOLDER}.`
+  return `Hola ${brandName}, necesito asistencia técnica para ${DEFAULT_MACHINE_PLACEHOLDER}.`
 }
 
 function getBrandContent() {

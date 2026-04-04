@@ -6,7 +6,7 @@ import { useContainer } from '@/di/container'
 import { reportGtagConversion } from '@/ui/utils/gtagConversion'
 
 const whatsappHref = computed(() => getWhatsAppHref())
-const fabAriaLabel = 'Abrir WhatsApp para pedir coordinacion'
+const fabAriaLabel = 'Abrir WhatsApp para pedir coordinación'
 
 function handleFabClick(event: MouseEvent): boolean | void {
   const whatsappUrl = whatsappHref.value

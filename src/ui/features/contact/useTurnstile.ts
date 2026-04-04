@@ -37,7 +37,7 @@ export function useTurnstile() {
       await ensureTurnstileScript()
       const api = resolveTurnstileApi()
       if (!api || !containerRef.value || !siteKey) {
-        errorMessage.value = 'No se pudo inicializar la verificacion anti-bot.'
+        errorMessage.value = 'No se pudo inicializar la verificación anti-bot.'
         return
       }
       widgetId.value = api.render(containerRef.value, {
@@ -54,13 +54,13 @@ export function useTurnstile() {
         'error-callback': () => {
           token.value = ''
           isReady.value = false
-          errorMessage.value = 'No se pudo validar anti-bot. Intenta de nuevo.'
+          errorMessage.value = 'No se pudo validar anti-bot. Intentá de nuevo.'
         },
         theme: 'dark'
       })
       isReady.value = true
     } catch {
-      errorMessage.value = 'No se pudo cargar la verificacion anti-bot.'
+      errorMessage.value = 'No se pudo cargar la verificación anti-bot.'
     }
   })
 

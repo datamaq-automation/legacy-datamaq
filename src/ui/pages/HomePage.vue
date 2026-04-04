@@ -64,7 +64,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
           <span class="c-home-header__brand-copy">{{ navbar.brand }}</span>
         </RouterLink>
 
-        <nav class="c-home-header__nav tw:hidden tw:lg:flex" aria-label="Navegacion principal">
+        <nav class="c-home-header__nav tw:hidden tw:lg:flex" aria-label="Navegación principal">
           <RouterLink
             v-for="link in headerLinks" :key="link.href"
             class="c-home-header__nav-link"
@@ -236,7 +236,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
             <div class="tw:col-span-1 tw:lg:col-span-7">
               <article class="c-home-panel c-home-profile__details">
                 <p class="c-home-profile__section-label">
-                  {{ isAuthorityVariant ? 'Por que elegirnos' : homePage.profileSectionLabel }}
+                  {{ isAuthorityVariant ? 'Por qué elegirnos' : homePage.profileSectionLabel }}
                 </p>
                 <p class="c-home-profile__detail-copy">
                   {{ profileDetail }}
@@ -379,7 +379,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
       class="c-home-dock tw:lg:hidden"
       :class="{ 'c-home-dock--direct': isDirectVariant }"
       :style="{ '--dock-columns': String(Math.max(dockLinks.length, 1)) }"
-      aria-label="Navegacion rapida"
+      aria-label="Navegación rápida"
     >
       <RouterLink
         v-for="link in dockLinks"

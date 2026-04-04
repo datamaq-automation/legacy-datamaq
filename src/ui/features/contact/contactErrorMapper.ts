@@ -16,7 +16,7 @@ export function mapContactError(
     case 'BackendError':
       if (error.status === 429) {
         return appendTrackingId(
-          'Demasiadas solicitudes. Intenta nuevamente en unos minutos.',
+          'Demasiadas solicitudes. Intentá nuevamente en unos minutos.',
           error.requestId
         )
       }
@@ -24,7 +24,7 @@ export function mapContactError(
         return appendTrackingId(error.backendMessage, error.requestId)
       }
       return appendTrackingId(
-        'No se pudo enviar la consulta. Verifica los datos e intenta nuevamente.',
+        'No se pudo enviar la consulta. Verificá los datos e intentá nuevamente.',
         error.requestId
       )
     case 'ValidationError':

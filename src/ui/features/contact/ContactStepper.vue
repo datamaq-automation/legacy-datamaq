@@ -28,7 +28,7 @@ function handleGoToStep(targetStep: number) {
         type="button"
         class="c-contact__stepper-trigger"
         :aria-current="currentStep === index + 1 ? 'step' : undefined"
-        :aria-label="`Ir al paso ${index + 1}: ${label}`"
+        :aria-label="`Andá al paso ${index + 1}: ${label}`"
         @click="handleGoToStep(index + 1)"
       >
         <span class="c-contact__stepper-dot" aria-hidden="true">

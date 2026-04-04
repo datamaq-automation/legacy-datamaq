@@ -116,7 +116,7 @@ async function onFinalSubmit() {
   if (turnstileEnabled.value && !turnstileToken.value) {
     feedback.success = false
     feedback.message =
-      turnstileErrorMessage.value || 'Completa la verificacion anti-bot para enviar el formulario.'
+      turnstileErrorMessage.value || 'Completá la verificación anti-bot para enviar el formulario.'
     return
   }
   form.captchaToken = turnstileToken.value
@@ -246,7 +246,7 @@ function validateCurrentStep(): boolean {
 
                 <div v-if="turnstileEnabled" class="c-contact__turnstile">
                   <p class="c-contact__helper c-contact__helper--turnstile">
-                    Verificacion anti-bot requerida para enviar.
+                    Verificación anti-bot requerida para que puedas enviar.
                   </p>
                   <div ref="turnstileContainerRef" class="c-contact__turnstile-widget"></div>
                   <small v-if="turnstileErrorMessage" class="c-contact__error">{{ turnstileErrorMessage }}</small>
@@ -260,7 +260,7 @@ function validateCurrentStep(): boolean {
                     :disabled="isSubmitting"
                     @click="goPrevStep"
                   >
-                    Volver
+                    Volvé
                   </button>
 
                   <button
@@ -270,7 +270,7 @@ function validateCurrentStep(): boolean {
                     :disabled="!isChannelEnabled || isSubmitting"
                     @click="goNextStep"
                   >
-                    Continuar
+                    Continuá
                   </button>
 
                   <button
@@ -281,10 +281,10 @@ function validateCurrentStep(): boolean {
                     :aria-busy="isSubmitting"
                   >
                     <span v-if="isSubmitting" class="tw:flex tw:items-center tw:justify-center tw:gap-2">
-                      Enviando solicitud...
+                      Enviando tu solicitud...
                       <span class="tw:animate-spin tw:h-4 tw:w-4 tw:border-2 tw:border-white tw:border-t-transparent tw:rounded-full"></span>
                     </span>
-                    <span v-else>Enviar solicitud</span>
+                    <span v-else>Enviá tu solicitud</span>
                   </button>
                 </div>
 
@@ -317,9 +317,9 @@ function validateCurrentStep(): boolean {
             </div>
           </div>
 
-          <article v-if="contactEmail" class="c-contact__email-card" aria-label="Contacto alternativo por email">
+          <article v-if="contactEmail" class="c-contact__email-card" aria-label="Contacto alternativo por e-mail">
             <p class="c-contact__email-label">Contacto alternativo</p>
-            <p class="c-contact__email-title">Cont&aacute;ctanos v&iacute;a e-mail</p>
+            <p class="c-contact__email-title">Escribinos por e-mail</p>
             <a class="c-contact__email-link" :href="`mailto:${contactEmail}`">{{ contactEmail }}</a>
           </article>
         </div>

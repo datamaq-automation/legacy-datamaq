@@ -9,7 +9,7 @@ vi.mock('@/di/container', () => ({
         note: 'Base: Garin - Industria'
       }),
       getNavbarContent: () => ({
-        contactLabel: 'Pedi coordinacion'
+        contactLabel: 'Pedí coordinación'
       })
     }
   })
@@ -23,7 +23,7 @@ describe('Footer', () => {
       }
     })
 
-    const button = screen.getByRole('button', { name: 'Pedi coordinacion' })
+    const button = screen.getByRole('button', { name: 'Pedí coordinación' })
     await fireEvent.click(button)
 
     expect(emitted().contact).toHaveLength(1)
@@ -36,6 +36,6 @@ describe('Footer', () => {
       }
     })
 
-    expect(screen.queryByRole('button', { name: 'Pedi coordinacion' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Pedí coordinación' })).not.toBeInTheDocument()
   })
 })

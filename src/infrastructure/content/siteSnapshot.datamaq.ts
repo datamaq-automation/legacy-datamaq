@@ -3,74 +3,75 @@ import type { SiteSnapshot } from '@/domain/types/site'
 export const datamaqSiteSnapshot: SiteSnapshot = {
   content: {
     hero: {
-      badge: 'Instalacion e integracion Powermeter + Automate',
-      title: 'Monitoreo energetico y automatizacion con Powermeter y Automate',
+      badge: 'Automatización, monitoreo y ciencia de datos aplicada',
+      title: 'Automatización industrial y ciencia de datos para decisiones operativas',
       subtitle:
-        'Instalacion en tablero, integracion a Powermate o SCADA y puesta en marcha para industria, edificios y cooperativas.',
-      responseNote: 'Base operativa: Garin (GBA Norte). Relevamiento inicial y alcance por WhatsApp.',
+        'Implementación de Powermeter y Automate, más asesoramiento y capacitaciones en Python, NumPy, pandas, bases de datos, APIs y Matplotlib.',
+      responseNote:
+        'Base operativa: Garín (GBA Norte). Relevamiento inicial y alcance por WhatsApp. Capacitaciones y asesoramiento también en formato remoto.',
       primaryCta: {
-        label: 'Escribir por WhatsApp',
+        label: 'Escribime por WhatsApp',
         href: 'https://wa.me/5491156297160',
         action: 'whatsapp'
       },
       secondaryCta: {
-        label: 'Ver solucion',
+        label: 'Mirá la solución',
         href: '#servicios',
         action: 'services'
       },
       benefits: [
         {
-          title: 'Medicion util',
-          text: 'Variables electricas y tendencias para entender como responde la instalacion.',
+          title: 'Medición útil',
+          text: 'Variables eléctricas y tendencias para entender cómo responde la instalación.',
           variant: 'primary'
         },
         {
-          title: 'Automatizacion aplicada',
-          text: 'Logicas de control e integracion para actuar con criterio operativo.',
+          title: 'Automatización aplicada',
+          text: 'Lógicas de control e integración para actuar con criterio operativo.',
           variant: 'success'
         },
         {
-          title: 'Puesta en marcha',
-          text: 'Configuracion, verificacion final y registro tecnico basico.',
+          title: 'Ciencia de datos útil',
+          text: 'Análisis, automatización y formación para trabajar datos con Python en casos reales.',
           variant: 'warning'
         }
       ],
       image: {
         src: '/media/hero-energy.svg',
-        alt: 'Monitoreo energetico y automatizacion en tablero industrial',
+        alt: 'Monitoreo energético y automatización en tablero industrial',
         width: 900,
         height: 700
       }
     },
     services: {
-      title: 'Solucion Powermeter + Automate',
+      title: 'Servicios técnicos y de ciencia de datos',
       cards: [
         {
           id: 'powermeter',
           title: 'Powermeter',
           description:
-            'Instalacion y configuracion de medicion electrica inteligente para tablero, linea o punto critico.',
-          subtitle: 'Monitoreo, alertas e integracion',
+            'Instalación y configuración de medición eléctrica inteligente para tablero, línea o punto crítico.',
+          subtitle: 'Monitoreo, alertas e integración',
           media: {
             src: '/media/analytics-dashboard.svg',
-            alt: 'Medicion electrica y tablero de datos',
+            alt: 'Medición eléctrica y tablero de datos',
             width: 900,
             height: 700
           },
           items: [
-            'Monitoreo remoto de variables electricas',
-            'Alertas y seguimiento de desvios',
-            'Integracion a Powermate o SCADA'
+            'Monitoreo remoto de variables eléctricas',
+            'Alertas y seguimiento de desvíos',
+            'Integración a Powermate o SCADA'
           ],
           figure: {
             src: '/media/analytics-dashboard.svg',
-            alt: 'Visualizacion de datos energeticos',
+            alt: 'Visualización de datos energéticos',
             width: 900,
             height: 700,
-            caption: 'Aplicable a tableros generales, lineas, edificios y puntos de consumo relevantes.'
+            caption: 'Aplicable a tableros generales, líneas, edificios y puntos de consumo relevantes.'
           },
           cta: {
-            label: 'Consultar medicion',
+            label: 'Consultá por medición',
             href: '#contacto',
             action: 'contact',
             section: 'contacto'
@@ -80,22 +81,22 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
           id: 'automate',
           title: 'Automate',
           description:
-            'Implementacion de controlador para automatizacion, logica de demanda e integracion con senales y sistemas.',
-          subtitle: 'Control y digitalizacion operativa',
+            'Implementación de controlador para automatización, lógica de demanda e integración con señales y sistemas.',
+          subtitle: 'Control y digitalización operativa',
           media: {
             src: '/media/install-tools.svg',
-            alt: 'Controlador y automatizacion en tablero',
+            alt: 'Controlador y automatización en tablero',
             width: 900,
             height: 700
           },
           items: [
-            'Logicas locales y remotas',
-            'Integracion por MQTT, Modbus y HTTP',
-            'Control de demanda y automatizacion'
+            'Lógicas locales y remotas',
+            'Integración por MQTT, Modbus y HTTP',
+            'Control de demanda y automatización'
           ],
-          note: 'La logica final depende del relevamiento, senales disponibles y objetivo operativo.',
+          note: 'La lógica final depende del relevamiento, señales disponibles y objetivo operativo.',
           cta: {
-            label: 'Consultar automatizacion',
+            label: 'Consultá por automatización',
             href: '#contacto',
             action: 'contact',
             section: 'contacto'
@@ -103,23 +104,49 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
         },
         {
           id: 'integracion',
-          title: 'Integracion y puesta en marcha',
+          title: 'Integración y puesta en marcha',
           description:
-            'Relevamiento, montaje, parametrizacion, pruebas y cierre tecnico sobre la solucion Powermeter + Automate.',
-          subtitle: 'Del tablero a la operacion',
+            'Relevamiento, montaje, parametrización, pruebas y cierre técnico sobre la solución Powermeter + Automate.',
+          subtitle: 'Del tablero a la operación',
           media: {
             src: '/media/team-training.svg',
-            alt: 'Puesta en marcha y acompanamiento tecnico',
+            alt: 'Puesta en marcha y acompañamiento técnico',
             width: 900,
             height: 700
           },
           items: [
             'Relevamiento inicial y checklist',
-            'Configuracion y pruebas de funcionamiento',
-            'Entrega tecnica con observaciones y proximos pasos'
+            'Configuración y pruebas de funcionamiento',
+            'Entrega técnica con observaciones y próximos pasos'
           ],
           cta: {
-            label: 'Coordinar relevamiento',
+            label: 'Coordiná un relevamiento',
+            href: '#contacto',
+            action: 'contact',
+            section: 'contacto'
+          }
+        },
+        {
+          id: 'data-science',
+          title: 'Ciencia de datos y capacitación en Python',
+          description:
+            'Asesoramiento técnico y capacitaciones aplicadas para análisis de datos, automatización y consumo de APIs.',
+          subtitle: 'Python para casos reales de negocio y operación',
+          media: {
+            src: '/media/analytics-dashboard.svg',
+            alt: 'Análisis de datos y capacitación en Python',
+            width: 900,
+            height: 700
+          },
+          items: [
+            'Capacitaciones en Python con NumPy, pandas y Matplotlib',
+            'Consultoría sobre bases de datos, APIs y limpieza de datos',
+            'Acompañamiento para dashboards, reportes y automatizaciones'
+          ],
+          note:
+            'El enfoque puede ser 100% remoto y se adapta al nivel del equipo, objetivos del negocio y stack disponible.',
+          cta: {
+            label: 'Consultá por ciencia de datos',
             href: '#contacto',
             action: 'contact',
             section: 'contacto'
@@ -130,197 +157,203 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
     about: {
       title: 'Sobre DataMaq',
       paragraphs: [
-        'DataMaq implementa soluciones de monitoreo energetico y automatizacion aplicada con foco en continuidad operativa, medicion util y decisiones tecnicas claras.',
-        'Cada intervencion prioriza tablero ordenado, integracion real con la operacion, documentacion minima y verificacion final.'
+        'DataMaq implementa soluciones de monitoreo energético, automatización aplicada y ciencia de datos con foco en continuidad operativa, medición útil y decisiones técnicas claras.',
+        'El servicio combina trabajo sobre tableros e integraciones con asesoramiento y capacitaciones prácticas en Python, análisis de datos, bases de datos y APIs.'
       ],
       image: {
         src: '/media/tecnico-a-cargo.webp',
-        alt: 'Tecnico a cargo de la implementacion',
+        alt: 'Técnico a cargo de la implementación',
         width: 700,
         height: 933
       }
     },
     profile: {
-      title: 'Perfil tecnico',
+      title: 'Perfil técnico',
       bullets: [
-        'Relevamiento en sitio y criterio de implementacion.',
-        'Instalacion, integracion y puesta en marcha.',
-        'Acompanamiento posterior para estabilizar la solucion.'
+        'Relevamiento en sitio y criterio de implementación.',
+        'Instalación, integración y puesta en marcha.',
+        'Asesoramiento y capacitaciones en Python, datos, bases de datos y APIs.'
       ]
     },
     navbar: {
       brand: 'DataMaq',
       brandAriaLabel: 'DataMaq, inicio',
       links: [
-        { label: 'Solucion', href: '#servicios' },
+        { label: 'Solución', href: '#servicios' },
         { label: 'Proceso', href: '#proceso' },
         { label: 'Alcance', href: '#tarifas' },
         { label: 'Cobertura', href: '#cobertura' },
         { label: 'FAQ', href: '#faq' },
         { label: 'Contacto', href: '#contacto' }
       ],
-      contactLabel: 'Contactar'
+      contactLabel: 'Escribime'
     },
     footer: {
-      note: 'DataMaq | Garin (GBA Norte)'
+      note: 'DataMaq | Garín (GBA Norte)'
     },
     legal: {
-      text: 'La informacion publicada es referencial y puede actualizarse segun alcance, tablero, conectividad y condiciones de implementacion.'
+      text: 'La información publicada es referencial y puede actualizarse según alcance, tablero, conectividad y condiciones de implementación.'
     },
     contact: {
       title: 'Contacto',
       subtitle:
-        'Contanos tu tablero, objetivo y zona. Te respondemos con el siguiente paso para Powermeter, Automate o integracion.',
+        'Contanos tu tablero, objetivo o necesidad de capacitación. Te respondemos con el siguiente paso para automatización, integración o ciencia de datos.',
       labels: {
         email: 'Email',
         message: 'Mensaje'
       },
-      submitLabel: 'Enviar',
+      submitLabel: 'Enviá',
       checkingMessage: 'Verificando disponibilidad del backend...',
       unavailableMessage: 'Servicio temporalmente no disponible.',
-      successMessage: 'Mensaje enviado. Gracias por contactarte.',
-      errorMessage: 'No se pudo enviar. Intentalo nuevamente.',
-      unexpectedErrorMessage: 'Ocurrio un error inesperado.'
+      successMessage: 'Mensaje enviado. Gracias por escribirnos.',
+      errorMessage: 'No se pudo enviar. Intentá nuevamente.',
+      unexpectedErrorMessage: 'Ocurrió un error inesperado.'
     },
     consent: {
       title: 'Privacidad',
-      description: 'Usamos analitica basica para mejorar la experiencia y el seguimiento de consultas.',
+      description: 'Usamos analítica básica para mejorar la experiencia y el seguimiento de consultas.',
       acceptLabel: 'Aceptar',
       rejectLabel: 'Rechazar'
     },
     decisionFlow: {
-      processTitle: 'Como trabajamos',
+      processTitle: 'Cómo trabajamos',
       processStepPrefixLabel: 'Paso',
       pricingTitle: 'Alcance del servicio',
       pricingSummaryFallback:
-        'El alcance depende del tablero, cantidad de mediciones, conectividad disponible y objetivo de automatizacion.',
+        'El alcance depende del tablero o caso de datos, cantidad de mediciones, stack disponible y objetivo técnico o de capacitación.',
       pricingIncludesTitle: 'Incluye',
       pricingIncludes: [
-        'Relevamiento inicial y checklist tecnico.',
-        'Instalacion y configuracion basica de Powermeter o Automate segun propuesta.',
-        'Integracion inicial a Powermate o sistema tercero si el alcance lo contempla.',
-        'Verificacion final y registro tecnico basico de la intervencion.'
+        'Relevamiento inicial y checklist técnico.',
+        'Instalación y configuración básica de Powermeter o Automate según propuesta.',
+        'Integración inicial a Powermate o sistema tercero si el alcance lo contempla.',
+        'Capacitación o transferencia técnica inicial según el alcance definido.'
       ],
       pricingExcludesTitle: 'No incluye',
       pricingExcludes: [
         'Equipos, sensores o accesorios si no fueron cotizados en la propuesta.',
-        'Adecuaciones electricas mayores del tablero.',
-        'Desarrollo de logica avanzada, tableros nuevos o integracion extensa no prevista en el alcance inicial.'
+        'Adecuaciones eléctricas mayores del tablero.',
+        'Desarrollo de lógica avanzada, pipelines extensos o integración no prevista en el alcance inicial.'
       ],
       pricingVariablesTitle: 'Puede variar por',
       pricingVariables: [
-        'Cantidad de circuitos, senales o puntos a relevar.',
-        'Conectividad disponible y necesidad de integracion con terceros.',
-        'Condiciones de seguridad, accesibilidad y criticidad operativa.'
+        'Cantidad de circuitos, señales o puntos a relevar.',
+        'Conectividad disponible y necesidad de integración con terceros.',
+        'Nivel del equipo, fuentes de datos disponibles y criticidad operativa.'
       ],
       coverageTitle: 'Cobertura y tiempos',
       coverageAreasTitle: 'Zona',
       coverageAreas: [
         'Cobertura prioritaria en GBA Norte.',
-        'AMBA sujeto a agenda y viabilidad tecnica.',
-        'Interior con coordinacion previa.'
+        'AMBA sujeto a agenda y viabilidad técnica.',
+        'Interior con coordinación previa.'
       ],
       responseTimesTitle: 'Tiempo de respuesta',
       responseTimes: [
         'Respuesta comercial en menos de 24 horas.',
-        'Agenda de relevamiento segun criticidad y disponibilidad.',
-        'Intervenciones urgentes con coordinacion previa.'
+        'Agenda de relevamiento según criticidad y disponibilidad.',
+        'Intervenciones urgentes con coordinación previa.'
       ],
-      whatsappLabel: 'Pedir coordinacion por WhatsApp',
-      contactFormLabel: 'Ir al formulario de contacto',
+      whatsappLabel: 'Pedí coordinación por WhatsApp',
+      contactFormLabel: 'Andá al formulario de contacto',
       faqTitle: 'Preguntas frecuentes',
       processSteps: [
         {
           order: 1,
           title: 'Relevamiento y objetivo operativo',
           description:
-            'Revisamos tablero, conectividad, variables a medir y objetivo de control para definir una implementacion razonable.'
+            'Revisamos tablero, conectividad, variables a medir y objetivo de control para definir una implementación razonable.'
         },
         {
           order: 2,
-          title: 'Instalacion y configuracion',
+          title: 'Instalación y configuración',
           description:
-            'Montamos Powermeter y/o Automate, configuramos comunicacion e integracion inicial segun el alcance acordado.'
+            'Montamos Powermeter y/o Automate, configuramos comunicación e integración inicial según el alcance acordado.'
         },
         {
           order: 3,
-          title: 'Pruebas y validacion',
+          title: 'Pruebas y validación',
           description:
-            'Verificamos lecturas, comunicaciones, logica basica y condiciones minimas de funcionamiento antes del cierre.'
+            'Verificamos lecturas, comunicaciones, lógica básica y condiciones mínimas de funcionamiento antes del cierre.'
         },
         {
           order: 4,
-          title: 'Cierre tecnico y proximos pasos',
+          title: 'Cierre técnico y próximos pasos',
           description:
-            'Entregamos observaciones, pendientes y recomendaciones para estabilizar la solucion y seguir escalando.'
+            'Entregamos observaciones, pendientes y recomendaciones para estabilizar la solución y seguir escalando.'
         }
       ],
       faqItems: [
         {
-          question: 'Que hace Powermeter?',
+          question: '¿Qué hace Powermeter?',
           answer:
-            'Permite medir variables electricas, ver tendencias, detectar desvios e integrar la informacion con Powermate o sistemas de terceros.'
+            'Permite medir variables eléctricas, ver tendencias, detectar desvíos e integrar la información con Powermate o sistemas de terceros.'
         },
         {
-          question: 'Que hace Automate?',
+          question: '¿También brindás capacitaciones en Python?',
           answer:
-            'Permite ejecutar logicas de automatizacion, control e integracion sobre senales y equipos segun el objetivo operativo definido.'
+            'Sí. Puedo dar asesoramiento y capacitaciones prácticas en Python, NumPy, pandas, Matplotlib, bases de datos y consumo de APIs, adaptadas al nivel y objetivo del equipo.'
         },
         {
-          question: 'Powermeter corrige directamente el factor de potencia?',
+          question: '¿Qué hace Automate?',
           answer:
-            'No por si solo. Sirve para medir, entender el comportamiento de la instalacion y tomar mejores decisiones de control o correccion.'
+            'Permite ejecutar lógicas de automatización, control e integración sobre señales y equipos según el objetivo operativo definido.'
         },
         {
-          question: 'Pueden integrarlo con Powermate o SCADA?',
+          question: '¿Podés ayudar con bases de datos y APIs?',
           answer:
-            'Si. El alcance exacto depende del equipo elegido, la conectividad disponible y el sistema al que haya que vincularse.'
+            'Sí. Puedo ayudar a consumir APIs, estructurar consultas, ordenar datos y conectar flujos de información para análisis, reportes o automatizaciones.'
         },
         {
-          question: 'Que necesitas para cotizar rapido?',
+          question: '¿Pueden integrarlo con Powermate o SCADA?',
           answer:
-            'Zona, fotos del tablero, objetivo del proyecto y una breve descripcion de que queres medir, controlar o automatizar.'
+            'Sí. El alcance exacto depende del equipo elegido, la conectividad disponible y el sistema al que haya que vincularse.'
+        },
+        {
+          question: '¿Qué necesitás para cotizar rápido?',
+          answer:
+            'Zona, fotos del tablero, objetivo del proyecto y una breve descripción de qué querés medir, controlar o automatizar.'
         }
       ]
     },
     thanks: {
       badge: 'Formulario enviado',
       topbarTitle: 'Solicitud finalizada',
-      title: 'Gracias!',
+      title: '¡Gracias!',
       subtitle: 'Recibimos tu consulta. En breve te contactamos.',
-      whatsappButtonLabel: 'Escribir por WhatsApp',
-      goHomeButtonLabel: 'Volver al inicio',
-      closeButtonAriaLabel: 'Volver al inicio'
+      whatsappButtonLabel: 'Escribime por WhatsApp',
+      goHomeButtonLabel: 'Volvé al inicio',
+      closeButtonAriaLabel: 'Volvé al inicio'
     },
     homePage: {
       headerContactLabel: 'Contacto',
-      heroFallbackContactLabel: 'Iniciar contacto',
-      heroMediaLabel: 'Cobertura tecnica activa',
-      trustTitle: 'Senales de confianza',
+      heroFallbackContactLabel: 'Iniciá el contacto',
+      heroMediaLabel: 'Cobertura técnica activa',
+      trustTitle: 'Señales de confianza',
       trustLogos: [],
       profileEyebrow: 'Perfil profesional',
       profileName: 'Agustin Bustos',
-      profileWhatsappLabel: 'Contacto directo por WhatsApp',
-      profileFormLabel: 'Ir al formulario',
-      profileSectionLabel: 'Enfoque tecnico',
+      profileWhatsappLabel: 'Escribime directo por WhatsApp',
+      profileFormLabel: 'Andá al formulario',
+      profileSectionLabel: 'Enfoque técnico',
       servicesEyebrow: 'Servicios',
-      servicesIntro: 'Soluciones tecnicas orientadas a tablero, monitoreo, integracion y puesta en marcha.',
+      servicesIntro:
+        'Servicios orientados a tablero, monitoreo, integración y formación técnica en análisis de datos con Python.',
       faqEyebrow: 'Ayuda',
       faqTitle: 'Preguntas frecuentes',
       quickLinks: {
-        services: 'Explorar solucion',
-        profile: 'Ver perfil tecnico'
+        services: 'Explorá la solución',
+        profile: 'Mirá el perfil técnico'
       },
       dockLabels: {
         home: 'Inicio',
-        services: 'Solucion',
+        services: 'Solución',
         profile: 'Perfil',
         contact: 'Contacto'
       },
       primaryContactForm: {
-        title: 'Inicia tu proyecto',
+        title: 'Iniciá tu proyecto o capacitación',
         subtitle: 'Dejanos tus datos y te contactamos en menos de 24 horas.',
-        submitLabel: 'Enviar solicitud'
+        submitLabel: 'Enviá tu solicitud'
       }
     },
     contactPage: {
@@ -328,41 +361,42 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
       homeButtonLabel: 'Inicio',
       supportTitle: 'Canales disponibles',
       supportItems: [
-        'Formulario principal para consultas tecnicas y comerciales.',
-        'WhatsApp directo para coordinacion rapida cuando este habilitado.'
+        'Formulario principal para consultas técnicas y comerciales.',
+        'WhatsApp directo para coordinación rápida cuando esté habilitado.'
       ],
-      supportBackHomeLabel: 'Volver al inicio',
+      supportBackHomeLabel: 'Volvé al inicio',
       introLinks: {
-        services: 'Solucion',
-        profile: 'Perfil tecnico',
+        services: 'Solución',
+        profile: 'Perfil técnico',
         faq: 'FAQ'
       },
-      primaryFormSubmitLabel: 'Enviar solicitud'
+      primaryFormSubmitLabel: 'Enviá tu solicitud'
     }
   },
   brand: {
     brandId: 'datamaq',
     brandName: 'DataMaq',
     brandAriaLabel: 'DataMaq, inicio',
-    baseOperativa: 'Garin (GBA Norte)',
+    baseOperativa: 'Garín (GBA Norte)',
     contactEmail: 'info@datamaq.com.ar',
     contactFormActive: true,
     whatsappUrl: 'https://wa.me/5491156297160',
     whatsappQr: {
       phoneE164: '5491156297160',
-      message: 'Hola, te contacto por DataMaq. Quiero coordinar una implementacion con Powermeter y/o Automate.',
+      message:
+        'Hola, te contacto por DataMaq. Quiero coordinar una implementación o una capacitación en Python y ciencia de datos.',
       sourceTag: 'qr_card'
     },
     technician: {
       name: 'Agustin Bustos',
-      role: 'Tecnico a cargo',
+      role: 'Técnico a cargo',
       photo: {
         src: '/media/tecnico-a-cargo.webp',
-        alt: 'Foto del tecnico a cargo',
+        alt: 'Foto del técnico a cargo',
         width: 100,
         height: 100
       },
-      whatsappLabel: 'Coordinar por WhatsApp',
+      whatsappLabel: 'Coordiná por WhatsApp',
       unavailableLabel: 'Contacto no disponible'
     },
     equipmentNames: {
@@ -374,7 +408,7 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
     siteUrl: 'https://datamaq.com.ar',
     siteName: 'DataMaq',
     siteDescription:
-      'Instalacion, integracion y puesta en marcha de Powermeter y Automate para monitoreo energetico y automatizacion aplicada en AMBA.',
+      'Automatización industrial, monitoreo energético y servicios de ciencia de datos con asesoramiento y capacitaciones en Python, pandas, APIs y bases de datos.',
     siteOgImage: 'https://datamaq.com.ar/og-default.png',
     siteLocale: 'es_AR',
     business: {

@@ -39,7 +39,7 @@ const handleFooterWhatsAppClick = createFooterWhatsAppClickHandler(whatsappHref)
           <span>{{ navbar.brand }}</span>
         </RouterLink>
 
-        <nav class="c-contact-page-header__nav tw:hidden tw:lg:flex" aria-label="Navegacion principal">
+        <nav class="c-contact-page-header__nav tw:hidden tw:lg:flex" aria-label="Navegación principal">
           <RouterLink
             v-for="link in homeLinks"
             :key="link.label"
