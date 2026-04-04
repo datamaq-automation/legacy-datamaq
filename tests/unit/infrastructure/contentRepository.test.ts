@@ -32,7 +32,7 @@ describe('ContentRepository', () => {
   it('exposes the frozen local snapshot as the initial content source', () => {
     const repository = new ContentRepository()
 
-    expect(repository.getHeroContent().title).toBe('Automatización industrial y ciencia de datos para decisiones operativas')
+    expect(repository.getHeroContent().title).toBe('Instalación e integración de equipos IoT para energía y producción')
     expect(repository.getContactPageContent().supportTitle).toBe('Canales disponibles')
     expect(repository.getBrandContent().technician.name).toBe('Agustin Bustos')
     expect(repository.getSeoContent().siteName).toBe('DataMaq')
