@@ -24,13 +24,16 @@ export function getContactFormActive(): boolean {
 }
 
 export function openWhatsApp(section: string = 'whatsapp', href?: string): void {
-  const whatsappUrl = buildPrefilledWhatsAppUrl(resolveCandidateChatUrl(href))
-  if (!whatsappUrl) {
+  const candidateUrl = resolveCandidateChatUrl(href)
+  const whatsappUrl = buildPrefilledWhatsAppUrl(candidateUrl)
+  const targetUrl = whatsappUrl ?? candidateUrl
+
+  if (!targetUrl) {
     return
   }
 
   if (typeof window !== 'undefined') {
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+    window.open(targetUrl, '_blank', 'noopener,noreferrer')
   }
 
   const { engagementTracker } = useContainer()

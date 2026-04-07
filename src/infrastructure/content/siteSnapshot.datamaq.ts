@@ -123,7 +123,7 @@ export const datamaqSiteSnapshot: SiteSnapshot = {
             'No se trata de formación genérica. El enfoque se ajusta al problema, los datos disponibles y el nivel técnico de quienes participan.',
           cta: {
             label: 'Consultá por capacitación',
-            href: '#contacto',
+            href: 'https://cursos.datamaq.com.ar',
             action: 'contact',
             section: 'contacto'
           }
