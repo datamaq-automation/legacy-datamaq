@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   submitContact: vi.fn(),
   getHeroContent: vi.fn(),
   getBrandContent: vi.fn(),
+  getSeoContent: vi.fn(),
   environment: {
     search: () => '' as string,
     referrer: () => '' as string
@@ -26,7 +27,8 @@ vi.mock('@/di/container', () => ({
   useContainer: () => ({
     content: {
       getHeroContent: mocks.getHeroContent,
-      getBrandContent: mocks.getBrandContent
+      getBrandContent: mocks.getBrandContent,
+      getSeoContent: mocks.getSeoContent
     },
     useCases: {
       submitContact: {
@@ -49,9 +51,13 @@ describe('contactController', () => {
     mocks.submitContact.mockReset()
     mocks.getHeroContent.mockReset()
     mocks.getBrandContent.mockReset()
+    mocks.getSeoContent.mockReset()
     mocks.getBrandContent.mockReturnValue({
       contactEmail: 'contacto@example.com',
       contactFormActive: true
+    })
+    mocks.getSeoContent.mockReturnValue({
+      siteUrl: 'https://datamaq.com.ar'
     })
     mocks.environment.search = () => ''
     mocks.environment.referrer = () => ''
@@ -132,6 +138,23 @@ describe('contactController', () => {
 
     expect(window.open).not.toHaveBeenCalled()
     expect(mocks.trackChat).not.toHaveBeenCalled()
+  })
+
+  it('opens trusted external datamaq subdomain links and tracks chat', () => {
+    mocks.getHeroContent.mockReturnValue({
+      primaryCta: {
+        href: 'https://wa.me/5491156297160'
+      }
+    })
+
+    openWhatsApp('service-training', 'https://cursos.datamaq.com.ar')
+
+    expect(window.open).toHaveBeenCalledWith(
+      'https://cursos.datamaq.com.ar/',
+      '_blank',
+      'noopener,noreferrer'
+    )
+    expect(mocks.trackChat).toHaveBeenCalledWith('service-training', 'direct')
   })
 
   it('tracks section scroll using normalized anchor', () => {

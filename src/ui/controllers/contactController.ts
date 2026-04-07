@@ -26,7 +26,7 @@ export function getContactFormActive(): boolean {
 export function openWhatsApp(section: string = 'whatsapp', href?: string): void {
   const candidateUrl = resolveCandidateChatUrl(href)
   const whatsappUrl = buildPrefilledWhatsAppUrl(candidateUrl)
-  const targetUrl = whatsappUrl ?? candidateUrl
+  const targetUrl = whatsappUrl ?? buildTrustedExternalUrl(candidateUrl)
 
   if (!targetUrl) {
     return
@@ -117,6 +117,10 @@ function getBrandContent() {
   return useContainer().content.getBrandContent()
 }
 
+function getSeoContent() {
+  return useContainer().content.getSeoContent()
+}
+
 function getCurrentTrafficSource(): string {
   return getTrafficSource(useContainer().environment)
 }
@@ -132,6 +136,40 @@ function isWhatsAppHostname(hostname: string): boolean {
 
 function isTrustedWhatsAppUrl(url: URL): boolean {
   return url.protocol === 'https:' && isWhatsAppHostname(url.hostname)
+}
+
+function buildTrustedExternalUrl(href: string | undefined): string | undefined {
+  const normalizedHref = normalizeHref(href)
+  if (!normalizedHref) {
+    return undefined
+  }
+
+  let targetUrl: URL
+  try {
+    targetUrl = new URL(normalizedHref)
+  } catch {
+    return undefined
+  }
+
+  if (targetUrl.protocol !== 'https:') {
+    return undefined
+  }
+
+  const siteOrigin = getSeoContent().siteUrl?.trim()
+  if (!siteOrigin) {
+    return undefined
+  }
+
+  let siteUrl: URL
+  try {
+    siteUrl = new URL(siteOrigin)
+  } catch {
+    return undefined
+  }
+
+  return hasDomain(targetUrl.hostname.trim().toLowerCase(), siteUrl.hostname.trim().toLowerCase())
+    ? targetUrl.toString()
+    : undefined
 }
 
 function hasDomain(hostname: string, domain: string): boolean {
