@@ -9,6 +9,15 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 - `todo.done.md`: historial archivado de tareas cerradas.
 - `preguntas-arquitectura.md`: inbox canonico de preguntas abiertas de arquitectura.
 
+## Migracion WP Nativo (cursos.datamaq.com.ar)
+
+- `wp-native-migration-phase-0.md`: inventario de rutas/SEO/tracking inicial.
+- `wp-native-migration-phase-2.md`: carga de contenido inicial.
+- `wp-native-migration-phase-3-smoke.md`: smoke pre-cutover (snapshot).
+- `wp-native-migration-phase-4-cutover.md`: activacion permanente del tema.
+- `wp-native-migration-phase-5-hardening.md`: hardening post-cutover (MU plugin + canonicalizacion nginx).
+- `wp-native-open-items.md`: pendientes operativos/documentales abiertos.
+
 ## Contratos canonicos
 
 - `backend-content-brand-seo-contract.md`: contrato historico/objetivo de `GET /v1/site` para backend. El frontend actual usa snapshot local congelado.

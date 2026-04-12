@@ -26,10 +26,11 @@ Dominio: `https://cursos.datamaq.com.ar`
 - Submit real probado con nonce valido.
 - Resultado: `302` a `/gracias/`.
 
-## Observaciones
-- La raiz `/` del dominio continua redirigiendo a `/courses/` por configuracion previa del sitio (fuera del tema nuevo).
+## Observaciones (actualizadas)
+- La raiz `/` originalmente redirigia a `/courses/` por Nginx; esto se corrigio luego en hardening.
 - El push de commits del repo WP sigue pendiente por credencial SSH de solo lectura en el servidor.
 
-## Estado final
+## Estado final de fase
 - Cutover aplicado.
 - Smoke critico completado.
+- Continuidad: ver Fase 5 (hardening post-cutover).

@@ -4,12 +4,12 @@ Fecha: 2026-04-12
 WP objetivo: `/home/datamaq/public_html/cursos`
 
 ## Resultado
-Se cargo contenido inicial real en paginas clave de migracion, manteniendolas en estado `draft` para QA sin impacto en produccion.
+Se cargo contenido inicial en paginas clave y luego se promovio a `publish` durante fases posteriores de smoke/cutover.
 
 ## Paginas actualizadas
-- ID `196` slug `contact` titulo `Contacto`.
-- ID `195` slug `gracias` titulo `Gracias`.
-- ID `197` slug `medicion-consumo-electrico-escobar` titulo `Medicion de consumo electrico en Escobar`.
+- ID `196` slug `contact` titulo `Contacto` (estado actual: `publish`).
+- ID `195` slug `gracias` titulo `Gracias` (estado actual: `publish`).
+- ID `197` slug `medicion-consumo-electrico-escobar` titulo `Medicion de consumo electrico en Escobar` (estado actual: `publish`).
 
 ## Alcance funcional cargado
 - Contenido editorial base de contacto con CTA a WhatsApp y email.
@@ -21,13 +21,11 @@ Se cargo contenido inicial real en paginas clave de migracion, manteniendolas en
   - FAQ inicial
 
 ## Notas tecnicas
-- En este WP no hay plugin de formularios activo (solo LearnPress + cache + mu-plugins).
-- La pagina `197` tenia `_wp_page_template = template-landing.php` (de tema inactivo), lo que bloqueaba updates por WP-CLI con `Invalid page template`.
-- Se normalizo temporalmente a `default` para poder editar contenido.
-- El tema activo sigue siendo `twentytwentythree`.
+- En este WP no habia plugin de formularios activo (LearnPress + cache + mu-plugins).
+- Se implemento luego formulario nativo del tema con `admin-post.php`.
+- La pagina `197` tuvo bloqueo temporal por `Invalid page template` y se normalizo para permitir updates.
 
-## Pendiente de Fase 3
-- Activar `datamaq-native` solo en staging.
-- Reasignar plantilla `template-landing.php` a slug `medicion-consumo-electrico-escobar` cuando el tema este activo.
-- Implementar formulario nativo/plug-in en `/contact` con redireccion a `/gracias` y tracking de conversion.
-- Validar redirecciones legacy (`/cotizador* -> /contact`).
+## Referencias de continuidad
+- Fase 3: smoke controlado.
+- Fase 4: cutover permanente.
+- Fase 5: hardening post-cutover.
