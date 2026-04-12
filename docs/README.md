@@ -18,6 +18,10 @@ Indice operativo para `docs/`. Ordena los documentos por tipo y por vigencia par
 - `wp-native-migration-phase-5-hardening.md`: hardening post-cutover (MU plugin + canonicalizacion nginx).
 - `wp-native-open-items.md`: pendientes operativos/documentales abiertos.
 
+## Archivo historico
+
+- `archive/relevamiento-comparativo-uiux-learnpress-2026-04-09.md`: relevamiento pre-cutover conservado como evidencia historica.
+
 ## Contratos canonicos
 
 - `backend-content-brand-seo-contract.md`: contrato historico/objetivo de `GET /v1/site` para backend. El frontend actual usa snapshot local congelado.
