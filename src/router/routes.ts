@@ -17,11 +17,6 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/ui/views/ThanksView.vue')
   },
   {
-    path: '/medicion-consumo-electrico-escobar',
-    name: 'medicion-consumo-escobar',
-    component: () => import('@/ui/pages/MedicionConsumoEscobar.vue')
-  },
-  {
     path: '/cotizador',
     redirect: '/contact'
   },
