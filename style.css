@@ -1,0 +1,56 @@
+/*
+ Theme Name:   Blocksy Child Datamaq
+ Template:     blocksy
+ Author:       Agustin Madygraf
+ Version:      1.5.0
+*/
+
+/* --- SAFETY NET FOR MIGRATED SECTIONS --- */
+
+/* Force Visibility and Minimum Height */
+.section-mobile, 
+#primary section, 
+section[id] {
+    display: block !important;
+    visibility: visible !important;
+    min-height: 400px !important; /* Prevents 0-height collapse */
+    width: 100% !important;
+    position: relative !important;
+    opacity: 1 !important;
+}
+
+/* Hardened Contrast (Solid Colors if alpha fails) */
+.tw\:bg-\[\#0c092f\] { background-color: #0c092f !important; }
+.tw\:bg-\[\#1a1c3d\]\/78 { background-color: #1a1c3d !important; }
+
+/* Global Text Visibility */
+#primary, #primary * {
+    color: #ffffff !important;
+}
+
+.c-home-eyebrow, 
+.tw\:text-dm-primary {
+    color: #ff9a4d !important;
+}
+
+/* Fix Hero Background specifically */
+.c-home-hero {
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+/* Ensure Button Legibility */
+.tw\:btn-primary {
+    background-color: #ff9a4d !important;
+    color: #0c092f !important;
+}
+
+/* Navbar Z-index fix */
+header.tw\:sticky {
+    z-index: 9999 !important;
+}
+
+/* Mobile Offcanvas Force */
+#mobile-offcanvas.active {
+    display: block !important;
+}

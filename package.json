@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "sync:wp": "node scripts/sync-styles.mjs",
     "build": "node scripts/build-target.mjs",
     "build:local": "node scripts/build-local.mjs",
     "build:datamaq": "npm run build -- datamaq",
