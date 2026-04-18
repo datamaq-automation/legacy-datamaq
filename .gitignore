@@ -2,6 +2,10 @@
 node_modules/
 public/
 .temp/
+
+# WordPress Theme Migration (Managed on VPS Git)
+wordpress-theme/
+assets/css/tailwind-dist.css
 coverage/
 test-results/
 dist/
