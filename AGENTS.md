@@ -49,3 +49,16 @@ This project is a Vue 3 + Vite frontend with a layered architecture under `src/`
 - Start from `.env.example`; keep secrets out of Git.
 - Never expose backend credentials or sensitive headers in frontend code.
 - Validate client-side guardrails with `npm run lint:security`.
+
+## Fase posterior de verificación
+Después de la fase de documentación puede ejecutarse una fase de verificación de cierre.
+
+Esa fase debe comprobar:
+- cobertura de vistas documentadas
+- cumplimiento estricto de `docs/plantilla.md`
+- consistencia y actualización de `docs/README.md`
+- calidad y utilidad real de la documentación para migración estética
+- respeto de todas las restricciones operativas del repositorio
+
+La fase de verificación no implementa cambios en WordPress.
+La fase de verificación audita, reporta hallazgos y determina si la etapa documental puede darse por cerrada.

@@ -14,3 +14,6 @@ Reglas clave:
 8. La comparación con WordPress es solo visual/funcional desde navegador.
 
 En caso de conflicto, prevalece `AGENT.md`.
+
+También existe una fase posterior de verificación documental.
+En esa fase deben revisarse cobertura, cumplimiento de `docs/plantilla.md`, consistencia de `docs/README.md` y respeto del alcance definido en `AGENT.md`.
