@@ -1,11 +1,11 @@
-# Microauditoría: Global — Header Logo Icon
+# Microauditoría: Home — Brand Logo Icon Parity
 
 ## 1. Ficha de microauditoría
 
 | Campo | Valor |
 |---|---|
-| ID | global-header-logo-icon |
-| Archivo | docs/microauditorias/global-header-logo-icon.md |
+| ID | home-logo-parity |
+| Archivo | docs/microauditorias/home-logo-parity.md |
 | Estado | Cerrada |
 | Prioridad | Alta |
 | Fecha de inicio | 2026-04-19 |
@@ -100,5 +100,20 @@ font-family: ui-monospace, SFMono-Regular, ...;
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante para el icono.
-* ## Siguiente microauditoría sugerida: `global-header-menu-items.md` (Ajustar labels y enlaces del menú).
+* ## Siguiente microauditoría sugerida: `home-header-typography.md`
+
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `header.php` |
+| Mensaje de commit | feat(header): add logo icon and fix mobile menu compatibility |
+| Hash de commit | 781cf92 |
+
+## 13. Resumen ejecutivo
+
+Se ha incorporado el componente visual de marca (cuadrado naranja con icono de terminal `>_`) en la cabecera. La implementación se realizó mediante CSS inline y HTML estructurado en `header.php` para asegurar fidelidad absoluta sin depender de compilaciones externas. La alineación y proporciones son idénticas a la referencia Vue.
+
 

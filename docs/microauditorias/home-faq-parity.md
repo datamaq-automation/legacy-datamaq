@@ -81,3 +81,16 @@ La sección FAQ en WordPress es estática y contiene menos información de la qu
 * ## Diferencia residual: Ninguna relevante.
 * ## Siguiente microauditoría sugerida: `home-footer-parity.md` (Auditoría de la sección de Footer).
 
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `template-parts/content-faq.php`, `inc/site-data.php` |
+| Mensaje de commit | style(faq): synchronize content and styles with Vue reference |
+| Hash de commit | 697c1f8 |
+
+## 13. Resumen ejecutivo
+
+Se ha dinamizado la sección de preguntas frecuentes (FAQ), extrayendo los 6 ítems del snapshot de Vue. Se actualizaron los badges a mayúsculas con el color institucional `#ff6a00` y se implementó la arquitectura BEM (`c-home-faq`), asegurando que la sección de ayuda sea totalmente coherente con la de la referencia local.

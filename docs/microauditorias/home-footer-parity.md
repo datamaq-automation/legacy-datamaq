@@ -80,5 +80,18 @@ El footer actual de WordPress es una versión simplificada que no incluye la inf
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante.
-* ## Siguiente microauditoría sugerida: `home-pricing-structure.md` (Auditoría de la sección de Alcance/Tarifas).
+* ## Siguiente microauditoría sugerida: `home-process-parity.md`
 
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `footer.php`, `inc/site-data.php` |
+| Mensaje de commit | style(footer): synchronize shell layout and dock labels with Vue reference |
+| Hash de commit | d021868 |
+
+## 13. Resumen ejecutivo
+
+Se ha rediseñado el pie de página (Footer) eliminando la estructura de columnas de Blocksy a favor de una "footer shell" de una sola fila alineada con Vue. Se ha sincronizado el dock móvil con los labels capturados en el snapshot y se ha automatizado la gestión de textos legales con strings dinámicos. La paridad global de la base de la página es ahora total.

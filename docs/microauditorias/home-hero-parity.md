@@ -98,5 +98,20 @@ La sección Hero en WordPress está incompleta a nivel de datos (falta la imagen
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante en el Hero.
-* ## Siguiente microauditoría sugerida: `home-services-layout.md` (Auditoría de la sección de Servicios).
+* ## Siguiente microauditoría sugerida: `home-profile-styles.md`
+
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `inc/site-data.php`, `template-parts/content-hero.php` |
+| Mensaje de commit | feat(hero): fix missing image and sync badge styles with Vue reference |
+| Hash de commit | 69b23ea |
+
+## 13. Resumen ejecutivo
+
+Se ha completado la sincronización del contenido y la estética del Hero. Se integró la imagen principal (`hero-energy.svg`) mediante el repositorio central de datos y se ajustaron los estilos del badge (mayúsculas y color naranja) y los radios de borde de los botones (12px), logrando una paridad visual premium idéntica a Vue.
+
 

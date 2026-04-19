@@ -75,5 +75,19 @@ La barra de navegación de WordPress contiene enlaces ("Alcance", "Cobertura") q
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante.
-* ## Siguiente microauditoría sugerida: Final de la Fase de Documentación y Paridad.
+* ## Siguiente microauditoría sugerida: Final de la Fase de Documentación y Paridad (Home).
+
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `header.php` |
+| Mensaje de commit | style(nav): synchronize navigation links with Vue reference |
+| Hash de commit | 35af1e4 |
+
+## 13. Resumen ejecutivo
+
+Se ha restaurado la integridad de la navegación en la Home Page, eliminando enlaces a secciones inexistentes ("Alcance", "Cobertura") y añadiendo el enlace funcional a "#perfil". Se validó que todos los anclajes dirijan a sus respectivos componentes BEM, sincronizando la experiencia de usuario con la arquitectura de la referencia Vue.
 

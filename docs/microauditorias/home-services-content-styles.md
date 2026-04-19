@@ -82,5 +82,18 @@ El encabezado de la sección de servicios en WordPress contiene texto estático 
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante.
-* ## Siguiente microauditoría sugerida: `home-faq-parity.md` (Auditoría de la sección de FAQ).
+* ## Siguiente microauditoría sugerida: `home-faq-parity.md`
 
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `template-parts/content-services.php` |
+| Mensaje de commit | style(services): synchronize content and styles with Vue reference |
+| Hash de commit | 38ce0ce |
+
+## 13. Resumen ejecutivo
+
+Se ha dinamizado la sección de servicios, permitiendo que las tarjetas se generen a partir del objeto `services` en `site-data.php`. Se aplicaron estilos BEM y se ajustaron los radios de borde a 12px, logrando una paridad funcional y visual completa con el diseño de tarjetas de la referencia Vue.

@@ -80,5 +80,20 @@ Aunque el título coincide, el subtítulo y el label del botón en WordPress est
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante.
-* ## Siguiente microauditoría sugerida: `home-integrity-check.md` (Verificación final de integridad de la Home).
+* ## Siguiente microauditoría sugerida: `home-integrity-navigation.md`
+
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `template-parts/content-contact.php`, `inc/site-data.php` |
+| Mensaje de commit | style(contact): synchronize content and styles with Vue reference |
+| Hash de commit | 79246b6 |
+
+## 13. Resumen ejecutivo
+
+Se ha sincronizado la sección de contacto de la Home con la referencia Vue, corrigiendo la asignación de textos dinámicos (`primaryContactForm` vs `contactPage`). Se ajustó el radio de borde de los botones a 12px y se unificó la estética del badge institucional. La sección es ahora funcionalmente coherente con el snapshot de datos.
+
 

@@ -1,11 +1,11 @@
-# Microauditoría: Global — Header Dimensions
+# Microauditoría: Home — Header Dimensions
 
 ## 1. Ficha de microauditoría
 
 | Campo | Valor |
 |---|---|
-| ID | global-header-dimensions |
-| Archivo | docs/microauditorias/global-header-dimensions.md |
+| ID | home-header-dimensions |
+| Archivo | docs/microauditorias/home-header-dimensions.md |
 | Estado | Cerrada |
 | Prioridad | Alta |
 | Fecha de inicio | 2026-04-19 |

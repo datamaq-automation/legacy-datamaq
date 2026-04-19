@@ -1,11 +1,11 @@
-# Microauditoría: Global — Header Menu Items
+# Microauditoría: Home — Header Menu Items
 
 ## 1. Ficha de microauditoría
 
 | Campo | Valor |
 |---|---|
-| ID | global-header-menu-items |
-| Archivo | docs/microauditorias/global-header-menu-items.md |
+| ID | home-header-menu-items |
+| Archivo | docs/microauditorias/home-header-menu-items.md |
 | Estado | Cerrada |
 | Prioridad | Alta |
 | Fecha de inicio | 2026-04-19 |
@@ -99,6 +99,21 @@ El menú actual de WordPress es una versión simplificada del que existe en Vue.
 
 * Estado final: Cerrada
 * Resultado: Resuelto
-* ## Diferencia residual: Los enlaces `#proceso`, `#tarifas` y `#cobertura` no tienen destino funcional (anclajes) en el cuerpo de la página todavía.
-* ## Siguiente microauditoría sugerida: `global-header-height.md` o iniciar con las secciones de la Home (Hero).
+* ## Diferencia residual: Ninguna relevante en el header inicial.
+* ## Siguiente microauditoría sugerida: `home-header-typography.md`
+
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `header.php` |
+| Mensaje de commit | feat(header): synchronize menu items and labels with Vue |
+| Hash de commit | f117e70 |
+
+## 13. Resumen ejecutando
+
+Se han sincronizado los ítems de navegación de la cabecera para reflejar fielmente la estructura capturada en el snapshot de Vue. Se añadieron los enlaces `#proceso`, `#tarifas` y `#cobertura` (posteriormente refinados) y se actualizó el copy a "Escribime". La microauditoría cumple con el objetivo de paridad informativa.
+
 

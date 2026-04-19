@@ -1,11 +1,11 @@
-# Microauditoría: Global — Header Typography
+# Microauditoría: Home — Header Typography
 
 ## 1. Ficha de microauditoría
 
 | Campo | Valor |
 |---|---|
-| ID | global-header-typography |
-| Archivo | docs/microauditorias/global-header-typography.md |
+| ID | home-header-typography |
+| Archivo | docs/microauditorias/home-header-typography.md |
 | Estado | Cerrada |
 | Prioridad | Alta |
 | Fecha de inicio | 2026-04-19 |
@@ -102,5 +102,20 @@ $dm-text-0: #e2e9f3;
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante en el header.
-* ## Siguiente microauditoría sugerida: `home-hero-content.md` (Inicio de auditoría de secciones de la Home).
+* ## Siguiente microauditoría sugerida: `home-hero-content-styles.md`
+
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `header.php` |
+| Mensaje de commit | style(header): synchronize navigation typography and button styles |
+| Hash de commit | eb07534 |
+
+## 13. Resumen ejecutivo
+
+Se ha sincronizado la tipografía del menú con los tokens exactos de Vue (Inter, 15.68px, peso 400). Asimismo, se ha unificado el color de hover a `#ff6a00` y se ha aplicado un border-radius de 12px al botón CTA para elevar la percepción premium del sitio. La microauditoría se considera exitosa y cerrada.
+
 

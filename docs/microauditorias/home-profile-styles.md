@@ -78,5 +78,18 @@ La sección de perfil reutiliza clases del hero (`c-home-hero__eyebrow`) pero no
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante.
-* ## Siguiente microauditoría sugerida: `home-services-structure.md` (Auditoría de la sección de Servicios).
+* ## Siguiente microauditoría sugerida: `home-services-content-styles.md`
 
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `template-parts/content-profile.php` |
+| Mensaje de commit | style(profile): synchronize badge and button styles with Vue reference |
+| Hash de commit | c34d019 |
+
+## 13. Resumen ejecutivo
+
+Se ha sincronizado la sección de perfil profesional, ajustando el badge a mayúsculas naranja y el radio del botón CTA a 12px. Los identificadores BEM (`c-home-profile`) han sido integrados, asegurando que la sección sea modular y visualmente idéntica a la referencia Vue. La microauditoría se cierra como resuelta.

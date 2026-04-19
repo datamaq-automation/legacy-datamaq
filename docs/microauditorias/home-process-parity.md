@@ -78,5 +78,20 @@ La sección de proceso en WordPress intenta consumir datos de un repositorio cen
 * Estado final: Cerrada
 * Resultado: Resuelto
 * ## Diferencia residual: Ninguna relevante.
-* ## Siguiente microauditoría sugerida: `home-contact-parity.md` (Auditoría de la sección de Contacto).
+* ## Siguiente microauditoría sugerida: `home-contact-parity.md`
+
+## 12. Registro Git
+
+| Campo | Valor |
+| --- | --- |
+| Rama | main |
+| Estado de Git revisado antes de cambios | Sí |
+| Archivos incluidos en commit | `template-parts/content-proceso.php`, `inc/site-data.php` |
+| Mensaje de commit | style(process): synchronize content and styles with Vue reference |
+| Hash de commit | a6f9bb0 |
+
+## 13. Resumen ejecutivo
+
+Se ha implementado el flujo de trabajo de 4 pasos ("CÓMO TRABAJAMOS") en WordPress, utilizando los datos dinámicos de la referencia Vue. La sección incluye el estilo visual de números de fondo sutiles y el badge institucional sincronizado en color y tipografía. Se han integrado las clases BEM (`c-home-process`), logrando paridad técnica completa.
+
 
